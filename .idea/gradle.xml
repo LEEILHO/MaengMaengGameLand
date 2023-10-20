@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/backend/Auth" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/backend/Auth" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/backend/Awrsp" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/backend/Awrsp" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/backend/Eureka" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/backend/Eureka" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/backend/Gateway" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/backend/Gateway" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/backend/Gsb" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/backend/Gsb" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/backend/Jwac" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/backend/Jwac" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/backend/Lobby" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/backend/Lobby" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/backend/Record" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/backend/Record" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/backend/User" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/backend/User" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>

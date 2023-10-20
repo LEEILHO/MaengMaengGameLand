@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$PROJECT_DIR$/backend/Auth" />
+    <file type="web" url="file://$PROJECT_DIR$/backend/Awrsp" />
+    <file type="web" url="file://$PROJECT_DIR$/backend/Eureka" />
+    <file type="web" url="file://$PROJECT_DIR$/backend/Gateway" />
+    <file type="web" url="file://$PROJECT_DIR$/backend/Gsb" />
+    <file type="web" url="file://$PROJECT_DIR$/backend/Jwac" />
+    <file type="web" url="file://$PROJECT_DIR$/backend/Lobby" />
+    <file type="web" url="file://$PROJECT_DIR$/backend/Record" />
+    <file type="web" url="file://$PROJECT_DIR$/backend/User" />
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_20" project-jdk-name="11" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>
