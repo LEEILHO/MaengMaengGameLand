@@ -1,0 +1,18 @@
+server:
+  hostname: localhost
+  port: 9130
+
+spring:
+  application:
+    name: maeng-record-service
+  cloud:
+    config:
+      name: maeng
+      profile: record
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${server.hostname}:8761/eureka/
+  instance:
+    hostname: ${server.hostname}

@@ -1,0 +1,18 @@
+server:
+  hostname: localhost
+  port: 9210
+
+spring:
+  application:
+    name: maeng-awrsp-service
+  cloud:
+    config:
+      name: maeng
+      profile: awrsp
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${server.hostname}:8761/eureka/
+  instance:
+    hostname: ${server.hostname}
