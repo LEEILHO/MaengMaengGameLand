@@ -1,6 +1,8 @@
 package com.maeng.jwac.domain.timer.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,16 +23,23 @@ public class TimerService {
 	@Transactional
 	public void timerEnd(String gameCode, String nickname, int round) {
 		Timer timer = timerRedisRepository.findById(gameCode)
-			.orElse(Timer.builder().gameCode(gameCode).nicknames(new HashMap<>()).build());
+			.orElse(Timer.builder().gameCode(gameCode).nicknames(new HashSet<>()).build());
 
-		timer.getNicknames().put(round, nickname);
+		if(timer.getNicknames() == null) {
+			timer.setNicknames(new HashSet<>());
+		}
+
+		timer.getNicknames().add(nickname);
+
+		System.out.println(timer.toString());
 
 		int headCount = gameService.getHeadCount(gameCode);
 
-		timerRedisRepository.save(timer);
-
-		if(timer.getNicknames().get(round).length() == headCount) {
+		if(timer.getNicknames().size() == headCount) {
 			gameService.nextRound(gameCode);
+			timer.getNicknames().clear();
 		}
+
+		timerRedisRepository.save(timer);
 	}
 }

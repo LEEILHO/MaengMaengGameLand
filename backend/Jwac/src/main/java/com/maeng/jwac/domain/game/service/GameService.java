@@ -48,7 +48,13 @@ public class GameService {
 	}
 
 	public int getHeadCount(String gameCode) {
-		return jwacRedisRepository.findById(gameCode).orElseThrow().getHeadCount();
+		Jwac jwac =  jwacRedisRepository.findById(gameCode).orElse(null);
+
+		if(jwac == null) {
+			return 0;
+		} else {
+			return jwac.getHeadCount();
+		}
 	}
 
 	public int setRound() {
