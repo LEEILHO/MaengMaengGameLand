@@ -5,7 +5,7 @@ server:
   port: 8761
 eureka:
   instance:
-    hostname: localhost
+    hostname: k9d208.p.ssafy.io
   client:
     registerWithEureka: false
     fetchRegistry: false
