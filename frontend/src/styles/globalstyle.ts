@@ -9,11 +9,32 @@ const GlobalStyle = createGlobalStyle`
   };
   
   body {  
-    font-family: 'Noto Sans KR', sans-serif;
-  } 
+    font-family: 'kbo-dia';
+  }
+
+  @font-face {
+    font-family: "kbo-dia";
+    font-weight: 400;
+    src: url("/fonts/KBO-Dia-Gothic_light.woff") format("woff");
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: "kbo-dia";
+    font-weight: 500;
+    src: url("/fonts/KBO-Dia-Gothic_medium.woff") format("woff");
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: "kbo-dia";
+    font-weight: 700;
+    src: url("/fonts/KBO-Dia-Gothic_bold.woff") format("woff");
+    font-style: normal;
+  }
 
   select,
-  input, 
+  input,
   button,
   textarea {
     border: 0;
