@@ -1,8 +1,6 @@
 import type { Metadata } from 'next'
-import './globals.css'
 import RecoilRootProvider from '@components/common/RecoilRootProvider'
 import NextThemeProvider from '@components/common/NextThemeProvider'
-import localFont from '@next/font/local'
 
 export const metadata: Metadata = {
   title: '맹맹게임랜드',
