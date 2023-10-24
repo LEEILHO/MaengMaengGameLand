@@ -5,37 +5,57 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.getSystemService
 
-private const val TAG = "MainActivity"
-class MainActivity : AppCompatActivity() {
+
+private const val TAG = "GameFragment_김진영"
+class GameFragment : Fragment() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        Log.d(TAG, "onCreate: ")
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_game, container, false)
+
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         initSensorManager()
     }
 
-    override fun onResume() {
-        super.onResume()
-        //
-        sensorManager.registerListener(listener, sensor, SensorManager.SENSOR_DELAY_UI)
-    }
 
-    override fun onPause() {
-        super.onPause()
-        sensorManager.unregisterListener(listener)
-    }
+//    override fun onResume() {
+//        super.onResume()
+//        //
+//        sensorManager.registerListener(listener, sensor, SensorManager.SENSOR_DELAY_UI)
+//    }
+//
+//    override fun onPause() {
+//        super.onPause()
+//        sensorManager.unregisterListener(listener)
+//    }
 
     private lateinit var sensorManager: SensorManager
     private lateinit var sensor: Sensor
 
-    fun initSensorManager() {
-        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)!!
+    private fun initSensorManager() {
+        val sensorManager = requireContext().getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        val sensor: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
     }
 
     // 메인 쓰레드에서 돌아감

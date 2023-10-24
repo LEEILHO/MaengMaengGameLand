@@ -3,11 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/startUpFragment">
+    app:startDestination="@id/gameFragment">
 
     <fragment
         android:id="@+id/startUpFragment"
         android:name="com.lessgenius.maengland.StartUpFragment"
         android:label="fragment_startup"
         tools:layout="@layout/fragment_startup" />
+    <fragment
+        android:id="@+id/gameFragment"
+        android:name="com.lessgenius.maengland.GameFragment"
+        android:label="fragment_game"
+        tools:layout="@layout/fragment_game" />
 </navigation>
