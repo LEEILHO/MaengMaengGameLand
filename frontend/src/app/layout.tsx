@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import RecoilRootProvider from '@components/common/RecoilRootProvider'
 import NextThemeProvider from '@components/common/NextThemeProvider'
+import RootStyleRegistry from '@styles/RootStyleRegistry'
 
 export const metadata: Metadata = {
   title: '맹맹게임랜드',
@@ -27,9 +28,11 @@ export default function RootLayout({
   return (
     <html>
       <body>
-        <NextThemeProvider>
-          <RecoilRootProvider>{children}</RecoilRootProvider>
-        </NextThemeProvider>
+        <RootStyleRegistry>
+          <NextThemeProvider>
+            <RecoilRootProvider>{children}</RecoilRootProvider>
+          </NextThemeProvider>
+        </RootStyleRegistry>
       </body>
     </html>
   )
