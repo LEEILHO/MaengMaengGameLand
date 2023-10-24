@@ -1,5 +1,5 @@
 server:
-  hostname: localhost
+  hostname: k9d208.p.ssafy.io
   port: 9130
 
 spring:
