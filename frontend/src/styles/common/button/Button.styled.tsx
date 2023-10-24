@@ -24,6 +24,8 @@ export const Button = styled.button<ButtonProps>`
   padding: 14px 18px;
   align-items: center;
   justify-content: center;
+  transition: 0.25s;
+  cursor: pointer;
   border-radius: ${(props) => (props.radius ? props.radius + 'px' : '')};
   background: radial-gradient(
       107.08% 85.59% at 86.3% 87.5%,
@@ -40,6 +42,11 @@ export const Button = styled.button<ButtonProps>`
   box-shadow:
     4px 38px 62px 0px rgba(0, 0, 0, 0.5),
     -3px -4px 7px 0px rgba(255, 255, 255, 0.15) inset;
+
+  &:active {
+    transform: translateY(4px);
+    filter: brightness(0.7);
+  }
 `
 
 export const Text = styled.p<TextProps>`
