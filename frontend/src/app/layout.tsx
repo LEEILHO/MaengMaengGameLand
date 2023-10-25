@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   icons: { apple: '/icons/apple-touch-icon.png' },
   appleWebApp: {
     capable: true,
-    title: '맹맹마블',
+    title: '맹맹게임랜드',
     statusBarStyle: 'black-translucent',
   },
 }
