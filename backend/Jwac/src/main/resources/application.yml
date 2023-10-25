@@ -3,6 +3,16 @@ server:
   port: 9220
 
 spring:
+  datasource:
+    username: maeng
+    password: maengmaeng
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${server.hostname}:3306/maengmaeng?serverTimeone=Asia/Seoul&characterEncoding=UTF-8
+  data:
+    redis:
+      host: ${server.hostname}
+      port: 6379
+      password: maengmaeng
   application:
     name: maeng-jwac-service
   cloud:
