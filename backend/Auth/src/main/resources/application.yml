@@ -10,11 +10,11 @@ spring:
       name: maeng
       profile: auth
   datasource:
-    url: jdbc:mysql://localhost:3306/maengland?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    username: ssafy
-    password: ssafy
+    url: jdbc:mysql://${server.hostname}:3306/maengland?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: maeng
+    password: maengmaeng
   redis:
-    host: localhost
+    host: redis
     port: 6379
   security:
     oauth2:
