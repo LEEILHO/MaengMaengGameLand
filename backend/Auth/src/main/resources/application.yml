@@ -1,5 +1,5 @@
 server:
-  hostname: localhost
+  hostname: k9d208.p.ssafy.io
   port: 9110
 
 spring:
@@ -23,10 +23,8 @@ spring:
           kakao:
             client-id: 82e3772b8d6d002b4f5c0a4be2860c38
             client-secret: SyLbCmehA1oTQXkuJtgJ2DbziiKWuWK5
-#            client-id: d46070d4a19b4ceb95ebec6b2f8c36f2
-#            client-secret: DBFEMnKTsKqzBzD8QzRISaDDw93ekqoQ
             authorization-grant-type: authorization_code
-#             scope: name,email,profile_image
+            #             scope: name,email,profile_image
             client-name: kakao
             redirect-uri: http://localhost:3000/login/3000
         provider:
@@ -38,16 +36,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-#
-#oauth2:
-#  kakao:
-#    client-id: 82e3772b8d6d002b4f5c0a4be2860c38
-#    client-security: SyLbCmehA1oTQXkuJtgJ2DbziiKWuWK5
-#    url:
-#      token-url: https://kauth.kakao.com/oauth/token
-#      user-url: https://kapi.kakao.com/v2/user/me
-
-
 
 
 app:
@@ -57,11 +45,9 @@ app:
 jwt:
   secret-key: aodaodrpdlafosemrlawldudrlatkdrmstjgusejrtlalswntladmswlsdldlfgh208zjstjftlcldhodhkTslwoaldjqtdj
 
-#
-#
-#eureka:
-#  client:
-#    service-url:
-#      defaultZone: http://${server.hostname}:8761/eureka/
-#  instance:
-#    hostname: ${server.hostname}
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${server.hostname}:8761/eureka/
+  instance:
+    hostname: ${server.hostname}
