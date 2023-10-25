@@ -1,12 +1,13 @@
 'use client'
 
 import CButton from '@components/common/clients/CButton'
+import Header from '@components/common/clients/Header'
 import { styled } from 'styled-components'
 
 const Test = () => {
   return (
     <StyledTestContainer>
-      <p>Test</p>
+      <Header viewFriend={true} viewSetting={true} />
       <CButton
         radius={36}
         backgroundColor="rgba(112, 0, 255, 1)"
@@ -26,4 +27,5 @@ const StyledTestContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: purple;
 `

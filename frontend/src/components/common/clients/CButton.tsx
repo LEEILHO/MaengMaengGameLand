@@ -1,5 +1,5 @@
 'use client'
-import * as S from '@styles/common/button/Button.styled'
+import * as S from '@styles/common/Button.styled'
 import React from 'react'
 
 type Props = React.HTMLProps<HTMLButtonElement> & {
