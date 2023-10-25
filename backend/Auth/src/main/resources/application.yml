@@ -53,4 +53,4 @@ eureka:
     hostname: ${server.hostname}
 logging:
   level:
-    root: debug
+    root: info
