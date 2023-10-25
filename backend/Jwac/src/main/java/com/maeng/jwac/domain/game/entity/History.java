@@ -1,12 +1,23 @@
 package com.maeng.jwac.domain.game.entity;
 
+import java.time.LocalDateTime;
+
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
 public class History {
-	private boolean bid;
+	private boolean Win;
+	private boolean lose;
 	private long bidAmount;
-	private boolean lowBidder;
+	private LocalDateTime bidAt;
+
+	public void roundWin() {
+		this.Win = true;
+	}
+
+	public void roundLose() {
+		this.lose = true;
+	}
 }

@@ -1,7 +1,5 @@
 package com.maeng.jwac.domain.timer.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 
 import org.springframework.stereotype.Service;

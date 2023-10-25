@@ -2,6 +2,7 @@ package com.maeng.jwac.domain.game.entity;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
@@ -25,5 +26,10 @@ public class Jwac {
 	private int maxRound;
 	private List<Long> bidAmounts;
 	private List<Jwerly> jwerly;
-	private List<Player> players;
+	private Map<String, Player> players;
+
+	public void nextRound() {
+		this.currentRound++;
+		this.roundStartAt = LocalDateTime.now();
+	}
 }

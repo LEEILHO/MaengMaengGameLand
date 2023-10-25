@@ -10,11 +10,26 @@ import lombok.Getter;
 @Getter
 @Builder
 public class Player {
-	private String nickname;
 	private String profileUrl;
 	private Tier tier;
 	private int score;
 	private long totalBidAmount;
 	private boolean specialItem;
 	private Map<Integer, History> history;
+
+	public void addScore(int score) {
+		this.score += score;
+	}
+
+	public void addTotalBidAmount(long bidAmount) {
+		this.totalBidAmount += bidAmount;
+	}
+
+	public void useSpecialItem() {
+		this.specialItem = false;
+	}
+
+	public void addSpecialItem() {
+		this.specialItem = true;
+	}
 }
