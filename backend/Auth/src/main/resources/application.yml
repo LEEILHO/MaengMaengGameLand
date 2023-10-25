@@ -51,3 +51,6 @@ eureka:
       defaultZone: http://${server.hostname}:8761/eureka/
   instance:
     hostname: ${server.hostname}
+logging:
+  level:
+    root: debug
