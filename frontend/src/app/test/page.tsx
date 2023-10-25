@@ -2,6 +2,7 @@
 
 import CButton from '@components/common/clients/CButton'
 import Header from '@components/common/clients/Header'
+import Timer from '@components/common/clients/Timer'
 import { styled } from 'styled-components'
 
 const Test = () => {
@@ -15,6 +16,7 @@ const Test = () => {
         fontSize={16}
         color="white"
       ></CButton>
+      <Timer size="150" fontSize="24" time={10} />
     </StyledTestContainer>
   )
 }

@@ -7,7 +7,7 @@ interface ButtonProps extends React.HTMLProps<HTMLButtonElement> {
   height?: number
   width?: number
   radius?: number
-  backgroundColor: string
+  $backgroundColor: string
 }
 
 interface TextProps {
@@ -38,7 +38,7 @@ export const Button = styled.button<ButtonProps>`
       rgba(255, 255, 255, 0) 69.79%,
       rgba(255, 255, 255, 0) 100%
     ),
-    ${(props) => (props.backgroundColor ? props.backgroundColor : '')};
+    ${(props) => (props.$backgroundColor ? props.$backgroundColor : '')};
   box-shadow:
     4px 38px 62px 0px rgba(0, 0, 0, 0.5),
     -3px -4px 7px 0px rgba(255, 255, 255, 0.15) inset;

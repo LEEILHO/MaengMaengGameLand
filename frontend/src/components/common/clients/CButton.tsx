@@ -27,7 +27,7 @@ const CButton = ({
       height={height}
       width={width}
       radius={radius}
-      backgroundColor={backgroundColor}
+      $backgroundColor={backgroundColor}
       {...rest}
     >
       <S.Text color={color} fontSize={fontSize}>
