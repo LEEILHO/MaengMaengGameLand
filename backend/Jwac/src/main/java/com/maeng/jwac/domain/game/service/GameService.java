@@ -160,7 +160,7 @@ public class GameService {
 				leastBidAmount = bidAmount;
 				leastBidderBidAt = result.get(nickname).getBidAt();
 			} else if(leastBidAmount == bidAmount) {
-				if(leastBidderBidAt.isAfter(result.get(nickname).getBidAt())) {
+				if(leastBidderBidAt.isBefore(result.get(nickname).getBidAt())) {
 					leastBidder = nickname;
 					leastBidderBidAt = result.get(nickname).getBidAt();
 				}
