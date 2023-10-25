@@ -71,6 +71,11 @@ public class AuthController {
         logger.debug("getUserId()");
         return ResponseEntity.ok().body(authService.getUserEmail(token));
     }
+    @GetMapping("/test")
+    public ResponseEntity<?> getTest(){
+        logger.debug("test");
+        return ResponseEntity.ok().build();
+    }
 
 
 }
