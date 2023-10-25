@@ -9,10 +9,59 @@ spring:
     config:
       name: maeng
       profile: auth
+  datasource:
+    url: jdbc:mysql://localhost:3306/maengland?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: ssafy
+    password: ssafy
+  redis:
+    host: localhost
+    port: 6379
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: 82e3772b8d6d002b4f5c0a4be2860c38
+            client-secret: SyLbCmehA1oTQXkuJtgJ2DbziiKWuWK5
+#            client-id: d46070d4a19b4ceb95ebec6b2f8c36f2
+#            client-secret: DBFEMnKTsKqzBzD8QzRISaDDw93ekqoQ
+            authorization-grant-type: authorization_code
+#             scope: name,email,profile_image
+            client-name: kakao
+            redirect-uri: http://localhost:3000/login/3000
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
 
-eureka:
-  client:
-    service-url:
-      defaultZone: http://${server.hostname}:8761/eureka/
-  instance:
-    hostname: ${server.hostname}
+  jpa:
+    hibernate:
+      ddl-auto: update
+#
+#oauth2:
+#  kakao:
+#    client-id: 82e3772b8d6d002b4f5c0a4be2860c38
+#    client-security: SyLbCmehA1oTQXkuJtgJ2DbziiKWuWK5
+#    url:
+#      token-url: https://kauth.kakao.com/oauth/token
+#      user-url: https://kapi.kakao.com/v2/user/me
+
+
+
+
+app:
+  auth:
+    access-expiry: 1800000
+    refresh-expriy:  604800000
+jwt:
+  secret-key: aodaodrpdlafosemrlawldudrlatkdrmstjgusejrtlalswntladmswlsdldlfgh208zjstjftlcldhodhkTslwoaldjqtdj
+
+#
+#
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://${server.hostname}:8761/eureka/
+#  instance:
+#    hostname: ${server.hostname}
