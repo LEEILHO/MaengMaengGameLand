@@ -15,6 +15,9 @@ spring:
       password: maengmaeng
   application:
     name: maeng-jwac-service
+  cloud:
+    config:
+      enabled: false
 
 eureka:
   client:
