@@ -36,7 +36,7 @@ public class AuthController {
      * */
     @PostMapping("/kakao")
     public ResponseEntity<?> getCode(@RequestBody CodeDto codeDto, HttpServletResponse response) {
-        logger.debug("getCode(), code = {}", codeDto.getCode());
+        logger.info("getCode(), code = {}", codeDto.getCode());
 
         OAuthToken oAuthToken = authService.createTokens(codeDto);
 
@@ -53,7 +53,7 @@ public class AuthController {
      * */
     @GetMapping("/token")
     public ResponseEntity<?> getToken(HttpServletRequest request, HttpServletResponse response) {
-        logger.debug("getToken(), Token 재발급");
+        logger.info("getToken(), Token 재발급");
 
         OAuthToken oAuthToken = authService.reGenerateAuthToken(request);
 
@@ -68,12 +68,12 @@ public class AuthController {
 
     @GetMapping("/me")
     public ResponseEntity<?> getUserId(@CookieValue(value = "refreshToken") String token) {
-        logger.debug("getUserId()");
+        logger.info("getUserId()");
         return ResponseEntity.ok().body(authService.getUserEmail(token));
     }
     @GetMapping("/test")
     public ResponseEntity<?> getTest(){
-        logger.debug("test");
+        logger.info("test");
         return ResponseEntity.ok().build();
     }
 
