@@ -5,7 +5,8 @@
   "orientation": "landscape",
   "theme_color": "#FFFFFF",
   "background_color": "#FFFFFF",
-  "start_url": "/https://localhost:3000",
+  "start_url": "/",
+  "scope": ".",
   "icons": [
     {
       "src": "/icons/android-chrome-192x192.png",
