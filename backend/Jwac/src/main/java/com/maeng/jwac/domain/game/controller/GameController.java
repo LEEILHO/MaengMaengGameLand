@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.maeng.jwac.domain.game.dto.PlayerInfo;
@@ -29,5 +30,10 @@ public class GameController {
 		playerInfo.add(PlayerInfo.builder().nickname("5555").profileUrl("test/55").tier(Tier.SILVER).build());
 		playerInfo.add(PlayerInfo.builder().nickname("6666").profileUrl("test/66").tier(Tier.BRONZE).build());
 		gameService.generateGame("abcdefg", "abcdefg123456", playerInfo);
+	}
+
+	@PostMapping("/bid")
+	public void bid(@RequestParam String gameCode, @RequestParam String nickname, @RequestParam int round, @RequestParam int bidAmount) {
+		gameService.bidJwerly(gameCode, nickname, round, bidAmount);
 	}
 }

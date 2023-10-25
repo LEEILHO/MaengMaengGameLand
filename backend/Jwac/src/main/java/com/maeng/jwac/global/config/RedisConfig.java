@@ -20,17 +20,10 @@ public class RedisConfig {
 	@Value("${spring.data.redis.password}")
 	private String redisPassword;
 
-	@Value("${spring.data.redis.jwac.database}")
-	private int jwacDatabase;
-
-	@Value("${spring.data.redis.timer.database}")
-	private int timerDatabase;
-
 	@Bean
 	public RedisConnectionFactory redisConnectionFactory() {
 		LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(redisHost, redisPort);
 		lettuceConnectionFactory.setPassword(redisPassword);
-		lettuceConnectionFactory.setDatabase(jwacDatabase);
 		return lettuceConnectionFactory;
 	}
 }

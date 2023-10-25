@@ -19,7 +19,9 @@ import com.maeng.jwac.domain.game.exception.GameNotFoundException;
 import com.maeng.jwac.domain.game.repository.JwacRedisRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class GameService {
@@ -54,7 +56,9 @@ public class GameService {
 			.bidAmount(bidAmount)
 			.bidAt(LocalDateTime.now())
 			.build();
-
+		if(jwac.getPlayers().get(nickname).getHistory() == null) {
+			jwac.getPlayers().get(nickname).setHistory(new HashMap<>());
+		}
 		jwac.getPlayers().get(nickname).getHistory().put(round, history);
 
 		jwacRedisRepository.save(jwac);
@@ -64,11 +68,16 @@ public class GameService {
 	public void nextRound(String gameCode) {
 		Jwac jwac = jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
 
-		// TODO : 현재 라운드 결과
-		getRoundResult(jwac);
+		if(jwac.getCurrentRound() != 0) {
+			roundResult(jwac);
+			// TODO : 라운드 결과 알림
+		}
 
-		// TODO : 다음 라운드 시작
-		jwac.nextRound();
+		nextRound(jwac);
+
+		// TODO : 다음 라운드 시작 알림
+
+		jwacRedisRepository.save(jwac);
 	}
 
 	@Transactional(readOnly = true)
@@ -113,11 +122,18 @@ public class GameService {
 		return players;
 	}
 
-	public void getRoundResult(Jwac jwac) {
+	public void roundResult(Jwac jwac) {
 		int currentRound = jwac.getCurrentRound();
 
 		Map<String, History> result = new HashMap<>();
 		for(String nickname : jwac.getPlayers().keySet()) {
+			if(jwac.getPlayers().get(nickname).getHistory() == null) {
+				continue;
+			}
+			if(!jwac.getPlayers().get(nickname).getHistory().containsKey(currentRound)) {
+				continue;
+			}
+
 			result.put(nickname, jwac.getPlayers().get(nickname).getHistory().get(currentRound));
 		}
 
@@ -151,20 +167,42 @@ public class GameService {
 			}
 		}
 
-		if(currentRound == 15) {
-			jwac.getPlayers().get(mostBidder).getHistory().get(currentRound).roundWin();
-			jwac.getPlayers().get(mostBidder).addTotalBidAmount(mostBidAmount);
-			jwac.getPlayers().get(mostBidder).addSpecialItem();
-		} else {
-			// 최고 금액 입찰자
-			jwac.getPlayers().get(mostBidder).getHistory().get(currentRound).roundWin();
-			jwac.getPlayers().get(mostBidder).addTotalBidAmount(mostBidAmount);
-			jwac.getPlayers().get(mostBidder).addScore(getScore(jwac.getJwerly().get(currentRound - 1)));
+		log.info("mostBidder : {}", mostBidder);
+		log.info("leastBidder : {}", leastBidder);
 
-			// 최저 금액 입찰자 -1점
-			jwac.getPlayers().get(leastBidder).getHistory().get(currentRound).roundLose();
-			jwac.getPlayers().get(leastBidder).addScore(-1);
+		if(currentRound == 15) {
+			if(!mostBidder.equals("")) {
+				jwac.getPlayers().get(mostBidder).getHistory().get(currentRound).roundWin();
+				jwac.getPlayers().get(mostBidder).addTotalBidAmount(mostBidAmount);
+				jwac.getPlayers().get(mostBidder).addSpecialItem();
+			}
+		} else {
+			if(!mostBidder.equals("")) {
+				// 최고 금액 입찰자
+				jwac.getPlayers().get(mostBidder).getHistory().get(currentRound).roundWin();
+				jwac.getPlayers().get(mostBidder).addTotalBidAmount(mostBidAmount);
+				jwac.getPlayers().get(mostBidder).addScore(getScore(jwac.getJwerly().get(currentRound - 1)));
+			}
+
+			if(!leastBidder.equals("")) {
+				// 최저 금액 입찰자 -1점
+				jwac.getPlayers().get(leastBidder).getHistory().get(currentRound).roundLose();
+				jwac.getPlayers().get(leastBidder).addScore(-1);
+			}
 		}
+	}
+
+	public void nextRound(Jwac jwac) {
+		int currentRound = jwac.getCurrentRound();
+		int maxRound = jwac.getMaxRound();
+
+		if(currentRound >= maxRound) {
+			// TODO : 게임 종료 알림
+			return;
+		}
+
+		log.info("next round");
+		jwac.nextRound();
 	}
 
 	public int getScore(Jwerly jwerly) {
