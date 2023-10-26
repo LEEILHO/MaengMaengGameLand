@@ -14,7 +14,7 @@ spring:
     username: maeng
     password: maengmaeng
   redis:
-    host: redis
+    host: ${server.hostname}
     port: 6379
     password: maengameng
   security:
