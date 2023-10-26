@@ -31,14 +31,11 @@ export default function RootLayout({
   return (
     <html>
       <body>
-        {/* <RootStyleRegistry> */}
         <StyledComponentsRegistry>
           <NextThemeProvider>
             <RecoilRootProvider>{children}</RecoilRootProvider>
           </NextThemeProvider>
         </StyledComponentsRegistry>
-
-        {/* </RootStyleRegistry> */}
       </body>
     </html>
   )
