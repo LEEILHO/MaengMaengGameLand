@@ -8,7 +8,7 @@ const GlobalStyle = createGlobalStyle`
     font-size: 16px;    
   };
   
-  body {  
+  body, button {  
     font-family: 'kbo-dia';
   }
 

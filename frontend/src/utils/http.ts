@@ -11,7 +11,7 @@ import AxiosS, {
 const axios = AxiosS.create()
 const gameAxios = AxiosS.create()
 export const authAxios = AxiosS.create()
-axios.defaults.baseURL = 'http://localhost:8000'
+axios.defaults.baseURL = 'https://k9d208.p.ssafy.io/api/'
 axios.defaults.withCredentials = true
 authAxios.defaults.baseURL = 'http://localhost:8000'
 authAxios.defaults.withCredentials = true
