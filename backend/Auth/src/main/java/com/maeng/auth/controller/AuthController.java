@@ -47,7 +47,7 @@ public class AuthController {
 
     /**
      * 사용자의 Refresh Token을 받아 OAuthToken 재발급
-     * 유효한 경우, 재발급23
+     * 유효한 경우, 재발급
      * Access Token : AccessTokenResponse
      * Refresh Token : httpOnly Cookie
      * */
@@ -75,6 +75,13 @@ public class AuthController {
     public ResponseEntity<?> getTest(){
         logger.info("test");
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/watch")
+    public ResponseEntity<?> getWatchToken(){
+        logger.info("getWatchToken()");
+        return ResponseEntity.ok().build();
+
     }
 
 
