@@ -5,9 +5,9 @@
     <file type="web" url="file://$PROJECT_DIR$/backend/Auth" />
     <file type="web" url="file://$PROJECT_DIR$/backend/Awrsp" />
     <file type="web" url="file://$PROJECT_DIR$/backend/Eureka" />
+    <file type="web" url="file://$PROJECT_DIR$/backend/Game" />
     <file type="web" url="file://$PROJECT_DIR$/backend/Gateway" />
     <file type="web" url="file://$PROJECT_DIR$/backend/Gsb" />
-    <file type="web" url="file://$PROJECT_DIR$/backend/Jwac" />
     <file type="web" url="file://$PROJECT_DIR$/backend/Lobby" />
     <file type="web" url="file://$PROJECT_DIR$/backend/Record" />
     <file type="web" url="file://$PROJECT_DIR$/backend/User" />
