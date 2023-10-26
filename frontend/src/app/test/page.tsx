@@ -3,9 +3,12 @@
 import CButton from '@components/common/clients/CButton'
 import Header from '@components/common/clients/Header'
 import Timer from '@components/common/clients/Timer'
+import { useRouter } from 'next/navigation'
 import { styled } from 'styled-components'
 
 const Test = () => {
+  const router = useRouter()
+
   return (
     <StyledTestContainer>
       <Header viewFriend={true} viewSetting={true} />
@@ -15,6 +18,7 @@ const Test = () => {
         text="테스트 버튼"
         fontSize={16}
         color="white"
+        onClick={() => router.push('/')}
       ></CButton>
       <Timer size="150" fontSize="24" time={10} />
     </StyledTestContainer>

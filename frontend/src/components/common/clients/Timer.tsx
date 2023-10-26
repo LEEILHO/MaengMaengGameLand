@@ -4,12 +4,15 @@ import { Circle } from 'rc-progress'
 import { useEffect, useState } from 'react'
 import * as S from '@styles/common/Timer.styled'
 import { secondsToMinutesAndSeconds } from '@utils/common/timer'
+import { images } from '@constants/images'
+import { css } from 'styled-components'
 
 type Props = {
   size: string
   fontSize: string
   time: number
 }
+
 // todo : 20으로 되어있는 곳 값 props로 받아오기
 const Timer = ({ size, fontSize, time }: Props) => {
   const [currentTime, setCurrentTime] = useState(0)
@@ -39,11 +42,13 @@ const Timer = ({ size, fontSize, time }: Props) => {
         strokeColor={'white'}
       />
       <S.TimerBackGround>
+        <img src={images.common.header.alarm} alt="timer" />
         <p
           style={{
-            color: `${currentTime <= 5 ? 'white' : 'red'}`,
+            color: `${timeRemaining > 5 ? 'white' : 'red'}`,
             fontSize: `${fontSize}px`,
             fontWeight: '700',
+            marginBottom: '24px',
           }}
         >
           {secondsToMinutesAndSeconds(timeRemaining)}

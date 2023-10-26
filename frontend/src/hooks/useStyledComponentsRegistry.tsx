@@ -18,7 +18,7 @@ export function useStyledComponentsRegistry() {
     children: React.ReactNode
   }) => (
     <StyleSheetManager sheet={styledComponentsStyleSheet.instance}>
-      {children as React.ReactElement}
+      {children}
     </StyleSheetManager>
   )
 

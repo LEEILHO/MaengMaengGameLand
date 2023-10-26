@@ -29,4 +29,10 @@ export const TimerBackGround = styled.div`
   width: 90%;
   height: 90%;
   border-radius: 50%;
+
+  img {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 12px;
+  }
 `

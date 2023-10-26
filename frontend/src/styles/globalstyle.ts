@@ -19,25 +19,9 @@ const GlobalStyle = createGlobalStyle<Props>`
   body {
     width: 100vw;
     height: 100vh;
+    height: -webkit-fill-available;
   }
 
-   ${(props) =>
-     props.isMobile &&
-     css`
-       /* 가로모드로 고정 */
-       @media (orientation: portrait) {
-         body {
-           transform: rotate(-90deg);
-           transform-origin: top left;
-           position: absolute;
-           top: 100%;
-           left: 0;
-           width: 100vh;
-           height: 100vw;
-         }
-       }
-     `}
-  
   @font-face {
     font-family: "kbo-dia";
     font-weight: 400;
