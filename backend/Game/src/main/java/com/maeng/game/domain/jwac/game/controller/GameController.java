@@ -1,4 +1,4 @@
-package com.maeng.game.domain.game.controller;
+package com.maeng.game.domain.jwac.game.controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.maeng.game.domain.game.dto.PlayerInfo;
-import com.maeng.game.domain.game.emums.Tier;
-import com.maeng.game.domain.game.service.GameService;
+import com.maeng.game.domain.jwac.game.dto.PlayerInfo;
+import com.maeng.game.domain.jwac.game.emums.Tier;
+import com.maeng.game.domain.jwac.game.service.GameService;
 
 import lombok.RequiredArgsConstructor;
 

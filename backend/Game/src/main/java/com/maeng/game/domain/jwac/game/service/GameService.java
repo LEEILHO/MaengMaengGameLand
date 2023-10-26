@@ -1,4 +1,4 @@
-package com.maeng.game.domain.game.service;
+package com.maeng.game.domain.jwac.game.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,13 +10,13 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.maeng.game.domain.game.dto.PlayerInfo;
-import com.maeng.game.domain.game.emums.Jwerly;
-import com.maeng.game.domain.game.entity.History;
-import com.maeng.game.domain.game.entity.Jwac;
-import com.maeng.game.domain.game.entity.Player;
-import com.maeng.game.domain.game.exception.GameNotFoundException;
-import com.maeng.game.domain.game.repository.JwacRedisRepository;
+import com.maeng.game.domain.jwac.game.dto.PlayerInfo;
+import com.maeng.game.domain.jwac.game.emums.Jwerly;
+import com.maeng.game.domain.jwac.game.entity.History;
+import com.maeng.game.domain.jwac.game.entity.Jwac;
+import com.maeng.game.domain.jwac.game.entity.Player;
+import com.maeng.game.domain.jwac.game.exception.GameNotFoundException;
+import com.maeng.game.domain.jwac.game.repository.JwacRedisRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

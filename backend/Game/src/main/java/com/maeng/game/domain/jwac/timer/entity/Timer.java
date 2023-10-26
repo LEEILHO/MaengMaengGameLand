@@ -1,4 +1,4 @@
-package com.maeng.game.domain.timer.entity;
+package com.maeng.game.domain.jwac.timer.entity;
 
 import java.util.List;
 import java.util.Map;
