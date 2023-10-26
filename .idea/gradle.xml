@@ -11,14 +11,6 @@
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/backend/Awrsp" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$/backend/Awrsp" />
-          </set>
-        </option>
-      </GradleProjectSettings>
-      <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/backend/Eureka" />
         <option name="modules">
           <set>
@@ -27,34 +19,18 @@
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/backend/Game" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/backend/Game" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/backend/Gateway" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/backend/Gateway" />
-          </set>
-        </option>
-      </GradleProjectSettings>
-      <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/backend/Gsb" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$/backend/Gsb" />
-          </set>
-        </option>
-      </GradleProjectSettings>
-      <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/backend/Jwac" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$/backend/Jwac" />
-          </set>
-        </option>
-      </GradleProjectSettings>
-      <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/backend/Lobby" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$/backend/Lobby" />
           </set>
         </option>
       </GradleProjectSettings>
