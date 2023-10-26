@@ -9,12 +9,6 @@ const NextThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
-    // 모바일 브라우저에 맞춰 높이 조절
-    const vh = window.innerHeight * 0.01
-    const vw = window.innerWidth * 0.01
-    document.documentElement.style.setProperty('--vh', `${vh}px`)
-    document.documentElement.style.setProperty('--vw', `${vw}px`)
-
     // ios기반 모델 가로모드 설정
     function isIos() {
       if (typeof window !== 'undefined') {
@@ -31,12 +25,24 @@ const NextThemeProvider = ({ children }: { children: React.ReactNode }) => {
     // 사파리에서 가로모드 설정
     function handleOrientationChange() {
       if (window.orientation === 0 || window.orientation === -180) {
+        // 모바일 브라우저에 맞춰 높이 조절
+        const vh = window.innerHeight * 0.01
+        const vw = window.innerWidth * 0.01
+        document.documentElement.style.setProperty('--vh', `${vh}px`)
+        document.documentElement.style.setProperty('--vw', `${vw}px`)
+
         // 가로 모드에 대한 처리
         setIsMobile(isIos())
         console.log('맹', isIos())
         // mobile = true
       }
       if (window.orientation === 90 || window.orientation === -90) {
+        // 모바일 브라우저에 맞춰 높이 조절
+        const vh = window.innerHeight * 0.01
+        const vw = window.innerWidth * 0.01
+        document.documentElement.style.setProperty('--vh', `${vh}px`)
+        document.documentElement.style.setProperty('--vw', `${vw}px`)
+
         // 가로 모드에 대한 처리
         setIsMobile(false)
         // mobile = true
