@@ -4,6 +4,13 @@ import NextThemeProvider from '@components/common/NextThemeProvider'
 import RootStyleRegistry from '@styles/RootStyleRegistry'
 
 export const metadata: Metadata = {
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    minimumScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+  },
   title: '맹맹게임랜드',
   description: '맹맹게임랜드에 오신걸 환영합니다.',
   keywords: ['맹맹게임랜드', 'Next.js', 'React', 'JavaScript', 'Game'],
