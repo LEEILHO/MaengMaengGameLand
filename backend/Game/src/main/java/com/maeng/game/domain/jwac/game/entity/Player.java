@@ -1,8 +1,8 @@
-package com.maeng.game.domain.game.entity;
+package com.maeng.game.domain.jwac.game.entity;
 
 import java.util.Map;
 
-import com.maeng.game.domain.game.emums.Tier;
+import com.maeng.game.domain.jwac.game.emums.Tier;
 
 import lombok.Builder;
 import lombok.Getter;
