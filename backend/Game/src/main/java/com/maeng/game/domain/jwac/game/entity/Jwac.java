@@ -1,4 +1,4 @@
-package com.maeng.game.domain.game.entity;
+package com.maeng.game.domain.jwac.game.entity;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.Map;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
-import com.maeng.game.domain.game.emums.Jwerly;
+import com.maeng.game.domain.jwac.game.emums.Jwerly;
 
 import lombok.Builder;
 import lombok.Getter;

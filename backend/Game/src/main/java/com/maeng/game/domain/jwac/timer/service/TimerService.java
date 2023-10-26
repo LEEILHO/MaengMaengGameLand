@@ -1,13 +1,13 @@
-package com.maeng.game.domain.timer.service;
+package com.maeng.game.domain.jwac.timer.service;
 
 import java.util.HashSet;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.maeng.game.domain.game.service.GameService;
-import com.maeng.game.domain.timer.repository.TimerRedisRepository;
-import com.maeng.game.domain.timer.entity.Timer;
+import com.maeng.game.domain.jwac.game.service.GameService;
+import com.maeng.game.domain.jwac.timer.repository.TimerRedisRepository;
+import com.maeng.game.domain.jwac.timer.entity.Timer;
 
 import lombok.RequiredArgsConstructor;
 
