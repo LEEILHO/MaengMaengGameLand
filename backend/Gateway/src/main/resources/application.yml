@@ -42,6 +42,7 @@ spring:
             - Path=/api/v1/ueer/**
           filters:
             - StripPrefix=0
+            - JwtAuthenticationFilter
         - id: maeng-lobby-service
           uri: lb://maeng-lobby-service
           predicates:
@@ -79,3 +80,5 @@ spring:
 
   main:
     allow-bean-definition-overriding: true
+jwt:
+  secret-key: aodaodrpdlafosemrlawldudrlatkdrmstjgusejrtlalswntladmswlsdldlfgh208zjstjftlcldhodhkTslwoaldjqtdj

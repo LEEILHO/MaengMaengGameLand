@@ -31,10 +31,19 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 //	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'\
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+//	implementation 'org.springframework.boot:spring-boot-starter-security'
+	// @ConfigurationProperties 사용을 위함
+	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+	// https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+
 }
 
 dependencyManagement {
