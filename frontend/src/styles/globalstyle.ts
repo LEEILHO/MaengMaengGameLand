@@ -7,19 +7,16 @@ type Props = {
 
 const GlobalStyle = createGlobalStyle<Props>`
   ${reset}
-
-  html {
-    font-size: 16px;    
-  };
   
   body, button {
     font-family: 'kbo-dia';
   }
 
-  body {
+  html,body {
     width: 100vw;
     height: 100vh;
-    height: -webkit-fill-available;
+    width: calc(var(--vw, 1vw) * 100);
+    height: calc(var(--vh, 1vh) * 100); 
   }
 
   @font-face {
