@@ -8,8 +8,21 @@ const GlobalStyle = createGlobalStyle`
     font-size: 16px;    
   };
   
-  body {
+  body, button {
     font-family: 'kbo-dia';
+  }
+  
+  /* 가로모드로 고정 */
+  @media( orientation: portrait ){
+    html {
+      transform: rotate(-90deg);
+      transform-origin: top left;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100vh;
+      height: 100vw;
+    }
   }
 
   @font-face {
