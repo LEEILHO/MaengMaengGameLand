@@ -3,16 +3,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/gameFragment">
+    app:startDestination="@id/startUpFragment">
 
     <fragment
         android:id="@+id/startUpFragment"
         android:name="com.lessgenius.maengland.StartUpFragment"
         android:label="fragment_startup"
-        tools:layout="@layout/fragment_startup" />
+        tools:layout="@layout/fragment_startup" >
+        <action
+            android:id="@+id/action_startUpFragment_to_gameFragment"
+            app:destination="@id/gameFragment" />
+        <action
+            android:id="@+id/action_startUpFragment_to_sensorFragment"
+            app:destination="@id/sensorFragment" />
+    </fragment>
     <fragment
         android:id="@+id/gameFragment"
         android:name="com.lessgenius.maengland.GameFragment"
         android:label="fragment_game"
         tools:layout="@layout/fragment_game" />
+    <fragment
+        android:id="@+id/sensorFragment"
+        android:name="com.lessgenius.maengland.SensorFragment"
+        android:label="fragment_sensor"
+        tools:layout="@layout/fragment_sensor" />
 </navigation>
