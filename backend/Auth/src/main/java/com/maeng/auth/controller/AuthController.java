@@ -5,6 +5,9 @@ import com.maeng.auth.dto.CodeDto;
 import com.maeng.auth.dto.OAuthToken;
 import com.maeng.auth.service.AuthService;
 import com.maeng.auth.util.CookieManager;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +37,12 @@ public class AuthController {
      * Access Token : AccessTokenResponse
      * Refresh Token : httpOnly Cookie
      * */
+    @Operation(summary = "토큰 발급")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "500", description = "실패")
+        }
+    )
     @PostMapping("/kakao")
     public ResponseEntity<?> getCode(@RequestBody CodeDto codeDto, HttpServletResponse response) {
         logger.info("getCode(), code = {}", codeDto.getCode());
