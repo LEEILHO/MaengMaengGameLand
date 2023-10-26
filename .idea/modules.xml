@@ -3,12 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Auth.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Auth.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Awrsp.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Awrsp.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Eureka.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Eureka.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Game.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Game.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Gateway.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Gateway.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Gsb.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Gsb.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Jwac.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Jwac.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Lobby.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Lobby.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Record.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Record.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/S09P31D208.iml" filepath="$PROJECT_DIR$/.idea/S09P31D208.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/User.main.iml" filepath="$PROJECT_DIR$/.idea/modules/User.main.iml" />
