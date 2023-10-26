@@ -3,12 +3,15 @@ server:
   port: 9220
 
 spring:
+  config:
+    import: optional:configserver:http://${server.hostname}:8880
   application:
     name: maeng-jwac-service
   cloud:
     config:
       name: maeng
       profile: jwac
+
 
 eureka:
   client:
