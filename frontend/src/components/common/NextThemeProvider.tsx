@@ -62,7 +62,7 @@ const NextThemeProvider = ({ children }: { children: React.ReactNode }) => {
       {isMobile && (
         <div
           style={{
-            position: 'absolute',
+            position: 'fixed',
             zIndex: '100',
             width: '100%',
             height: '100%',

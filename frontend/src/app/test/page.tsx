@@ -28,6 +28,7 @@ const Test = () => {
 export default Test
 
 const StyledTestContainer = styled.div`
+  position: fixed;
   width: 100%;
   height: 100%;
   display: flex;
