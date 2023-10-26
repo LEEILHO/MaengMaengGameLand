@@ -12,6 +12,23 @@ spring:
     name: apigateway-service
   cloud:
     gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - 'http://localhost:3000'
+              - 'https://${server.hostname}'
+            allow-credentials: true
+            allowedHeaders: '*'
+            allowedMethods:
+              - PUT
+              - GET
+              - POST
+              - DELETE
+              - PATCH
+              - OPTIONS
       routes: # 사용자 인증과정             - StripPrefix=1             - Method=POST
         - id: maeng-auth-service
           uri: lb://maeng-auth-service
