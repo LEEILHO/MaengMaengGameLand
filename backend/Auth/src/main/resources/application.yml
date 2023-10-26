@@ -16,7 +16,7 @@ spring:
   redis:
     host: ${server.hostname}
     port: 6379
-    password: maengameng
+    password: maengmaeng
   security:
     oauth2:
       client:
