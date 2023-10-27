@@ -15,6 +15,8 @@ export const GameCardContainer = styled.div`
   justify-content: space-around;
   top: 90px;
   position: absolute;
+  padding-left: 24px;
+  padding-right: 24px;
 `
 
 export const ButtonLow = styled.div`
