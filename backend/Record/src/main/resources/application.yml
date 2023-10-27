@@ -1,8 +1,10 @@
 server:
-  hostname: k9d208.p.ssafy.io
+  hostname: maengland.com
   port: 9130
 
 spring:
+  config:
+    import: configserver:http://${server.hostname}:8880
   application:
     name: maeng-record-service
   cloud:
