@@ -3,12 +3,14 @@ import Lottie from 'lottie-react'
 import { images } from '@constants/constants'
 
 export const Login = styled.div`
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
   background-image: url(${images.login.background});
   background-repeat: no-repeat;
   background-size: cover;
-  position: relative;
   overflow: hidden;
 `
 
