@@ -13,12 +13,12 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class TimerService {
-	private final JwacService jwacService;
-
 	private final TimerRedisRepository timerRedisRepository;
 
 	@Transactional
-	public void timerEnd(String gameCode, String nickname, int round) {
+	public boolean timerEnd(String gameCode, String nickname, int headCount) {
+		boolean timerEnd = false;
+
 		Timer timer = timerRedisRepository.findById(gameCode)
 			.orElse(Timer.builder().gameCode(gameCode).nicknames(new HashSet<>()).build());
 
@@ -30,13 +30,18 @@ public class TimerService {
 
 		System.out.println(timer.toString());
 
-		int headCount = jwacService.getHeadCount(gameCode);
-
 		if(timer.getNicknames().size() == headCount) {
-			jwacService.nextRound(gameCode);
+			timerEnd = true;
 			timer.getNicknames().clear();
 		}
 
 		timerRedisRepository.save(timer);
+
+		return timerEnd;
+	}
+
+	@Transactional
+	public void timerStart() {
+		// TODO : 타이머 시작 로직
 	}
 }

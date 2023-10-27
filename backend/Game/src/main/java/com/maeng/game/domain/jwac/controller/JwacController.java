@@ -3,11 +3,15 @@ package com.maeng.game.domain.jwac.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.maeng.game.domain.jwac.dto.JwacBidInfoDto;
+import com.maeng.game.domain.jwac.dto.JwacRoundResultDto;
 import com.maeng.game.domain.jwac.dto.PlayerInfo;
 import com.maeng.game.domain.jwac.emums.Tier;
 import com.maeng.game.domain.jwac.service.JwacService;
@@ -31,16 +35,30 @@ public class JwacController {
 		playerInfo.add(PlayerInfo.builder().userEmail("4444").profileUrl("test/44").tier(Tier.CHALLENGER).build());
 		playerInfo.add(PlayerInfo.builder().userEmail("5555").profileUrl("test/55").tier(Tier.SILVER).build());
 		playerInfo.add(PlayerInfo.builder().userEmail("6666").profileUrl("test/66").tier(Tier.BRONZE).build());
-		jwacService.generateGame("abcdefg", "abcdefg123456", playerInfo);
+		jwacService.generateGame("abcdefg", playerInfo);
 	}
 
-	@PostMapping("/bid")
-	public void bid(@RequestParam String gameCode, @RequestParam String userEmail, @RequestParam int round, @RequestParam int bidAmount) {
-		jwacService.bidJwerly(gameCode, userEmail, round, bidAmount);
+	@PostMapping("/bid/{gameCode}")
+	public void bid(@RequestBody JwacBidInfoDto jwacBidInfoDto) {
+		jwacService.bidJwerly(jwacBidInfoDto);
 	}
 
-	@PostMapping("/timer/end")
-	public void end(@RequestParam String gameCode, String nickname, int round) {
-		timerService.timerEnd(gameCode, nickname, round);
+	@PostMapping("/time/{gameCode}")
+	public ResponseEntity<JwacRoundResultDto> end(@RequestParam String gameCode, String nickname, int round) {
+		boolean timerEnd = timerService.timerEnd(gameCode, nickname, round);
+
+		JwacRoundResultDto jwacRoundResult = null;
+		if(timerEnd) {
+			jwacRoundResult = jwacService.nextRound(gameCode);
+		}
+
+		// TODO : 새로운 타이머 시작
+		timerService.timerStart();
+
+		if(jwacRoundResult != null) {
+			return ResponseEntity.ok(jwacRoundResult);
+		} else {
+			return ResponseEntity.status(5000).build();
+		}
 	}
 }
