@@ -1,3 +1,5 @@
+'use client'
+
 import { accessTokenState } from '@atom/userAtom'
 import { ResponseAccessTokenType } from '@type/common/auth.type'
 import { http, authAxios } from '@utils/http'
@@ -7,7 +9,7 @@ import {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from 'axios'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { useRecoilState } from 'recoil'
 
 const useAxiosInterceptor = () => {
@@ -32,9 +34,8 @@ const useAxiosInterceptor = () => {
     // 엑세스토큰 없는 경우 리프레시 토큰으로 엑세스 토큰 재발급
     else {
       try {
-        const refreshResponse = await http.post<ResponseAccessTokenType>(
-          'user-service/auth/token',
-        )
+        const refreshResponse =
+          await http.post<ResponseAccessTokenType>('v1/auth/token')
         const newAccessToken = refreshResponse.accessToken
 
         if (newAccessToken) {
@@ -58,7 +59,6 @@ const useAxiosInterceptor = () => {
   ): AxiosResponse<T> => {
     return response
   }
-
   const requestInterceptor = authAxios.interceptors.request.use(requestHandler)
 
   const responseInterceptor = authAxios.interceptors.response.use(
