@@ -8,15 +8,16 @@ eureka:
       defaultZone: http://${server.hostname}:8761/eureka/
 
 spring:
+  config:
     import: configserver:http://${server.hostname}:8880
   application:
-    name: apigateway-service
+    name: maeng-gateway-service
   cloud:
     config:
       name: maeng
       profile: gateway
 
+
+
   main:
     allow-bean-definition-overriding: true
-jwt:
-  secret-key: aodaodrpdlafosemrlawldudrlatkdrmstjgusejrtlalswntladmswlsdldlfgh208zjstjftlcldhodhkTslwoaldjqtdj
