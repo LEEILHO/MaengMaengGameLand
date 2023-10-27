@@ -11,9 +11,9 @@ import AxiosS, {
 const axios = AxiosS.create()
 const gameAxios = AxiosS.create()
 export const authAxios = AxiosS.create()
-axios.defaults.baseURL = 'https://k9d208.p.ssafy.io/api/'
+axios.defaults.baseURL = 'https://maengland.com/api/'
 axios.defaults.withCredentials = true
-authAxios.defaults.baseURL = 'https://k9d208.p.ssafy.io/api/'
+authAxios.defaults.baseURL = 'https://maengland.com/api/'
 authAxios.defaults.withCredentials = true
 gameAxios.defaults.baseURL = 'http://j9d207.p.ssafy.io:8081/api/'
 gameAxios.defaults.withCredentials = true
