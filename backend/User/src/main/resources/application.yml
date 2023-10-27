@@ -11,6 +11,15 @@ spring:
     config:
       name: maeng
       profile: user
+  datasource:
+    url: jdbc:mysql://${server.hostname}:3306/maengland?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: maeng
+    password: maengmaeng
+  redis:
+    host: ${server.hostname}
+    port: 6379
+    password: maengmaeng
+
 
 eureka:
   client:
@@ -18,3 +27,6 @@ eureka:
       defaultZone: http://${server.hostname}:8761/eureka/
   instance:
     hostname: ${server.hostname}
+logging:
+  level:
+    root: info
