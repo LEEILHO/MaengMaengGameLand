@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -25,6 +26,7 @@ public class JwtProvider {
 
     private final AppProperties appProperties;
     private final Key key;
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public JwtProvider(@Value("${jwt.secret-key}") String secretKey , AppProperties appProperties){
         this.appProperties =appProperties;
@@ -76,6 +78,19 @@ public class JwtProvider {
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
+        }
+        return null;
+    }
+    public String resolveRefreshToken(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+
+        // logger.debug("cookie size = {}", cookies.length);
+        for (Cookie cookie : cookies) {
+            // logger.debug("cookie name = {}", cookie.getName());
+            if (cookie.getName().equals("refreshToken")) {
+//                 logger.debug("cookie name = {}, value = {}", cookie.getName(), cookie.getValue());
+                return cookie.getValue();
+            }
         }
         return null;
     }

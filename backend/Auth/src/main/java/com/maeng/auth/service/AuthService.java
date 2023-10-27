@@ -112,7 +112,7 @@ public class AuthService {
      */
     public OAuthToken reGenerateAuthToken(HttpServletRequest request) {
 
-        String refreshToken = jwtProvider.resolveToken(request);
+        String refreshToken = jwtProvider.resolveRefreshToken(request);
         logger.info("reGenerateAuthToken(), refreshToken = {}",refreshToken);
         if (refreshToken == null || !jwtProvider.validateToken(refreshToken)) {
             return null;
