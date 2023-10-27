@@ -7,6 +7,10 @@ type Props = {
 
 const GlobalStyle = createGlobalStyle<Props>`
   ${reset}
+
+  *{
+    box-sizing: border-box;
+  }
   
   body, button {
     font-family: 'kbo-dia';
