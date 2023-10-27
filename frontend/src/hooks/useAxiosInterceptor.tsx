@@ -1,3 +1,5 @@
+'use client'
+
 import { accessTokenState } from '@atom/userAtom'
 import { ResponseAccessTokenType } from '@type/common/auth.type'
 import { http, authAxios } from '@utils/http'
@@ -23,7 +25,6 @@ const useAxiosInterceptor = () => {
 
   const requestHandler = async (config: InternalAxiosRequestConfig) => {
     if (accessToken?.accessToken) {
-      console.log('accessToken setting')
       config.headers = config.headers || {}
       ;(config.headers as AxiosRequestHeaders).Authorization = accessToken
         ? `Bearer ${accessToken.accessToken}`
@@ -58,7 +59,6 @@ const useAxiosInterceptor = () => {
   ): AxiosResponse<T> => {
     return response
   }
-
   const requestInterceptor = authAxios.interceptors.request.use(requestHandler)
 
   const responseInterceptor = authAxios.interceptors.response.use(

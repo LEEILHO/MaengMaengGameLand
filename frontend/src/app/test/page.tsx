@@ -4,10 +4,11 @@ import CButton from '@components/common/clients/CButton'
 import Header from '@components/common/clients/Header'
 import Timer from '@components/common/clients/Timer'
 import withAuth from '@components/hoc/client/PrivateRoute'
+import { NextPage } from 'next'
 import { useRouter } from 'next/navigation'
 import { styled } from 'styled-components'
 
-const Test = () => {
+const Test: NextPage = () => {
   const router = useRouter()
 
   return (
