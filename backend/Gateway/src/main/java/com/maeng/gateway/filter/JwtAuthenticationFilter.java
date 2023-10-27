@@ -41,6 +41,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
     public GatewayFilter apply(Config config) {
 
         return ((exchange, chain) -> {
+            logger.info("JwtAuthenticationFilter()");
             ServerHttpRequest request = exchange.getRequest();
             if(!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)){
                 return onError(exchange, "No authoriazation header", HttpStatus.UNAUTHORIZED);
@@ -48,6 +49,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
 
             String authorizationHeader = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
             String jwt = authorizationHeader.replace("Bearer", "");
+            logger.info("jwt ={}", jwt);
 
             if(!isJwtValid(jwt)){
                 return onError(exchange, "JWT token is not valid",HttpStatus.UNAUTHORIZED);
@@ -63,7 +65,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
     }
 
     private boolean isJwtValid(String jwt){
-
+        logger.info("isJwtValid()");
         boolean returnValue = true;
 
         String subject = null;
