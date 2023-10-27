@@ -11,4 +11,10 @@ export const images = {
       alarm: '/images/common/ic-alarm.png',
     },
   },
+  home: {
+    discription: '/images/home/ic-discription.png',
+    gsb: '/images/home/gsb.png',
+    jwac: '/images/home/jwac.png',
+    awrsp: '/images/home/awrsp.png',
+  },
 }

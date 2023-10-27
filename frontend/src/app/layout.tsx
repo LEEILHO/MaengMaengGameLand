@@ -35,7 +35,6 @@ export default function RootLayout({
           <NextThemeProvider>
             <RecoilRootProvider>
               {children}
-              // 포탈 위치
               <div id="portal"></div>
             </RecoilRootProvider>
           </NextThemeProvider>
