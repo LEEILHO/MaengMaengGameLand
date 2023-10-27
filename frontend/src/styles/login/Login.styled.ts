@@ -3,27 +3,29 @@ import Lottie from 'lottie-react'
 import { images } from '@constants/constants'
 
 export const Login = styled.div`
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
   background-image: url(${images.login.background});
   background-repeat: no-repeat;
   background-size: cover;
-  position: relative;
   overflow: hidden;
 `
 
 export const Rocket = styled(Lottie)`
   width: 600px;
   height: 700px;
-  position: absolute;
-  bottom: -35%;
-  right: -20%;
-  /* transform: translate(-50%, -50%); */
+  position: fixed;
+  top: 50%;
+  left: 85%;
+  transform: translate(-50%, -50%);
   z-index: 3;
 `
 
 export const Title = styled.img`
-  position: absolute;
+  position: fixed;
   left: 50%;
   top: 35%;
   transform: translate(-50%, -50%);
@@ -37,7 +39,7 @@ export const Announcement = styled.p`
   font-weight: 700;
   letter-spacing: -0.32px;
 
-  position: absolute;
+  position: fixed;
   left: 50%;
   bottom: 35%;
   transform: translate(-50%, -50%);
