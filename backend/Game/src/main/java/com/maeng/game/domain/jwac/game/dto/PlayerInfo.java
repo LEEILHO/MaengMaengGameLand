@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 @Builder
 public class PlayerInfo {
-	private String nickname;
+	private String userEmail;
 	private String profileUrl;
 	private Tier tier;
 }

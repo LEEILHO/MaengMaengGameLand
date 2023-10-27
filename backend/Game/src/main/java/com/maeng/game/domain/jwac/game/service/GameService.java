@@ -49,17 +49,17 @@ public class GameService {
 	}
 
 	@Transactional
-	public void bidJwerly(String gameCode, String nickname, int round, int bidAmount) {
+	public void bidJwerly(String gameCode, String userEmail, int round, int bidAmount) {
 		Jwac jwac = jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
 
 		History history = History.builder()
 			.bidAmount(bidAmount)
 			.bidAt(LocalDateTime.now())
 			.build();
-		if(jwac.getPlayers().get(nickname).getHistory() == null) {
-			jwac.getPlayers().get(nickname).setHistory(new HashMap<>());
+		if(jwac.getPlayers().get(userEmail).getHistory() == null) {
+			jwac.getPlayers().get(userEmail).setHistory(new HashMap<>());
 		}
-		jwac.getPlayers().get(nickname).getHistory().put(round, history);
+		jwac.getPlayers().get(userEmail).getHistory().put(round, history);
 
 		jwacRedisRepository.save(jwac);
 	}
@@ -71,13 +71,16 @@ public class GameService {
 		if(jwac.getCurrentRound() != 0) {
 			roundResult(jwac);
 			// TODO : 라운드 결과 알림
+
+			nextRound(jwac);
 		}
 
-		nextRound(jwac);
-
-		// TODO : 다음 라운드 시작 알림
-
 		jwacRedisRepository.save(jwac);
+	}
+
+	@Transactional
+	public void endGame(Jwac jwac) {
+		// TODO : 게임 종료 로직
 	}
 
 	@Transactional(readOnly = true)
@@ -97,7 +100,8 @@ public class GameService {
 
 	public List<Jwerly> setRandomJwerly(int maxRound) {
 		List<Jwerly> jwerly = new ArrayList<>();
-		for(int i = 0; i < maxRound; i++) {
+		jwerly.add(null);
+		for(int i = 1; i <= maxRound; i++) {
 			if(i == 10) {
 				jwerly.add(Jwerly.SPECIAL);
 				continue;
@@ -110,7 +114,7 @@ public class GameService {
 	public Map<String, Player> setPlayer(List<PlayerInfo> playerInfo) {
 		Map<String, Player> players = new LinkedHashMap<>();
 		for(PlayerInfo info : playerInfo) {
-			players.put(info.getNickname(), Player.builder()
+			players.put(info.getUserEmail(), Player.builder()
 					.profileUrl(info.getProfileUrl())
 					.tier(info.getTier())
 					.score(0)
@@ -122,19 +126,20 @@ public class GameService {
 		return players;
 	}
 
+	@Transactional
 	public void roundResult(Jwac jwac) {
 		int currentRound = jwac.getCurrentRound();
 
 		Map<String, History> result = new HashMap<>();
-		for(String nickname : jwac.getPlayers().keySet()) {
-			if(jwac.getPlayers().get(nickname).getHistory() == null) {
+		for(String userEmail : jwac.getPlayers().keySet()) {
+			if(jwac.getPlayers().get(userEmail).getHistory() == null) {
 				continue;
 			}
-			if(!jwac.getPlayers().get(nickname).getHistory().containsKey(currentRound)) {
+			if(!jwac.getPlayers().get(userEmail).getHistory().containsKey(currentRound)) {
 				continue;
 			}
 
-			result.put(nickname, jwac.getPlayers().get(nickname).getHistory().get(currentRound));
+			result.put(userEmail, jwac.getPlayers().get(userEmail).getHistory().get(currentRound));
 		}
 
 		String mostBidder = "";
@@ -143,26 +148,26 @@ public class GameService {
 		long leastBidAmount = Long.MAX_VALUE;
 		LocalDateTime mostBidderBidAt = LocalDateTime.now();
 		LocalDateTime leastBidderBidAt = LocalDateTime.of(1970, 1, 1, 0, 0, 0);
-		for (String nickname : result.keySet()) {
-			long bidAmount = result.get(nickname).getBidAmount();
+		for (String userEmail : result.keySet()) {
+			long bidAmount = result.get(userEmail).getBidAmount();
 			if (mostBidAmount < bidAmount) {
-				mostBidder = nickname;
+				mostBidder = userEmail;
 				mostBidAmount = bidAmount;
-				mostBidderBidAt = result.get(nickname).getBidAt();
+				mostBidderBidAt = result.get(userEmail).getBidAt();
 			} else if(mostBidAmount == bidAmount) {
-				if(mostBidderBidAt.isAfter(result.get(nickname).getBidAt())) {
-					mostBidder = nickname;
-					mostBidderBidAt = result.get(nickname).getBidAt();
+				if(mostBidderBidAt.isAfter(result.get(userEmail).getBidAt())) {
+					mostBidder = userEmail;
+					mostBidderBidAt = result.get(userEmail).getBidAt();
 				}
 			}
 			if (leastBidAmount > bidAmount) {
-				leastBidder = nickname;
+				leastBidder = userEmail;
 				leastBidAmount = bidAmount;
-				leastBidderBidAt = result.get(nickname).getBidAt();
+				leastBidderBidAt = result.get(userEmail).getBidAt();
 			} else if(leastBidAmount == bidAmount) {
-				if(leastBidderBidAt.isBefore(result.get(nickname).getBidAt())) {
-					leastBidder = nickname;
-					leastBidderBidAt = result.get(nickname).getBidAt();
+				if(leastBidderBidAt.isBefore(result.get(userEmail).getBidAt())) {
+					leastBidder = userEmail;
+					leastBidderBidAt = result.get(userEmail).getBidAt();
 				}
 			}
 		}
@@ -171,25 +176,46 @@ public class GameService {
 		log.info("leastBidder : {}", leastBidder);
 
 		if(currentRound == 15) {
-			if(!mostBidder.equals("")) {
+			if(!mostBidder.isEmpty()) {
 				jwac.getPlayers().get(mostBidder).getHistory().get(currentRound).roundWin();
 				jwac.getPlayers().get(mostBidder).addTotalBidAmount(mostBidAmount);
 				jwac.getPlayers().get(mostBidder).addSpecialItem();
+
+				// TODO : 아이템 결과 알림
+				Map<Jwerly, Integer> itemResult = useSpecialItem(jwac);
 			}
 		} else {
-			if(!mostBidder.equals("")) {
+			if(!mostBidder.isEmpty()) {
 				// 최고 금액 입찰자
 				jwac.getPlayers().get(mostBidder).getHistory().get(currentRound).roundWin();
 				jwac.getPlayers().get(mostBidder).addTotalBidAmount(mostBidAmount);
 				jwac.getPlayers().get(mostBidder).addScore(getScore(jwac.getJwerly().get(currentRound - 1)));
 			}
 
-			if(!leastBidder.equals("")) {
+			if(!leastBidder.isEmpty()) {
 				// 최저 금액 입찰자 -1점
 				jwac.getPlayers().get(leastBidder).getHistory().get(currentRound).roundLose();
 				jwac.getPlayers().get(leastBidder).addScore(-1);
 			}
 		}
+	}
+
+	public Map<Jwerly, Integer> useSpecialItem(Jwac jwac) {
+		List<Jwerly> jwerly = jwac.getJwerly();
+		int currentRound = jwac.getCurrentRound();
+		int maxRound = jwac.getMaxRound();
+
+		Map<Jwerly, Integer> itemResult = new HashMap<>();
+		itemResult.put(Jwerly.SAPPHIRE, 0);
+		itemResult.put(Jwerly.RUBY, 0);
+		itemResult.put(Jwerly.EMERALD, 0);
+		itemResult.put(Jwerly.DIAMOND, 0);
+
+		for(int i = currentRound + 1; i <= maxRound; i++) {
+			itemResult.put(jwerly.get(i - 1), itemResult.get(jwerly.get(i - 1)) + 1);
+		}
+
+		return itemResult;
 	}
 
 	public void nextRound(Jwac jwac) {
@@ -201,7 +227,6 @@ public class GameService {
 			return;
 		}
 
-		log.info("next round");
 		jwac.nextRound();
 	}
 
