@@ -1,4 +1,4 @@
-package com.maeng.game.domain.jwac.game.service;
+package com.maeng.game.domain.jwac.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,13 +10,13 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.maeng.game.domain.jwac.game.dto.PlayerInfo;
-import com.maeng.game.domain.jwac.game.emums.Jwerly;
-import com.maeng.game.domain.jwac.game.entity.History;
-import com.maeng.game.domain.jwac.game.entity.Jwac;
-import com.maeng.game.domain.jwac.game.entity.Player;
-import com.maeng.game.domain.jwac.game.exception.GameNotFoundException;
-import com.maeng.game.domain.jwac.game.repository.JwacRedisRepository;
+import com.maeng.game.domain.jwac.dto.PlayerInfo;
+import com.maeng.game.domain.jwac.emums.Jwerly;
+import com.maeng.game.domain.jwac.entity.History;
+import com.maeng.game.domain.jwac.entity.Jwac;
+import com.maeng.game.domain.jwac.entity.Player;
+import com.maeng.game.domain.jwac.exception.GameNotFoundException;
+import com.maeng.game.domain.jwac.repository.JwacRedisRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class GameService {
+public class JwacService {
 	private final int MIN_ROUND = 15;
 	private final int MAX_ROUND = 25;
 

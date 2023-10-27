@@ -1,4 +1,4 @@
-package com.maeng.game.domain.jwac.game.entity;
+package com.maeng.game.domain.jwac.entity;
 
 import java.time.LocalDateTime;
 

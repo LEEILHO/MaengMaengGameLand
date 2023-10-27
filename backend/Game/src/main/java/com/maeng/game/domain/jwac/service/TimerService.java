@@ -1,20 +1,19 @@
-package com.maeng.game.domain.jwac.timer.service;
+package com.maeng.game.domain.jwac.service;
 
 import java.util.HashSet;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.maeng.game.domain.jwac.game.service.GameService;
-import com.maeng.game.domain.jwac.timer.repository.TimerRedisRepository;
-import com.maeng.game.domain.jwac.timer.entity.Timer;
+import com.maeng.game.domain.jwac.repository.TimerRedisRepository;
+import com.maeng.game.domain.jwac.entity.Timer;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class TimerService {
-	private final GameService gameService;
+	private final JwacService jwacService;
 
 	private final TimerRedisRepository timerRedisRepository;
 
@@ -31,10 +30,10 @@ public class TimerService {
 
 		System.out.println(timer.toString());
 
-		int headCount = gameService.getHeadCount(gameCode);
+		int headCount = jwacService.getHeadCount(gameCode);
 
 		if(timer.getNicknames().size() == headCount) {
-			gameService.nextRound(gameCode);
+			jwacService.nextRound(gameCode);
 			timer.getNicknames().clear();
 		}
 

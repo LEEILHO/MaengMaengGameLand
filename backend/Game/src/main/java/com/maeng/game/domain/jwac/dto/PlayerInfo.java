@@ -1,6 +1,6 @@
-package com.maeng.game.domain.jwac.game.dto;
+package com.maeng.game.domain.jwac.dto;
 
-import com.maeng.game.domain.jwac.game.emums.Tier;
+import com.maeng.game.domain.jwac.emums.Tier;
 
 import lombok.Builder;
 import lombok.Data;

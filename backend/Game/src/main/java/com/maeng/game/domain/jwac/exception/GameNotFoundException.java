@@ -1,4 +1,4 @@
-package com.maeng.game.domain.jwac.game.exception;
+package com.maeng.game.domain.jwac.exception;
 
 public class GameNotFoundException extends RuntimeException {
 	public GameNotFoundException(String gameCode) {
