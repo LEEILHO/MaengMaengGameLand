@@ -52,9 +52,11 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
             logger.info("jwt ={}", jwt);
 
             if(!isJwtValid(jwt)){
+
                 return onError(exchange, "JWT token is not valid",HttpStatus.UNAUTHORIZED);
             }
             String email = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody().getSubject();
+            logger.info("email ={} ", email);
             exchange.mutate().request(builder -> builder.header("userEmail", email)).build();
 
             return chain.filter(exchange);
