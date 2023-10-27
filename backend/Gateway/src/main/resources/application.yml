@@ -1,5 +1,5 @@
 server:
-  hostname: k9d208.p.ssafy.io
+  hostname: manegland.com
   port: 9600
 
 eureka:
@@ -8,8 +8,7 @@ eureka:
       defaultZone: http://${server.hostname}:8761/eureka/
 
 spring:
-  config:
-    import: configserver:http://${server.hostname}:8880
+    import: configserver: http://${server.hostname}:8880
   application:
     name: apigateway-service
   cloud:
