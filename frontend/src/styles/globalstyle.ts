@@ -19,6 +19,16 @@ const GlobalStyle = createGlobalStyle<Props>`
     height: calc(var(--vh, 1vh) * 100); 
   }
 
+  body #portal  {
+    .modal-overlay {
+      width: 100%;
+      height: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+  }
+
   @font-face {
     font-family: "kbo-dia";
     font-weight: 400;
