@@ -49,6 +49,9 @@ dependencies {
 	implementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.1'
 
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
+
+	// cloug config
+	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 }
 
 
