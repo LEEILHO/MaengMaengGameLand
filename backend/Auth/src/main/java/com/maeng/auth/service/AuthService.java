@@ -12,6 +12,8 @@ import com.maeng.auth.exception.ExceptionCode;
 import com.maeng.auth.repository.UserRepository;
 import com.maeng.auth.util.JwtProvider;
 import com.maeng.auth.util.JwtRedisManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -57,6 +59,7 @@ public class AuthService {
         this.userRepository = userRepository;
 
     }
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * 인가 코드를 받아 액세스 토큰을 발급 받고, 이를 통해 사용자의 정보를 조회해 JWT 생성 및 반환
@@ -108,8 +111,9 @@ public class AuthService {
      * Refresh Token을 받아 유효성을 검사하고, 유효한 경우는 Access Token과 Refresh Token을 재발급
      */
     public OAuthToken reGenerateAuthToken(HttpServletRequest request) {
-        String refreshToken = jwtProvider.resolveToken(request);
 
+        String refreshToken = jwtProvider.resolveToken(request);
+        logger.info("reGenerateAuthToken(), refreshToken = {}",refreshToken);
         if (refreshToken == null || !jwtProvider.validateToken(refreshToken)) {
             return null;
         }
@@ -123,8 +127,8 @@ public class AuthService {
 
 
     /**
-     * 인가 코드를 통해 Naver로부터 액세스 토큰을 발급받아 반환
-     * @param codeDto 인가 코드, state
+     * 인가 코드를 통해 KAKAO로부터 액세스 토큰을 발급받아 반환
+     * @param codeDto 인가 코드
      * @return String 액세스 토큰
      * */
     private String getAccessToken(CodeDto codeDto) {
