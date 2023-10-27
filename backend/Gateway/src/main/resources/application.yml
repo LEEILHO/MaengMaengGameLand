@@ -1,5 +1,5 @@
 server:
-  hostname: manegland.com
+  hostname: maengland.com
   port: 9600
 
 eureka:
