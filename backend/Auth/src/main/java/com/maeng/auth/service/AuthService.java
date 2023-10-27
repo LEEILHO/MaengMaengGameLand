@@ -115,6 +115,7 @@ public class AuthService {
         String refreshToken = jwtProvider.resolveRefreshToken(request);
         logger.info("reGenerateAuthToken(), refreshToken = {}",refreshToken);
         if (refreshToken == null || !jwtProvider.validateToken(refreshToken)) {
+            logger.info("검증 실패");
             return null;
         }
         logger.info("검증 끝");
