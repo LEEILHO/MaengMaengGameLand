@@ -5,16 +5,31 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-class StartUpFragment : Fragment() {
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
+import com.lessgenius.maengland.base.BaseFragment
+import com.lessgenius.maengland.databinding.FragmentStartupBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+class StartUpFragment : BaseFragment<FragmentStartupBinding>(
+    FragmentStartupBinding::bind, R.layout.fragment_startup
+) {
+
+    private lateinit var navController: NavController
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        navController = Navigation.findNavController(binding.root)
+
+        initListener()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_startup, container, false)
+    private fun initListener() {
+
+        binding.buttonSensor.setOnClickListener {
+            navController.navigate(R.id.action_startUpFragment_to_sensorFragment)
+        }
+        binding.buttonGame.setOnClickListener {
+            navController.navigate(R.id.action_startUpFragment_to_gameFragment)
+        }
     }
 }
