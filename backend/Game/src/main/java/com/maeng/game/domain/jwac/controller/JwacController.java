@@ -4,14 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.maeng.game.domain.jwac.dto.JwacBidInfoDto;
 import com.maeng.game.domain.jwac.dto.JwacRoundResultDto;
+import com.maeng.game.domain.jwac.dto.JwacTimerEndDto;
 import com.maeng.game.domain.jwac.dto.PlayerInfo;
 import com.maeng.game.domain.jwac.emums.Tier;
 import com.maeng.game.domain.jwac.service.JwacService;
@@ -29,12 +30,12 @@ public class JwacController {
 	@PostMapping("/generate")
 	public void test() {
 		List<PlayerInfo> playerInfo = new ArrayList<>();
-		playerInfo.add(PlayerInfo.builder().userEmail("1111").profileUrl("test/11").tier(Tier.BRONZE).build());
-		playerInfo.add(PlayerInfo.builder().userEmail("2222").profileUrl("test/22").tier(Tier.GOLD).build());
-		playerInfo.add(PlayerInfo.builder().userEmail("3333").profileUrl("test/33").tier(Tier.BRONZE).build());
-		playerInfo.add(PlayerInfo.builder().userEmail("4444").profileUrl("test/44").tier(Tier.CHALLENGER).build());
-		playerInfo.add(PlayerInfo.builder().userEmail("5555").profileUrl("test/55").tier(Tier.SILVER).build());
-		playerInfo.add(PlayerInfo.builder().userEmail("6666").profileUrl("test/66").tier(Tier.BRONZE).build());
+		playerInfo.add(PlayerInfo.builder().nickname("1111").profileUrl("test/11").tier(Tier.BRONZE).build());
+		playerInfo.add(PlayerInfo.builder().nickname("2222").profileUrl("test/22").tier(Tier.GOLD).build());
+		playerInfo.add(PlayerInfo.builder().nickname("3333").profileUrl("test/33").tier(Tier.BRONZE).build());
+		playerInfo.add(PlayerInfo.builder().nickname("4444").profileUrl("test/44").tier(Tier.CHALLENGER).build());
+		playerInfo.add(PlayerInfo.builder().nickname("5555").profileUrl("test/55").tier(Tier.SILVER).build());
+		playerInfo.add(PlayerInfo.builder().nickname("6666").profileUrl("test/66").tier(Tier.BRONZE).build());
 		jwacService.generateGame("abcdefg", playerInfo);
 	}
 
@@ -44,17 +45,21 @@ public class JwacController {
 	}
 
 	@PostMapping("/time/{gameCode}")
-	public ResponseEntity<JwacRoundResultDto> end(@RequestParam String gameCode, String nickname, int round) {
-		boolean timerEnd = timerService.timerEnd(gameCode, nickname, round);
-
+	public ResponseEntity<JwacRoundResultDto> end(@PathVariable String gameCode, @RequestBody JwacTimerEndDto jwacTimerEndDto) {
+		// 현재 라운드 결과 확인
 		JwacRoundResultDto jwacRoundResult = null;
-		if(timerEnd) {
-			jwacRoundResult = jwacService.nextRound(gameCode);
+		int headCount = jwacService.getHeadCount(gameCode);
+		if(timerService.timerEnd(gameCode, headCount, jwacTimerEndDto)) {
+			jwacRoundResult = jwacService.endRound(gameCode);
+
+			// 다음 라운드
+			if(jwacService.nextRound(gameCode)) {
+				// TODO : 새로운 타이머 시작
+				timerService.timerStart();
+			}
 		}
 
-		// TODO : 새로운 타이머 시작
-		timerService.timerStart();
-
+		// 결과 전송
 		if(jwacRoundResult != null) {
 			return ResponseEntity.ok(jwacRoundResult);
 		} else {

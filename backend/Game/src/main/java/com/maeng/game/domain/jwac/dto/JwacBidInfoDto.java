@@ -7,7 +7,7 @@ import lombok.Data;
 @Builder
 public class JwacBidInfoDto {
 	private String gameCode;
-	private String uerEmail;
+	private String nickname;
 	private int round;
 	private int bidAmount;
 }
