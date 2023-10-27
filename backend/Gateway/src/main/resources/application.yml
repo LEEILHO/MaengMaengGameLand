@@ -6,13 +6,59 @@ server:
 spring:
   config:
     import: configserver:http://${server.hostname}:8880
-
   application:
     name: maeng-gateway-service
   cloud:
     config:
       name: maeng
       profile: gateway
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - 'http://localhost:3000'
+              - 'https://${server.hostname}'
+            allow-credentials: true
+            allowedHeaders: '*'
+            allowedMethods:
+              - PUT
+              - GET
+              - POST
+              - DELETE
+              - PATCH
+              - OPTIONS
+      routes: # 사용자 인증과정             - StripPrefix=1             - Method=POST
+        - id: maeng-auth-service
+          uri: lb://maeng-auth-service
+          predicates:
+            - Path=/api/v1/auth/**
+          filters:
+            - StripPrefix=0
+        - id: maeng-user-service
+          uri: lb://maeng-user-service
+          predicates:
+            - Path=/api/v1/ueer/**
+          filters:
+            - StripPrefix=0
+            - JwtAuthenticationFilter
+        - id: maeng-game-service
+          uri: lb://maeng-game-service
+          predicates:
+            - Path=/api/v1/game/**
+          filters:
+            - StripPrefix=0
+        - id: maeng-record-service
+          uri: lb://maeng-record-service
+          predicates:
+            - Path=/api/v1/record/**
+          filters:
+            - StripPrefix=0
+            #- RewritePath=/dotori-user-service/(?<segment>.*), /$\{segment}
+  main:
+    allow-bean-definition-overriding: true
 
 eureka:
   client:
