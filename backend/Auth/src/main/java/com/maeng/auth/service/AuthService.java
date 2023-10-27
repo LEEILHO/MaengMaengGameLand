@@ -117,6 +117,7 @@ public class AuthService {
         if (refreshToken == null || !jwtProvider.validateToken(refreshToken)) {
             return null;
         }
+        logger.info("검증 끝");
 
         String id = jwtProvider.getUserId(refreshToken);
 
