@@ -75,14 +75,18 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
             subject = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody().getSubject();
             expire  = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody().getExpiration();
 
+            logger.info("subject = {}, expire ={} ", subject, expire);
+
         } catch (JwtException | IllegalArgumentException e) {
             returnValue = false;
         }
 
         if(subject == null || subject.isEmpty() || expire.before(new Date())){
+            logger.info("만료..?");
             returnValue = false;
         }
 
+        logger.info("returnValue = {}", returnValue);
 
         return returnValue;
     }
