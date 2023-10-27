@@ -33,7 +33,11 @@ export default function RootLayout({
       <body>
         <StyledComponentsRegistry>
           <NextThemeProvider>
-            <RecoilRootProvider>{children}</RecoilRootProvider>
+            <RecoilRootProvider>
+              {children}
+              // 포탈 위치
+              <div id="portal"></div>
+            </RecoilRootProvider>
           </NextThemeProvider>
         </StyledComponentsRegistry>
       </body>
