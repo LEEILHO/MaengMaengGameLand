@@ -4,7 +4,7 @@ server:
 
 spring:
   config:
-    import: optional:configserver:http://${server.hostname}:8880
+    import: configserver:http://${server.hostname}:8880
   application:
     name: maeng-auth-service
   cloud:
