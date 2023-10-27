@@ -1,7 +1,6 @@
 'use client'
 
 import CButton from '@components/common/clients/CButton'
-import Header from '@components/common/clients/Header'
 import Timer from '@components/common/clients/Timer'
 import useModal from '@hooks/useModal'
 import { useRouter } from 'next/navigation'
@@ -20,7 +19,6 @@ const Test = () => {
         </div>
       </Modal>
       <StyledTestContainer>
-        <Header viewFriend={true} viewSetting={true} />
         <CButton
           radius={36}
           backgroundColor="rgba(112, 0, 255, 1)"

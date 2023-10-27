@@ -7,6 +7,7 @@ export const HeaderContainer = styled.div`
   position: fixed;
   width: 100%;
   top: 0;
+  z-index: 3;
 `
 
 export const ProfileCard = styled.div`
