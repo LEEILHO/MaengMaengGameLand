@@ -1,50 +1,17 @@
 server:
-  hostname: k9d208.p.ssafy.io
+  hostname: maengland.com
   port: 9110
 
 spring:
+  config:
+    import: configserver:http://${server.hostname}:8880
   application:
     name: maeng-auth-service
   cloud:
     config:
       name: maeng
       profile: auth
-  datasource:
-    url: jdbc:mysql://${server.hostname}:3306/maengland?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    username: maeng
-    password: maengmaeng
-  redis:
-    host: ${server.hostname}
-    port: 6379
-    password: maengmaeng
-  security:
-    oauth2:
-      client:
-        registration:
-          kakao:
-            client-id: 82e3772b8d6d002b4f5c0a4be2860c38
-            client-secret: SyLbCmehA1oTQXkuJtgJ2DbziiKWuWK5
-            authorization-grant-type: authorization_code
-            #             scope: name,email,profile_image
-            client-name: kakao
-            redirect-uri: http://localhost:3000/login/kakao
-        provider:
-          kakao:
-            authorization-uri: https://kauth.kakao.com/oauth/authorize
-            token-uri: https://kauth.kakao.com/oauth/token
-            user-info-uri: https://kapi.kakao.com/v2/user/me
 
-  jpa:
-    hibernate:
-      ddl-auto: update
-
-
-app:
-  auth:
-    access-expiry: 1800000
-    refresh-expriy:  604800000
-jwt:
-  secret-key: aodaodrpdlafosemrlawldudrlatkdrmstjgusejrtlalswntladmswlsdldlfgh208zjstjftlcldhodhkTslwoaldjqtdj
 
 eureka:
   client:
