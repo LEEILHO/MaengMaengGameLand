@@ -65,10 +65,11 @@ public class AuthController {
         logger.info("getToken(), Token 재발급");
 
         OAuthToken oAuthToken = authService.reGenerateAuthToken(request);
-
+        logger.info("accessToken ={}, refreshToken = {}", oAuthToken.getAccessToken(),oAuthToken.getRefreshToken());
         if (oAuthToken == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+        logger.info("재발급 완료");
 
         response.addHeader("Set-Cookie", CookieManager.createCookie(oAuthToken.getRefreshToken()).toString());
 
