@@ -5,7 +5,7 @@
   "orientation": "landscape",
   "theme_color": "#FFFFFF",
   "background_color": "#FFFFFF",
-  "start_url": "/test",
+  "start_url": "/login",
   "scope": ".",
   "icons": [
     {
