@@ -7,7 +7,7 @@ import {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from 'axios'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { useRecoilState } from 'recoil'
 
 const useAxiosInterceptor = () => {
@@ -23,6 +23,7 @@ const useAxiosInterceptor = () => {
 
   const requestHandler = async (config: InternalAxiosRequestConfig) => {
     if (accessToken?.accessToken) {
+      console.log('accessToken setting')
       config.headers = config.headers || {}
       ;(config.headers as AxiosRequestHeaders).Authorization = accessToken
         ? `Bearer ${accessToken.accessToken}`
@@ -32,9 +33,8 @@ const useAxiosInterceptor = () => {
     // 엑세스토큰 없는 경우 리프레시 토큰으로 엑세스 토큰 재발급
     else {
       try {
-        const refreshResponse = await http.post<ResponseAccessTokenType>(
-          'user-service/auth/token',
-        )
+        const refreshResponse =
+          await http.post<ResponseAccessTokenType>('v1/auth/token')
         const newAccessToken = refreshResponse.accessToken
 
         if (newAccessToken) {

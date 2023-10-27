@@ -15,15 +15,15 @@ export const Login = styled.div`
 export const Rocket = styled(Lottie)`
   width: 600px;
   height: 700px;
-  position: absolute;
-  bottom: -35%;
-  right: -20%;
-  /* transform: translate(-50%, -50%); */
+  position: fixed;
+  top: 50%;
+  left: 85%;
+  transform: translate(-50%, -50%);
   z-index: 3;
 `
 
 export const Title = styled.img`
-  position: absolute;
+  position: fixed;
   left: 50%;
   top: 35%;
   transform: translate(-50%, -50%);
@@ -37,7 +37,7 @@ export const Announcement = styled.p`
   font-weight: 700;
   letter-spacing: -0.32px;
 
-  position: absolute;
+  position: fixed;
   left: 50%;
   bottom: 35%;
   transform: translate(-50%, -50%);

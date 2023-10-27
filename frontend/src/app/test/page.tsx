@@ -3,6 +3,7 @@
 import CButton from '@components/common/clients/CButton'
 import Header from '@components/common/clients/Header'
 import Timer from '@components/common/clients/Timer'
+import withAuth from '@components/hoc/client/PrivateRoute'
 import { useRouter } from 'next/navigation'
 import { styled } from 'styled-components'
 
@@ -25,7 +26,7 @@ const Test = () => {
   )
 }
 
-export default Test
+export default withAuth(Test)
 
 const StyledTestContainer = styled.div`
   position: fixed;
