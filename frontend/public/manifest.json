@@ -1,7 +1,7 @@
 {
   "name": "ManegManegGameLand",
   "short_name": "mmGameLand",
-  "display": "standalone",
+  "display": "fullscreen",
   "orientation": "landscape",
   "theme_color": "#FFFFFF",
   "background_color": "#FFFFFF",
