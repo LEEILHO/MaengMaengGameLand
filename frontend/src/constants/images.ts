@@ -9,6 +9,7 @@ export const images = {
       friends: '/images/common/ic-friend.png',
       dummyProfile: '/images/common/dummyProfile.png',
       alarm: '/images/common/ic-alarm.png',
+      back: '/images/common/ic-arrow-back.png',
     },
   },
 }
