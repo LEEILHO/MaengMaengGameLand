@@ -1,18 +1,17 @@
 server:
-  hostname: maengland.com
-  port: 9600
-
+  hostname: k9d208.p.ssafy.io
+  port: 9220
 
 spring:
   config:
-    import: configserver:http://${server.hostname}:8880
-
+    import: optional:configserver:http://${server.hostname}:8880
   application:
-    name: maeng-gateway-service
+    name: maeng-game-service
   cloud:
     config:
       name: maeng
-      profile: gateway
+      profile: game
+
 
 eureka:
   client:
