@@ -8,6 +8,7 @@ export const images = {
       setting: '/images/common/ic-setting.png',
       friends: '/images/common/ic-friend.png',
       dummyProfile: '/images/common/dummyProfile.png',
+      alarm: '/images/common/ic-alarm.png',
     },
   },
 }

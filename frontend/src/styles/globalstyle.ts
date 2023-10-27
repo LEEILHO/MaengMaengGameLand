@@ -1,15 +1,22 @@
-import { createGlobalStyle } from 'styled-components'
+import { createGlobalStyle, css } from 'styled-components'
 import reset from 'styled-reset'
 
-const GlobalStyle = createGlobalStyle`
-  ${reset}
+type Props = {
+  isMobile: boolean
+}
 
-  html {
-    font-size: 16px;    
-  };
+const GlobalStyle = createGlobalStyle<Props>`
+  ${reset}
   
-  body {
+  body, button {
     font-family: 'kbo-dia';
+  }
+
+  html,body {
+    width: 100vw;
+    height: 100vh;
+    width: calc(var(--vw, 1vw) * 100);
+    height: calc(var(--vh, 1vh) * 100); 
   }
 
   @font-face {

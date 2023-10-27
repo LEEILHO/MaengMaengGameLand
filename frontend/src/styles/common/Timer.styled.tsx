@@ -14,6 +14,8 @@ export const TimerContainer = styled.div<TimerProps>`
 
   .rc-progress-circle {
     z-index: 1;
+    width: 100%;
+    height: 100%;
   }
 `
 
@@ -27,4 +29,10 @@ export const TimerBackGround = styled.div`
   width: 90%;
   height: 90%;
   border-radius: 50%;
+
+  img {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 12px;
+  }
 `

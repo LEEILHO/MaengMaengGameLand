@@ -1,9 +1,12 @@
 import type { Metadata } from 'next'
 import RecoilRootProvider from '@components/common/RecoilRootProvider'
 import NextThemeProvider from '@components/common/NextThemeProvider'
-import RootStyleRegistry from '@styles/RootStyleRegistry'
+import RootStyleRegistry from '@styles/StyledComponentsRegistry'
+import StyledComponentsRegistry from '@styles/StyledComponentsRegistry'
 
 export const metadata: Metadata = {
+  viewport:
+    'minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover',
   title: '맹맹게임랜드',
   description: '맹맹게임랜드에 오신걸 환영합니다.',
   keywords: ['맹맹게임랜드', 'Next.js', 'React', 'JavaScript', 'Game'],
@@ -28,11 +31,11 @@ export default function RootLayout({
   return (
     <html>
       <body>
-        <RootStyleRegistry>
+        <StyledComponentsRegistry>
           <NextThemeProvider>
             <RecoilRootProvider>{children}</RecoilRootProvider>
           </NextThemeProvider>
-        </RootStyleRegistry>
+        </StyledComponentsRegistry>
       </body>
     </html>
   )
