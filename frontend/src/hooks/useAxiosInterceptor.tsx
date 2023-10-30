@@ -18,7 +18,7 @@ const useAxiosInterceptor = () => {
   const errorHandler = (error: AxiosError) => {
     console.log('errInterceptor!', error)
     if (error.response?.status === 401) {
-      window.location.href = '/login'
+      // window.location.href = '/login'
     }
     return Promise.reject(error)
   }
@@ -35,7 +35,7 @@ const useAxiosInterceptor = () => {
     else {
       try {
         const refreshResponse =
-          await http.post<ResponseAccessTokenType>('v1/auth/token')
+          await http.get<ResponseAccessTokenType>('v1/auth/token')
         const newAccessToken = refreshResponse.accessToken
 
         if (newAccessToken) {
@@ -49,7 +49,7 @@ const useAxiosInterceptor = () => {
       } catch (error) {
         console.error('엑세스 토큰 재발급 실패: ', error)
         // 이후 로그인 화면으로 이동시키기
-        window.location.href = '/login'
+        // window.location.href = '/login'
       }
     }
     return config
