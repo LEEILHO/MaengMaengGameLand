@@ -14,6 +14,7 @@ import { images } from '@constants/images'
 import { SeatInfo } from '@type/waitingRoom/Seat.types'
 import useModal from '@hooks/useModal'
 import UpdateRoomModal from './UpdateRoomModal'
+import BackButton from '@components/common/clients/BackButton'
 
 const user = {
   userSeq: 1,
@@ -125,9 +126,7 @@ const WaitingRoomPage = () => {
           </S.PlayerList>
         </S.Contents>
         <S.BottomButtons>
-          <S.MoveBackButton>
-            <img src={images.common.leftArrow} alt="뒤로가기" />
-          </S.MoveBackButton>
+          <BackButton size={32} />
           <S.ButtonRelatedGame>
             <CButton
               radius={109}

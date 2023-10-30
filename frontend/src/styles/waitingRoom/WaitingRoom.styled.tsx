@@ -35,6 +35,7 @@ export const BottomButtons = styled.div`
   align-items: center;
   position: fixed;
   bottom: 8px;
+  padding-left: 34px;
 `
 
 export const ButtonRelatedGame = styled.div`

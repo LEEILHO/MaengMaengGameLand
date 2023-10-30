@@ -36,12 +36,18 @@ const UpdateRoomModal = ({ closeModal }: Props) => {
       </S.SubRow>
       <S.ButtonRow>
         <CButton
+          width={85}
+          height={36}
+          fontSize={16}
           text="설정"
           color="white"
           backgroundColor={colors.button.blue}
           radius={50}
         />
         <CButton
+          width={85}
+          height={36}
+          fontSize={16}
           text="취소"
           color="white"
           backgroundColor={colors.button.red}

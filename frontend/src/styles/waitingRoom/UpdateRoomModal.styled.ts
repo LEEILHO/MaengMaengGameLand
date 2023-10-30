@@ -62,7 +62,7 @@ export const ButtonRow = styled.div`
   width: 100%;
   display: flex;
   margin-top: auto;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   align-items: center;
   justify-content: center;
   gap: 8px;

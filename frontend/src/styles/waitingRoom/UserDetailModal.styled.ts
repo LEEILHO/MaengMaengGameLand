@@ -24,7 +24,7 @@ export const UserProfile = styled.img`
 export const UserDetail = styled.table`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 16px;
   font-size: 18px;
   font-weight: 700;
   width: 150px;
@@ -46,4 +46,12 @@ export const BottomButtons = styled.div`
   align-items: center;
   gap: 16px;
   margin-bottom: 16px;
+`
+
+export const CloseButton = styled.img`
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
 `

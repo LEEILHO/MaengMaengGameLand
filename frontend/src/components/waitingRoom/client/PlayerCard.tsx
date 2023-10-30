@@ -55,7 +55,7 @@ const PlayerCard = ({ user, onClickEmptySeat, index }: Props) => {
 
         {/* 유저의 디테일한 정보를 보여주는 모달 */}
         <Modal isOpen={isOpen} closeModal={closeModal}>
-          <UserDetailModal userSeq={user?.userSeq} />
+          <UserDetailModal userSeq={user?.userSeq} closeModal={closeModal} />
         </Modal>
       </>
     ) : (
