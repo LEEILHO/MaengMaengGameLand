@@ -5,7 +5,7 @@ import java.util.HashSet;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.maeng.game.domain.jwac.dto.JwacTimerEndDto;
+import com.maeng.game.domain.jwac.dto.JwacNicknameDto;
 import com.maeng.game.domain.jwac.repository.TimerRedisRepository;
 import com.maeng.game.domain.jwac.entity.Timer;
 
@@ -17,7 +17,7 @@ public class TimerService {
 	private final TimerRedisRepository timerRedisRepository;
 
 	@Transactional
-	public boolean timerEnd(String gameCode, int headCount, JwacTimerEndDto jwacTimerEndDto) {
+	public boolean timerEnd(String gameCode, int headCount, JwacNicknameDto jwacNicknameDto) {
 		Timer timer = timerRedisRepository.findById(gameCode)
 			.orElse(Timer.builder().gameCode(gameCode).nicknames(new HashSet<>()).build());
 
@@ -25,7 +25,7 @@ public class TimerService {
 			timer.setNicknames(new HashSet<>());
 		}
 
-		timer.getNicknames().add(jwacTimerEndDto.getNickname());
+		timer.getNicknames().add(jwacNicknameDto.getNickname());
 
 		boolean timerEnd = (timer.getNicknames().size() == headCount);
 
