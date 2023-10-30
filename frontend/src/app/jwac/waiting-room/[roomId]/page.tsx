@@ -3,7 +3,7 @@
 import withAuth from '@components/hoc/client/PrivateRoute'
 import React from 'react'
 
-import WaitingRoomPage from '@components/waitingroom/client/WaitingRoomPage'
+import WaitingRoomPage from '@components/waitingRoom/client/WaitingRoomPage'
 
 const WaitingRoom = () => {
   return <WaitingRoomPage />
