@@ -18,7 +18,7 @@ const Lobby = ({ title }: Props) => {
 
   return (
     <>
-      <Modal isOpen={isOpen} closeModal={closeModal}>
+      <Modal isOpen={isOpen}>
         <CreateRoomModal closeModal={closeModal} />
       </Modal>
       <S.LobbyContainer>
