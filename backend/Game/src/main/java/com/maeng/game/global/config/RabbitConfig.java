@@ -10,6 +10,7 @@ import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,6 +25,16 @@ public class RabbitConfig {
     private static final String GAME_EXCHANGE_NAME = "game.exchange";
     private static final String ROOM_ROUTING_KEY = "*.room.*";
     private static final String GAME_ROUTING_KEY = "*.game.*.*"; // *.game.게임종류.방코드
+
+    @Value("${spring.rabbitmq.host}")
+    private String HOST;
+
+    @Value("${spring.rabbitmq.username}")
+    private String USERNAME;
+    @Value("${spring.rabbitmq.password}")
+    private String PASSWORD;
+    @Value("${spring.rabbitmq.port}")
+    private int PORT;
 
     // Queue 등록
     @Bean
@@ -61,10 +72,10 @@ public class RabbitConfig {
     @Bean
     public ConnectionFactory connectionFactory(){
         CachingConnectionFactory factory = new CachingConnectionFactory();
-        factory.setHost("localhost");
-        factory.setPort(5672);
-        factory.setUsername("guest");
-        factory.setPassword("guest");
+        factory.setHost(HOST);
+        factory.setPort(PORT);
+        factory.setUsername(USERNAME);
+        factory.setPassword(PASSWORD);
 
         return factory;
     }
