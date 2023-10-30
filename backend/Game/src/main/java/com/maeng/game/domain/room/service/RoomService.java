@@ -1,6 +1,6 @@
 package com.maeng.game.domain.room.service;
 
-import com.maeng.game.domain.jwac.game.emums.Tier;
+import com.maeng.game.domain.jwac.emums.Tier;
 import com.maeng.game.domain.room.dto.CreateRoomDTO;
 import com.maeng.game.domain.room.entity.Player;
 import com.maeng.game.domain.room.entity.Room;
