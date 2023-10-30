@@ -43,23 +43,23 @@ public class WebSocketController {
         template.convertAndSend(CHAT_EXCHANGE_NAME, "enter.room."+roomCode, messageDTO);
 
         // 방에 있는 모든 사람에게 갱신된 ROOM_INFO 전송
-        MessageDTO roomDTO = MessageDTO.builder()
-                    .type("ROOM_INFO")
-                    .data(RoomInfoDTO.builder()
-                            .title(roomInfo.getTitle())
-                            .createdAt(roomInfo.getCreatedAt())
-                            .maxHeadCount(roomInfo.getMaxHeadCount())
-                            .gameCategory(roomInfo.getGameCategory())
-                            .participant(roomInfo.getParticipant())
-                            .participant(roomInfo.getParticipant())
-                            .headCount(roomInfo.getHeadCount())
-                            .publicRoom(roomInfo.isPublicRoom())
-                            .build())
-                    .build();
+//        messageDTO = MessageDTO.builder()
+//                    .type("ROOM_INFO")
+//                    .data(RoomInfoDTO.builder()
+//                            .title(roomInfo.getTitle())
+//                            .createdAt(roomInfo.getCreatedAt())
+//                            .maxHeadCount(roomInfo.getMaxHeadCount())
+//                            .gameCategory(roomInfo.getGameCategory())
+//                            .participant(roomInfo.getParticipant())
+//                            .participant(roomInfo.getParticipant())
+//                            .headCount(roomInfo.getHeadCount())
+//                            .publicRoom(roomInfo.isPublicRoom())
+//                            .build())
+//                    .build();
 
-        log.info(roomDTO.toString());
+        log.info(messageDTO.toString());
 
-        template.convertAndSend(CHAT_EXCHANGE_NAME, "*.room."+roomCode, roomDTO);
+        template.convertAndSend(CHAT_EXCHANGE_NAME, "*.room."+roomCode, messageDTO);
     }
 
     @MessageMapping("room.message.{roomCode}")
