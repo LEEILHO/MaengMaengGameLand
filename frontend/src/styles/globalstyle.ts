@@ -7,6 +7,15 @@ type Props = {
 
 const GlobalStyle = createGlobalStyle<Props>`
   ${reset}
+
+  * {
+    box-sizing: border-box;
+    /* 텍스트 터치 막기 */
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* 인터넷익스플로러 */
+    user-select: none;
+  }
   
   body, button {
     font-family: 'kbo-dia';
