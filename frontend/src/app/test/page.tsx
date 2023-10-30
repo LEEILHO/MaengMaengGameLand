@@ -13,7 +13,13 @@ const Test = () => {
   return (
     <>
       <Modal isOpen={isOpen}>
-        <div>
+        <div
+          style={{
+            height: '200px',
+            width: '300px',
+            backgroundColor: 'skyblue',
+          }}
+        >
           {'모달달달달달달달'}
           <button onClick={closeModal}>닫기</button>
         </div>
