@@ -41,7 +41,9 @@ const Timer = ({ size, fontSize, time }: Props) => {
         strokeLinecap="round"
         strokeColor={'white'}
       />
-      <S.TimerBackGround>
+      <S.TimerBackGround
+        $type={timeRemaining <= 5 && timeRemaining !== 0 ? 'SHAKE' : 'COMMON'}
+      >
         <img src={images.common.header.alarm} alt="timer" />
         <p
           style={{
