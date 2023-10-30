@@ -44,6 +44,14 @@ dependencies {
 
 	// config
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
+
+	// websocket
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'org.webjars:stomp-websocket:2.3.4'
+
+	// rabbitMQ
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+	implementation 'org.springframework.boot:spring-boot-starter-reactor-netty:2.6.4'
 }
 
 
