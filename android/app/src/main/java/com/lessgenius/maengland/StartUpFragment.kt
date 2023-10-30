@@ -25,8 +25,8 @@ class StartUpFragment : BaseFragment<FragmentStartupBinding>(
 
     private fun initListener() {
 
-        binding.buttonSensor.setOnClickListener {
-            navController.navigate(R.id.action_startUpFragment_to_sensorFragment)
+        binding.buttonLogin.setOnClickListener {
+            navController.navigate(R.id.action_startUpFragment_to_loginFragment)
         }
         binding.buttonGame.setOnClickListener {
             navController.navigate(R.id.action_startUpFragment_to_gameFragment)

@@ -115,10 +115,13 @@ class GameFragment :
 
 
 //                        if (playerRect.intersect(platformRect)) {
-                            Log.d(TAG, "checkCollisions:  ${binding.imageViewPlayer.y} ${platform.y}")
+                            Log.d(
+                                TAG,
+                                "checkCollisions:  ${binding.imageViewPlayer.y} ${platform.y}"
+                            )
                             yPosition = platform.y
                             initAnimation()
-                        } else if (!playerRect.intersect(platformRect) && yPosition != 0.0f){
+                        } else if (!playerRect.intersect(platformRect) && yPosition != 0.0f) {
                             fallAnimation()
                         }
                     }
@@ -252,7 +255,8 @@ class GameFragment :
                 if (playerRect.intersect(platformRect)) {
 //                    valueAnimator.cancel() // 발판에 닿았을 때 애니메이션 취소
                     yPosition = platform.y
-                    imageViewPlayerReference?.y = platform.y + binding.imageViewPlayer.height // 캐릭터 위치를 발판 위로 설정
+                    imageViewPlayerReference?.y =
+                        platform.y + binding.imageViewPlayer.height // 캐릭터 위치를 발판 위로 설정
                     break
                 }
             }

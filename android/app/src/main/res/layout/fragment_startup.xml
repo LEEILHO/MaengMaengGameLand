@@ -19,10 +19,10 @@
         android:layout_marginTop="@dimen/_20sdp"/>
 
     <Button
-        android:id="@+id/button_sensor"
+        android:id="@+id/button_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SENSOR"
+        android:text="LOGIN"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -37,7 +37,7 @@
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/button_sensor"
+        app:layout_constraintTop_toTopOf="@id/button_login"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,13 +10,13 @@ import android.util.Log
 import android.view.View
 import androidx.wear.widget.SwipeDismissFrameLayout
 import com.lessgenius.maengland.base.BaseFragment
-import com.lessgenius.maengland.databinding.FragmentSensorBinding
+import com.lessgenius.maengland.databinding.FragmentLoginBinding
 
 
 private const val TAG = "GameFragment_김진영"
 
-class SensorFragment :
-    BaseFragment<FragmentSensorBinding>(FragmentSensorBinding::bind, R.layout.fragment_sensor) {
+class LoginFragment :
+    BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::bind, R.layout.fragment_login) {
 
     private lateinit var swipeCallback: SwipeDismissFrameLayout.Callback
 

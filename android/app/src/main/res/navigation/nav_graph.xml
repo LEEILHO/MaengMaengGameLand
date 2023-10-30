@@ -14,8 +14,8 @@
             android:id="@+id/action_startUpFragment_to_gameFragment"
             app:destination="@id/gameFragment" />
         <action
-            android:id="@+id/action_startUpFragment_to_sensorFragment"
-            app:destination="@id/sensorFragment" />
+            android:id="@+id/action_startUpFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
     </fragment>
     <fragment
         android:id="@+id/gameFragment"
@@ -23,8 +23,8 @@
         android:label="fragment_game"
         tools:layout="@layout/fragment_game" />
     <fragment
-        android:id="@+id/sensorFragment"
-        android:name="com.lessgenius.maengland.SensorFragment"
-        android:label="fragment_sensor"
-        tools:layout="@layout/fragment_sensor" />
+        android:id="@+id/loginFragment"
+        android:name="com.lessgenius.maengland.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" />
 </navigation>
