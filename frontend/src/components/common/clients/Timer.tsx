@@ -30,7 +30,7 @@ const Timer = ({ size, fontSize, time }: Props) => {
 
   useEffect(() => {
     console.log(time - currentTime)
-    console.log('남은 시간', timeRemaining)
+    // console.log('남은 시간', timeRemaining)
   }, [currentTime])
 
   return (
@@ -41,7 +41,7 @@ const Timer = ({ size, fontSize, time }: Props) => {
         strokeLinecap="round"
         strokeColor={'white'}
       />
-      <S.TimerBackGround>
+      <S.TimerBackGround $type={timeRemaining === 0 ? 'COMMON' : 'SHAKE'}>
         <img src={images.common.header.alarm} alt="timer" />
         <p
           style={{

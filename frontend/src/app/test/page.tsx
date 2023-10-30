@@ -1,7 +1,6 @@
 'use client'
 
 import CButton from '@components/common/clients/CButton'
-import Header from '@components/common/clients/Header'
 import Timer from '@components/common/clients/Timer'
 import useModal from '@hooks/useModal'
 import { useRouter } from 'next/navigation'
@@ -14,13 +13,18 @@ const Test = () => {
   return (
     <>
       <Modal isOpen={isOpen}>
-        <div>
+        <div
+          style={{
+            height: '200px',
+            width: '300px',
+            backgroundColor: 'skyblue',
+          }}
+        >
           {'모달달달달달달달'}
           <button onClick={closeModal}>닫기</button>
         </div>
       </Modal>
       <StyledTestContainer>
-        <Header viewFriend={true} viewSetting={true} />
         <CButton
           radius={36}
           backgroundColor="rgba(112, 0, 255, 1)"

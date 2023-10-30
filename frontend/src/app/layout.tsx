@@ -6,7 +6,7 @@ import StyledComponentsRegistry from '@styles/StyledComponentsRegistry'
 
 export const metadata: Metadata = {
   viewport:
-    'minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover',
+    'minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover user-scalable=no',
   title: '맹맹게임랜드',
   description: '맹맹게임랜드에 오신걸 환영합니다.',
   keywords: ['맹맹게임랜드', 'Next.js', 'React', 'JavaScript', 'Game'],
@@ -35,7 +35,6 @@ export default function RootLayout({
           <NextThemeProvider>
             <RecoilRootProvider>
               {children}
-              // 포탈 위치
               <div id="portal"></div>
             </RecoilRootProvider>
           </NextThemeProvider>
