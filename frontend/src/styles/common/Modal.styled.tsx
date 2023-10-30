@@ -1,4 +1,5 @@
 import { styled } from 'styled-components'
+import { motion } from 'framer-motion'
 
 export const Overlay = styled.div`
   z-index: 10;
@@ -8,7 +9,7 @@ export const Overlay = styled.div`
   height: 100%;
 `
 
-export const Wrapper = styled.div`
+export const Wrapper = styled(motion.div)`
   position: absolute;
   top: 50%;
   left: 50%;
