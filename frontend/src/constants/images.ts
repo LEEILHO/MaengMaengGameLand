@@ -10,5 +10,17 @@ export const images = {
       dummyProfile: '/images/common/dummyProfile.png',
       alarm: '/images/common/ic-alarm.png',
     },
+    leftArrow: '/images/common/ic-left-arrow.png',
+  },
+  waitingRoom: {
+    header: {
+      lock: '/images/common/ic-lock.png',
+      unlock: '/images/common/ic-unlock.png',
+    },
+    dummyRabbit: '/images/waitingRoom/dummyRabbit.png',
+    info: '/images/waitingRoom/ic-info.png',
+    crown: '/images/waitingRoom/ic-crown.png',
+    ready: '/images/waitingRoom/ic-ready.png',
+    inactive: '/images/waitingRoom/inactive.png',
   },
 }
