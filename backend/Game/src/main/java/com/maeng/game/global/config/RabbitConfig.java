@@ -23,7 +23,7 @@ public class RabbitConfig {
     private static final String ROOM_EXCHANGE_NAME = "room.exchange";
     private static final String GAME_EXCHANGE_NAME = "game.exchange";
     private static final String ROOM_ROUTING_KEY = "*.room.*";
-    private static final String GAME_ROUTING_KEY = "*.game.*.*";
+    private static final String GAME_ROUTING_KEY = "*.game.*.*"; // *.game.게임종류.방코드
 
     // Queue 등록
     @Bean
