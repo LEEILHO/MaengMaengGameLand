@@ -9,6 +9,7 @@ export const images = {
       friends: '/images/common/ic-friend.png',
       dummyProfile: '/images/common/dummyProfile.png',
       alarm: '/images/common/ic-alarm.png',
+      back: '/images/common/ic-arrow-back.png',
     },
   },
   home: {
@@ -16,5 +17,8 @@ export const images = {
     gsb: '/images/home/gsb.png',
     jwac: '/images/home/jwac.png',
     awrsp: '/images/home/awrsp.png',
+  },
+  lobby: {
+    close: '/images/lobby/ic-close-modal.png',
   },
 }

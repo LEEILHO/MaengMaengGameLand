@@ -2,6 +2,7 @@
 
 import * as S from '@styles/common/Modal.styled'
 import { ModalProps } from '@type/common/modal.type'
+import { AnimatePresence } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 
@@ -19,13 +20,40 @@ const Modal = ({ children, isOpen, closeModal }: ModalProps) => {
 
   return (
     <>
-      {isOpen && portalElement
+      {portalElement
         ? createPortal(
-            <S.Overlay onClick={closeHandler} className="modal-overlay">
-              <S.Wrapper onClick={(e) => e.stopPropagation()}>
-                {children}
-              </S.Wrapper>
-            </S.Overlay>,
+            <AnimatePresence>
+              {isOpen && (
+                <S.Overlay onClick={closeHandler} className="modal-overlay">
+                  <S.Wrapper
+                    onClick={(e) => e.stopPropagation()}
+                    initial={{
+                      opacity: 0,
+                      scale: 0.75,
+                      transform: 'translate(-50%, -50%)',
+                    }}
+                    animate={{
+                      opacity: 1,
+                      scale: 1,
+                      transition: {
+                        ease: 'easeOut',
+                        duration: 0.25,
+                      },
+                    }}
+                    exit={{
+                      opacity: 0,
+                      scale: 0.75,
+                      transition: {
+                        ease: 'easeIn',
+                        duration: 0.2,
+                      },
+                    }}
+                  >
+                    {children}
+                  </S.Wrapper>
+                </S.Overlay>
+              )}
+            </AnimatePresence>,
             portalElement,
           )
         : null}

@@ -11,6 +11,23 @@ const GlobalStyle = createGlobalStyle<Props>`
   *{
     box-sizing: border-box;
   }
+
+  * {
+    box-sizing: border-box;
+    /* 텍스트 터치 막기 */
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* 인터넷익스플로러 */
+    user-select: none;
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  img {
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+  }
   
   body, button {
     font-family: 'kbo-dia';
