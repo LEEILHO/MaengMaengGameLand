@@ -1,7 +1,6 @@
 package com.maeng.game.domain.jwac.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -12,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.maeng.game.domain.jwac.dto.JwacBidInfoDto;
+import com.maeng.game.domain.jwac.dto.JwacGameResultDTO;
+import com.maeng.game.domain.jwac.dto.JwacRoundPlayerInfoDTO;
 import com.maeng.game.domain.jwac.dto.JwacRoundResultDto;
 import com.maeng.game.domain.jwac.dto.PlayerInfo;
 import com.maeng.game.domain.jwac.emums.Jwerly;
@@ -34,7 +35,6 @@ public class JwacService {
 	private final JwacRedisRepository jwacRedisRepository;
 
 	@Transactional
-
 	public void generateGame(String roomCode, List<PlayerInfo> playerInfo) {
 		String gameCode = generateGameCode();
 
@@ -47,7 +47,7 @@ public class JwacService {
 			.headCount(playerInfo.size())
 			.currentRound(0)
 			.maxRound(maxRound)
-			.bidAmounts(new ArrayList<>())
+			.bidAmounts(new HashMap<>())
 			.jwerly(setRandomJwerly(maxRound))
 			.players(setPlayer(playerInfo))
 			.build();
@@ -94,8 +94,24 @@ public class JwacService {
 	}
 
 	@Transactional
-	public void endGame(Jwac jwac) {
+	public JwacGameResultDTO endGame(String gameCode) {
+		Jwac jwac = jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
+
+		Map<String, Player> players = jwac.getPlayers();
+
+		JwacGameResultDTO gameResult = JwacGameResultDTO.builder()
+			.roomCode(jwac.getRoomCode())
+			.gameCode(jwac.getGameCode())
+			.winner(findGameWinner(players))
+			.players(players)
+			.build();
+
 		// TODO : 게임 종료 로직
+
+
+		// TODO : record db 저장
+
+		return gameResult;
 	}
 
 	@Transactional(readOnly = true)
@@ -109,15 +125,14 @@ public class JwacService {
 		return (int)(Math.random() * (MAX_ROUND - MIN_ROUND)) + MIN_ROUND;
 	}
 
-	public List<Jwerly> setRandomJwerly(int maxRound) {
-		List<Jwerly> jwerly = new ArrayList<>();
-		jwerly.add(null);
+	public Map<Integer, Jwerly> setRandomJwerly(int maxRound) {
+		Map<Integer, Jwerly> jwerly = new HashMap<>();
 		for(int i = 1; i <= maxRound; i++) {
 			if(i == 10) {
-				jwerly.add(Jwerly.SPECIAL);
+				jwerly.put(i, Jwerly.SPECIAL);
 				continue;
 			}
-			jwerly.add(Jwerly.values()[(int)(Math.random() * 3)]);
+			jwerly.put(i, Jwerly.values()[(int)(Math.random() * 4) + 1]);
 		}
 		return jwerly;
 	}
@@ -149,9 +164,11 @@ public class JwacService {
 		Map<String, History> result = new HashMap<>();
 		log.info("jwac.getPlayers().keySet(): {}", jwac.getPlayers().keySet());
 		for (String nickname : jwac.getPlayers().keySet()) {
-			log.info("nickname: {}", nickname);
 			Player player = jwac.getPlayers().get(nickname);
-			History playerHistory = player.getHistory().get(currentRound);
+			if(player.getHistory() == null) {
+				continue;
+			}
+			History playerHistory = player.getHistory().getOrDefault(currentRound, null);
 			if (playerHistory != null) {
 				result.put(nickname, playerHistory);
 			}
@@ -165,21 +182,42 @@ public class JwacService {
 		jwacRoundResultDto.setMostBidder(mostBidder);
 		jwacRoundResultDto.setLeastBidder(leastBidder);
 
-		// Step 4: 15 라운드 특수 처리
-		long mostBidAmount = result.get(mostBidder).getBidAmount();
-		if (currentRound == 15) {
-			handleRound15(jwac, mostBidder, mostBidAmount);
-		} else {
-			handleNonRound15(jwac, mostBidder, leastBidder, currentRound, mostBidAmount);
+		if(result.get(mostBidder) != null) {
+			// Step 4: 15 라운드 특수 처리
+			long mostBidAmount = result.get(mostBidder).getBidAmount();
+			if(jwac.getBidAmounts() == null) {
+				jwac.setBidAmounts(new HashMap<>());
+			}
+			jwac.getBidAmounts().put(currentRound, mostBidAmount);
+
+			if (currentRound == 15) {
+				handleRound15(jwac, mostBidder, mostBidAmount);
+			} else {
+				handleNonRound15(jwac, mostBidder, leastBidder, currentRound, mostBidAmount);
+			}
 		}
 
 		// Step 5: 플레이어 점수를 jwacRoundResult에 저장
 		// TODO : 플레이어 점수 jwacRoundResult 에 저장
+		jwacRoundResultDto.setPlayers(new HashMap<>());
+		for(String nickname : jwac.getPlayers().keySet()) {
+			Player player = jwac.getPlayers().get(nickname);
+			jwacRoundResultDto.getPlayers().put(nickname, JwacRoundPlayerInfoDTO.builder()
+				.score(player.getScore())
+				.item(player.isSpecialItem())
+				.build());
+		}
 
 		// Step 6: 4라운드 마다 4라운드 동안의 낙찰금 합계 저장
+		Long bidSum = 0L;
+		if (currentRound % 4 == 0) {
+			for (int i = currentRound - 3; i <= currentRound; i++) {
+				bidSum += jwac.getBidAmounts().getOrDefault(i, 0L);
+			}
+			jwacRoundResultDto.setRoundBidSum(bidSum);
+		}
 
-		// Step 7: 다음 보석 jwacRoundResult에 저장
-		jwacRoundResultDto.setNextJwerly(jwac.getJwerly().get(currentRound));
+		jwacRedisRepository.save(jwac);
 
 
 		return jwacRoundResultDto;
@@ -242,7 +280,7 @@ public class JwacService {
 			Player mostBidderPlayer = jwac.getPlayers().get(mostBidder);
 			mostBidderPlayer.getHistory().get(currentRound).roundWin();
 			mostBidderPlayer.addTotalBidAmount(mostBidAmount);
-			mostBidderPlayer.addScore(getScore(jwac.getJwerly().get(currentRound - 1)));
+			mostBidderPlayer.addScore(getScore(jwac.getJwerly().get(currentRound)));
 		}
 
 		if (!leastBidder.isEmpty()) {
@@ -253,7 +291,7 @@ public class JwacService {
 	}
 
 	public Map<Jwerly, Integer> useSpecialItem(Jwac jwac) {
-		List<Jwerly> jwerly = jwac.getJwerly();
+		Map<Integer, Jwerly> jwerly = jwac.getJwerly();
 		int currentRound = jwac.getCurrentRound();
 		int maxRound = jwac.getMaxRound();
 
@@ -264,7 +302,7 @@ public class JwacService {
 		itemResult.put(Jwerly.DIAMOND, 0);
 
 		for(int i = currentRound + 1; i <= maxRound; i++) {
-			itemResult.put(jwerly.get(i - 1), itemResult.get(jwerly.get(i - 1)) + 1);
+			itemResult.put(jwerly.get(i), itemResult.get(jwerly.get(i)) + 1);
 		}
 
 		return itemResult;
@@ -275,7 +313,6 @@ public class JwacService {
 		int maxRound = jwac.getMaxRound();
 
 		if(currentRound >= maxRound) {
-			// TODO : 게임 종료 알림
 			return false;
 		}
 
@@ -286,6 +323,31 @@ public class JwacService {
 
 	public int getScore(Jwerly jwerly) {
 		return jwerly.getIndex();
+	}
+
+	public String findGameWinner(Map<String, Player> players) {
+		String winner = "";
+		long winnerBidAmount = -1L;
+		long maxBidAmount = -1L;
+		int maxScore = -1;
+		for(String nickname : players.keySet()) {
+			Player player = players.get(nickname);
+			// 낙찰금 총 합이 가장 큰 사람은 승리 X
+			if(maxBidAmount < player.getTotalBidAmount()) {
+				maxBidAmount = player.getTotalBidAmount();
+				continue;
+			// 최고점
+			} else if(player.getScore() > maxScore) {
+				winner = nickname;
+				winnerBidAmount = player.getTotalBidAmount();
+				maxScore = player.getScore();
+			// 최고점이 동점일경우 더 적은 금액을 낸 사람이 승리
+			} else if(player.getScore() == maxScore && winnerBidAmount > player.getTotalBidAmount()) {
+				winner = nickname;
+				winnerBidAmount = player.getTotalBidAmount();
+			}
+		}
+		return winner;
 	}
 
 	public String generateGameCode() {

@@ -6,8 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.maeng.game.domain.jwac.dto.JwacNicknameDto;
-import com.maeng.game.domain.jwac.repository.TimerRedisRepository;
+import com.maeng.game.domain.jwac.dto.JwacTimerInfoDTO;
 import com.maeng.game.domain.jwac.entity.Timer;
+import com.maeng.game.domain.jwac.repository.TimerRedisRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TimerService {
 	private final TimerRedisRepository timerRedisRepository;
+
+	private final static int ROUND_TIME = 20;
 
 	@Transactional
 	public boolean timerEnd(String gameCode, int headCount, JwacNicknameDto jwacNicknameDto) {
@@ -27,8 +30,9 @@ public class TimerService {
 
 		timer.getNicknames().add(jwacNicknameDto.getNickname());
 
-		boolean timerEnd = (timer.getNicknames().size() == headCount);
-
+		// TODO : 테스트를 위한 코드
+		// boolean timerEnd = (timer.getNicknames().size() == headCount);
+		boolean timerEnd = true;
 		if(timerEnd) {
 			timer.getNicknames().clear();
 		}
@@ -39,7 +43,10 @@ public class TimerService {
 	}
 
 	@Transactional
-	public void timerStart() {
-		// TODO : 타이머 시작 로직
+	public JwacTimerInfoDTO timerStart(String gameCode) {
+		return JwacTimerInfoDTO.builder()
+			.gameCode(gameCode)
+			.time(ROUND_TIME)
+			.build();
 	}
 }

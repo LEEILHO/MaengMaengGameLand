@@ -1,5 +1,11 @@
 package com.maeng.game.domain.room.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+
 import com.maeng.game.domain.jwac.emums.Tier;
 import com.maeng.game.domain.room.dto.CreateRoomDTO;
 import com.maeng.game.domain.room.entity.Player;
@@ -7,15 +13,14 @@ import com.maeng.game.domain.room.entity.Room;
 import com.maeng.game.domain.room.exception.NotFoundRoomException;
 import com.maeng.game.domain.room.exception.PullRoomException;
 import com.maeng.game.domain.room.repository.RoomRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class RoomService {
+public class   RoomService {
     private final RoomRepository roomRepository;
 
     // TODO : 대기방 생성
