@@ -3,44 +3,54 @@ package com.maeng.game.domain.jwac.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.maeng.game.domain.jwac.dto.JwacBidInfoDto;
-import com.maeng.game.domain.jwac.dto.JwacRoundResultDto;
+import com.maeng.game.domain.jwac.dto.JwacGameResultDTO;
 import com.maeng.game.domain.jwac.dto.JwacNicknameDto;
+import com.maeng.game.domain.jwac.dto.JwacRoundResultDto;
+import com.maeng.game.domain.jwac.dto.JwacTimerInfoDTO;
 import com.maeng.game.domain.jwac.dto.PlayerInfo;
 import com.maeng.game.domain.jwac.emums.Tier;
 import com.maeng.game.domain.jwac.service.EnterService;
 import com.maeng.game.domain.jwac.service.JwacService;
 import com.maeng.game.domain.jwac.service.TimerService;
+import com.maeng.game.domain.room.dto.MessageDTO;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
+@Controller
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/jwac")
 public class JwacController {
+	private final RabbitTemplate template;
+
 	private final JwacService jwacService;
 	private final TimerService timerService;
 	private final EnterService enterService;
 
-	@PostMapping("/enter/{gameCode}")
-	public void enter(@PathVariable String gameCode, @RequestBody JwacNicknameDto jwacNicknameDto) {
+	private final static String Game_EXCHANGE_NAME = "game.exchange";
+
+	@MessageMapping("game.jwac.{gameCode}")
+	public void enter(@DestinationVariable String gameCode, JwacNicknameDto jwacNicknameDto) {
 		// TODO :  방 정보에서 인원수 가져오기
 		int headCount = 6;
 		if(enterService.enter(gameCode, headCount, jwacNicknameDto)) {
 			// TODO : 방 정보에서 사용자 정보 가져오기
-			jwacService.generateGame("abcdefg", null);
-			timerService.timerStart();
+			test();
+			// jwacService.generateGame("abcdefg", null);
+			timerService.timerStart(gameCode);
 		}
 	}
 
-	@PostMapping("/generate")
+	@PostMapping("/test")
 	public void test() {
 		List<PlayerInfo> playerInfo = new ArrayList<>();
 		playerInfo.add(PlayerInfo.builder().nickname("1111").profileUrl("test/11").tier(Tier.BRONZE).build());
@@ -52,31 +62,43 @@ public class JwacController {
 		jwacService.generateGame("abcdefg", playerInfo);
 	}
 
-	@PostMapping("/bid/{gameCode}")
-	public void bid(@RequestBody JwacBidInfoDto jwacBidInfoDto) {
+	@MessageMapping("game.jwac.bid.{gameCode}")
+	public void bid(@DestinationVariable String gameCode, JwacBidInfoDto jwacBidInfoDto) {
+		log.info("bid");
 		jwacService.bidJwerly(jwacBidInfoDto);
 	}
 
-	@PostMapping("/time/{gameCode}")
-	public ResponseEntity<JwacRoundResultDto> end(@PathVariable String gameCode, @RequestBody JwacNicknameDto jwacNicknameDto) {
+	@MessageMapping("game.jwac.time.{gameCode}")
+	public void timerEnd(@DestinationVariable String gameCode, JwacNicknameDto jwacNicknameDto) {
+		log.info("timerEnd");
 		// 현재 라운드 결과 확인
-		JwacRoundResultDto jwacRoundResult = null;
 		int headCount = jwacService.getHeadCount(gameCode);
 		if(timerService.timerEnd(gameCode, headCount, jwacNicknameDto)) {
-			jwacRoundResult = jwacService.endRound(gameCode);
+			JwacRoundResultDto jwacRoundResult = jwacService.endRound(gameCode);
+
+			log.info(jwacRoundResult.toString());
+			template.convertAndSend(Game_EXCHANGE_NAME, "game.jwac."+gameCode, MessageDTO.builder()
+				.type("GAME_ROUND_RESULT")
+				.data(jwacRoundResult)
+				.build());
 
 			// 다음 라운드
 			if(jwacService.nextRound(gameCode)) {
-				// TODO : 새로운 타이머 시작
-				timerService.timerStart();
-			}
-		}
+				JwacTimerInfoDTO timerInfo = timerService.timerStart(gameCode);
 
-		// 결과 전송
-		if(jwacRoundResult != null) {
-			return ResponseEntity.ok(jwacRoundResult);
-		} else {
-			return ResponseEntity.status(5000).build();
+				template.convertAndSend(Game_EXCHANGE_NAME, "game.jwac."+gameCode, MessageDTO.builder()
+					.type("GAME_ROUND_START")
+					.data(timerInfo)
+					.build());
+			// 게임 종료
+			} else {
+				JwacGameResultDTO gameResult = jwacService.endGame(gameCode);
+
+				template.convertAndSend(Game_EXCHANGE_NAME, "game.jwac."+gameCode, MessageDTO.builder()
+					.type("GAME_END")
+					.data(gameResult)
+					.build());
+			}
 		}
 	}
 }
