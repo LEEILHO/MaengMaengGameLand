@@ -1,6 +1,6 @@
 import CButton from '@components/common/clients/CButton'
 import { images } from '@constants/images'
-import * as S from '@styles/lobby/CreateRoomModal'
+import * as S from '@styles/lobby/CreateRoomModal.styled'
 
 type Props = {
   closeModal: () => void
