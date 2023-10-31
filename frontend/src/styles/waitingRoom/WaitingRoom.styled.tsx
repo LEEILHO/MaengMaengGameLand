@@ -32,16 +32,14 @@ export const BottomButtons = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
-  align-items: center;
   position: fixed;
-  bottom: 8px;
-  padding-left: 34px;
+  bottom: 0px;
+  padding: 0px 20px 12px 20px;
 `
 
 export const ButtonRelatedGame = styled.div`
   display: flex;
   gap: 8px;
-  margin-right: 32px;
 `
 
 export const MoveBackButton = styled.button`

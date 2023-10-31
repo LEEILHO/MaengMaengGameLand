@@ -5,11 +5,12 @@ type Props = {
   title: string
   curPeople: string
   maxPeople: string
+  onClick?: () => void
 }
 
-const RoomItem = ({ title, curPeople, maxPeople }: Props) => {
+const RoomItem = ({ title, curPeople, maxPeople, onClick }: Props) => {
   return (
-    <S.RoomItemContainer>
+    <S.RoomItemContainer onClick={onClick}>
       <S.Title>{title}</S.Title>
       <S.BottomRow>
         <S.NumberOfPeople>{`${curPeople} / ${maxPeople}`}</S.NumberOfPeople>

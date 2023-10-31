@@ -2,6 +2,7 @@ import * as S from '@styles/lobby/RoomList.styled'
 import RoomItem from './RoomItem'
 import RoomTypeButton from './RoomTypeButton'
 import { useCallback, useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 const RoomList = () => {
   const [seletedRoomType, setSeletedRoomType] = useState<
@@ -14,6 +15,8 @@ const RoomList = () => {
     },
     [],
   )
+
+  const router = useRouter()
 
   return (
     <S.RoomListContainer>
@@ -40,7 +43,14 @@ const RoomList = () => {
         />
       </S.TypeButtonRaw>
       <S.RoomBox>
-        <RoomItem title="1번방 1번방 1번방 1번방" maxPeople="8" curPeople="3" />
+        <RoomItem
+          title="1번방 1번방 1번방 1번방"
+          maxPeople="8"
+          curPeople="3"
+          onClick={() => {
+            router.push('/gsb/waiting-room/1')
+          }}
+        />
         <RoomItem title="1번방 2번방 2번방 2번방" maxPeople="8" curPeople="2" />
         <RoomItem title="3번방 3번방 3번방 3번방" maxPeople="8" curPeople="1" />
         <RoomItem title="4번방 4번방 4번방 4번방" maxPeople="8" curPeople="8" />
