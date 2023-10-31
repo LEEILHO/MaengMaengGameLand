@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Rect
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -45,6 +46,9 @@ class GameFragment :
     // 이미지뷰의 크기
     val pWidth = lazy { binding.imageViewPlayer.width }
 
+    val displayMetrics = Resources.getSystem().displayMetrics
+    val screenHeight = displayMetrics.heightPixels
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initSensorManager()
@@ -52,7 +56,7 @@ class GameFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        Log.d(TAG, "displayMetrics: $displayMetrics ${displayMetrics.ydpi}")
         imageViewPlayerReference = binding.imageViewPlayer
 
         // 스와이프로 뒤로가기 적용
@@ -73,6 +77,10 @@ class GameFragment :
         // 발판 생성
         initPlatform()
 
+//        binding.imageViewPlayer.bringToFront()
+        binding.root.bringChildToFront(binding.imageViewPlayer)
+        binding.imageViewPlayer.elevation = 1f
+
         // 점프 애니메이션
         initAnimation()
 //        jumpUpAnimation()
@@ -82,10 +90,10 @@ class GameFragment :
     private fun updatePlayerPosition() {
         binding.imageViewPlayer.let {
             val playerRect = Rect(
-                binding.imageViewPlayer.x.toInt(),
-                binding.imageViewPlayer.y.toInt(),
-                (binding.imageViewPlayer.x + binding.imageViewPlayer.width).toInt(),
-                (binding.imageViewPlayer.y + binding.imageViewPlayer.height).toInt()
+                it.x.toInt(),
+                it.y.toInt(),
+                (it.x + it.width).toInt(),
+                (it.y + it.height).toInt()
             )
             playerPosition.value = playerRect
         }
@@ -98,8 +106,8 @@ class GameFragment :
 
         playerPosition.observe(viewLifecycleOwner) { playerRect ->
 
-            // 애니메이션 중이 아니라면
-            if (!isGoingUp) {
+            // 점프하고 내려오는 중
+            if (isGoingDown) {
                 for (i in 0 until binding.root.childCount) {
                     val platform = binding.root.getChildAt(i)
 
@@ -110,20 +118,21 @@ class GameFragment :
                             (platform.x + platform.width).toInt(),
                             (platform.y + platform.height).toInt()
                         )
-
-                        if (playerRect.left > platformRect.left && playerRect.right < platformRect.right && playerRect.bottom == platformRect.bottom) {
-
-
-//                        if (playerRect.intersect(platformRect)) {
+//                        Log.d(TAG, "platform: ${platformRect.top}, ${platformRect.bottom} ${platformRect.left} ${platformRect.right}")
+//                        Log.d(TAG, "player: ${playerRect.top} ${playerRect.bottom} ${playerRect.left} ${playerRect.right}")
+                        if (playerRect.right > platformRect.left && playerRect.left < platformRect.right && (playerRect.bottom - platformRect.top <= 10)) {
                             Log.d(
                                 TAG,
-                                "checkCollisions:  ${binding.imageViewPlayer.y} ${platform.y}"
+                                "checkCollisions:  ${playerRect.bottom} ${platformRect.top}"
                             )
-                            yPosition = platform.y
+                            yPosition = platformRect.top.toFloat() - screenHeight
+                            Log.d(TAG, "yPosition: $yPosition")
                             initAnimation()
-                        } else if (!playerRect.intersect(platformRect) && yPosition != 0.0f) {
-                            fallAnimation()
                         }
+
+//                        else if (yPosition != 0.0f) {
+//                            fallAnimation()
+//                        }
                     }
                 }
             }
@@ -138,7 +147,8 @@ class GameFragment :
         }
     }
 
-    private var isGoingUp = true
+    private var isGoingDown = false
+    private var beforeAnimateValue = 0F
     private fun initAnimation() {
         valueAnimator = ValueAnimator.ofFloat(yPosition, yPosition - 250f).apply {
             duration = 540
@@ -149,19 +159,20 @@ class GameFragment :
 
             addUpdateListener { animator ->
                 val animatedValue = animator.animatedValue as Float
-                imageViewPlayerReference?.translationY = animatedValue
+                binding.imageViewPlayer.y = animatedValue + binding.imageViewPlayer.top
+//                imageViewPlayerReference?.translationY = animatedValue
+//                Log.d(TAG, "initAnimation: $yPosition")
 
-                if (isGoingUp) {
-                    // 점프해서 위로 올라가는 로직
-                    if (animatedValue <= -250f) {
-                        isGoingUp = false
-                    }
-                } else {
-                    // 점프한 후 내려오는 로직
-                    if (animatedValue >= yPosition) {
-                        isGoingUp = true
-                    }
+                // 0.0 -> 착지 / -250 -> 꼭대기
+                if (animatedValue >= beforeAnimateValue) { // 내려가는 중
+                    updatePlayerPosition()
+//                        Log.d(TAG, "initAnimation: 내려감~~~")
+                    isGoingDown = true
+                } else { // 점프하는 중
+                    isGoingDown = false
+//                        Log.d(TAG, "initAnimation: 올라감~~~")
                 }
+                beforeAnimateValue = animatedValue
             }
 
 //            addListener(object : AnimatorListenerAdapter() {
@@ -183,12 +194,12 @@ class GameFragment :
 
     private var isAnimating = false
 
-    private fun updateAnimation() {
-        if (!isAnimating) {
-            isAnimating = true
-            jumpUpAnimation() // updateAnimation 호출 시 상승하는 애니메이션부터 시작
-        }
-    }
+//    private fun updateAnimation() {
+//        if (!isAnimating) {
+//            isAnimating = true
+//            jumpUpAnimation() // updateAnimation 호출 시 상승하는 애니메이션부터 시작
+//        }
+//    }
 
     private fun jumpUpAnimation() {
         valueAnimator = ValueAnimator.ofFloat(yPosition, yPosition - 200f).apply {
@@ -219,7 +230,7 @@ class GameFragment :
             addUpdateListener { animator ->
                 val animatedValue = animator.animatedValue as Float
                 imageViewPlayerReference?.y = animatedValue
-                checkPlatformCollision() // 내려오면서 발판과의 충돌 확인
+//                checkPlatformCollision() // 내려오면서 발판과의 충돌 확인
             }
 
             addListener(object : AnimatorListenerAdapter() {
@@ -236,7 +247,7 @@ class GameFragment :
     private fun checkPlatformCollision() {
         val playerRect = Rect(
             binding.imageViewPlayer.x.toInt(),
-            (binding.imageViewPlayer.y + binding.imageViewPlayer.height).toInt(),
+            binding.imageViewPlayer.y.toInt(),
             (binding.imageViewPlayer.x + binding.imageViewPlayer.width).toInt(),
             (binding.imageViewPlayer.y + binding.imageViewPlayer.height).toInt()
         )
@@ -249,7 +260,7 @@ class GameFragment :
                     platform.x.toInt(),
                     platform.y.toInt(),
                     (platform.x + platform.width).toInt(),
-                    platform.y.toInt()
+                    (platform.y + platform.height).toInt()
                 )
 
                 if (playerRect.intersect(platformRect)) {
@@ -293,12 +304,12 @@ class GameFragment :
     private val listener = object : SensorEventListener {
 
         override fun onSensorChanged(event: SensorEvent) {
-            updatePlayerPosition()
+//            updatePlayerPosition()
 //            Log.d(TAG, "onSensorChanged: ${binding.imageViewPlayer.x}, ${binding.imageViewPlayer.y}")
 //            Log.d(TAG, "onSensorChanged: ${binding.imageViewPlayer.left}, ${binding.imageViewPlayer.top}")
 //            Log.d(TAG, "onSensorChanged: x: ${event.values[0]}")
 
-            // 캐릭터 방향
+            // 캐릭터 좌우 방향
             binding.imageViewPlayer.scaleX = if (event.values[0] > 0) -1f else 1f
 
             // 센서의 움직임에 따라 이동할 위치
@@ -347,7 +358,7 @@ class GameFragment :
 
     private fun createPlatform(): ImageView {
         val platform = ImageView(context)
-        platform.setImageResource(R.drawable.icon_foothold)
+        platform.setImageResource(R.drawable.icon_platform)
         platform.layoutParams = RelativeLayout.LayoutParams(
             dpToPx(40f).toInt(), dpToPx(40f).toInt()
         )
