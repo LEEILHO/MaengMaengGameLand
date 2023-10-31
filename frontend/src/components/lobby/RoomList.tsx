@@ -48,7 +48,7 @@ const RoomList = () => {
           maxPeople="8"
           curPeople="3"
           onClick={() => {
-            router.push('gsb/waiting-room/1')
+            router.push('/gsb/waiting-room/1')
           }}
         />
         <RoomItem title="1번방 2번방 2번방 2번방" maxPeople="8" curPeople="2" />

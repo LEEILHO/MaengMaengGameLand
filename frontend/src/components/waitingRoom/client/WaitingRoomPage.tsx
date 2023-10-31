@@ -125,9 +125,10 @@ const WaitingRoomPage = () => {
           </S.PlayerList>
         </S.Contents>
         <S.BottomButtons>
-          <BackButton size={32} />
+          <BackButton size={44} />
           <S.ButtonRelatedGame>
             <CButton
+              height={48}
               radius={109}
               fontSize={20}
               color={colors.greyScale.white}
@@ -137,6 +138,7 @@ const WaitingRoomPage = () => {
             />
             {isHost ? (
               <CButton
+                height={48}
                 radius={109}
                 fontSize={20}
                 color={colors.greyScale.white}
@@ -145,6 +147,7 @@ const WaitingRoomPage = () => {
               />
             ) : (
               <CButton
+                height={48}
                 radius={109}
                 fontSize={20}
                 color={colors.greyScale.white}
