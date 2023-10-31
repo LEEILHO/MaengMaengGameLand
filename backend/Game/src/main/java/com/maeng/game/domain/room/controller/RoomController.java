@@ -19,9 +19,7 @@ public class RoomController {
     @Operation(summary = "대기실 생성")
     @PostMapping("/create")
     public ResponseEntity<String> createRoom(@RequestBody CreateRoomDTO createRoomDTO){
-        log.info(createRoomDTO.toString());
         String roomCode = roomService.createRoom(createRoomDTO);
-        log.info(roomCode);
         roomService.enterRoom(roomCode, createRoomDTO.getHost());
 
         return ResponseEntity.ok(roomCode);

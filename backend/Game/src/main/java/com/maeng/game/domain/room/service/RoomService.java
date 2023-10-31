@@ -9,6 +9,7 @@ import com.maeng.game.domain.room.exception.PullRoomException;
 import com.maeng.game.domain.room.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.util.*;
 
@@ -17,6 +18,9 @@ import java.util.*;
 @Service
 public class RoomService {
     private final RoomRepository roomRepository;
+
+    @Value("${game.max}")
+    private final int GAME_MAX_PLAYER = 8;
 
     // TODO : 대기방 생성
     public String createRoom(CreateRoomDTO createRoomDTO){
@@ -27,7 +31,7 @@ public class RoomService {
                         .title(createRoomDTO.getTitle())
                         .createdAt(createRoomDTO.getCreatedAt())
                         .headCount(0)
-                        .maxHeadCount(createRoomDTO.getHeadCount())
+                        .maxHeadCount(GAME_MAX_PLAYER)
                         .publicRoom(createRoomDTO.isPublicRoom())
                         .participant(null)
                         .gameCategory(createRoomDTO.getGameCategory())
@@ -46,7 +50,7 @@ public class RoomService {
             throw new NotFoundRoomException("존재하지 않는 방입니다.");
         }
 
-        if(roomInfo.getHeadCount() == roomInfo.getMaxHeadCount()){
+        if(roomInfo.getHeadCount() == GAME_MAX_PLAYER){
             throw new PullRoomException("플레이어가 가득 찬 방입니다.");
         }
 
@@ -77,6 +81,5 @@ public class RoomService {
     }
 
     // TODO : sendMessageToUser - 특정 사용자에게 메세지 보낼 때
-
 
 }

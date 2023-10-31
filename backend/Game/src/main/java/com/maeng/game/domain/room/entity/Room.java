@@ -19,8 +19,8 @@ public class Room implements Serializable {
     private String id;
     private String title;
     private LocalDateTime createdAt;
-    private int maxHeadCount;
     private int headCount;
+    private int maxHeadCount;
     private boolean publicRoom;
     private List<Player> participant;
     private Game gameCategory;

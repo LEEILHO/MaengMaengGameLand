@@ -15,7 +15,7 @@ public class AwrspController {
     private final static String GAME_EXCHANGE_NAME = "game.exchange";
 
     @MessageMapping("game.awrsp.{roomCode}")
-    public void awrsp(@DestinationVariable("roomCode") String roomCode, ChatDTO chatDTO){
+    public void start(@DestinationVariable("roomCode") String roomCode, ChatDTO chatDTO){
 
         MessageDTO messageDTO = MessageDTO.builder()
                 .type("ROOM_CHAT")

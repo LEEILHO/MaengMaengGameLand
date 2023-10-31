@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Data
 public class CreateRoomDTO {
     private String title;
-    private int headCount;
     private boolean publicRoom;
     private LocalDateTime createdAt;
     private String host;
