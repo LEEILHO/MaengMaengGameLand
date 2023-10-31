@@ -15,6 +15,7 @@ import com.maeng.game.domain.jwac.dto.JwacRoundResultDto;
 import com.maeng.game.domain.jwac.dto.JwacNicknameDto;
 import com.maeng.game.domain.jwac.dto.PlayerInfo;
 import com.maeng.game.domain.jwac.emums.Tier;
+import com.maeng.game.domain.jwac.service.EnterService;
 import com.maeng.game.domain.jwac.service.JwacService;
 import com.maeng.game.domain.jwac.service.TimerService;
 
@@ -26,11 +27,17 @@ import lombok.RequiredArgsConstructor;
 public class JwacController {
 	private final JwacService jwacService;
 	private final TimerService timerService;
+	private final EnterService enterService;
 
 	@PostMapping("/enter/{gameCode}")
 	public void enter(@PathVariable String gameCode, @RequestBody JwacNicknameDto jwacNicknameDto) {
-
-
+		// TODO :  방 정보에서 인원수 가져오기
+		int headCount = 6;
+		if(enterService.enter(gameCode, headCount, jwacNicknameDto)) {
+			// TODO : 방 정보에서 사용자 정보 가져오기
+			jwacService.generateGame("abcdefg", null);
+			timerService.timerStart();
+		}
 	}
 
 	@PostMapping("/generate")
