@@ -7,22 +7,31 @@ import HomeHeader from '@components/home/HomeHeader'
 import GameCard from '@components/home/GameCard'
 import { images } from '@constants/images'
 import CButton from '@components/common/clients/CButton'
+import { useRouter } from 'next/navigation'
 
 const Home = () => {
+  const router = useRouter()
+
   return (
     <>
       <S.HomeContainer>
         <HomeHeader onClickFriend={() => {}} onClickSetting={() => {}} />
         <S.BackgroundLottie animationData={Backround} loop />
         <S.GameCardContainer>
-          <GameCard backGroundUrl={images.home.gsb} name={'금은동'} />
+          <GameCard
+            backGroundUrl={images.home.gsb}
+            name={'금은동'}
+            onClick={() => router.push('gsb/lobby')}
+          />
           <GameCard
             backGroundUrl={images.home.jwac}
             name={'무제한 보석 경매'}
+            onClick={() => router.push('jwac/lobby')}
           />
           <GameCard
             backGroundUrl={images.home.awrsp}
             name={'전승 가위바위보'}
+            onClick={() => router.push('awrsp/lobby')}
           />
         </S.GameCardContainer>
         <S.ButtonLow>
