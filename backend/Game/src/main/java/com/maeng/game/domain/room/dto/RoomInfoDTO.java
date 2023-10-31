@@ -16,7 +16,7 @@ import java.util.List;
 public class RoomInfoDTO implements Serializable {
 
     private String title;
-    private LocalDateTime createdAt;
+    private String roomCode;
     private int headCount;
     private int maxHeadCount;
     private boolean publicRoom;
