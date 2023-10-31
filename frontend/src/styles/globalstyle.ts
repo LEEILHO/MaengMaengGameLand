@@ -33,6 +33,10 @@ const GlobalStyle = createGlobalStyle<Props>`
     font-family: 'kbo-dia';
   }
 
+  body {
+    position: fixed;
+  }
+
   html,body {
     width: 100vw;
     height: 100vh;
