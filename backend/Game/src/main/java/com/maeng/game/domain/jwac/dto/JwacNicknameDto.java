@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class JwacTimerEndDto {
+public class JwacNicknameDto {
 	private String gameCode;
 	private String nickname;
 }

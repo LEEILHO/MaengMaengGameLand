@@ -33,6 +33,8 @@ public class JwacService {
 
 	private final JwacRedisRepository jwacRedisRepository;
 
+	@Transactional
+
 	public void generateGame(String roomCode, List<PlayerInfo> playerInfo) {
 		String gameCode = generateGameCode();
 
@@ -145,7 +147,9 @@ public class JwacService {
 
 		// Step 1: 관련 데이터 추출
 		Map<String, History> result = new HashMap<>();
+		log.info("jwac.getPlayers().keySet(): {}", jwac.getPlayers().keySet());
 		for (String nickname : jwac.getPlayers().keySet()) {
+			log.info("nickname: {}", nickname);
 			Player player = jwac.getPlayers().get(nickname);
 			History playerHistory = player.getHistory().get(currentRound);
 			if (playerHistory != null) {
@@ -171,6 +175,12 @@ public class JwacService {
 
 		// Step 5: 플레이어 점수를 jwacRoundResult에 저장
 		// TODO : 플레이어 점수 jwacRoundResult 에 저장
+
+		// Step 6: 4라운드 마다 4라운드 동안의 낙찰금 합계 저장
+
+		// Step 7: 다음 보석 jwacRoundResult에 저장
+		jwacRoundResultDto.setNextJwerly(jwac.getJwerly().get(currentRound));
+
 
 		return jwacRoundResultDto;
 	}

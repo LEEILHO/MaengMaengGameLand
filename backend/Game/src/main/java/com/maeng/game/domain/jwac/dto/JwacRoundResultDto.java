@@ -2,6 +2,8 @@ package com.maeng.game.domain.jwac.dto;
 
 import java.util.Map;
 
+import com.maeng.game.domain.jwac.emums.Jwerly;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +16,7 @@ public class JwacRoundResultDto {
 	private String mostBidder;
 	private String leastBidder;
 	private Long roundBidSum;
+	private Jwerly nextJwerly;
 	private Map<String, Player> players;
 
 	@Data

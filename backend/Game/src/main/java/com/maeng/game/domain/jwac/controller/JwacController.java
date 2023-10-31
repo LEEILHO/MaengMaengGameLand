@@ -12,9 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.maeng.game.domain.jwac.dto.JwacBidInfoDto;
 import com.maeng.game.domain.jwac.dto.JwacRoundResultDto;
-import com.maeng.game.domain.jwac.dto.JwacTimerEndDto;
+import com.maeng.game.domain.jwac.dto.JwacNicknameDto;
 import com.maeng.game.domain.jwac.dto.PlayerInfo;
 import com.maeng.game.domain.jwac.emums.Tier;
+import com.maeng.game.domain.jwac.service.EnterService;
 import com.maeng.game.domain.jwac.service.JwacService;
 import com.maeng.game.domain.jwac.service.TimerService;
 
@@ -26,6 +27,18 @@ import lombok.RequiredArgsConstructor;
 public class JwacController {
 	private final JwacService jwacService;
 	private final TimerService timerService;
+	private final EnterService enterService;
+
+	@PostMapping("/enter/{gameCode}")
+	public void enter(@PathVariable String gameCode, @RequestBody JwacNicknameDto jwacNicknameDto) {
+		// TODO :  방 정보에서 인원수 가져오기
+		int headCount = 6;
+		if(enterService.enter(gameCode, headCount, jwacNicknameDto)) {
+			// TODO : 방 정보에서 사용자 정보 가져오기
+			jwacService.generateGame("abcdefg", null);
+			timerService.timerStart();
+		}
+	}
 
 	@PostMapping("/generate")
 	public void test() {
@@ -45,11 +58,11 @@ public class JwacController {
 	}
 
 	@PostMapping("/time/{gameCode}")
-	public ResponseEntity<JwacRoundResultDto> end(@PathVariable String gameCode, @RequestBody JwacTimerEndDto jwacTimerEndDto) {
+	public ResponseEntity<JwacRoundResultDto> end(@PathVariable String gameCode, @RequestBody JwacNicknameDto jwacNicknameDto) {
 		// 현재 라운드 결과 확인
 		JwacRoundResultDto jwacRoundResult = null;
 		int headCount = jwacService.getHeadCount(gameCode);
-		if(timerService.timerEnd(gameCode, headCount, jwacTimerEndDto)) {
+		if(timerService.timerEnd(gameCode, headCount, jwacNicknameDto)) {
 			jwacRoundResult = jwacService.endRound(gameCode);
 
 			// 다음 라운드
