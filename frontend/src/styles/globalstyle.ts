@@ -1,11 +1,7 @@
 import { createGlobalStyle, css } from 'styled-components'
 import reset from 'styled-reset'
 
-type Props = {
-  isMobile: boolean
-}
-
-const GlobalStyle = createGlobalStyle<Props>`
+const GlobalStyle = createGlobalStyle`
   ${reset}
 
   *{
@@ -35,6 +31,7 @@ const GlobalStyle = createGlobalStyle<Props>`
 
   body {
     position: fixed;
+    overflow: hidden;
   }
 
   html,body {

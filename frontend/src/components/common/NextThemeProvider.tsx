@@ -58,7 +58,7 @@ const NextThemeProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <ThemeProvider theme={theme}>
-      <GlobalStyle isMobile={false} />
+      <GlobalStyle />
       {isMobile && (
         <div
           style={{
