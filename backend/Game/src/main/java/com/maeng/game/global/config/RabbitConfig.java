@@ -21,10 +21,13 @@ public class RabbitConfig {
 
     private static final String ROOM_QUEUE_NAME = "room.queue";
     private static final String GAME_QUEUE_NAME = "game.queue";
+    private static final String RECORD_QUEUE_NAME = "record.queue";
     private static final String ROOM_EXCHANGE_NAME = "room";
     private static final String GAME_EXCHANGE_NAME = "game";
+	private static final String RECORD_EXCHANGE_NAME = "record";
     private static final String ROOM_ROUTING_KEY = "*.room.*";
     private static final String GAME_ROUTING_KEY = "*.game.*"; // *.game.게임종류.방코드
+    private static final String RECORD_ROUTING_KEY = "*.record.*";
 
     @Value("${spring.rabbitmq.host}")
     private String HOST;
@@ -47,6 +50,11 @@ public class RabbitConfig {
         return new Queue(GAME_QUEUE_NAME, true);
     }
 
+    @Bean
+    public Queue record_queue(){
+        return new Queue(RECORD_QUEUE_NAME, true);
+    }
+
     // Exchange 등록
     @Bean
     public TopicExchange room_exchange(){
@@ -58,6 +66,11 @@ public class RabbitConfig {
         return new TopicExchange(GAME_EXCHANGE_NAME);
     }
 
+    @Bean
+    public TopicExchange record_exchange(){
+        return new TopicExchange(RECORD_EXCHANGE_NAME);
+    }
+
     // Exchange와 Queue 바인딩
     @Bean
     public Binding room_binding(){
@@ -67,6 +80,11 @@ public class RabbitConfig {
     @Bean
     public Binding game_binding(){
         return BindingBuilder.bind(game_queue()).to(game_exchange()).with(GAME_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding record_binding(){
+        return BindingBuilder.bind(record_queue()).to(record_exchange()).with(RECORD_ROUTING_KEY);
     }
 
     @Bean

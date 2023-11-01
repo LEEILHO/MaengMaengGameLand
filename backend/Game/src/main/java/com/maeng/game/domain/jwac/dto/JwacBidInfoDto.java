@@ -9,5 +9,5 @@ public class JwacBidInfoDto {
 	private String gameCode;
 	private String nickname;
 	private int round;
-	private int bidAmount;
+	private long bidAmount;
 }
