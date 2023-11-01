@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,7 +21,9 @@ public class RoomController {
 
     @Operation(summary = "대기방 생성")
     @PostMapping("/create")
-    public ResponseEntity<String> create(CreateRoomDTO createRoomDTO){
+    public ResponseEntity<String> create(@RequestBody CreateRoomDTO createRoomDTO){
+
+        log.info(createRoomDTO.toString());
         String roomCode = roomService.createRoom(createRoomDTO);
         log.info(roomCode);
 

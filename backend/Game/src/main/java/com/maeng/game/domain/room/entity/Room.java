@@ -25,6 +25,7 @@ public class Room implements Serializable {
     private LocalDateTime createdAt;
     private int headCount;
     private int maxHeadCount;
+    @Indexed
     private boolean publicRoom;
     private HashMap<String, Player> participant;
     @Indexed

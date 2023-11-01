@@ -13,5 +13,6 @@ import java.util.Optional;
 @Repository
 public interface RoomRepository extends CrudRepository<Room, String> {
     Optional<Room> findById(String roomCode);
-    List<Room> findAllByGameCategoryAndChannelTire(Game game, ChannelTire channelTire);
+    List<Room> findAllByGameCategoryAndChannelTireAndPublicRoomIsTrue(Game game, ChannelTire channelTire);
+
 }
