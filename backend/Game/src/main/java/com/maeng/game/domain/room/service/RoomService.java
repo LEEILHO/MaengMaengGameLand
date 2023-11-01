@@ -148,13 +148,22 @@ public class RoomService {
         }
 
         HashMap<String, Player> players = room.getParticipant();
+        Player player = players.get(playerDTO.getNickname());
+
         players.remove(playerDTO.getNickname());
         room.setParticipant(players);
         room.setHeadCount(room.getHeadCount()-1);
 
         if(room.getHeadCount() == 0){ // 방에 아무도 남아있지 않다면 방 정보 삭제
             roomRepository.delete(room);
+            log.info("roomCode : " +roomCode+ "방 삭제 완");
             return;
+        }
+
+        List<String> temp = new ArrayList<>(room.getParticipant().keySet());
+        if(player.isHost()){ // 나간 사람이 방장이면 남은 사람 중 한 명을 방장으로
+            Player nextHost = players.get(temp.get(0));
+            nextHost.setHost(true);
         }
 
         roomRepository.save(room);
