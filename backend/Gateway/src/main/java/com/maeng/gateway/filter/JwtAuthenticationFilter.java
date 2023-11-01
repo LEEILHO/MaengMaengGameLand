@@ -44,6 +44,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
             logger.info("JwtAuthenticationFilter()");
             ServerHttpRequest request = exchange.getRequest();
             if(!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)){
+                logger.info("header 없음");
                 return onError(exchange, "No authoriazation header", HttpStatus.UNAUTHORIZED);
             }
 
@@ -52,14 +53,20 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
             logger.info("jwt ={}", jwt);
 
             if(!isJwtValid(jwt)){
-
+                logger.info("유효하지 않은 토큰");
                 return onError(exchange, "JWT token is not valid",HttpStatus.UNAUTHORIZED);
             }
             String email = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody().getSubject();
             logger.info("email ={} ", email);
-            exchange.mutate().request(builder -> builder.header("userEmail", email)).build();
+//            exchange.mutate().request(builder -> builder.header("userEmail", email)).build();
+            // 이메일 값을 헤더로 추가
+            ServerHttpRequest modifiedRequest = request.mutate()
+                    .header("userEmail", email)
+                    .build();
 
-            return chain.filter(exchange);
+//            return chain.filter(exchange);
+            return chain.filter(exchange.mutate().request(modifiedRequest).build());
+
         });
 
 
