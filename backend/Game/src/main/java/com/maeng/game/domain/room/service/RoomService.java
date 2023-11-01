@@ -23,7 +23,7 @@ public class RoomService {
     private final RoomRepository roomRepository;
     private final AwrspService awrspService;
     private final RabbitTemplate template;
-    private final static String CHAT_EXCHANGE_NAME = "room.exchange";
+    private final static String CHAT_EXCHANGE_NAME = "room";
     @Value("${game.max}")
     private final int GAME_MAX_PLAYER = 8;
     @Value("${game.gsb-min}")
@@ -49,17 +49,11 @@ public class RoomService {
                         .channelTire(createRoomDTO.getChannelTire())
                 .build());
 
-        MessageDTO messageDTO = MessageDTO.builder()
-                .type("ROOM_CREATE")
-                .data(roomCode)
-                .build();
-
-        template.convertAndSend(CHAT_EXCHANGE_NAME, "room."+createRoomDTO.getHost(), messageDTO);
         return roomCode;
     }
 
     // 대기방 입장
-    public Room enterRoom(String roomCode, String nickname){
+    public void enterRoom(String roomCode, String nickname){
 
         // 방에 사람이 가득찼는지 확인하기
         Room roomInfo = roomRepository.findById(roomCode).orElse(null);
@@ -98,7 +92,6 @@ public class RoomService {
 
         sendRoomInfo(roomCode, roomInfo);
 
-        return roomInfo;
     }
 
     public void gameStart(String roomCode, PlayerDTO playerDTO){
