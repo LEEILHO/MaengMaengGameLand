@@ -42,16 +42,17 @@ export const TierFrame = styled.div`
 
 export const ProfileImage = styled.img`
   position: absolute;
+  border-radius: 50%;
   top: 20px;
   left: 22px;
   width: 50px;
   height: 50px;
 
   @media screen and ((max-width: 700px) or (max-height: 376px)) {
-    top: 18px;
-    left: 18px;
-    width: 40px;
-    height: 40px;
+    top: 17px;
+    left: 17px;
+    width: 42px;
+    height: 42px;
   }
 `
 
