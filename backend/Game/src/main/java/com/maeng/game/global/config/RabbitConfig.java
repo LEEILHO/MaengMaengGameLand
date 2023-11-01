@@ -1,6 +1,5 @@
 package com.maeng.game.global.config;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -14,6 +13,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import lombok.RequiredArgsConstructor;
+
 @RequiredArgsConstructor
 @Configuration
 @EnableRabbit
@@ -24,7 +25,6 @@ public class RabbitConfig {
     private static final String RECORD_QUEUE_NAME = "record.queue";
     private static final String ROOM_EXCHANGE_NAME = "room";
     private static final String GAME_EXCHANGE_NAME = "game";
-    private static final String ROOM_ROUTING_KEY = "room.*";
 	private static final String RECORD_EXCHANGE_NAME = "record";
     private static final String ROOM_ROUTING_KEY = "*.room.*";
     private static final String GAME_ROUTING_KEY = "*.game.*"; // *.game.게임종류.방코드
