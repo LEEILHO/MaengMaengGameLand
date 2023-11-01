@@ -31,6 +31,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
     public JwtAuthenticationFilter(Environment env, @Value("${jwt.secret-key}") String secretKey) {
         super(Config.class);
         this.env = env;
+        logger.info("secretKey ={}" , secretKey);
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
@@ -103,7 +104,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
     private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus httpStatus){
         ServerHttpResponse response  =  exchange.getResponse();
         response.setStatusCode(httpStatus);
-
+        logger.info("에러 발생");
         logger.error(err);
         return response.setComplete();
 
