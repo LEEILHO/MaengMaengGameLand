@@ -2,19 +2,15 @@ package com.maeng.game.domain.room.service;
 
 import com.maeng.game.domain.awrsp.game.service.AwrspService;
 import com.maeng.game.domain.jwac.emums.Tier;
-import com.maeng.game.domain.lobby.enums.ChannelTire;
-import com.maeng.game.domain.room.dto.CreateRoomDTO;
-import com.maeng.game.domain.room.dto.GameStartDTO;
+import com.maeng.game.domain.room.dto.*;
 import com.maeng.game.domain.room.entity.Game;
 import com.maeng.game.domain.room.entity.Player;
 import com.maeng.game.domain.room.entity.Room;
-import com.maeng.game.domain.room.exception.MinHeadCountException;
-import com.maeng.game.domain.room.exception.NotFoundRoomException;
-import com.maeng.game.domain.room.exception.NotReadyPlayerException;
-import com.maeng.game.domain.room.exception.PullRoomException;
+import com.maeng.game.domain.room.exception.*;
 import com.maeng.game.domain.room.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.util.*;
@@ -25,6 +21,8 @@ import java.util.*;
 public class RoomService {
     private final RoomRepository roomRepository;
     private final AwrspService awrspService;
+    private final RabbitTemplate template;
+    private final static String CHAT_EXCHANGE_NAME = "room.exchange";
     @Value("${game.max}")
     private final int GAME_MAX_PLAYER = 8;
     @Value("${game.gsb-min}")
@@ -50,7 +48,12 @@ public class RoomService {
                         .channelTire(createRoomDTO.getChannelTire())
                 .build());
 
-        log.info(createRoomDTO.getChannelTire()+"");
+        MessageDTO messageDTO = MessageDTO.builder()
+                .type("ROOM_CREATE")
+                .data(roomCode)
+                .build();
+
+        template.convertAndSend(CHAT_EXCHANGE_NAME, "room."+createRoomDTO.getHost(), messageDTO);
         return roomCode;
     }
 
@@ -70,7 +73,8 @@ public class RoomService {
 
         // 방이 가득차지 않았으면 headCount++ 후 Player 추가해주기
         int headCount = roomInfo.getHeadCount();
-        List<Player> newList = new ArrayList<>();
+        //List<Player> newList = new ArrayList<>();
+        HashMap<String, Player> newList = new HashMap<>();
         Player player = Player.builder()
                 .nickname(nickname)
                 .ready(false)
@@ -80,11 +84,13 @@ public class RoomService {
                 .build();
 
         if(roomInfo.getParticipant() != null) { // 방장이 아닐 경우
-            newList.addAll(roomInfo.getParticipant());
+            //newList.addAll(roomInfo.getParticipant());
+            newList.putAll(roomInfo.getParticipant());
             player.setHost(false);
         }
 
-        newList.add(player);
+        //newList.add(player);
+        newList.put(player.getNickname(), player);
 
         roomInfo.setParticipant(newList);
         roomInfo.setHeadCount(headCount+1);
@@ -94,23 +100,50 @@ public class RoomService {
         return roomInfo;
     }
 
-    public void gameStart(String roomCode){
+    public void gameStart(String roomCode, StartDTO startDTO){
         Room room = roomRepository.findById(roomCode).orElse(null);
 
         if(room == null){
             throw new NotFoundRoomException("존재하지 않는 방입니다.");
         }
 
+        // TODO : 해당 닉네임이 host이면 게임 시작
+        Player player = room.getParticipant().get(startDTO.getNickname());
+        if(!player.isHost()){
+            throw new NotHostException("방장만 게임을 시작할 수 있습니다.");
+        }
+
         checkCount(room.getGameCategory(), room.getHeadCount()); // 최소 인원 확인
         checkReady(room.getParticipant()); // 플레이어 레디 상태 확인
-        gameStart(room, roomCode); // 게임시작
+        start(room, roomCode); // 게임시작
     }
 
-    public void gameStart(Room room, String roomCode){
+    public Room readyPlayer(String roomCode, ReadyDTO readyDTO){
+
+        // TODO : 방 정보에서 해당 플레이어 레디 상태 바꾸고
+        Room room = roomRepository.findById(roomCode).orElse(null);
+
+        if(room == null){
+            throw new NotFoundRoomException("방이 존재하지 않습니다.");
+        }
+
+        HashMap<String, Player> players = room.getParticipant();
+        Player player = players.get(readyDTO.getNickname());
+        log.info(player.getNickname());
+
+        player.setReady(readyDTO.isReady());
+        players.put(player.getNickname(), player);
+        room.setParticipant(players);
+        roomRepository.save(room);
+
+        return room;
+    }
+
+    public void start(Room room, String roomCode){
         GameStartDTO gameStartDTO = GameStartDTO.builder()
                 .roomCode(roomCode)
                 .headCount(room.getHeadCount())
-                .participant(room.getParticipant())
+                //.participant(room.getParticipant())
                 .build();
 
         // TODO : 각 gameService의 start 호출
@@ -147,9 +180,11 @@ public class RoomService {
             throw new MinHeadCountException("플레이어가 부족합니다. 현재 플레이어 수 : "+headCount);
         }
     }
-    public void checkReady(List<Player> participant){
+    public void checkReady(HashMap<String, Player> participant){
         // 모든 플레이어 ready 확인
-        for(Player player : participant){
+        List<Player> players = new ArrayList<>(participant.values());
+
+        for(Player player : players){
             if(!player.isReady()){
                 throw new NotReadyPlayerException("모든 플레이어가 준비되어야 합니다.");
             }
@@ -157,5 +192,37 @@ public class RoomService {
     }
 
     // TODO : sendMessageToUser - 특정 사용자에게 메세지 보낼 때
+
+    public void enterNotice(String roomCode, EnterDTO enterDTO){
+        EnterDTO chatDTO = EnterDTO.builder()
+                .nickname(enterDTO.getNickname())
+                .roomCode(roomCode)
+                .build();
+
+        MessageDTO messageDTO = MessageDTO.builder()
+                .type("ROOM_ENTER")
+                .data(chatDTO)
+                .build();
+
+        template.convertAndSend(CHAT_EXCHANGE_NAME, "room."+roomCode, messageDTO);
+    }
+
+
+    public void sendRoomInfo(String roomCode, Room roomInfo){
+        MessageDTO messageDTO = MessageDTO.builder()
+                .type("ROOM_INFO")
+                .data(RoomInfoDTO.builder()
+                        .title(roomInfo.getTitle())
+                        .roomCode(roomCode)
+                        .gameCategory(roomInfo.getGameCategory())
+                        .participant(roomInfo.getParticipant())
+                        .headCount(roomInfo.getHeadCount())
+                        .maxHeadCount(roomInfo.getMaxHeadCount())
+                        .publicRoom(roomInfo.isPublicRoom())
+                        .build())
+                .build();
+
+        template.convertAndSend(CHAT_EXCHANGE_NAME, "room."+roomCode, messageDTO);
+    }
 
 }

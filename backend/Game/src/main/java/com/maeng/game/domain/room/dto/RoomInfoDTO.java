@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 @Data
@@ -20,6 +21,7 @@ public class RoomInfoDTO implements Serializable {
     private int headCount;
     private int maxHeadCount;
     private boolean publicRoom;
-    private List<Player> participant;
+    //private List<Player> participant;
+    private HashMap<String, Player> participant;
     private Game gameCategory;
 }

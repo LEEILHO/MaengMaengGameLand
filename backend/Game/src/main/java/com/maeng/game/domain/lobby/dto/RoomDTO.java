@@ -7,8 +7,9 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class RoomInfo {
+public class RoomDTO {
     private String roomCode;
     private String title;
     private int headCount;
+    private int maxHeadCount;
 }

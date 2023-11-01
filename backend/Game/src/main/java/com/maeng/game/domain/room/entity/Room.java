@@ -8,6 +8,7 @@ import org.springframework.data.redis.core.index.Indexed;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 @Builder
@@ -15,7 +16,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@RedisHash("RoomInfo")
+@RedisHash("RoomDTO")
 public class Room implements Serializable {
 
     @Id
@@ -25,7 +26,7 @@ public class Room implements Serializable {
     private int headCount;
     private int maxHeadCount;
     private boolean publicRoom;
-    private List<Player> participant;
+    private HashMap<String, Player> participant;
     @Indexed
     private Game gameCategory;
     @Indexed
