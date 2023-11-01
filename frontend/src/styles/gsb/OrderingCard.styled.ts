@@ -16,23 +16,6 @@ export const OrderingCardContainer = styled.div`
   align-items: center;
 `
 
-export const DisplayBoard = styled.div`
-  width: 60%;
-  padding: 16px 54px;
-  border-radius: 12px;
-  background: rgba(228, 241, 255, 0.75);
-
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translate(-50%, 0%);
-
-  text-align: center;
-  font-size: 18px;
-  font-weight: 700;
-  line-height: normal;
-`
-
 export const CardList = styled.div`
   display: flex;
   gap: 96px;

@@ -29,7 +29,6 @@ const TurnCard = () => {
 
   return (
     <S.OrderingCardContainer>
-      <S.DisplayBoard>카드를 뒤집어 선공을 정해주세요.</S.DisplayBoard>
       <S.CardList>
         {orderList.map((order, index) => (
           <S.CardContainer
