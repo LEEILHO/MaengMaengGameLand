@@ -94,9 +94,9 @@ const WaitingRoomPage = () => {
   }
 
   useEffect(() => {
-    // authHttp.get(`v1/user/info`).then((res) => {
-    //   console.log(res)
-    // })
+    authHttp.get(`v1/user/info`).then((res) => {
+      console.log(res)
+    })
     dummyParticipant.map((participant) => {
       if (participant.host) {
         if (participant.userSeq === user.userSeq) {
