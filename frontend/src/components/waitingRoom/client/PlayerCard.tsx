@@ -28,10 +28,10 @@ const PlayerCard = ({ user, onClickEmptySeat, index }: Props) => {
       <>
         <S.PlayerCardContainer>
           {user?.host && (
-            <S.ManagerMark src={images.waitingRoom.crown} alt="방장" />
+            <S.LeftTopMark src={images.waitingRoom.crown} alt="방장" />
           )}
           {!user?.host && user?.ready && (
-            <S.ReadyMark src={images.waitingRoom.ready} alt="레디" />
+            <S.LeftTopMark src={images.waitingRoom.ready} alt="레디" />
           )}
           <S.UserInfo>
             <S.TierFrame>

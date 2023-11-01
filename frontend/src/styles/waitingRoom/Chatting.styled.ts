@@ -8,6 +8,11 @@ export const ChattingContainer = styled.div`
   background: rgba(228, 241, 255, 0.5);
   display: flex;
   flex-direction: column;
+
+  @media screen and ((max-width: 700px) or (max-height: 376px)) {
+    width: 200px;
+    height: 234px;
+  }
 `
 
 export const MessageArea = styled.div`
@@ -21,9 +26,8 @@ export const MessageArea = styled.div`
 
 export const ChattingInput = styled.input`
   border-bottom: white solid 2px;
-  width: 200px;
-  margin-bottom: 16px;
-  margin-left: 16px;
+  width: calc(100% - 32px);
+  margin: 0px 16px 16px 16px;
   padding-bottom: 6px;
   background: none;
   font-family: 'kbo-dia';
