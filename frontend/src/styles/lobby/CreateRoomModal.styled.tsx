@@ -69,6 +69,7 @@ export const RoomNameInput = styled.input`
   height: 28px;
   font-size: 14px;
   font-weight: 500;
+  padding: 0 12px;
 `
 
 export const ButtonRow = styled.div`

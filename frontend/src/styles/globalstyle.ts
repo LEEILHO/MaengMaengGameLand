@@ -25,7 +25,7 @@ const GlobalStyle = createGlobalStyle`
     -o-user-drag: none;
   }
   
-  body, button {
+  body, button, input {
     font-family: 'kbo-dia';
   }
 
