@@ -12,9 +12,10 @@ const GameRoom = () => {
     useState<string>('카드를 뒤집어 선공을 정해주세요.')
   return (
     <>
-      <S.GameRoomContainer>page</S.GameRoomContainer>
-      <S.DisplayBoard>{displayMessage}</S.DisplayBoard>
-      <TurnCard />
+      <S.GameRoomContainer>
+        <S.DisplayBoard>{displayMessage}</S.DisplayBoard>
+      </S.GameRoomContainer>
+      {/* <TurnCard /> */}
     </>
   )
 }
