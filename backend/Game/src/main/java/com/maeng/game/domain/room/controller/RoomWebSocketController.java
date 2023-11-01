@@ -18,7 +18,7 @@ public class RoomWebSocketController {
 
     private final RabbitTemplate template;
     private final RoomService roomService;
-    private final static String CHAT_EXCHANGE_NAME = "room.exchange";
+    private final static String CHAT_EXCHANGE_NAME = "room";
 
     @Operation(summary = "대기방 입장")
     @MessageMapping("room.enter.{roomCode}")

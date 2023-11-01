@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
@@ -39,17 +41,22 @@ public class RoomService {
     public String createRoom(CreateRoomDTO createRoomDTO){
 
         String roomCode = UUID.randomUUID().toString().replace("-", "").substring(0, 6);
-        roomRepository.save(Room.builder()
-                        .id(roomCode)
-                        .title(createRoomDTO.getTitle())
-                        .createdAt(createRoomDTO.getCreatedAt())
-                        .headCount(0)
-                        .maxHeadCount(GAME_MAX_PLAYER)
-                        .publicRoom(createRoomDTO.isPublicRoom())
-                        .participant(null)
-                        .gameCategory(createRoomDTO.getGameCategory())
-                        .channelTire(createRoomDTO.getChannelTire())
-                .build());
+        Room room = Room.builder()
+                .id(roomCode)
+                .title(createRoomDTO.getTitle())
+                .createdAt(LocalDateTime.now())
+                .headCount(0)
+                .maxHeadCount(GAME_MAX_PLAYER)
+                .publicRoom(createRoomDTO.isPublicRoom())
+                .participant(null)
+                .gameCategory(createRoomDTO.getGameCategory())
+                .channelTire(createRoomDTO.getChannelTire())
+                .build();
+
+        roomRepository.save(room);
+
+        // ROOM_LIST
+        lobbyService.findAllRoom(room.getGameCategory(), room.getChannelTire()); // 로비에 리스트 전송
 
         return roomCode;
     }
@@ -151,7 +158,9 @@ public class RoomService {
 
         if(room.getHeadCount() == 0){ // 방에 아무도 남아있지 않다면 방 정보 삭제
             roomRepository.delete(room);
-            log.info("roomCode : " +roomCode+ "방 삭제 완");
+            // ROOM_LIST
+            lobbyService.findAllRoom(room.getGameCategory(), room.getChannelTire()); // 로비에 리스트 전송
+            log.info("roomCode : " +roomCode+ " 방 삭제 완");
             return;
         }
 
