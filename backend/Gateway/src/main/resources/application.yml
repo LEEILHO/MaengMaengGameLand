@@ -16,6 +16,8 @@ spring:
     config:
       name: maeng
       profile: gateway
+  security:
+    enabled: false
 
 
 
