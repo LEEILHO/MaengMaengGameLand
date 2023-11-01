@@ -24,10 +24,10 @@ public class LobbyService {
     private final RabbitTemplate template;
     @Value("${game.max}")
     private int MAX_HAED_COUNT;
-    private final static String LOBBY_EXCHANGE_NAME = "room.exchange";
+    private final static String LOBBY_EXCHANGE_NAME = "room";
 
     public void findAllRoom(Game game, ChannelTire channelTire){
-        List<Room> roomList = roomRepository.findAllByGameCategoryAndChannelTire(game, channelTire);
+        List<Room> roomList = roomRepository.findAllByGameCategoryAndChannelTireAndPublicRoomIsTrue(game, channelTire);
         List<RoomDTO> list = new ArrayList<>();
 
         for(Room room : roomList){
