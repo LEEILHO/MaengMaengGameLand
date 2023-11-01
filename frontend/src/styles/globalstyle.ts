@@ -29,7 +29,7 @@ const GlobalStyle = createGlobalStyle<Props>`
     -o-user-drag: none;
   }
   
-  body, button {
+  body, button, input {
     font-family: 'kbo-dia';
   }
 

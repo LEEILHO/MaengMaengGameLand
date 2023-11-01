@@ -48,7 +48,7 @@ const Timer = ({ size, fontSize, time }: Props) => {
             color: `${timeRemaining > 5 ? 'white' : 'red'}`,
             fontSize: `${fontSize}px`,
             fontWeight: '700',
-            marginBottom: '24px',
+            marginBottom: '20px',
           }}
         >
           {secondsToMinutesAndSeconds(timeRemaining)}

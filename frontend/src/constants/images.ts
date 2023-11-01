@@ -33,4 +33,14 @@ export const images = {
   lobby: {
     close: '/images/lobby/ic-close-modal.png',
   },
+  gameRoom: {
+    jwac: {
+      backGround: '/images/gameRoom/background-jwac.png',
+      table: '/images/gameRoom/table.png',
+      money: '/images/gameRoom/ic-money.png',
+      roundFrame: '/images/gameRoom/frame-round.png',
+      noteFrame: '/images/gameRoom/frame-note.png',
+      showCase: '/images/gameRoom/showcase.jpg',
+    },
+  },
 }
