@@ -1,3 +1,5 @@
+'use client'
+
 import withAuth from '@components/hoc/client/PrivateRoute'
 import Lobby from '@components/lobby/Lobby'
 
