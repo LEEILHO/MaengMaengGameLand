@@ -21,17 +21,17 @@ const Home = () => {
           <GameCard
             backGroundUrl={images.home.gsb}
             name={'금은동'}
-            onClick={() => router.push('gsb/lobby')}
+            onClick={() => router.push('gsb/lobby', { scroll: false })}
           />
           <GameCard
             backGroundUrl={images.home.jwac}
             name={'무제한 보석 경매'}
-            onClick={() => router.push('jwac/lobby')}
+            onClick={() => router.push('jwac/lobby', { scroll: false })}
           />
           <GameCard
             backGroundUrl={images.home.awrsp}
             name={'전승 가위바위보'}
-            onClick={() => router.push('awrsp/lobby')}
+            onClick={() => router.push('awrsp/lobby', { scroll: false })}
           />
         </S.GameCardContainer>
         <S.ButtonLow>
