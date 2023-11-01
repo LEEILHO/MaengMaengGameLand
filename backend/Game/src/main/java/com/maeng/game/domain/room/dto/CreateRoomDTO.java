@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 public class CreateRoomDTO {
     private String title;
     private boolean publicRoom;
-    private LocalDateTime createdAt;
     private String host;
     private Game gameCategory;
     private ChannelTire channelTire;

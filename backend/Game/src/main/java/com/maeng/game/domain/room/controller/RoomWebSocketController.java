@@ -18,12 +18,11 @@ public class RoomWebSocketController {
 
     private final RabbitTemplate template;
     private final RoomService roomService;
-    private final static String CHAT_EXCHANGE_NAME = "room.exchange";
+    private final static String CHAT_EXCHANGE_NAME = "room";
 
     @Operation(summary = "대기방 입장")
     @MessageMapping("room.enter.{roomCode}")
     public void enter(@DestinationVariable("roomCode") String roomCode, EnterDTO enterDTO){
-
         roomService.enterNotice(roomCode, enterDTO); // 입장 알림
         roomService.enterRoom(roomCode, enterDTO.getNickname()); // player 추가
     }

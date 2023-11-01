@@ -24,6 +24,7 @@ public class RabbitConfig {
     private static final String RECORD_QUEUE_NAME = "record.queue";
     private static final String ROOM_EXCHANGE_NAME = "room";
     private static final String GAME_EXCHANGE_NAME = "game";
+    private static final String ROOM_ROUTING_KEY = "room.*";
 	private static final String RECORD_EXCHANGE_NAME = "record";
     private static final String ROOM_ROUTING_KEY = "*.room.*";
     private static final String GAME_ROUTING_KEY = "*.game.*"; // *.game.게임종류.방코드
@@ -31,7 +32,6 @@ public class RabbitConfig {
 
     @Value("${spring.rabbitmq.host}")
     private String HOST;
-
     @Value("${spring.rabbitmq.username}")
     private String USERNAME;
     @Value("${spring.rabbitmq.password}")
