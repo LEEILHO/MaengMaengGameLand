@@ -39,6 +39,7 @@ public class JwacController {
 	private final EnterService enterService;
 
 	private final static String Game_EXCHANGE_NAME = "game.exchange";
+	private final static String RECORD_EXCHANGE_NAME = "record.exchange";
 
 	@MessageMapping("game.jwac.{gameCode}")
 	public void enter(@DestinationVariable String gameCode, JwacNicknameDto jwacNicknameDto) {
@@ -113,6 +114,12 @@ public class JwacController {
 
 				template.convertAndSend(Game_EXCHANGE_NAME, "game.jwac."+gameCode, MessageDTO.builder()
 					.type("GAME_END")
+					.data(gameResult)
+					.build());
+
+				// record 서버에 결과 저장 요청
+				template.convertAndSend(RECORD_EXCHANGE_NAME, "record.jwac."+gameCode, MessageDTO.builder()
+					.type("GAME_RESULT")
 					.data(gameResult)
 					.build());
 			}

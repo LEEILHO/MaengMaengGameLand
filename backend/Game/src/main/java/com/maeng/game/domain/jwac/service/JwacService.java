@@ -99,19 +99,12 @@ public class JwacService {
 
 		Map<String, Player> players = jwac.getPlayers();
 
-		JwacGameResultDTO gameResult = JwacGameResultDTO.builder()
+		return JwacGameResultDTO.builder()
 			.roomCode(jwac.getRoomCode())
 			.gameCode(jwac.getGameCode())
 			.winner(findGameWinner(players))
 			.players(getPlayerInfo(players))
 			.build();
-
-		// TODO : 게임 종료 로직
-
-
-		// TODO : record db 저장
-
-		return gameResult;
 	}
 
 	@Transactional(readOnly = true)
