@@ -37,7 +37,6 @@ const useAxiosInterceptor = () => {
         const refreshResponse =
           await http.get<ResponseAccessTokenType>('v1/auth/token')
         const newAccessToken = refreshResponse.accessToken
-        console.log('토큰재발급: ', refreshResponse)
 
         if (newAccessToken) {
           config.headers = config.headers || {}
