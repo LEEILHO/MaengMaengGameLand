@@ -109,16 +109,20 @@ class GameFragment :
             binding.gameScrollView.fullScroll(ScrollView.FOCUS_DOWN)
         }
 
-        Log.d(TAG, "onViewCreated: ${binding.gameLayout.layoutParams.height} ${binding.gameLayout.layoutParams.width}")
+        Log.d(
+            TAG,
+            "onViewCreated: ${binding.gameLayout.layoutParams.height} ${binding.gameLayout.layoutParams.width}"
+        )
     }
 
     private var isCollided = false  // 충돌 감지 플래그
     private fun initObserve() {
         playerPosition.observe(viewLifecycleOwner) { playerRect ->
+//            Log.d(TAG, "initObserve: $playerRect")
             // 점프하고 내려오는 중
             if (isGoingDown) {
-                for (i in 0 until binding.root.childCount) {
-                    val platform = binding.root.getChildAt(i)
+                for (i in 0 until binding.gameLayout.childCount) {
+                    val platform = binding.gameLayout.getChildAt(i)
 
                     if (platform.tag == "platform" && platform.visibility == View.VISIBLE) {
                         val platformRect = Rect(
@@ -257,22 +261,44 @@ class GameFragment :
     private val MAX_PLATFORM_DISTANCE = JUMP_HEIGHT      // 최대 간격
 
     private fun initPlatform() {
-        for (i: Int in 0..2) {
-            val platform = createPlatform()
-            positionPlatformRandomly(platform)
+//        for (i: Int in 0..2) {
+//            val platform = createPlatform()
+//            positionPlatformRandomly(platform)
+//        }
+
+        var lastY = binding.gameLayout.layoutParams.height  // 마지막 발판의 Y 위치
+
+        while (lastY > 0) {
+            val distance =
+                (MIN_PLATFORM_DISTANCE.toInt()..MAX_PLATFORM_DISTANCE.toInt()).random()  // 다음 발판까지의 거리
+            lastY -= distance
+
+            val platformCount = (1..3).random()  // 발판의 개수
+            for (i in 0 until platformCount) {
+                val platform = createPlatform()
+                positionPlatformRandomly(platform, lastY)
+
+            }
         }
     }
 
-    private fun positionPlatformRandomly(platform: ImageView) {
+    private fun positionPlatformRandomly(platform: ImageView, targetY: Int) {
         val maxX = screenWidth - platform.layoutParams.width
         val randomX = (0..maxX).random()
-        val maxY = screenHeight - platform.layoutParams.height
-        val randomY = (0..maxY).random()
+//        val maxY = screenHeight - platform.layoutParams.height
+//        val randomY = (0..maxY).random()
+
+
+        // 발판의 Y 위치를 targetY 주변으로 랜덤 설정
+//        val minY = targetY - (JUMP_HEIGHT / 4)
+//        val maxY = targetY + (JUMP_HEIGHT / 4)
+//        val randomY = (minY..maxY).random()
+
 
         platform.x = randomX.toFloat()
-        platform.y = randomY.toFloat()
+        platform.y = targetY.toFloat()
         platform.visibility = View.VISIBLE
-        Log.d(TAG, "positionPlatformRandomly: ${platform.x} ${platform.y}")
+        Log.d(TAG, "positionPlatformRandomly: ${platform.x} ${platform.y} ${platform.layoutParams.height}")
     }
 
 
