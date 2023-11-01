@@ -8,6 +8,7 @@ import com.maeng.game.domain.room.entity.Player;
 import com.maeng.game.domain.room.entity.Room;
 import com.maeng.game.domain.room.exception.*;
 import com.maeng.game.domain.room.repository.RoomRepository;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -74,7 +75,6 @@ public class RoomService {
         // 방이 가득차지 않았으면 headCount++ 후 Player 추가해주기
         int headCount = roomInfo.getHeadCount();
         //List<Player> newList = new ArrayList<>();
-        HashMap<String, Player> newList = new HashMap<>();
         Player player = Player.builder()
                 .nickname(nickname)
                 .ready(false)
@@ -83,13 +83,12 @@ public class RoomService {
                 .tier(Tier.GOLD) // TODO : 플레이어 정보 가져오기(프로필 사진, 티어)
                 .build();
 
+        HashMap<String, Player> newList = new HashMap<>();
         if(roomInfo.getParticipant() != null) { // 방장이 아닐 경우
-            //newList.addAll(roomInfo.getParticipant());
             newList.putAll(roomInfo.getParticipant());
             player.setHost(false);
         }
 
-        //newList.add(player);
         newList.put(player.getNickname(), player);
 
         roomInfo.setParticipant(newList);
@@ -97,10 +96,12 @@ public class RoomService {
 
         roomRepository.save(roomInfo);
 
+        sendRoomInfo(roomCode, roomInfo);
+
         return roomInfo;
     }
 
-    public void gameStart(String roomCode, StartDTO startDTO){
+    public void gameStart(String roomCode, PlayerDTO playerDTO){
         Room room = roomRepository.findById(roomCode).orElse(null);
 
         if(room == null){
@@ -108,7 +109,7 @@ public class RoomService {
         }
 
         // TODO : 해당 닉네임이 host이면 게임 시작
-        Player player = room.getParticipant().get(startDTO.getNickname());
+        Player player = room.getParticipant().get(playerDTO.getNickname());
         if(!player.isHost()){
             throw new NotHostException("방장만 게임을 시작할 수 있습니다.");
         }
@@ -137,6 +138,33 @@ public class RoomService {
         roomRepository.save(room);
 
         return room;
+    }
+
+    @Operation(summary = "대기방 퇴장")
+    public void exitRoom(String roomCode, PlayerDTO playerDTO){
+        Room room = roomRepository.findById(roomCode).orElse(null);
+        if(room == null){
+            throw new NotFoundRoomException("존재하지 않는 방입니다.");
+        }
+
+        HashMap<String, Player> players = room.getParticipant();
+        players.remove(playerDTO.getNickname());
+        room.setParticipant(players);
+        room.setHeadCount(room.getHeadCount()-1);
+
+        if(room.getHeadCount() == 0){ // 방에 아무도 남아있지 않다면 방 정보 삭제
+            roomRepository.delete(room);
+            return;
+        }
+
+        roomRepository.save(room);
+        MessageDTO messageDTO = MessageDTO.builder()
+                .type("ROOM_EXIT")
+                .data(PlayerDTO.builder().roomCode(roomCode).nickname(playerDTO.getNickname()).build())
+                .build();
+        template.convertAndSend(CHAT_EXCHANGE_NAME, "room."+roomCode, messageDTO);
+
+        this.sendRoomInfo(roomCode, room);
     }
 
     public void start(Room room, String roomCode){
@@ -209,13 +237,16 @@ public class RoomService {
 
 
     public void sendRoomInfo(String roomCode, Room roomInfo){
+
+        List<Player> players = new ArrayList<>(roomInfo.getParticipant().values());
+
         MessageDTO messageDTO = MessageDTO.builder()
                 .type("ROOM_INFO")
                 .data(RoomInfoDTO.builder()
                         .title(roomInfo.getTitle())
                         .roomCode(roomCode)
                         .gameCategory(roomInfo.getGameCategory())
-                        .participant(roomInfo.getParticipant())
+                        .participant(players)
                         .headCount(roomInfo.getHeadCount())
                         .maxHeadCount(roomInfo.getMaxHeadCount())
                         .publicRoom(roomInfo.isPublicRoom())

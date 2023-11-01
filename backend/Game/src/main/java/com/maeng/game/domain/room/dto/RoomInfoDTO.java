@@ -21,7 +21,6 @@ public class RoomInfoDTO implements Serializable {
     private int headCount;
     private int maxHeadCount;
     private boolean publicRoom;
-    //private List<Player> participant;
-    private HashMap<String, Player> participant;
+    private List<Player> participant;
     private Game gameCategory;
 }

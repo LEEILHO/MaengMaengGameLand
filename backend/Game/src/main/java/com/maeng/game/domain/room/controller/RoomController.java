@@ -35,7 +35,6 @@ public class RoomController {
 
         roomService.enterNotice(roomCode, enterDTO); // 입장 알림
         Room roomInfo = roomService.enterRoom(roomCode, enterDTO.getNickname()); // player 추가
-        roomService.sendRoomInfo(roomCode, roomInfo); // 방에 있는 모든 사람에게 갱신된 ROOM_INFO 전송
     }
 
     @Operation(summary = "대기방 채팅")
@@ -58,7 +57,13 @@ public class RoomController {
 
     @Operation(summary = "게임 시작")
     @MessageMapping("room.start.{roomCode}")
-    public void start(@DestinationVariable("roomCode") String roomCode, StartDTO startDTO){
-        roomService.gameStart(roomCode, startDTO);
+    public void start(@DestinationVariable("roomCode") String roomCode, PlayerDTO playerDTO){
+        roomService.gameStart(roomCode, playerDTO);
+    }
+
+    @Operation(summary = "대기방 퇴장")
+    @MessageMapping("room.exit.{roomCode}")
+    public void exit(@DestinationVariable String roomCode, PlayerDTO playerDTO){
+        roomService.exitRoom(roomCode, playerDTO);
     }
 }
