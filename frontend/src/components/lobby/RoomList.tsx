@@ -1,22 +1,31 @@
 import * as S from '@styles/lobby/RoomList.styled'
 import RoomItem from './RoomItem'
 import RoomTypeButton from './RoomTypeButton'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSetRecoilState } from 'recoil'
+import { channelState } from '@atom/gameAtom'
+import { channelTypeChange } from '@utils/lobby/lobbyUtil'
 
 const RoomList = () => {
+  const router = useRouter()
   const [seletedRoomType, setSeletedRoomType] = useState<
     '자유' | '브론즈' | '실버' | '골드'
   >('자유')
+  const setChanel = useSetRecoilState(channelState)
 
   const handleTypeButton = useCallback(
     (type: '자유' | '브론즈' | '실버' | '골드') => {
       setSeletedRoomType(type)
+      setChanel(channelTypeChange(type))
     },
     [],
   )
 
-  const router = useRouter()
+  // 초기 채널 설정
+  useEffect(() => {
+    setChanel(channelTypeChange('자유'))
+  }, [])
 
   return (
     <S.RoomListContainer>

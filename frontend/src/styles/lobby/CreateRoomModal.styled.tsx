@@ -54,6 +54,7 @@ export const SubTitle = styled.h6`
 
 export const SubRow = styled.div`
   width: 100%;
+  height: auto;
   display: flex;
   justify-content: center;
   padding: 0 24px;
@@ -66,6 +67,9 @@ export const RoomNameInput = styled.input`
   background: #d9d9d9;
   flex: 1;
   height: 28px;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 0 12px;
 `
 
 export const ButtonRow = styled.div`

@@ -1,12 +1,43 @@
+import { channelState } from '@atom/gameAtom'
+import { userState } from '@atom/userAtom'
 import CButton from '@components/common/clients/CButton'
 import { images } from '@constants/images'
 import * as S from '@styles/lobby/CreateRoomModal.styled'
+import { gameTypeChange } from '@utils/lobby/lobbyUtil'
+import { createRoom } from 'apis/lobby/lobbyApi'
+import { usePathname } from 'next/navigation'
+import { useCallback, useEffect, useState } from 'react'
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 type Props = {
   closeModal: () => void
 }
 
 const CreateRoomModal = ({ closeModal }: Props) => {
+  const pathname = usePathname()
+  const [roomType, setRoomType] = useState<'공개' | '비공개'>('공개')
+  const [title, setTitle] = useState('')
+  const user = useRecoilValue(userState)
+  const channel = useRecoilValue(channelState)
+
+  const handleRoomType = useCallback((roomType: '공개' | '비공개') => {
+    setRoomType(roomType)
+  }, [])
+
+  const handleTitileChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setTitle(e.target.value)
+    },
+    [],
+  )
+
+  const handleCreateRoom = useCallback(() => {
+    if (!user || !channel) return
+    const isPublic = roomType === '공개'
+    const gameType = gameTypeChange(pathname.split('/')[1])
+    createRoom(title, isPublic, user.nickname, gameType, channel)
+  }, [])
+
   return (
     <S.CreateRoomModalContainer>
       <S.TopRow>
@@ -15,13 +46,23 @@ const CreateRoomModal = ({ closeModal }: Props) => {
       </S.TopRow>
       <S.SubRow>
         <S.SubTitle className="title">방제목</S.SubTitle>
-        <S.RoomNameInput />
+        <S.RoomNameInput value={title} onChange={handleTitileChange} />
       </S.SubRow>
       <S.SubRow>
         <S.SubTitle>공개 설정</S.SubTitle>
         <S.SettingButtonContainer>
-          <S.SettingButton $isSeleted={true}>공개</S.SettingButton>
-          <S.SettingButton $isSeleted={false}>비공개</S.SettingButton>
+          <S.SettingButton
+            onClick={() => handleRoomType('공개')}
+            $isSeleted={roomType === '공개'}
+          >
+            공개
+          </S.SettingButton>
+          <S.SettingButton
+            onClick={() => handleRoomType('비공개')}
+            $isSeleted={roomType === '비공개'}
+          >
+            비공개
+          </S.SettingButton>
         </S.SettingButtonContainer>
       </S.SubRow>
       <S.ButtonRow>
@@ -32,6 +73,7 @@ const CreateRoomModal = ({ closeModal }: Props) => {
           radius={32}
           fontSize={18}
           height={40}
+          onClick={handleCreateRoom}
         />
         <CButton
           text="취소"
