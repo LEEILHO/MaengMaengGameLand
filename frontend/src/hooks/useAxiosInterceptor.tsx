@@ -11,6 +11,7 @@ import {
 } from 'axios'
 import { useEffect } from 'react'
 import { useRecoilState } from 'recoil'
+import useInitUser from './useInitUser'
 
 const useAxiosInterceptor = () => {
   const [accessToken, setAccessToken] = useRecoilState(accessTokenState)
@@ -35,7 +36,7 @@ const useAxiosInterceptor = () => {
     else {
       try {
         const refreshResponse =
-          await http.get<ResponseAccessTokenType>('v1/auth/token')
+          await http.get<ResponseAccessTokenType>('auth/token')
         const newAccessToken = refreshResponse.accessToken
 
         if (newAccessToken) {
@@ -45,6 +46,7 @@ const useAxiosInterceptor = () => {
           ).Authorization = `Bearer ${newAccessToken}`
 
           setAccessToken(refreshResponse)
+          useInitUser()
         }
       } catch (error) {
         console.error('엑세스 토큰 재발급 실패: ', error)
