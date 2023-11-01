@@ -103,6 +103,7 @@ public class JwtProvider {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         calendar.add(Calendar.MILLISECOND, expiry);
+        logger.debug(calendar.toString());
 
         return calendar.getTime( );
     }
