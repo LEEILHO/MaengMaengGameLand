@@ -23,4 +23,4 @@ spring:
     allow-bean-definition-overriding: true
 logging:
   level:
-    root: info
+    root: debug
