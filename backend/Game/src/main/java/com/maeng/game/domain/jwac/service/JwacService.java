@@ -58,9 +58,8 @@ public class JwacService {
 	}
 
 	@Transactional
-	public void bidJwerly(JwacBidInfoDto jwacBidInfoDto) {
-		Jwac jwac = jwacRedisRepository.findById(jwacBidInfoDto.getGameCode())
-			.orElseThrow(() -> new GameNotFoundException(jwacBidInfoDto.getGameCode()));
+	public void bidJwerly(String gameCode, JwacBidInfoDto jwacBidInfoDto) {
+		Jwac jwac = jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
 
 		History history = History.builder()
 			.bidAmount(jwacBidInfoDto.getBidAmount())
@@ -82,15 +81,15 @@ public class JwacService {
 	}
 
 	@Transactional
-	public boolean nextRound(String gameCode) {
+	public Jwerly nextRound(String gameCode) {
 		Jwac jwac = jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
 
 		if(hasNextRound(jwac)) {
 			jwacRedisRepository.save(jwac);
-			return true;
+			return jwac.getJwerly().get(jwac.getCurrentRound());
 		}
 
-		return false;
+		return null;
 	}
 
 	@Transactional
@@ -103,7 +102,7 @@ public class JwacService {
 			.roomCode(jwac.getRoomCode())
 			.gameCode(jwac.getGameCode())
 			.winner(findGameWinner(players))
-			.players(players)
+			.players(getPlayerInfo(players))
 			.build();
 
 		// TODO : 게임 종료 로직
@@ -154,9 +153,11 @@ public class JwacService {
 
 	@Transactional
 	public JwacRoundResultDto roundResult(Jwac jwac) {
-		JwacRoundResultDto jwacRoundResultDto = new JwacRoundResultDto();
-		jwacRoundResultDto.setGameCode(jwac.getGameCode());
-		jwacRoundResultDto.setRoundBidSum(-1L);
+		JwacRoundResultDto jwacRoundResultDto = JwacRoundResultDto.builder()
+			.gameCode(jwac.getGameCode())
+			.roundBidSum(-1L)
+			.round(jwac.getCurrentRound())
+			.build();
 
 		int currentRound = jwac.getCurrentRound();
 
@@ -198,15 +199,7 @@ public class JwacService {
 		}
 
 		// Step 5: 플레이어 점수를 jwacRoundResult에 저장
-		// TODO : 플레이어 점수 jwacRoundResult 에 저장
-		jwacRoundResultDto.setPlayers(new HashMap<>());
-		for(String nickname : jwac.getPlayers().keySet()) {
-			Player player = jwac.getPlayers().get(nickname);
-			jwacRoundResultDto.getPlayers().put(nickname, JwacRoundPlayerInfoDTO.builder()
-				.score(player.getScore())
-				.item(player.isSpecialItem())
-				.build());
-		}
+		jwacRoundResultDto.setPlayers(getPlayerInfo(jwac.getPlayers()));
 
 		// Step 6: 4라운드 마다 4라운드 동안의 낙찰금 합계 저장
 		Long bidSum = 0L;
@@ -221,6 +214,18 @@ public class JwacService {
 
 
 		return jwacRoundResultDto;
+	}
+
+	private Map<String, JwacRoundPlayerInfoDTO> getPlayerInfo(Map<String, Player> players) {
+		Map<String, JwacRoundPlayerInfoDTO> playerInfo = new HashMap<>();
+		for(String nickname : players.keySet()) {
+			Player player = players.get(nickname);
+			playerInfo.put(nickname, JwacRoundPlayerInfoDTO.builder()
+				.score(player.getScore())
+				.item(player.isSpecialItem())
+				.build());
+		}
+		return playerInfo;
 	}
 
 	private String findMostBidder(Map<String, History> result) {
