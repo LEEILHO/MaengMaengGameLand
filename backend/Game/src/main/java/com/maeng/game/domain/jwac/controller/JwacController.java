@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.maeng.game.domain.jwac.dto.JwacBidInfoDto;
 import com.maeng.game.domain.jwac.dto.JwacGameResultDTO;
+import com.maeng.game.domain.jwac.dto.JwacItemResultDTO;
 import com.maeng.game.domain.jwac.dto.JwacNicknameDto;
 import com.maeng.game.domain.jwac.dto.JwacRoundResultDto;
 import com.maeng.game.domain.jwac.dto.JwacTimerInfoDTO;
@@ -94,6 +95,18 @@ public class JwacController {
 					.type("GAME_ROUND_START")
 					.data(timerInfo)
 					.build());
+
+				// 10 라운드에서 아이템 결과 전송
+				log.info("round : " + jwacRoundResult.getRound());
+				if(jwacRoundResult.getRound() == 10) {
+					JwacItemResultDTO itemResult = jwacService.getSpecialItemResult(gameCode, jwacRoundResult.getMostBidder());
+
+					template.convertAndSend(Game_EXCHANGE_NAME, "game.jwac." + gameCode, MessageDTO.builder()
+						.type("GAME_SPECIAL_ITEM_RESULT")
+						.data(itemResult)
+						.build());
+				}
+
 			// 게임 종료
 			} else {
 				JwacGameResultDTO gameResult = jwacService.endGame(gameCode);

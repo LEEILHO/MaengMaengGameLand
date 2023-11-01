@@ -17,6 +17,8 @@ public class JwacRoundResultDto {
 	private String leastBidder;
 	private Long roundBidSum;
 	private int round;
+	private int jwerlyScore;
+	private int panaltyScore;
 	private Map<String, JwacRoundPlayerInfoDTO> players;
 
 	@Data

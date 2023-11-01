@@ -8,4 +8,5 @@ import lombok.Data;
 public class JwacRoundPlayerInfoDTO {
 	private int score;
 	private boolean item;
+	private Long bidSum;
 }
