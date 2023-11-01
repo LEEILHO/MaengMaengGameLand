@@ -31,14 +31,29 @@ export const TierFrame = styled.div`
     height: 106px;
     z-index: 1;
   }
+
+  @media screen and ((max-width: 700px) or (max-height: 376px)) {
+    .frame {
+      width: 75px;
+      height: 90px;
+    }
+  }
 `
 
 export const ProfileImage = styled.img`
   position: absolute;
+  border-radius: 50%;
   top: 20px;
   left: 22px;
   width: 50px;
   height: 50px;
+
+  @media screen and ((max-width: 700px) or (max-height: 376px)) {
+    top: 17px;
+    left: 17px;
+    width: 42px;
+    height: 42px;
+  }
 `
 
 export const UserDetailButton = styled.button`
@@ -53,26 +68,30 @@ export const UserDetailButton = styled.button`
     width: 16px;
     height: 16px;
   }
+
+  @media screen and ((max-width: 700px) or (max-height: 376px)) {
+    top: 4px;
+    right: 1px;
+  }
 `
 
-export const ManagerMark = styled.img`
+export const LeftTopMark = styled.img`
   position: absolute;
   top: 8px;
   left: 8px;
   width: 20px;
   height: 20px;
-`
 
-export const ReadyMark = styled.img`
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  width: 20px;
-  height: 20px;
+  @media screen and ((max-width: 700px) or (max-height: 376px)) {
+    top: 6px;
+    left: 6px;
+    width: 16px;
+    height: 16px;
+  }
 `
 export const EmptyPlayerCardContainer = styled.div`
-  width: 119px;
-  height: 127px;
+  width: 100%;
+  height: 100%;
   border-radius: 16px;
   background: rgba(228, 241, 255, 0.5);
   display: flex;
@@ -83,4 +102,9 @@ export const EmptyPlayerCardContainer = styled.div`
 export const InActiveMark = styled.img`
   width: 62px;
   height: 62px;
+
+  @media screen and ((max-width: 700px) or (max-height: 376px)) {
+    width: 48px;
+    height: 48px;
+  }
 `

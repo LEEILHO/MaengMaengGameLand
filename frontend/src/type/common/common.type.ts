@@ -1,5 +1,5 @@
 export type UserInformationType = {
-  userId: string
+  userEmail: string
   nickname: string
-  profileImage: string
+  profile: string
 }

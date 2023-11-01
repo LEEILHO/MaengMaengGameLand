@@ -11,21 +11,31 @@ export const WaitingRoomContainer = styled.div`
 `
 export const Contents = styled.div`
   display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   position: fixed;
   top: 54px;
-  left: 49px;
   gap: 24px;
+
+  @media screen and ((max-width: 700px)) {
+    gap: 12px;
+  }
 `
 
 export const PlayerList = styled.div`
   width: 500px;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(2, 1fr);
   row-gap: 12px;
   column-gap: 8px;
   align-items: center;
   justify-items: center;
+
+  @media screen and ((max-width: 700px) or (max-height: 376px)) {
+    width: 400px;
+  }
 `
 
 export const BottomButtons = styled.div`
