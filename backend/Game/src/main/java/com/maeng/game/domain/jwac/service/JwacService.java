@@ -10,6 +10,9 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.maeng.game.domain.jwac.dto.JwacBidInfoDto;
 import com.maeng.game.domain.jwac.dto.JwacGameResultDTO;
 import com.maeng.game.domain.jwac.dto.JwacItemResultDTO;
@@ -355,7 +358,18 @@ public class JwacService {
 		return uuid.toString().replaceAll("-", "").substring(0, 16);
 	}
 
-	public Jwac getAllData(String gameCode) {
-		return jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
+	public String getAllDataToJson(String gameCode) {
+		Jwac jwac = jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
+		String json = "";
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			objectMapper.registerModule(new JavaTimeModule());
+			objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+			json = objectMapper.writeValueAsString(jwac);
+		} catch (Exception e) {
+			log.error("json error : {}", e.getMessage());
+		}
+
+		return json;
 	}
 }
