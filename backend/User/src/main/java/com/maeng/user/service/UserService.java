@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final ScoreRepository scoreRepository;
+//    private final ScoreRepository scoreRepository;
 
 
     public UserDetailResponse getUserDetail(String userEmail){
