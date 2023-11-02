@@ -25,9 +25,10 @@ public class WatchRedisManager {
 
     public void storeCode(String userEmail, String code) {
         // 만료기한 설정
-        String key = "CODE:" + code;
+        String key = "CODE:\\xac\\xed\\x00\\x05t\\x00\\b" + code;
         redisTemplate.expire(key, 30, TimeUnit.SECONDS);
         opsHashWatchCode.put("CODE", code, userEmail);
+        System.out.println(key);
     }
 
     public boolean isCodeExists(String code) {
