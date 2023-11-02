@@ -1,15 +1,15 @@
 package com.maeng.score.entity;
 
 import com.maeng.user.entity.User;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Getter
-@Setter
 @Entity(name = "scores")
 public class Score {
     @Id
@@ -26,6 +26,8 @@ public class Score {
     private int score;
 
     @Column(name = "tier")
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("BRONZE")
     private Tier tier;
 
     @ManyToOne

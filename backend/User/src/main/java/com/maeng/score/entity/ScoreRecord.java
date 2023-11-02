@@ -1,15 +1,14 @@
 package com.maeng.score.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Getter
-@Setter
 @Entity(name = "score_records")
 public class ScoreRecord {
     @Id
