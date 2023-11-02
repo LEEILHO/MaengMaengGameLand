@@ -1,13 +1,15 @@
 package com.maeng.user.service;
 
-import com.maeng.user.config.WatchRedisManager;
+//import com.maeng.user.config.WatchRedisManager;
 import com.maeng.score.entity.Tier;
 import com.maeng.user.dto.UserDetailResponse;
 import com.maeng.user.dto.WatchCode;
 import com.maeng.user.entity.User;
+import com.maeng.user.entity.WatchRedis;
 import com.maeng.user.exception.ExceptionCode;
 import com.maeng.user.exception.UserException;
 import com.maeng.user.respository.UserRepository;
+import com.maeng.user.respository.WatchRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +28,8 @@ public class UserService {
     private final UserRepository userRepository;
 //    private final ScoreRepository scoreRepository;
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final WatchRedisManager watchRedisManager;
+//    private final WatchRedisManager watchRedisManager;
+    private final WatchRepository watchRepository;
 
     public UserDetailResponse getUserDetail(String userEmail){
         User user = userRepository.findUserByEmail(userEmail)
@@ -47,18 +50,18 @@ public class UserService {
     }
     @Transactional
     public WatchCode getWatchCode(String userEmail){
-        Map<String, String> Codes =watchRedisManager.getCode();
-
-        List<String> keys = new ArrayList<>();
-        for (Map.Entry<String, String> entry : Codes.entrySet()) {
-            if (userEmail.equals(entry.getValue())) {
-                keys.add(entry.getKey());
-            }
-        }
-        // 삭제
-        for(String key: keys){
-            watchRedisManager.deleteCode(key);
-        }
+//        Map<String, String> Codes =watchRedisManager.getCode();
+//
+//        List<String> keys = new ArrayList<>();
+//        for (Map.Entry<String, String> entry : Codes.entrySet()) {
+//            if (userEmail.equals(entry.getValue())) {
+//                keys.add(entry.getKey());
+//            }
+//        }
+//        // 삭제
+//        for(String key: keys){
+//            watchRedisManager.deleteCode(key);
+//        }
         Random random = new Random();
         int letter = 8;
         String code = "";
@@ -67,11 +70,13 @@ public class UserService {
             code +=Integer.toString(num);
         }
         logger.info("getUserWatchCode(), userEmail = {}, code = {}",userEmail,code);
-        watchRedisManager.storeCode(userEmail,code);
+        //TODO: 예외 처리 하자
+
+        watchRepository.save(WatchRedis.builder().code(code).email(userEmail).build());
+//        watchRedisManager.storeCode(userEmail,code);
         return WatchCode.builder()
                 .watchCode(code).
                 build();
-
     }
 
 
