@@ -9,6 +9,6 @@ import org.springframework.stereotype.Service;
 public class AwrspService {
 
     public void gameStart(GameStartDTO gameStartDTO){
-        log.info("GAME START!");
+        log.info(gameStartDTO.getGameCode());
     }
 }

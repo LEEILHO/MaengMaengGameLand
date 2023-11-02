@@ -72,7 +72,7 @@ public class RoomWebSocketController {
     }
 
     @Operation(summary = "대기방 설정 변경")
-    @MessageMapping("room.state.{roomCode}")
+    @MessageMapping("room.setting.{roomCode}")
     public void state(@DestinationVariable String roomCode, RoomStateDTO roomStateDTO){
         roomService.roomStateChange(roomCode, roomStateDTO);
 

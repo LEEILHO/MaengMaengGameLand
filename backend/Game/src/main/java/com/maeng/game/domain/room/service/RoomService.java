@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -38,6 +39,7 @@ public class RoomService {
     @Value("${game.awrsp-min}")
     private int AWRSP_MIN_PLAYER;
 
+    @Transactional
     @Operation(summary = "대기방 생성")
     public String createRoom(CreateRoomDTO createRoomDTO){
 
@@ -64,6 +66,7 @@ public class RoomService {
         return roomCode;
     }
 
+    @Transactional
     @Operation(summary = "대기방 입장")
     public void enterRoom(String roomCode, EnterDTO enterDTO){
         Room roomInfo = this.getCurrentRoom(roomCode);
@@ -105,6 +108,7 @@ public class RoomService {
         lobbyService.findAllRoom(roomInfo.getGameCategory(), roomInfo.getChannelTire()); // ROOM_LIST
     }
 
+    @Transactional
     @Operation(summary = "게임 시작")
     public void gameStart(String roomCode, PlayerDTO playerDTO){
         Room room = getCurrentRoom(roomCode);
@@ -115,11 +119,14 @@ public class RoomService {
             throw new NotHostException("방장만 게임을 시작할 수 있습니다.");
         }
 
+        // 방장도 ready 상태로 변경
+        this.readyPlayer(roomCode, ReadyDTO.builder().roomCode(roomCode).nickname(player.getNickname()).ready(true).build());
         this.checkCount(room.getGameCategory(), room.getHeadCount()); // 최소 인원 확인
         this.checkReady(room.getParticipant()); // 플레이어 레디 상태 확인
         this.start(room, roomCode); // 게임시작
     }
 
+    @Transactional
     @Operation(summary = "플레이어 레디")
     public Room readyPlayer(String roomCode, ReadyDTO readyDTO){
 
@@ -136,6 +143,7 @@ public class RoomService {
         return room;
     }
 
+    @Transactional
     @Operation(summary = "대기방 퇴장")
     public void exitRoom(String roomCode, ExitDTO exitDTO){
         Room room = getCurrentRoom(roomCode);
@@ -177,6 +185,7 @@ public class RoomService {
         lobbyService.findAllRoom(room.getGameCategory(), room.getChannelTire()); // ROOM_LIST
     }
 
+    @Transactional
     @Operation(summary = "자리 상태 변경(자리 열기/닫기)")
     public void seatStateChange(String roomCode, SeatDTO seatDTO){
         Room room = this.getCurrentRoom(roomCode);
@@ -193,6 +202,7 @@ public class RoomService {
         lobbyService.findAllRoom(room.getGameCategory(), room.getChannelTire()); // ROOM_LIST
     }
 
+    @Transactional
     @Operation(summary = "플레이어 강퇴")
     public void kickPlayer(String roomCode, KickDTO kickDTO){
         Room room = this.getCurrentRoom(roomCode);
@@ -216,6 +226,7 @@ public class RoomService {
     @Operation(summary = "대기방 설정 변경")
     public void roomStateChange(String roomCode, RoomStateDTO roomStateDTO){
         Room room = this.getCurrentRoom(roomCode);
+        checkHost(room, roomStateDTO.getNickname());
         room.setTitle(roomStateDTO.getTitle());
         room.setPublicRoom(roomStateDTO.isPublicRoom());
         roomRepository.save(room);
@@ -225,11 +236,14 @@ public class RoomService {
     }
 
     public void start(Room room, String roomCode){
+        // TODO : gameCode 만들기
+        String gameCode = UUID.randomUUID().toString().replace("-", "").substring(0, 16);
         List<Player> players = new ArrayList<>(room.getParticipant().values());
         GameStartDTO gameStartDTO = GameStartDTO.builder()
                 .roomCode(roomCode)
                 .headCount(room.getHeadCount())
                 .participant(players)
+                .gameCode(gameCode)
                 .build();
 
         // 각 gameService의 start 호출
