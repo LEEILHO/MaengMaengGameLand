@@ -9,7 +9,6 @@ import org.springframework.data.redis.core.index.Indexed;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 
 @Builder
 @ToString
@@ -27,7 +26,7 @@ public class Room implements Serializable {
     private int maxHeadCount;
     @Indexed
     private boolean publicRoom;
-    private HashMap<String, Player> participant;
+    private HashMap<String, User> participant;
     @Indexed
     private Game gameCategory;
     @Indexed

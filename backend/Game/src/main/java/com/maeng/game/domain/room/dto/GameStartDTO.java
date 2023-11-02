@@ -1,6 +1,6 @@
 package com.maeng.game.domain.room.dto;
 
-import com.maeng.game.domain.room.entity.Player;
+import com.maeng.game.domain.room.entity.User;
 import lombok.Builder;
 import lombok.Data;
 
@@ -12,5 +12,5 @@ public class GameStartDTO {
     private String roomCode;
     private int headCount;
     private String gameCode;
-    private List<Player> participant;
+    private List<User> participant;
 }

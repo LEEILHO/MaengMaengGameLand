@@ -13,16 +13,15 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @RedisHash("awrsp")
-public class GameInfo {
+public class Game {
 
     @Id
     private String id; // gameCode
     private String roomCode;
-    private LocalDateTime createdAt;
+    private LocalDateTime startedAt;
     private LocalDateTime roundStartedAt;
-    private int HeadCount;
+    private int headCount;
     private int currentRound;
     private List<Player> players;
-    private String[] answer;
-
+    private Card[] problem;
 }

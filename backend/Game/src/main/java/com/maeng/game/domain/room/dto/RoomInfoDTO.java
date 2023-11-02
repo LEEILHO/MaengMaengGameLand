@@ -1,12 +1,10 @@
 package com.maeng.game.domain.room.dto;
 
 import com.maeng.game.domain.room.entity.Game;
-import com.maeng.game.domain.room.entity.Player;
+import com.maeng.game.domain.room.entity.User;
 import lombok.*;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 
 @Data
@@ -21,6 +19,6 @@ public class RoomInfoDTO implements Serializable {
     private int headCount;
     private int maxHeadCount;
     private boolean publicRoom;
-    private List<Player> participant;
+    private List<User> participant;
     private Game gameCategory;
 }
