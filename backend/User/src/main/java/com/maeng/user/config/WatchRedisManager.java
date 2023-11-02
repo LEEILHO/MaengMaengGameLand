@@ -7,6 +7,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
@@ -22,6 +24,8 @@ public class WatchRedisManager {
     }
 
     public void storeCode(String userEmail, String code) {
+        // 만료기한 설정
+        redisTemplate.expire("CODE:" + code, 300, TimeUnit.SECONDS);
         opsHashWatchCode.put("CODE", code, userEmail);
     }
 
@@ -31,6 +35,10 @@ public class WatchRedisManager {
 
     public int deleteCode(String code) {
         return Long.valueOf(opsHashWatchCode.delete("CODE", code)).intValue();
+    }
+
+    public Map<String,String> getCode() {
+        return opsHashWatchCode.entries("CODE");
     }
 
 }

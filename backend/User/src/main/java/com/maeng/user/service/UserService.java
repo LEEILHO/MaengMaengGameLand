@@ -12,7 +12,11 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 @Service
@@ -41,7 +45,20 @@ public class UserService {
 
 
     }
+    @Transactional
     public WatchCode getWatchCode(String userEmail){
+        Map<String, String> Codes =watchRedisManager.getCode();
+
+        List<String> keys = new ArrayList<>();
+        for (Map.Entry<String, String> entry : Codes.entrySet()) {
+            if (userEmail.equals(entry.getValue())) {
+                keys.add(entry.getKey());
+            }
+        }
+        // 삭제 
+        for(String key: keys){
+            watchRedisManager.deleteCode(key);
+        }
         Random random = new Random();
         int letter = 8;
         String code = "";
@@ -54,9 +71,6 @@ public class UserService {
         return WatchCode.builder()
                 .watchCode(code).
                 build();
-
-
-
 
     }
 
