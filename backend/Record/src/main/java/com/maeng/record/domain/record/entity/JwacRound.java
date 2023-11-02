@@ -14,9 +14,11 @@ import com.maeng.record.domain.record.enums.Jwerly;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -39,4 +41,15 @@ public class JwacRound {
 	@Column
 	@Enumerated(value = EnumType.STRING)
 	private Jwerly jwerly;
+
+	public void update(JwacRound jwacRound) {
+		if(jwacRound.game != null)
+			this.game = jwacRound.game;
+		if(jwacRound.gameParticipant != null)
+			this.gameParticipant = jwacRound.gameParticipant;
+		if(jwacRound.round != null)
+			this.round = jwacRound.round;
+		if(jwacRound.jwerly != null)
+			this.jwerly = jwacRound.jwerly;
+	}
 }

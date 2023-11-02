@@ -7,9 +7,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.maeng.record.domain.record.data.Jwac;
+import com.maeng.record.domain.record.service.JwacRecordService;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class MessageListener {
+	private final JwacRecordService jwacRecordService;
 
 	@RabbitListener(queues = "record.queue")
 	public void receiveMessage(String message){
@@ -28,7 +33,7 @@ public class MessageListener {
 			e.printStackTrace();
 		}
 
-		System.out.println("jwac = " + jwac);
+		jwacRecordService.saveJwacRecord(jwac);
 	}
 
 	@RabbitListener(queues = "gsb.queue")

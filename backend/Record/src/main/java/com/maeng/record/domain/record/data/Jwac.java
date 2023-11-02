@@ -1,8 +1,10 @@
 package com.maeng.record.domain.record.data;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.maeng.record.domain.record.enums.Jwerly;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,7 +39,7 @@ public class Jwac {
 	private Map<String, Integer> bidAmounts;
 
 	@JsonProperty("jwerly")
-	private Map<String, String> jwerly;
+	private Map<Integer, Jwerly> jwerly;
 
 	@JsonProperty("players")
 	private Map<String, Player> players;
@@ -57,13 +59,13 @@ public class Jwac {
 		private int score;
 
 		@JsonProperty("totalBidAmount")
-		private int totalBidAmount;
+		private long totalBidAmount;
 
 		@JsonProperty("specialItem")
 		private boolean specialItem;
 
 		@JsonProperty("history")
-		private Map<String, History> history;
+		private Map<Integer, History> history;
 	}
 
 	@Data
@@ -74,10 +76,10 @@ public class Jwac {
 		private boolean lose;
 
 		@JsonProperty("bidAmount")
-		private int bidAmount;
+		private long bidAmount;
 
 		@JsonProperty("bidAt")
-		private String bidAt;
+		private LocalDateTime bidAt;
 
 		@JsonProperty("win")
 		private boolean win;

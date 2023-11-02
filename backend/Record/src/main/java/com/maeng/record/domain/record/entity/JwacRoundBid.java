@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class JwacBid {
+public class JwacRoundBid {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long bidSeq;
@@ -27,6 +27,13 @@ public class JwacBid {
 	@JoinColumn(name = "jwac_round_seq")
 	private JwacRound jwacRound;
 
+	@ManyToOne
+	@JoinColumn(name = "user_seq")
+	private GameUser gameUser;
+
 	@Column
 	private LocalDateTime bidAt;
+
+	@Column
+	private Long bidAmount;
 }
