@@ -1,4 +1,4 @@
-package com.maeng.config;
+package com.maeng.user.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
