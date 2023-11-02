@@ -38,8 +38,8 @@ public class JwacController {
 	private final TimerService timerService;
 	private final EnterService enterService;
 
-	private final static String Game_EXCHANGE_NAME = "game.exchange";
-	private final static String RECORD_EXCHANGE_NAME = "record.exchange";
+	private final static String Game_EXCHANGE_NAME = "game";
+	private final static String RECORD_EXCHANGE_NAME = "record";
 
 	@MessageMapping("game.jwac.{gameCode}")
 	public void enter(@DestinationVariable String gameCode, JwacNicknameDto jwacNicknameDto) {
