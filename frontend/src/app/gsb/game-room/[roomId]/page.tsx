@@ -5,6 +5,8 @@ import React, { useState } from 'react'
 
 import * as S from '@styles/gsb/GameRoom.styled'
 import TurnCard from '@components/gsb/client/TurnCard'
+import Timer from '@components/common/clients/Timer'
+import PlayerCard from '@components/gsb/client/PlayerCard'
 
 const GameRoom = () => {
   // 전광판 하나로 해서 상황에 따라 메세지만 바꾸기
@@ -13,7 +15,13 @@ const GameRoom = () => {
   return (
     <>
       <S.GameRoomContainer>
-        <S.DisplayBoard>{displayMessage}</S.DisplayBoard>
+        <S.TopRow>
+          <S.DisplayBoard>{displayMessage}</S.DisplayBoard>
+        </S.TopRow>
+        <S.CenterRow>
+          <PlayerCard nickname="심은진" chipsPlayerHas={30} weight={0} />
+          <PlayerCard nickname="김진영" chipsPlayerHas={30} weight={0} />
+        </S.CenterRow>
       </S.GameRoomContainer>
       {/* <TurnCard /> */}
     </>

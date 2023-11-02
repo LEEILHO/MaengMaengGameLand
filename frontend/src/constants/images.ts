@@ -44,5 +44,6 @@ export const images = {
     cardBack: '/images/gsb/card-back.png',
     cardFrontHu: '/images/gsb/card-front-hu.png',
     cardFrontSun: '/images/gsb/card-front-sun.png',
+    mul: '/images/gsb/ic-x.png',
   },
 }
