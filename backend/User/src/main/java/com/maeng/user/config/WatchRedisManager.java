@@ -1,4 +1,4 @@
-package com.maeng.config;
+package com.maeng.user.config;
 
 
 import lombok.RequiredArgsConstructor;

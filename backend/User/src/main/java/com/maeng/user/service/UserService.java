@@ -1,19 +1,16 @@
 package com.maeng.user.service;
 
-import com.maeng.config.WatchRedisManager;
+import com.maeng.user.config.WatchRedisManager;
 import com.maeng.score.entity.Tier;
-import com.maeng.score.repository.ScoreRepository;
 import com.maeng.user.dto.UserDetailResponse;
 import com.maeng.user.dto.WatchCode;
 import com.maeng.user.entity.User;
 import com.maeng.user.exception.ExceptionCode;
 import com.maeng.user.exception.UserException;
 import com.maeng.user.respository.UserRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
