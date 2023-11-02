@@ -31,10 +31,10 @@ public class RabbitConfig {
 	private static final String GSB_QUEUE_NAME = "gsb.queue";
 	private static final String AWRSP_QUEUE_NAME = "awrsp.queue";
 	private static final String RECORD_EXCHANGE_NAME = "record";
-	private static final String RECORD_ROUTING_KEY = "record.*";
-	private static final String JWAC_ROUTING_KEY = "record.jwac";
-	private static final String GSB_ROUTING_KEY = "record.gsb";
-	private static final String AWRSP_ROUTING_KEY = "record.awrsp";
+	private static final String RECORD_ROUTING_KEY = "*.*";
+	private static final String JWAC_ROUTING_KEY = "jwac.*";
+	private static final String GSB_ROUTING_KEY = "gsb.*";
+	private static final String AWRSP_ROUTING_KEY = "awrsp.*";
 
 	@Bean
 	public Queue record_queue(){
