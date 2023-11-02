@@ -16,7 +16,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@RedisHash("RoomDTO")
+@RedisHash("Room")
 public class Room implements Serializable {
 
     @Id
@@ -32,5 +32,6 @@ public class Room implements Serializable {
     private Game gameCategory;
     @Indexed
     private ChannelTire channelTire;
+    private HashMap<Integer, Seat> seats;
 
 }
