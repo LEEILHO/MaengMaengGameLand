@@ -24,7 +24,7 @@ public class UserController {
 
     }
 
-    @PostMapping("/watch")
+    @GetMapping("/watch")
     public ResponseEntity<?> watchCode(@RequestHeader("userEmail") String userEmail) {
         logger.info("myDetail(), userEmail = {}", userEmail);
 
