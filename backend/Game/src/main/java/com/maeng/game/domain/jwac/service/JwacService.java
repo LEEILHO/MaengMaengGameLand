@@ -354,4 +354,8 @@ public class JwacService {
 		UUID uuid = UUID.randomUUID();
 		return uuid.toString().replaceAll("-", "").substring(0, 16);
 	}
+
+	public Jwac getAllData(String gameCode) {
+		return jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
+	}
 }

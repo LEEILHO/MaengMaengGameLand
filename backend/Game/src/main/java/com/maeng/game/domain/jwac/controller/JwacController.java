@@ -118,10 +118,7 @@ public class JwacController {
 					.build());
 
 				// record 서버에 결과 저장 요청
-				template.convertAndSend(RECORD_EXCHANGE_NAME, "jwac."+gameCode, MessageDTO.builder()
-					.type("GAME_RESULT")
-					.data(gameResult)
-					.build());
+				template.convertAndSend(RECORD_EXCHANGE_NAME, "jwac."+gameCode, jwacService.getAllData(gameCode));
 			}
 		}
 	}
