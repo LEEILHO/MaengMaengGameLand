@@ -5,10 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -26,6 +23,14 @@ public class UserController {
         return ResponseEntity.ok().body(userService.getUserDetail(userEmail));
 
     }
+
+    @PostMapping("watch")
+    public ResponseEntity<?> watchCode(@RequestHeader("userEmail") String userEmail) {
+        logger.info("myDetail(), userEmail = {}", userEmail);
+
+        return ResponseEntity.ok().body(userService.getWatchCode(userEmail));
+    }
+
 
 
 
