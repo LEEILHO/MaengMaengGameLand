@@ -79,7 +79,7 @@ public class JwacController {
 		if(timerService.timerEnd(gameCode, headCount, jwacNicknameDto)) {
 			JwacRoundResultDto jwacRoundResult = jwacService.endRound(gameCode);
 
-			template.convertAndSend(Game_EXCHANGE_NAME, "game.jwac."+gameCode, MessageDTO.builder()
+			template.convertAndSend(Game_EXCHANGE_NAME, "jwac."+gameCode, MessageDTO.builder()
 				.type("GAME_ROUND_RESULT")
 				.data(jwacRoundResult)
 				.build());
@@ -92,7 +92,7 @@ public class JwacController {
 				timerInfo.setJwerly(nextJwerly);
 				timerInfo.setJwerlyScore(nextJwerly.getIndex());
 
-				template.convertAndSend(Game_EXCHANGE_NAME, "game.jwac."+gameCode, MessageDTO.builder()
+				template.convertAndSend(Game_EXCHANGE_NAME, "jwac."+gameCode, MessageDTO.builder()
 					.type("GAME_ROUND_START")
 					.data(timerInfo)
 					.build());
@@ -102,7 +102,7 @@ public class JwacController {
 				if(jwacRoundResult.getRound() == 10) {
 					JwacItemResultDTO itemResult = jwacService.getSpecialItemResult(gameCode, jwacRoundResult.getMostBidder());
 
-					template.convertAndSend(Game_EXCHANGE_NAME, "game.jwac." + gameCode, MessageDTO.builder()
+					template.convertAndSend(Game_EXCHANGE_NAME, "jwac." + gameCode, MessageDTO.builder()
 						.type("GAME_SPECIAL_ITEM_RESULT")
 						.data(itemResult)
 						.build());
@@ -112,13 +112,13 @@ public class JwacController {
 			} else {
 				JwacGameResultDTO gameResult = jwacService.endGame(gameCode);
 
-				template.convertAndSend(Game_EXCHANGE_NAME, "game.jwac."+gameCode, MessageDTO.builder()
+				template.convertAndSend(Game_EXCHANGE_NAME, "jwac."+gameCode, MessageDTO.builder()
 					.type("GAME_END")
 					.data(gameResult)
 					.build());
 
 				// record 서버에 결과 저장 요청
-				template.convertAndSend(RECORD_EXCHANGE_NAME, "record.jwac."+gameCode, MessageDTO.builder()
+				template.convertAndSend(RECORD_EXCHANGE_NAME, "jwac."+gameCode, MessageDTO.builder()
 					.type("GAME_RESULT")
 					.data(gameResult)
 					.build());
