@@ -1,16 +1,22 @@
 package com.maeng.user.service;
 
+import com.maeng.config.WatchRedisManager;
 import com.maeng.score.entity.Tier;
 import com.maeng.score.repository.ScoreRepository;
 import com.maeng.user.dto.UserDetailResponse;
+import com.maeng.user.dto.WatchCode;
 import com.maeng.user.entity.User;
 import com.maeng.user.exception.ExceptionCode;
 import com.maeng.user.exception.UserException;
 import com.maeng.user.respository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -18,7 +24,8 @@ public class UserService {
 
     private final UserRepository userRepository;
 //    private final ScoreRepository scoreRepository;
-
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final WatchRedisManager watchRedisManager;
 
     public UserDetailResponse getUserDetail(String userEmail){
         User user = userRepository.findUserByEmail(userEmail)
@@ -37,6 +44,25 @@ public class UserService {
 
 
     }
+    public WatchCode getWatchCode(String userEmail){
+        Random random = new Random();
+        int letter = 8;
+        String code = "";
+        for(int i=0; i<letter; i++){
+            int num = random.nextInt(9);
+            code +=Integer.toString(num);
+        }
+        logger.info("getUserWatchCode(), userEmail = {}, code = {}",userEmail,code);
+        watchRedisManager.storeCode(userEmail,code);
+        return WatchCode.builder()
+                .watchCode(code).
+                build();
+
+
+
+
+    }
+
 
 
 
