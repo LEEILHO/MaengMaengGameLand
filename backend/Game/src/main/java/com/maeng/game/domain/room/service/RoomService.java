@@ -7,6 +7,7 @@ import com.maeng.game.domain.room.dto.*;
 import com.maeng.game.domain.room.entity.Game;
 import com.maeng.game.domain.room.entity.Player;
 import com.maeng.game.domain.room.entity.Room;
+import com.maeng.game.domain.room.entity.Seat;
 import com.maeng.game.domain.room.exception.*;
 import com.maeng.game.domain.room.repository.RoomRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,6 +42,8 @@ public class RoomService {
     public String createRoom(CreateRoomDTO createRoomDTO){
 
         String roomCode = UUID.randomUUID().toString().replace("-", "").substring(0, 6);
+        HashMap<Integer, Seat> seats = this.seatInit();
+
         Room room = Room.builder()
                 .id(roomCode)
                 .title(createRoomDTO.getTitle())
@@ -51,6 +54,7 @@ public class RoomService {
                 .participant(null)
                 .gameCategory(createRoomDTO.getGameCategory())
                 .channelTire(createRoomDTO.getChannelTire())
+                .seats(seats)
                 .build();
 
         roomRepository.save(room);
@@ -62,10 +66,11 @@ public class RoomService {
     }
 
     // 대기방 입장
-    public void enterRoom(String roomCode, String nickname){
+    public void enterRoom(String roomCode, EnterDTO enterDTO){
 
         // 방에 사람이 가득찼는지 확인하기
         Room roomInfo = roomRepository.findById(roomCode).orElse(null);
+
         if(roomInfo == null){
             log.info(roomCode);
             throw new NotFoundRoomException("존재하지 않는 방입니다.");
@@ -78,14 +83,21 @@ public class RoomService {
         // 방이 가득차지 않았으면 headCount++ 후 Player 추가해주기
         int headCount = roomInfo.getHeadCount();
         Player player = Player.builder()
-                .nickname(nickname)
+                .nickname(enterDTO.getNickname())
                 .ready(false)
                 .host(true)
                 .profileUrl("넣어야 됨")
                 .tier(Tier.GOLD) // TODO : 플레이어 정보 가져오기(프로필 사진, 티어)
                 .build();
 
+        HashMap<Integer, Seat> seats = roomInfo.getSeats();
         HashMap<String, Player> newList = new HashMap<>();
+
+        seats.put(headCount+1, Seat.builder()
+                                    .available(false)
+                                    .nickname(enterDTO.getNickname())
+                                    .build());
+
         if(roomInfo.getParticipant() != null) { // 방장이 아닐 경우
             newList.putAll(roomInfo.getParticipant());
             player.setHost(false);
@@ -94,6 +106,7 @@ public class RoomService {
         newList.put(player.getNickname(), player);
         roomInfo.setParticipant(newList);
         roomInfo.setHeadCount(headCount+1);
+        roomInfo.setSeats(seats);
         roomRepository.save(roomInfo);
 
         // ROOM_INFO
@@ -143,16 +156,17 @@ public class RoomService {
     }
 
     @Operation(summary = "대기방 퇴장")
-    public void exitRoom(String roomCode, PlayerDTO playerDTO){
+    public void exitRoom(String roomCode, ExitDTO exitDTO){
         Room room = roomRepository.findById(roomCode).orElse(null);
         if(room == null){
             throw new NotFoundRoomException("존재하지 않는 방입니다.");
         }
 
         HashMap<String, Player> players = room.getParticipant();
-        Player player = players.get(playerDTO.getNickname());
+        HashMap<Integer, Seat> seats = room.getSeats();
+        Player player = players.get(exitDTO.getNickname());
 
-        players.remove(playerDTO.getNickname());
+        players.remove(exitDTO.getNickname());
         room.setParticipant(players);
         room.setHeadCount(room.getHeadCount()-1);
 
@@ -164,6 +178,10 @@ public class RoomService {
             return;
         }
 
+        // 해당 자리 초기화
+        seats.put(exitDTO.getSeatNumber(), Seat.builder().available(true).nickname(null).build());
+
+        // 방장 위임
         List<String> temp = new ArrayList<>(room.getParticipant().keySet());
         if(player.isHost()){ // 나간 사람이 방장이면 남은 사람 중 한 명을 방장으로
             Player nextHost = players.get(temp.get(0));
@@ -174,7 +192,7 @@ public class RoomService {
         // ROOM_EXIT
         MessageDTO messageDTO = MessageDTO.builder()
                 .type("ROOM_EXIT")
-                .data(PlayerDTO.builder().roomCode(roomCode).nickname(playerDTO.getNickname()).build())
+                .data(PlayerDTO.builder().roomCode(roomCode).nickname(exitDTO.getNickname()).build())
                 .build();
         template.convertAndSend(CHAT_EXCHANGE_NAME, "room."+roomCode, messageDTO);
 
@@ -186,10 +204,11 @@ public class RoomService {
     }
 
     public void start(Room room, String roomCode){
+        List<Player> players = new ArrayList<>(room.getParticipant().values());
         GameStartDTO gameStartDTO = GameStartDTO.builder()
                 .roomCode(roomCode)
                 .headCount(room.getHeadCount())
-                //.participant(room.getParticipant())
+                .participant(players)
                 .build();
 
         // TODO : 각 gameService의 start 호출
@@ -238,8 +257,6 @@ public class RoomService {
         }
     }
 
-    // TODO : sendMessageToUser - 특정 사용자에게 메세지 보낼 때
-
     public void enterNotice(String roomCode, EnterDTO enterDTO){
         EnterDTO chatDTO = EnterDTO.builder()
                 .nickname(enterDTO.getNickname())
@@ -273,5 +290,18 @@ public class RoomService {
                 .build();
 
         template.convertAndSend(CHAT_EXCHANGE_NAME, "room."+roomCode, messageDTO);
+    }
+
+    public HashMap<Integer, Seat> seatInit(){
+        HashMap<Integer, Seat> seats = new HashMap<>();
+
+        for(int i = 1; i <= 8; i++){
+            seats.put(i, Seat.builder()
+                            .available(true)
+                            .nickname(null)
+                            .build());
+        }
+
+        return seats;
     }
 }

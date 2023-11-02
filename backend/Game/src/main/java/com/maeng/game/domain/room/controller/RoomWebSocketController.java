@@ -24,7 +24,7 @@ public class RoomWebSocketController {
     @MessageMapping("room.enter.{roomCode}")
     public void enter(@DestinationVariable("roomCode") String roomCode, EnterDTO enterDTO){
         roomService.enterNotice(roomCode, enterDTO); // 입장 알림
-        roomService.enterRoom(roomCode, enterDTO.getNickname()); // player 추가
+        roomService.enterRoom(roomCode, enterDTO); // player 추가
     }
 
     @Operation(summary = "대기방 채팅")
@@ -53,7 +53,7 @@ public class RoomWebSocketController {
 
     @Operation(summary = "대기방 퇴장")
     @MessageMapping("room.exit.{roomCode}")
-    public void exit(@DestinationVariable String roomCode, PlayerDTO playerDTO){
-        roomService.exitRoom(roomCode, playerDTO);
+    public void exit(@DestinationVariable String roomCode, ExitDTO exitDTO){
+        roomService.exitRoom(roomCode, exitDTO);
     }
 }
