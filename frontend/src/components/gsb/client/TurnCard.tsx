@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import * as S from '@styles/gsb/OrderingCard.styled'
+import * as S from '@styles/gsb/TurnCard.styled'
 import { TurnListType } from '@type/gsb/game.type'
 import { images } from '@constants/images'
 
