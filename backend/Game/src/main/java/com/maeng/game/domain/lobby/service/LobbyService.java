@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ public class LobbyService {
     private final RabbitTemplate template;
     private final static String LOBBY_EXCHANGE_NAME = "room";
 
+    @Transactional
     public void findAllRoom(Game game, ChannelTire channelTire){
         List<Room> roomList = roomRepository.findAllByGameCategoryAndChannelTireAndPublicRoomIsTrue(game, channelTire);
         List<RoomDTO> list = new ArrayList<>();

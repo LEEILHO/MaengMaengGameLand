@@ -11,5 +11,6 @@ import java.util.List;
 public class GameStartDTO {
     private String roomCode;
     private int headCount;
+    private String gameCode;
     private List<Player> participant;
 }

@@ -5,14 +5,11 @@ import com.maeng.game.domain.room.entity.Game;
 import lombok.Data;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
-
 @ToString
 @Data
 public class CreateRoomDTO {
     private String title;
     private boolean publicRoom;
-    private String host;
     private Game gameCategory;
     private ChannelTire channelTire;
 }
