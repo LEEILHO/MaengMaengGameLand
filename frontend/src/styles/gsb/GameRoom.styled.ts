@@ -10,7 +10,6 @@ export const GameRoomContainer = styled.div`
 
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
 
   background-image: url(${images.gsb.background});
   background-repeat: no-repeat;
@@ -24,7 +23,7 @@ export const TopRow = styled.div`
   justify-content: center;
   align-items: center;
   position: relative;
-  margin-top: 20px;
+  margin: 20px 0px;
 `
 
 export const DisplayBoard = styled.p`
@@ -43,6 +42,5 @@ export const DisplayBoard = styled.p`
 export const CenterRow = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center;
   padding: 0px 40px;
 `
