@@ -22,8 +22,6 @@ public class LobbyService {
 
     private final RoomRepository roomRepository;
     private final RabbitTemplate template;
-    @Value("${game.max}")
-    private int MAX_HAED_COUNT;
     private final static String LOBBY_EXCHANGE_NAME = "room";
 
     public void findAllRoom(Game game, ChannelTire channelTire){
@@ -35,7 +33,7 @@ public class LobbyService {
                             .roomCode(room.getId())
                             .title(room.getTitle())
                             .headCount(room.getHeadCount())
-                            .maxHeadCount(MAX_HAED_COUNT)
+                            .maxHeadCount(room.getMaxHeadCount())
                             .build());
         }
 

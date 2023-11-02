@@ -38,7 +38,7 @@ public class RoomService {
     @Value("${game.awrsp-min}")
     private int AWRSP_MIN_PLAYER;
 
-    // TODO : 대기방 생성
+    @Operation(summary = "대기방 생성")
     public String createRoom(CreateRoomDTO createRoomDTO){
 
         String roomCode = UUID.randomUUID().toString().replace("-", "").substring(0, 6);
@@ -59,22 +59,14 @@ public class RoomService {
 
         roomRepository.save(room);
 
-        // ROOM_LIST
-        lobbyService.findAllRoom(room.getGameCategory(), room.getChannelTire()); // 로비에 리스트 전송
+        lobbyService.findAllRoom(room.getGameCategory(), room.getChannelTire()); // ROOM_LIST
 
         return roomCode;
     }
 
-    // 대기방 입장
+    @Operation(summary = "대기방 입장")
     public void enterRoom(String roomCode, EnterDTO enterDTO){
-
-        // 방에 사람이 가득찼는지 확인하기
-        Room roomInfo = roomRepository.findById(roomCode).orElse(null);
-
-        if(roomInfo == null){
-            log.info(roomCode);
-            throw new NotFoundRoomException("존재하지 않는 방입니다.");
-        }
+        Room roomInfo = this.getCurrentRoom(roomCode);
 
         if(roomInfo.getHeadCount() == GAME_MAX_PLAYER){
             throw new PullRoomException("플레이어가 가득 찬 방입니다.");
@@ -109,21 +101,15 @@ public class RoomService {
         roomInfo.setSeats(seats);
         roomRepository.save(roomInfo);
 
-        // ROOM_INFO
-        this.sendRoomInfo(roomCode, roomInfo); // 방에 있는 사람들에게 방 정보 전송
-
-        // ROOM_LIST
-        lobbyService.findAllRoom(roomInfo.getGameCategory(), roomInfo.getChannelTire()); // 로비에 리스트 전송
+        this.sendRoomInfo(roomCode, roomInfo); // ROOM_INFO
+        lobbyService.findAllRoom(roomInfo.getGameCategory(), roomInfo.getChannelTire()); // ROOM_LIST
     }
 
+    @Operation(summary = "게임 시작")
     public void gameStart(String roomCode, PlayerDTO playerDTO){
-        Room room = roomRepository.findById(roomCode).orElse(null);
+        Room room = getCurrentRoom(roomCode);
 
-        if(room == null){
-            throw new NotFoundRoomException("존재하지 않는 방입니다.");
-        }
-
-        // TODO : 해당 닉네임이 host이면 게임 시작
+        // 해당 닉네임이 host이면 게임 시작
         Player player = room.getParticipant().get(playerDTO.getNickname());
         if(!player.isHost()){
             throw new NotHostException("방장만 게임을 시작할 수 있습니다.");
@@ -134,18 +120,13 @@ public class RoomService {
         this.start(room, roomCode); // 게임시작
     }
 
+    @Operation(summary = "플레이어 레디")
     public Room readyPlayer(String roomCode, ReadyDTO readyDTO){
 
-        // TODO : 방 정보에서 해당 플레이어 레디 상태 바꾸고
-        Room room = roomRepository.findById(roomCode).orElse(null);
-
-        if(room == null){
-            throw new NotFoundRoomException("방이 존재하지 않습니다.");
-        }
-
+        // 방 정보에서 해당 플레이어 레디 상태 바꾸고
+        Room room = getCurrentRoom(roomCode);
         HashMap<String, Player> players = room.getParticipant();
         Player player = players.get(readyDTO.getNickname());
-        log.info(player.getNickname());
 
         player.setReady(readyDTO.isReady());
         players.put(player.getNickname(), player);
@@ -157,10 +138,7 @@ public class RoomService {
 
     @Operation(summary = "대기방 퇴장")
     public void exitRoom(String roomCode, ExitDTO exitDTO){
-        Room room = roomRepository.findById(roomCode).orElse(null);
-        if(room == null){
-            throw new NotFoundRoomException("존재하지 않는 방입니다.");
-        }
+        Room room = getCurrentRoom(roomCode);
 
         HashMap<String, Player> players = room.getParticipant();
         HashMap<Integer, Seat> seats = room.getSeats();
@@ -172,8 +150,7 @@ public class RoomService {
 
         if(room.getHeadCount() == 0){ // 방에 아무도 남아있지 않다면 방 정보 삭제
             roomRepository.delete(room);
-            // ROOM_LIST
-            lobbyService.findAllRoom(room.getGameCategory(), room.getChannelTire()); // 로비에 리스트 전송
+            lobbyService.findAllRoom(room.getGameCategory(), room.getChannelTire()); // ROOM_LIST
             log.info("roomCode : " +roomCode+ " 방 삭제 완");
             return;
         }
@@ -196,11 +173,55 @@ public class RoomService {
                 .build();
         template.convertAndSend(CHAT_EXCHANGE_NAME, "room."+roomCode, messageDTO);
 
-        // ROOM_INFO
-        this.sendRoomInfo(roomCode, room);
+        this.sendRoomInfo(roomCode, room); // ROOM_INFO
+        lobbyService.findAllRoom(room.getGameCategory(), room.getChannelTire()); // ROOM_LIST
+    }
 
-        // ROOM_LIST
-        lobbyService.findAllRoom(room.getGameCategory(), room.getChannelTire()); // 로비에 리스트 전송
+    @Operation(summary = "자리 상태 변경(자리 열기/닫기)")
+    public void seatStateChange(String roomCode, SeatDTO seatDTO){
+        Room room = this.getCurrentRoom(roomCode);
+        checkHost(room, seatDTO.getNickname()); // 방장 권한 확인
+
+        // 자리 상태, MaxHeadCount 변경
+        Seat seat = room.getSeats().get(seatDTO.getSeatNumber());
+        room.setMaxHeadCount(seat.isAvailable() ? room.getMaxHeadCount() - 1 : room.getMaxHeadCount() + 1);
+        seat.setAvailable(!seat.isAvailable());
+        room.getSeats().put(seatDTO.getSeatNumber(), seat);
+        roomRepository.save(room);
+
+        sendRoomInfo(roomCode, room); // ROOM_INFO
+        lobbyService.findAllRoom(room.getGameCategory(), room.getChannelTire()); // ROOM_LIST
+    }
+
+    @Operation(summary = "플레이어 강퇴")
+    public void kickPlayer(String roomCode, KickDTO kickDTO){
+        Room room = this.getCurrentRoom(roomCode);
+        checkHost(room, kickDTO.getNickname()); // 방장 권한 확인
+
+        HashMap<String, Player> players = room.getParticipant();
+        HashMap<Integer, Seat> seats = room.getSeats();
+
+        // 해당 플레이어 삭제, HeadCount, 자리 사용가능으로 변경
+        players.remove(kickDTO.getKickPlayer());
+        seats.put(kickDTO.getSeatNumber(), Seat.builder().available(true).nickname(null).build());
+        room.setParticipant(players);
+        room.setSeats(seats);
+        room.setHeadCount(room.getHeadCount()-1);
+        roomRepository.save(room);
+
+        this.sendRoomInfo(roomCode, room); // ROOM_INFO
+        lobbyService.findAllRoom(room.getGameCategory(), room.getChannelTire());
+    }
+
+    @Operation(summary = "대기방 설정 변경")
+    public void roomStateChange(String roomCode, RoomStateDTO roomStateDTO){
+        Room room = this.getCurrentRoom(roomCode);
+        room.setTitle(roomStateDTO.getTitle());
+        room.setPublicRoom(roomStateDTO.isPublicRoom());
+        roomRepository.save(room);
+
+        this.sendRoomInfo(roomCode, room);
+        lobbyService.findAllRoom(room.getGameCategory(), room.getChannelTire());
     }
 
     public void start(Room room, String roomCode){
@@ -211,7 +232,7 @@ public class RoomService {
                 .participant(players)
                 .build();
 
-        // TODO : 각 gameService의 start 호출
+        // 각 gameService의 start 호출
         if(room.getGameCategory().equals(Game.ALL_WIN_ROCK_SCISSOR_PAPER)){
             awrspService.gameStart(gameStartDTO);
         }
@@ -272,6 +293,7 @@ public class RoomService {
     }
 
 
+    @Operation(summary = "방 정보 전송")
     public void sendRoomInfo(String roomCode, Room roomInfo){
 
         List<Player> players = new ArrayList<>(roomInfo.getParticipant().values());
@@ -303,5 +325,24 @@ public class RoomService {
         }
 
         return seats;
+    }
+
+    public Room getCurrentRoom(String roomCode){
+        Room room = roomRepository.findById(roomCode).orElse(null);
+
+        if(room == null){
+            throw new NotFoundRoomException("존재하지 않는 방입니다.");
+        }
+
+        return room;
+    }
+
+    public void checkHost(Room room, String nickname){
+        Player player = room.getParticipant().get(nickname);
+
+        if(!player.isHost()){
+            throw new NotHostException("권한이 없습니다.");
+        }
+
     }
 }
