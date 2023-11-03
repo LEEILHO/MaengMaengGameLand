@@ -32,13 +32,11 @@ const CreateRoomModal = ({ closeModal }: Props) => {
   )
 
   const handleCreateRoom = useCallback(() => {
-    console.log('버튼 클릭')
-    console.log(user, channel)
     if (!user || !channel) return
     const isPublic = roomType === '공개'
     const gameType = gameTypeChange(pathname.split('/')[1])
     createRoom(title, isPublic, user.nickname, gameType, channel)
-  }, [])
+  }, [title, roomType, user?.nickname, channel])
 
   return (
     <S.CreateRoomModalContainer>
