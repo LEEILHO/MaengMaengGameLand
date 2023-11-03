@@ -312,7 +312,7 @@ public class RoomService {
     @Operation(summary = "방 정보 전송")
     public void sendRoomInfo(String roomCode, Room roomInfo){
 
-        User[] users = new User[GAME_MAX_PLAYER];
+        User[] users = new User[roomInfo.getMaxHeadCount()];
         HashMap<Integer, Seat> list = roomInfo.getSeats();
 
         for(int i = 0; i < roomInfo.getMaxHeadCount(); i++){
