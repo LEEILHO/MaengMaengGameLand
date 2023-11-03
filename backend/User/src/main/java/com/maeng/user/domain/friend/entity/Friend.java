@@ -1,6 +1,7 @@
 package com.maeng.user.domain.friend.entity;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,7 +13,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
 
 import com.maeng.user.domain.user.entity.User;
 
@@ -31,9 +31,8 @@ public class Friend {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
-    @Type(type = "uuid-char")
-    @Column(name = "friendId", columnDefinition = "CHAR(36)")
-    private String friendId;
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID friendId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "requester_seq")

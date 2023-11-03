@@ -1,5 +1,7 @@
 package com.maeng.user.domain.friend.service;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 
 import com.maeng.user.domain.friend.entity.Friend;
@@ -20,7 +22,7 @@ public class FriendService {
 			.build());
 	}
 
-	public void deleteFriend(String friendId) {
-		friendRepository.deleteById(friendId);
+	public void deleteFriend(UUID friendId) {
+		friendRepository.deleteByFriendId(friendId);
 	}
 }

@@ -1,8 +1,11 @@
 package com.maeng.user.domain.friend.controller;
 
+import java.util.UUID;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.maeng.user.domain.friend.entity.FriendRequest;
@@ -29,7 +32,7 @@ public class FriendController {
 	}
 
 	@PostMapping("/accept")
-	public ResponseEntity<?> acceptFriend(String requestId) {
+	public ResponseEntity<?> acceptFriend(@RequestParam UUID requestId) {
 		FriendRequest friendRequest = friendRequestService.acceptFriend(requestId);
 
 		friendService.addFriend(friendRequest);
@@ -38,17 +41,17 @@ public class FriendController {
 	}
 
 	@PostMapping("/reject")
-	public void rejectFriend(String requestId) {
+	public void rejectFriend(@RequestParam UUID requestId) {
 		friendRequestService.deleteFriendRequest(requestId);
 	}
 
 	@PostMapping("/cancel")
-	public void cancelRequest(String requestId) {
+	public void cancelRequest(@RequestParam UUID requestId) {
 		friendRequestService.deleteFriendRequest(requestId);
 	}
 
 	@PostMapping("/delete")
-	public void deleteFriend(String friendId) {
+	public void deleteFriend(@RequestParam UUID friendId) {
 		friendService.deleteFriend(friendId);
 	}
 

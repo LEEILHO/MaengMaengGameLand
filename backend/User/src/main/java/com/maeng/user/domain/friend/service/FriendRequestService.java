@@ -1,5 +1,7 @@
 package com.maeng.user.domain.friend.service;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,8 +29,8 @@ public class FriendRequestService {
 	}
 
 	@Transactional
-	public FriendRequest acceptFriend(String requestId) {
-		FriendRequest friendRequest = friendRequestRepository.findById(requestId)
+	public FriendRequest acceptFriend(UUID requestId) {
+		FriendRequest friendRequest = friendRequestRepository.findByRequestId(requestId)
 			.orElseThrow(() -> new FriendRequestException(FriendExceptionCode.FRIEND_REQUEST_NOT_FOUND));
 
 		friendRequestRepository.delete(friendRequest);
@@ -36,8 +38,9 @@ public class FriendRequestService {
 		return friendRequest;
 	}
 
-	public void deleteFriendRequest(String requestId) {
-		friendRequestRepository.deleteById(requestId);
+	@Transactional
+	public void deleteFriendRequest(UUID requestId) {
+		friendRequestRepository.deleteByRequestId(requestId);
 	}
 
 }
