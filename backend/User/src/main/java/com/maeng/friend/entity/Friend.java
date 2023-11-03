@@ -1,22 +1,40 @@
 package com.maeng.friend.entity;
 
+import java.time.LocalDateTime;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import com.maeng.user.entity.User;
-import lombok.*;
 
-import javax.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
 @Getter
-@AllArgsConstructor
 @Builder
-@Entity(name = "friends")
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity(name = "friend")
 public class Friend {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "friend_seq")
-    private long friendSeq;
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
+    @Type(type = "uuid-char")
+    @Column(name = "friendId", columnDefinition = "CHAR(36)")
+    private String friendId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "requester_seq")
     private User requester;
@@ -25,6 +43,12 @@ public class Friend {
     @JoinColumn(name = "recipient_seq")
     private User recipient;
 
+    @Column(name = "createAt")
+    private LocalDateTime createAt;
 
+    @PrePersist
+    public void prePersist() {
+        createAt = LocalDateTime.now();
+    }
 
 }
