@@ -15,6 +15,7 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
+import android.view.View.GONE
 import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
 import android.widget.RelativeLayout
@@ -31,7 +32,7 @@ class GameFragment :
     BaseFragment<FragmentGameBinding>(FragmentGameBinding::bind, R.layout.fragment_game) {
 
     companion object {
-        const val JUMP_HEIGHT = 250F
+        const val JUMP_HEIGHT = 200F
     }
 
     private lateinit var swipeCallback: SwipeDismissFrameLayout.Callback
@@ -75,7 +76,12 @@ class GameFragment :
         initData()
         initObserve()
         initPlatform() // 발판 생성
-        initAnimation()
+        // 레이아웃의 높이가 결정된 후에 beforeAnimateValue 설정
+        binding.gameLayout.post {
+            beforeAnimateValue = binding.gameLayout.height + 10F
+            // 애니메이션 초기화 함수나 다른 초기화 로직을 이곳에 호출
+            initAnimation()
+        }
 
 
         // 스크롤 금지
@@ -115,7 +121,6 @@ class GameFragment :
         )
     }
 
-    private var isCollided = false  // 충돌 감지 플래그
     private fun initObserve() {
         playerPosition.observe(viewLifecycleOwner) { playerRect ->
 //            Log.d(TAG, "initObserve: $playerRect")
@@ -125,6 +130,8 @@ class GameFragment :
             }
         }
     }
+
+    private var isCollided = false  // 충돌 감지 플래그
 
     private fun checkVisiblePlatforms(playerRect: Rect) {
         val scrollY = binding.gameScrollView.scrollY  // 현재 스크롤 위치
@@ -150,33 +157,35 @@ class GameFragment :
                         (platform.y + platform.height).toInt()
                     )
 
-
-                    //좌표계와 충돌 판정: 안드로이드 좌표계에서 y값은 화면의 위에서 아래로 증가합니다.
-                    // player가 platform의 위에 있을 때 player.bottom 값이 platform.top보다 같거나 작고,
-                    // player.top 값이 platform.bottom보다 같거나 크다면 충돌로 간주할 수 있습니다.
-
-                    if (playerRect.right > platformRect.left && playerRect.left < platformRect.right && (playerRect.bottom - platformRect.top < 10) && (playerRect.bottom - platformRect.top >= 0)) {
+//                    if (playerRect.right > platformRect.left && playerRect.left < platformRect.right && (playerRect.bottom - platformRect.top < 10) && (playerRect.bottom - platformRect.top >= 0)) {
+                    if (playerRect.right > platformRect.left && playerRect.left < platformRect.right && (playerRect.bottom <= platformRect.top) && (platformRect.top - playerRect.bottom < 10)) {
 //                            Log.d(TAG, "checkCollisions:  ${playerRect.bottom} ${platformRect.top}")
 //                            yPosition = screenHeight - platformRect.top.toFloat()
-                        if (yPosition > platformRect.top.toFloat()) {
+//                        if (yPosition > platformRect.top.toFloat()) {
 //                            Log.d(TAG, "initObserve: scroll")
 //                            binding.gameScrollView.smoothScrollBy(
 //                                0,
 //                                -(yPosition - platformRect.top).toInt()
 //                            )
-                        }
+//                        }
 
                         yPosition = platformRect.top.toFloat()
-
+                        Log.d(TAG, "checkVisiblePlatforms: $playerRect $platformRect")
                         isCollided = true // 충돌 발생 플래그
+
+                        valueAnimator.cancel()
+                        valueAnimator.setFloatValues(yPosition, yPosition - JUMP_HEIGHT)
+                        valueAnimator.start()
+                        isGoingDown = false
+                        platform.visibility = GONE
                         break
                     }
                 }
             }
         }
-        if (!isCollided && isGoingDown) {
-            isCollided = false // 충돌하지 않음 상태 업데이트
-        }
+//        if (!isCollided && isGoingDown) {
+//            isCollided = false // 충돌하지 않음 상태 업데이트
+//        }
     }
 
 
@@ -196,11 +205,12 @@ class GameFragment :
 
     private var isGoingDown = false
     private var beforeAnimateValue = 0F
+    private var animationCancelled = false
 
     private fun initAnimation() {
         if (!::valueAnimator.isInitialized) { // 초기화
             valueAnimator = ValueAnimator().apply {
-                duration = 540
+                duration = 630
                 repeatCount = 1
                 repeatMode = ValueAnimator.REVERSE
                 interpolator = DecelerateInterpolator(1.2f)
@@ -219,16 +229,37 @@ class GameFragment :
                     beforeAnimateValue = animatedValue
                 }
 
+
                 addListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationCancel(animation: Animator) {
+                        super.onAnimationCancel(animation)
+                        animationCancelled = true
+                    }
+
                     override fun onAnimationEnd(animation: Animator) {
                         super.onAnimationEnd(animation)
+
+                        if (animationCancelled) {
+                            animationCancelled = false
+                            return
+                        }
+
+                        // 현재 충돌 상태 로그
+                        Log.d(
+                            TAG,
+                            "onAnimationEnd: isCollided = $isCollided, isGoingDown = $isGoingDown"
+                        )
 
                         if (!isCollided && isGoingDown) { // 추락
                             Log.d(TAG, "onAnimationEnd: 추락! 플레이어의 높이를 0으로 설정")
                             fallingAnimation()
 
-                        } else if (isCollided) { // 충돌한 경우, 다시 애니메이션 시작
-                            Log.d(TAG, "onAnimationEnd: 발판 충돌! yPosition: $yPosition")
+                        } else if (isCollided && isGoingDown) { // 충돌한 경우, 다시 애니메이션 시작
+                            Log.d(
+                                TAG,
+                                "onAnimationEnd: 발판 충돌! yPosition: $yPosition ${playerPosition.value} "
+                            )
+
                             isCollided = false  // 충돌 상태 리셋
 
                             valueAnimator.setFloatValues(yPosition, yPosition - JUMP_HEIGHT)
@@ -244,6 +275,7 @@ class GameFragment :
     }
 
     private fun fallingAnimation() {
+        Log.d(TAG, "fallingAnimation: ")
         val fallingAnimator =
             ValueAnimator.ofFloat(player?.y ?: 0f, binding.gameLayout.height.toFloat()).apply {
 //            duration = 100  // 지속 시간
@@ -330,7 +362,7 @@ class GameFragment :
             lastY -= distance
 
             val platformCount = (1..3).random()  // 발판의 개수
-            for (i in 0 until platformCount) {
+            for (i in 0 until 1) {
                 val platform = createPlatform()
                 positionPlatformRandomly(platform, lastY, idx++)
             }
