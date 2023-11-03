@@ -35,14 +35,19 @@ public class JwtProvider {
     }
 
     public String generateAccessToken(String email) {
-        logger.debug("accessExprieTime = {}",(int)appProperties.getAuth().getAccessExpiry());
+        logger.debug("accessExpireTime = {}",(int)appProperties.getAuth().getAccessExpiry());
         return generate(email,
                 getExpiryDate((int)appProperties.getAuth().getAccessExpiry()));
     }
 
     public String generateRefreshToken(String email) {
-        logger.debug("accessExprieTime = {}",(int)appProperties.getAuth().getRefreshExpiry());
+        logger.debug("accessExpireTime = {}",(int)appProperties.getAuth().getRefreshExpiry());
 
+        return generate(email,
+                getExpiryDate((int)appProperties.getAuth().getRefreshExpiry()));
+    }
+
+    public String generateWatchToken(String email){
         return generate(email,
                 getExpiryDate((int)appProperties.getAuth().getRefreshExpiry()));
     }

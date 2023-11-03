@@ -6,10 +6,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maeng.auth.dto.CodeDto;
 import com.maeng.auth.dto.OAuthToken;
 import com.maeng.auth.dto.TokenInfoResponse;
+import com.maeng.auth.dto.WatchToken;
 import com.maeng.auth.entity.User;
+import com.maeng.auth.entity.WatchJwtRedis;
+import com.maeng.auth.entity.WatchRedis;
 import com.maeng.auth.exception.AuthException;
 import com.maeng.auth.exception.ExceptionCode;
 import com.maeng.auth.repository.UserRepository;
+import com.maeng.auth.repository.WatchRepository;
+import com.maeng.auth.repository.WatchTokenRepository;
 import com.maeng.auth.util.JwtProvider;
 import com.maeng.auth.util.JwtRedisManager;
 import org.slf4j.Logger;
@@ -43,12 +48,16 @@ public class AuthService {
 
     private final JwtProvider jwtProvider;
 
+    private  final WatchRepository watchRepository;
+
+    private final WatchTokenRepository watchTokenRepository;
     public AuthService(RestTemplate restTemplate,
                        @Value("${spring.security.oauth2.client.registration.kakao.client-id}") String clientId,
                        @Value("${spring.security.oauth2.client.registration.kakao.client-secret}") String clientSecret ,
                        @Value("${spring.security.oauth2.client.provider.kakao.token-uri}") String accessTokenUrl,
                        @Value("${spring.security.oauth2.client.provider.kakao.user-info-uri}") String userInfoUrl,
-                       JwtRedisManager jwtRedisManager, JwtProvider jwtProvider, UserRepository userRepository){
+                       JwtRedisManager jwtRedisManager, JwtProvider jwtProvider, UserRepository userRepository, WatchRepository watchRepository
+                        ,WatchTokenRepository watchTokenRepository){
         this.restTemplate = restTemplate;
         this.clientId = clientId;
         this.clientSecret = clientSecret;
@@ -57,6 +66,9 @@ public class AuthService {
         this.jwtRedisManager = jwtRedisManager;
         this.jwtProvider = jwtProvider;
         this.userRepository = userRepository;
+        this.watchRepository = watchRepository;
+        this.watchTokenRepository =watchTokenRepository;
+
 
     }
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -124,6 +136,23 @@ public class AuthService {
 
         return new OAuthToken(jwtProvider.generateAccessToken(id), jwtProvider.generateRefreshToken(id));
     }
+    public WatchToken getWatchToken(String code){
+
+        WatchRedis watchRedis = watchRepository.findByCode(code).orElseThrow(()
+                -> new AuthException(ExceptionCode.WATCH_CODE_FAILED));
+        WatchToken watchToken = new WatchToken(jwtProvider.generateWatchToken(watchRedis.getEmail()));
+        logger.info("getWatchToken(), email = {}, WatchToken = {}", watchRedis.getEmail(),watchToken);
+
+        watchTokenRepository.save(WatchJwtRedis.builder()
+                        .email(watchRedis.getEmail())
+                        .watchToken(watchToken.getWatchToken())
+                .build());
+
+        return watchToken;
+
+
+    }
+
 
 
 
@@ -174,6 +203,9 @@ public class AuthService {
             throw new AuthException(ExceptionCode.KAKAO_TOKEN_RESPONSE_FAILED);
         }
     }
+    /** 코드를 입력 받아 정보 확인 후 AccessToken 확인 */
+
+
 
     private ResponseEntity<String> requestAccessToken(CodeDto codeDto) {
         try {
@@ -191,6 +223,8 @@ public class AuthService {
             throw new AuthException(ExceptionCode.KAKAO_ACCESS_TOKEN_FETCH_FAILED);
         }
     }
+
+
 
 
 
