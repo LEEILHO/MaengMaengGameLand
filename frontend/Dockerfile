@@ -7,7 +7,7 @@ RUN mkdir -p /usr/app
 
 FROM base AS builder
 WORKDIR /usr/app
-COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /usr/app/node_modules ./node_modules
 COPY . .
 RUN yarn build
 
@@ -15,9 +15,9 @@ RUN yarn build
 
 FROM base AS runner
 WORKDIR /app
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/public ./public
+COPY --from=builder /usr/app/.next/standalone ./
+COPY --from=builder /usr/app/.next/static ./.next/static
+COPY --from=builder /usr/app/public ./public
 
 EXPOSE 3000
 
