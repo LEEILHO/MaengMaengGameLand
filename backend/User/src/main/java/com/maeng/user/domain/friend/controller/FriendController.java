@@ -28,6 +28,7 @@ public class FriendController {
 	public void requestFriend(String requester, String recipient) {
 		User requestUser = userService.getUserByEmail(requester);
 		User recipUser = userService.getUserByEmail(recipient);
+		friendService.checkFriend(requestUser, recipUser);
 		friendRequestService.requestFriend(requestUser, recipUser);
 	}
 

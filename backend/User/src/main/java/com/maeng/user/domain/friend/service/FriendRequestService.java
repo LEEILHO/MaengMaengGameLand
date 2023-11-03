@@ -20,6 +20,11 @@ public class FriendRequestService {
 
 	@Transactional
 	public void requestFriend(User requester, User recipient) {
+		friendRequestRepository.findByRequesterAndRecipient(requester, recipient)
+			.ifPresent(friendRequest -> {
+				throw new FriendRequestException(FriendExceptionCode.FRIEND_REQUEST_ALREADY_EXIST);
+			});
+
 		friendRequestRepository.save(FriendRequest.builder()
 			.requester(requester)
 			.recipient(recipient)
