@@ -1,5 +1,6 @@
 package com.maeng.record.domain.record.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,7 +39,7 @@ public class JwacRecordService {
 	private final GameParticipantRepository gameParticipantRepository;
 
 	public void saveJwacRecord(Jwac jwac) {
-		Game game = createGame(jwac.getGameCode());
+		Game game = createGame(jwac.getGameCode(), jwac.getCreateAt());
 
 		Map<String, GameParticipant> participants = createGameParticipant(game, new ArrayList<>(jwac.getPlayers().keySet()), jwac);
 
@@ -52,10 +53,11 @@ public class JwacRecordService {
 		jwacBidRepository.saveAll(jwacRoundBids);
 	}
 
-	private Game createGame(String gameCode) {
+	private Game createGame(String gameCode, LocalDateTime startAt) {
 		return Game.builder()
 				.gameCode(gameCode)
 				.gameCategory(GameCategoty.JWERLY_AUCTION)
+				.startAt(startAt)
 				.build();
 	}
 

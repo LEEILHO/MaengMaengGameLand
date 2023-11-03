@@ -21,7 +21,7 @@ public class Jwac {
 	private String roomCode;
 
 	@JsonProperty("createAt")
-	private String createAt;
+	private LocalDateTime createAt;
 
 	@JsonProperty("roundStartAt")
 	private String roundStartAt;
