@@ -18,7 +18,7 @@ interface TextProps {
 export const Button = styled.button<ButtonProps>`
   text-align: center;
   font-size: 1.3rem;
-  width: ${(props) => (props.height ? props.height + 'px' : '')};
+  width: ${(props) => (props.width ? props.width + 'px' : '')};
   height: ${(props) => (props.height ? props.height + 'px' : '')};
   display: flex;
   padding: 14px 18px;

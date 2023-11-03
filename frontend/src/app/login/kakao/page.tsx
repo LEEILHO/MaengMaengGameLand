@@ -17,7 +17,7 @@ export default function loginRedirect() {
 
     if (code) {
       http
-        .post<ResponseAccessTokenType>(`v1/auth/kakao`, { code: code })
+        .post<ResponseAccessTokenType>(`auth/kakao`, { code: code })
         .then((res) => {
           console.log('response: ', res)
           setAccessToken({ accessToken: res.accessToken })

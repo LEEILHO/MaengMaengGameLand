@@ -4,6 +4,10 @@ interface TimerProps {
   $size: string
 }
 
+interface TimerIconProps {
+  $type: 'SHAKE' | 'COMMON'
+}
+
 export const TimerContainer = styled.div<TimerProps>`
   display: flex;
   align-items: center;
@@ -19,7 +23,7 @@ export const TimerContainer = styled.div<TimerProps>`
   }
 `
 
-export const TimerBackGround = styled.div`
+export const TimerBackGround = styled.div<TimerIconProps>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -34,5 +38,24 @@ export const TimerBackGround = styled.div`
     width: 32px;
     height: 32px;
     margin-bottom: 12px;
+    animation: ${(props) => props.$type === 'SHAKE' && 'shake 0.5s infinite'};
+
+    @keyframes shake {
+      0% {
+        transform: translateX(0) rotate(5deg);
+      }
+      25% {
+        transform: translateX(-3px) rotate(-5deg);
+      }
+      50% {
+        transform: translateX(3px) rotate(5deg);
+      }
+      75% {
+        transform: translateX(-3px) rotate(-5deg);
+      }
+      100% {
+        transform: translateX(3px) rotate(5deg);
+      }
+    }
   }
 `
