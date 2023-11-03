@@ -2,7 +2,7 @@ import { DragDropContext } from 'react-beautiful-dnd'
 import { styled } from 'styled-components'
 
 export const CombinationGsbContainer = styled.div`
-  width: 60%;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-around;

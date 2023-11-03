@@ -17,6 +17,13 @@ export const PlayerCardContainer = styled.div`
 
   border-radius: 12px;
   background: rgba(228, 241, 255, 0.75);
+
+  @media screen and (max-width: 700px) {
+    width: 120px;
+    height: 160px;
+
+    font-size: 16px;
+  }
 `
 
 export const NicknameP = styled.p``
@@ -40,6 +47,13 @@ export const ChipsRow = styled.div`
 
   .chipsCnt {
   }
+
+  @media screen and (max-width: 700px) {
+    .chip {
+      width: 28px;
+      height: 28px;
+    }
+  }
 `
 
 export const WeightDisplay = styled.p`
@@ -52,6 +66,13 @@ export const WeightDisplay = styled.p`
       rgba(0, 0, 0, 0.3) 74.5%
     ),
     #2a2a2a;
-  padding: 36px 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: white;
+
+  @media screen and (max-width: 700px) {
+    width: 100px;
+    height: 75px;
+  }
 `

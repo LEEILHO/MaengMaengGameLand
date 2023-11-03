@@ -9,26 +9,34 @@ import Timer from '@components/common/clients/Timer'
 import PlayerCard from '@components/gsb/client/PlayerCard'
 import { images } from '@constants/images'
 import CombinationGsb from '@components/gsb/client/CombinationGsb'
+import Betting from '@components/gsb/client/Betting'
+import BettingStatus from '@components/gsb/client/BettingStatus'
+import RoundResult from '@components/gsb/client/RoundResult'
 
 const GameRoom = () => {
   // 전광판 하나로 해서 상황에 따라 메세지만 바꾸기
   const [displayMessage, setDisplayMessage] =
-    useState<string>('카드를 뒤집어 선공을 정해주세요.')
+    useState<string>('금은동 조합을 공개합니다')
 
+  const [minBet, setMinBet] = useState<number>(1)
   return (
-    <>
-      <S.GameRoomContainer>
-        <S.TopRow>
-          <S.DisplayBoard>{displayMessage}</S.DisplayBoard>
-        </S.TopRow>
-        <S.CenterRow>
-          <PlayerCard nickname="심은진" chipsPlayerHas={30} weight={0} />
+    <S.GameRoomContainer>
+      <S.TopRow>
+        <S.DisplayBoard>{displayMessage}</S.DisplayBoard>
+      </S.TopRow>
+      <S.CenterRow>
+        <PlayerCard nickname="심은진" chipsPlayerHas={30} weight={0} />
+        <S.Content>
           {/* <CombinationGsb /> */}
-          <PlayerCard nickname="김진영" chipsPlayerHas={30} weight={0} />
-        </S.CenterRow>
-      </S.GameRoomContainer>
+          {/* <BettingStatus betChips={[3, 3]} /> */}
+          <RoundResult />
+        </S.Content>
+        <PlayerCard nickname="김진영" chipsPlayerHas={30} weight={0} />
+      </S.CenterRow>
+      {/* 베팅라운드이고 내가 베팅할 차례일 때 활성화 */}
+      {/* <Betting minBet={minBet} chipsPlayerHas={30} /> */}
       {/* <TurnCard /> */}
-    </>
+    </S.GameRoomContainer>
   )
 }
 
