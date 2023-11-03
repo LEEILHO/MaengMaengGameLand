@@ -3,6 +3,7 @@ package com.maeng.auth.controller;
 import com.maeng.auth.dto.AuthAccessTokenResponse;
 import com.maeng.auth.dto.CodeDto;
 import com.maeng.auth.dto.OAuthToken;
+import com.maeng.auth.dto.WatchCodeDto;
 import com.maeng.auth.service.AuthService;
 import com.maeng.auth.util.CookieManager;
 import io.swagger.v3.oas.annotations.Operation;
@@ -87,12 +88,17 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * 사용자의 CODE를 입력하여 정보를 확인하여
+     * 인증이 되면 WatchToken 반환
+     * */
     @PostMapping("/watch")
-    public ResponseEntity<?> getWatchToken(){
-        logger.info("getWatchToken()");
-        return ResponseEntity.ok().build();
-
+    public ResponseEntity<?> getWatchToken(@RequestBody WatchCodeDto watchCodeDto){
+        logger.info("getWatchToken(), watchCode={}",watchCodeDto.getWatchCode());
+        return ResponseEntity.ok().body(authService.getWatchToken(watchCodeDto.getWatchCode()));
     }
+
+
 
 
 }
