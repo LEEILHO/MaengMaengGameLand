@@ -3,8 +3,8 @@ import * as S from '@styles/lobby/RoomItem.styled'
 
 type Props = {
   title: string
-  curPeople: string
-  maxPeople: string
+  curPeople: number
+  maxPeople: number
   onClick?: () => void
 }
 

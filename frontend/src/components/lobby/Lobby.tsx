@@ -6,15 +6,40 @@ import RoomList from '@components/lobby/RoomList'
 import useModal from '@hooks/useModal'
 import * as S from '@styles/lobby/Lobby.styled'
 import Background from 'assets/lotties/background.json'
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import CreateRoomModal from './CreateRoomModal'
+import useSocket from '@hooks/useSocketLobby'
+import { useRecoilState, useRecoilValue } from 'recoil'
+import { channelState, gameTypeState } from '@atom/gameAtom'
+import { usePathname } from 'next/navigation'
+import { gameTypeChange } from '@utils/lobby/lobbyUtil'
 
 type Props = {
   title: string
 }
 
 const Lobby = ({ title }: Props) => {
+  const pathname = usePathname()
   const { Modal, isOpen, closeModal, openModal } = useModal()
+  const { connectSocket, disconnectSocket } = useSocket()
+  const [gameType, setGameType] = useRecoilState(gameTypeState)
+  const channel = useRecoilValue(channelState)
+
+  useEffect(() => {
+    setGameType(gameTypeChange(pathname.split('/')[1]))
+  }, [pathname])
+
+  useEffect(() => {
+    connectSocket()
+
+    return () => {
+      disconnectSocket()
+    }
+  }, [gameType, channel])
+
+  useEffect(() => {
+    console.log(gameType, channel)
+  }, [gameType, channel])
 
   return (
     <>

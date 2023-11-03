@@ -35,8 +35,8 @@ const CreateRoomModal = ({ closeModal }: Props) => {
     if (!user || !channel) return
     const isPublic = roomType === '공개'
     const gameType = gameTypeChange(pathname.split('/')[1])
-    createRoom(title, isPublic, gameType, channel)
-  }, [title, roomType, channel])
+    createRoom(title, isPublic, gameType, channel).then(() => closeModal())
+  }, [title, roomType, channel, pathname])
 
   return (
     <S.CreateRoomModalContainer>

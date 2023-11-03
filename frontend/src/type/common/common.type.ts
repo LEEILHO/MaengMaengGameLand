@@ -9,3 +9,8 @@ export type UserInformationType = {
 }
 
 export type TireType = 'BRONZE' | 'SILVER' | 'GOLD' | 'CHALLENGER'
+
+export type socketResponseType<T> = {
+  type: string
+  data: T
+}
