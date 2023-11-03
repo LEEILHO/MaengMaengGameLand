@@ -1,13 +1,17 @@
-package com.maeng.game.domain.awrsp.game.service;
+package com.maeng.game.domain.awrsp.service;
 
-import com.maeng.game.domain.awrsp.game.entity.Card;
-import com.maeng.game.domain.awrsp.game.entity.Game;
-import com.maeng.game.domain.awrsp.game.entity.Player;
-import com.maeng.game.domain.awrsp.game.repository.AwrspRepository;
+import com.maeng.game.domain.awrsp.dto.CardDTO;
+import com.maeng.game.domain.awrsp.entity.Card;
+import com.maeng.game.domain.awrsp.entity.Game;
+import com.maeng.game.domain.awrsp.entity.Player;
+import com.maeng.game.domain.awrsp.repository.AwrspRepository;
 import com.maeng.game.domain.room.dto.GameStartDTO;
+import com.maeng.game.domain.room.dto.MessageDTO;
 import com.maeng.game.domain.room.entity.User;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,12 +24,15 @@ import java.util.*;
 public class AwrspService {
 
     private final AwrspRepository awrspRepository;
+    private final RabbitTemplate template;
+    private static final String GAME_EXCHANGE = "game";
     private static final int CARD_COUNT = 7;
     private static final Card[] cards = { Card.ROCK, Card.ROCK, Card.ROCK,
                                             Card.SCISSOR, Card.SCISSOR, Card.SCISSOR,
                                             Card.PAPER, Card.PAPER, Card.PAPER};
 
-    public void gameStart(GameStartDTO gameStartDTO){
+    @Operation(summary = "게임 정보 세팅")
+    public void gameSetting(GameStartDTO gameStartDTO){
         log.info(gameStartDTO.getGameCode());
 
         // 플레이어 초기화
@@ -41,6 +48,7 @@ public class AwrspService {
                     .build());
         }
 
+        Card[] problem = this.generateCard();
         // 게임 정보 세팅 후 저장
         awrspRepository.save(Game.builder()
                                 .id(gameStartDTO.getGameCode())
@@ -50,9 +58,22 @@ public class AwrspService {
                                 .headCount(gameStartDTO.getHeadCount())
                                 .currentRound(0)
                                 .players(players)
-                                .problem(this.generateCard())
+                                .problem(problem)
                         .build());
+
+        MessageDTO messageDTO = MessageDTO.builder()
+                .type("AWRSP_CARD")
+                .data(CardDTO.builder().problem(problem).build())
+                .build();
+
+        // 정답 카드 공개
+        template.convertAndSend(GAME_EXCHANGE, "awrsp."+gameStartDTO.getGameCode(), messageDTO);
     }
+
+    public void enterGame(String gameCode){
+
+    }
+
 
     public Card[] generateCard(){
         // cards 9개 중에 7개 뽑기

@@ -1,4 +1,4 @@
-package com.maeng.game.domain.awrsp.game.entity;
+package com.maeng.game.domain.awrsp.entity;
 
 import com.maeng.game.domain.jwac.emums.Tier;
 import lombok.AllArgsConstructor;

@@ -1,6 +1,6 @@
-package com.maeng.game.domain.awrsp.game.repository;
+package com.maeng.game.domain.awrsp.repository;
 
-import com.maeng.game.domain.awrsp.game.entity.Game;
+import com.maeng.game.domain.awrsp.entity.Game;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

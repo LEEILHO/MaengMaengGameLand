@@ -29,7 +29,7 @@ public class RoomWebSocketController {
     }
 
     @Operation(summary = "대기방 채팅")
-    @MessageMapping("room.message.{roomCode}")
+    @MessageMapping("room.chat.{roomCode}")
     public void send(@DestinationVariable("roomCode") String roomCode, ChatDTO chatDTO){
 
         MessageDTO messageDTO = MessageDTO.builder()
@@ -41,7 +41,7 @@ public class RoomWebSocketController {
 
     @Operation(summary = "플레이어 레디")
     @MessageMapping("room.ready.{roomCode}")
-    public void ready(@DestinationVariable String roomCode, ReadyDTO readyDTO){
+    public void ready(@DestinationVariable String roomCode, PlayerDTO readyDTO){
         Room room = roomService.readyPlayer(roomCode, readyDTO);
         roomService.sendRoomInfo(roomCode, room);
     }

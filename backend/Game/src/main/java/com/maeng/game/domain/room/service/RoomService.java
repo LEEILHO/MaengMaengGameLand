@@ -1,6 +1,6 @@
 package com.maeng.game.domain.room.service;
 
-import com.maeng.game.domain.awrsp.game.service.AwrspService;
+import com.maeng.game.domain.awrsp.service.AwrspService;
 import com.maeng.game.domain.jwac.emums.Tier;
 import com.maeng.game.domain.lobby.service.LobbyService;
 import com.maeng.game.domain.room.dto.*;
@@ -120,7 +120,7 @@ public class RoomService {
         }
 
         // 방장도 ready 상태로 변경
-        this.readyPlayer(roomCode, ReadyDTO.builder().roomCode(roomCode).nickname(user.getNickname()).ready(true).build());
+        this.readyPlayer(roomCode, PlayerDTO.builder().nickname(user.getNickname()).build());
         room = this.getCurrentRoom(roomCode);
         this.checkCount(room.getGameCategory(), room.getHeadCount()); // 최소 인원 확인
         this.checkReady(room.getParticipant()); // 플레이어 레디 상태 확인
@@ -129,14 +129,15 @@ public class RoomService {
 
     @Transactional
     @Operation(summary = "플레이어 레디")
-    public Room readyPlayer(String roomCode, ReadyDTO readyDTO){
+    public Room readyPlayer(String roomCode, PlayerDTO readyDTO){
 
         // 방 정보에서 해당 플레이어 레디 상태 바꾸고
         Room room = getCurrentRoom(roomCode);
         HashMap<String, User> players = room.getParticipant();
         User user = players.get(readyDTO.getNickname());
 
-        user.setReady(readyDTO.isReady());
+//        user.setReady(readyDTO.isReady());
+        user.setReady(user.isReady() ? false : true);
         players.put(user.getNickname(), user);
         room.setParticipant(players);
         roomRepository.save(room);
@@ -179,7 +180,7 @@ public class RoomService {
         // ROOM_EXIT
         MessageDTO messageDTO = MessageDTO.builder()
                 .type("ROOM_EXIT")
-                .data(PlayerDTO.builder().roomCode(roomCode).nickname(exitDTO.getNickname()).build())
+                .data(PlayerDTO.builder().nickname(exitDTO.getNickname()).build())
                 .build();
         template.convertAndSend(CHAT_EXCHANGE_NAME, "room."+roomCode, messageDTO);
 
@@ -238,8 +239,7 @@ public class RoomService {
     }
 
     public void start(Room room, String roomCode){
-        // TODO : gameCode 만들기
-        String gameCode = UUID.randomUUID().toString().replace("-", "").substring(0, 16);
+        String gameCode = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
         List<User> users = new ArrayList<>(room.getParticipant().values());
         GameStartDTO gameStartDTO = GameStartDTO.builder()
                 .roomCode(roomCode)
@@ -250,16 +250,19 @@ public class RoomService {
 
         // 각 gameService의 start 호출
         if(room.getGameCategory().equals(Game.ALL_WIN_ROCK_SCISSOR_PAPER)){
-            awrspService.gameStart(gameStartDTO);
+            awrspService.gameSetting(gameStartDTO);
         }
 
         if(room.getGameCategory().equals(Game.GOLD_SILVER_BRONZE)){
-            awrspService.gameStart(gameStartDTO);
+            awrspService.gameSetting(gameStartDTO);
         }
 
         if(room.getGameCategory().equals(Game.JEWELRY_AUCTION)){
-            awrspService.gameStart(gameStartDTO);
+            awrspService.gameSetting(gameStartDTO);
         }
+
+        template.convertAndSend(CHAT_EXCHANGE_NAME, "room."+roomCode, MessageDTO.builder()
+                .type("GAME_START").data(gameCode).build());
     }
 
     public void checkCount(Game game, int headCount){

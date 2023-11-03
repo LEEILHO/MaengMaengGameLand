@@ -1,4 +1,4 @@
-package com.maeng.game.domain.awrsp.game.entity;
+package com.maeng.game.domain.awrsp.entity;
 
 import lombok.ToString;
 
