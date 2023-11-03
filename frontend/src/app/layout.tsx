@@ -1,9 +1,12 @@
 import type { Metadata } from 'next'
-import './globals.css'
 import RecoilRootProvider from '@components/common/RecoilRootProvider'
 import NextThemeProvider from '@components/common/NextThemeProvider'
+import RootStyleRegistry from '@styles/StyledComponentsRegistry'
+import StyledComponentsRegistry from '@styles/StyledComponentsRegistry'
 
 export const metadata: Metadata = {
+  viewport:
+    'minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover user-scalable=no',
   title: '맹맹게임랜드',
   description: '맹맹게임랜드에 오신걸 환영합니다.',
   keywords: ['맹맹게임랜드', 'Next.js', 'React', 'JavaScript', 'Game'],
@@ -15,7 +18,7 @@ export const metadata: Metadata = {
   icons: { apple: '/icons/apple-touch-icon.png' },
   appleWebApp: {
     capable: true,
-    title: '맹맹마블',
+    title: '맹맹게임랜드',
     statusBarStyle: 'black-translucent',
   },
 }
@@ -28,9 +31,14 @@ export default function RootLayout({
   return (
     <html>
       <body>
-        <NextThemeProvider>
-          <RecoilRootProvider>{children}</RecoilRootProvider>
-        </NextThemeProvider>
+        <StyledComponentsRegistry>
+          <NextThemeProvider>
+            <RecoilRootProvider>
+              {children}
+              <div id="portal"></div>
+            </RecoilRootProvider>
+          </NextThemeProvider>
+        </StyledComponentsRegistry>
       </body>
     </html>
   )
