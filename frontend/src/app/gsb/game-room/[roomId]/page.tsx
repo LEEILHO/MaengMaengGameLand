@@ -12,6 +12,7 @@ import CombinationGsb from '@components/gsb/client/CombinationGsb'
 import Betting from '@components/gsb/client/Betting'
 import BettingStatus from '@components/gsb/client/BettingStatus'
 import RoundResult from '@components/gsb/client/RoundResult'
+import BarTimer from '@components/common/clients/BarTimer'
 
 const GameRoom = () => {
   // 전광판 하나로 해서 상황에 따라 메세지만 바꾸기
@@ -23,6 +24,7 @@ const GameRoom = () => {
     <S.GameRoomContainer>
       <S.TopRow>
         <S.DisplayBoard>{displayMessage}</S.DisplayBoard>
+        <BarTimer time={10} />
       </S.TopRow>
       <S.CenterRow>
         <PlayerCard nickname="심은진" chipsPlayerHas={30} weight={0} />

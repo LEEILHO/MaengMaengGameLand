@@ -10,6 +10,7 @@ export const images = {
       dummyProfile: '/images/common/dummyProfile.png',
       alarm: '/images/common/ic-alarm.png',
       back: '/images/common/ic-arrow-back.png',
+      timer: '/images/common/ic-timer.png',
     },
     leftArrow: '/images/common/ic-left-arrow.png',
   },
