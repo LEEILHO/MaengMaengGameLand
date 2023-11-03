@@ -10,6 +10,5 @@ RUN yarn build
 FROM node:18.17.0-alpine
 
 WORKDIR /usr/app
-COPY --from=build /usr/app/build ./build
 EXPOSE 3000
 CMD ["yarn", "start"]
