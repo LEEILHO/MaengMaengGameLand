@@ -1,9 +1,23 @@
 'use client'
 
 import { images } from '@constants/images'
+import useModal from '@hooks/useModal'
 import * as S from '@styles/gsb/RoundResult.styled'
+import { useEffect } from 'react'
 
 const RoundResult = () => {
+  const { isOpen, closeModal, Modal, openModal } = useModal()
+
+  useEffect(() => {
+    // 포기했을 때는 모달 바로 뜨게
+    setTimeout(() => {
+      openModal()
+      setTimeout(() => {
+        closeModal()
+      }, 3000)
+    }, 5000)
+  }, [])
+
   // framer motion variants
   const combAreaVariants = {
     hidden: { opacity: 1, scale: 0 },
@@ -29,6 +43,7 @@ const RoundResult = () => {
   const bronze = [...Array(12)]
   return (
     <S.RoundResultContainer>
+      {/* 포기 안 했을 때 */}
       <S.CombArea
         variants={combAreaVariants}
         initial="hidden"
@@ -102,6 +117,13 @@ const RoundResult = () => {
           ))}
         </S.StarList>
       </S.CombArea>
+
+      <Modal isOpen={isOpen}>
+        <S.RoundResultModalContainer>
+          {/* <S.ModalContent>심은진님이 포기하였습니다.</S.ModalContent> */}
+          <S.ModalContent>김진영님이 {10}개의 칩을 가져갑니다.</S.ModalContent>
+        </S.RoundResultModalContainer>
+      </Modal>
     </S.RoundResultContainer>
   )
 }

@@ -57,3 +57,36 @@ export const Content = styled.div`
   flex: 1;
   padding: 0px 6px;
 `
+
+export const BottomRow = styled.div`
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`
+
+export const ManyChips = styled.img`
+  position: absolute;
+  width: 450px;
+  height: 118px;
+  bottom: -30;
+`
+
+export const AllBetChips = styled.p`
+  width: 364px;
+  height: 50px;
+  border-radius: 12px;
+  background: rgba(228, 241, 255, 0.9);
+
+  font-weight: 700;
+  font-size: 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  margin-bottom: 20px;
+`

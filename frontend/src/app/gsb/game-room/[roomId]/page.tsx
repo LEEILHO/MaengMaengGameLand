@@ -36,6 +36,10 @@ const GameRoom = () => {
       {/* 베팅라운드이고 내가 베팅할 차례일 때 활성화 */}
       {/* <Betting minBet={minBet} chipsPlayerHas={30} /> */}
       {/* <TurnCard /> */}
+      <S.BottomRow>
+        <S.ManyChips src={images.gsb.allChipsBet} />
+        <S.AllBetChips>10</S.AllBetChips>
+      </S.BottomRow>
     </S.GameRoomContainer>
   )
 }

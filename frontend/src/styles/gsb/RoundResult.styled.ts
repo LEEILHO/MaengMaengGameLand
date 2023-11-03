@@ -1,6 +1,7 @@
 import { styled } from 'styled-components'
 
 import { motion } from 'framer-motion'
+import { colors } from '@constants/colors'
 
 interface StarProps {
   index: number
@@ -50,4 +51,22 @@ export const Star = styled.img<StarProps>`
     width: 33px;
     height: 30px;
   }
+`
+
+export const RoundResultModalContainer = styled.div`
+  width: 300px;
+  height: 150px;
+  background-color: ${colors.greyScale.white};
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+
+  border-radius: 12px;
+`
+
+export const ModalContent = styled.p`
+  font-weight: 700;
 `
