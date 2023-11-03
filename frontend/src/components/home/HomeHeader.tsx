@@ -1,6 +1,8 @@
 'use client'
+import { userState } from '@atom/userAtom'
 import { images } from '@constants/images'
 import * as S from '@styles/home/Header.styled'
+import { useRecoilValue } from 'recoil'
 
 type Props = {
   onClickFriend: () => void
@@ -8,17 +10,16 @@ type Props = {
 }
 
 const HomeHeader = ({ onClickFriend, onClickSetting }: Props) => {
+  const user = useRecoilValue(userState)
+
   return (
     <S.HeaderContainer>
       <S.ProfileCard>
         <S.TierFrame>
           <img className="frame" src={images.common.header.goldFrame} alt="" />
-          <S.ProfileImage
-            src={images.common.header.dummyProfile}
-            alt="프로필사진"
-          />
+          <S.ProfileImage src={user?.profile} alt="프로필사진" />
         </S.TierFrame>
-        <S.UserName>김상근김상근김상근김상근</S.UserName>
+        <S.UserName>{user?.nickname}</S.UserName>
       </S.ProfileCard>
 
       <S.FriendsButton onClick={onClickFriend}>
