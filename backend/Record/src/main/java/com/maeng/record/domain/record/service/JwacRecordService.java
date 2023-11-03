@@ -2,12 +2,14 @@ package com.maeng.record.domain.record.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -39,6 +41,7 @@ public class JwacRecordService {
 	private final GameParticipantRepository gameParticipantRepository;
 
 	public void saveJwacRecord(Jwac jwac) {
+		jwac.setGameCode(UUID.randomUUID().toString().replace("-", "").substring(0, 16));
 		Game game = createGame(jwac.getGameCode(), jwac.getCreateAt());
 
 		Map<String, GameParticipant> participants = createGameParticipant(game, new ArrayList<>(jwac.getPlayers().keySet()), jwac);
@@ -80,7 +83,8 @@ public class JwacRecordService {
 			}
 		}
 
-		PriorityQueue<Integer> scoreQueue = new PriorityQueue<>(scores);
+		PriorityQueue<Integer> scoreQueue = new PriorityQueue<>(Collections.reverseOrder());
+		scoreQueue.addAll(scores);
 		Map<Integer, Integer> scoreRank = new HashMap<>();
 		for(int i = 1; i <= scores.size(); i++) {
 			scoreRank.put(scoreQueue.poll(), i);
@@ -90,12 +94,12 @@ public class JwacRecordService {
 		for(String participant : participants) {
 			GameUser gameUser = getOrCreateUser(participant);
 			int score = jwac.getPlayers().get(participant).getScore();
-
+			int rank = scoreRank.get(score) == null ? scoreRank.size() + 1 : scoreRank.get(score);
 			GameParticipant gameParticipant = GameParticipant.builder()
 				.game(game)
 				.gameUser(gameUser)
 				.score(score)
-				.userRank(scoreRank.get(score))
+				.userRank(rank)
 				.build();
 
 			gameParticipants.add(gameParticipant);

@@ -1,23 +1,32 @@
 package com.maeng.record.domain.record.controller;
 
+import java.util.List;
+
+import org.apache.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.maeng.record.domain.record.data.Jwac;
-import com.maeng.record.domain.record.service.JwacRecordService;
+import com.maeng.record.domain.record.dto.GameParticipantDTO;
+import com.maeng.record.domain.record.dto.UserGameInfoDTO;
+import com.maeng.record.domain.record.service.RecordService;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/record")
+@RequestMapping("/api/v1/record")
 public class RecordController {
-	private final JwacRecordService jwacRecordService;
-	@PostMapping("/jwac")
-	public void recordJwac(@RequestBody Jwac jwac) {
-		System.out.println("jwac = " + jwac);
-		jwacRecordService.saveJwacRecord(jwac);
+	private final RecordService recordService;
+	@PostMapping("/history")
+	public ResponseEntity<List<UserGameInfoDTO>> gameHistory(@RequestBody String nickname) {
+		return ResponseEntity.status(HttpStatus.SC_OK).body(recordService.userGameHistory(nickname));
+	}
+
+	@PostMapping("/history/detail")
+	public ResponseEntity<List<GameParticipantDTO>>  gameHistoryDetail(@RequestBody String gameCode) {
+		return ResponseEntity.status(HttpStatus.SC_OK).body(recordService.gameDetail(gameCode));
 	}
 }
