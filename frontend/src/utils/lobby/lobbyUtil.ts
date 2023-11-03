@@ -2,7 +2,7 @@ import { type } from 'os'
 
 export function channelTypeChange(type: '자유' | '브론즈' | '실버' | '골드') {
   if (type === '자유') {
-    return 'UNRANK'
+    return 'UNRANKED'
   }
   if (type === '브론즈') {
     return 'BRONZE'

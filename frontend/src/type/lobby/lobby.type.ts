@@ -15,4 +15,4 @@ export type GameCategoryType =
   | 'JEWELRY_AUCTION'
   | 'GOLD_SILVER_BRONZE'
 
-export type ChannelTireType = 'BRONZE' | 'SILVER' | 'GOLD' | 'UNRANK'
+export type ChannelTireType = 'BRONZE' | 'SILVER' | 'GOLD' | 'UNRANKED'

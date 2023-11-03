@@ -8,14 +8,16 @@ import GameCard from '@components/home/GameCard'
 import { images } from '@constants/images'
 import CButton from '@components/common/clients/CButton'
 import { useRouter } from 'next/navigation'
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { GameCategoryType } from '@type/lobby/lobby.type'
 import { useSetRecoilState } from 'recoil'
 import { gameTypeState } from '@atom/gameAtom'
+import useInitUser from '@hooks/useInitUser'
+import withAuth from '@components/hoc/client/PrivateRoute'
 
 const Home = () => {
   const router = useRouter()
-  const setGameType = useSetRecoilState(gameTypeState)
+  const initUser = useInitUser()
 
   const handleGameClick = useCallback((url: string) => {
     router.push(url, { scroll: false })
@@ -57,4 +59,4 @@ const Home = () => {
   )
 }
 
-export default Home
+export default withAuth(Home)
