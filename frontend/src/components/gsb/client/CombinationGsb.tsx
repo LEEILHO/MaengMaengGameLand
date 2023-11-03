@@ -6,6 +6,8 @@ import { StarListType, StarStatus } from '@type/gsb/game.type'
 import { useEffect, useState } from 'react'
 import { DropResult } from 'react-beautiful-dnd'
 import DragAndDrop from './DragAndDrop'
+import CButton from '@components/common/clients/CButton'
+import { colors } from '@constants/colors'
 
 const CombinationGsb = () => {
   const [enabled, setEnabled] = useState(false)
@@ -105,6 +107,17 @@ const CombinationGsb = () => {
       <S.DragAndDropArea onDragEnd={onDragEndBronze}>
         <DragAndDrop stars={bronzeStars} starClass={'bronze'} />
       </S.DragAndDropArea>
+
+      <S.SubmitButton>
+        <CButton
+          color={colors.greyScale.white}
+          text="조합"
+          backgroundColor={colors.button.purple}
+          radius={100}
+          width={118}
+          fontSize={20}
+        />
+      </S.SubmitButton>
     </S.CombinationGsbContainer>
   )
 }

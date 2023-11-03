@@ -6,9 +6,16 @@ export const CombinationGsbContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-around;
+  gap: 8px;
 `
 export const DragAndDropArea = styled(DragDropContext)`
   display: flex;
   align-items: center;
   justify-content: center;
+`
+
+export const SubmitButton = styled.div`
+  position: fixed;
+  bottom: 20px;
+  right: 40px;
 `

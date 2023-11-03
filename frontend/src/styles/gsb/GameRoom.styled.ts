@@ -55,5 +55,5 @@ export const CenterRow = styled.div`
 
 export const Content = styled.div`
   flex: 1;
-  padding: 6px;
+  padding: 0px 6px;
 `
