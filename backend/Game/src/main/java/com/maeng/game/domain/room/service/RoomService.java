@@ -44,7 +44,6 @@ public class RoomService {
     public String createRoom(CreateRoomDTO createRoomDTO){
 
         String roomCode = UUID.randomUUID().toString().replace("-", "").substring(0, 6);
-        HashMap<Integer, Seat> seats = this.seatInit();
 
         Room room = Room.builder()
                 .id(roomCode)
@@ -56,7 +55,7 @@ public class RoomService {
                 .participant(null)
                 .gameCategory(createRoomDTO.getGameCategory())
                 .channelTire(createRoomDTO.getChannelTire())
-                .seats(seats)
+                .seats(this.seatInit())
                 .build();
 
         roomRepository.save(room);
@@ -88,7 +87,8 @@ public class RoomService {
         HashMap<Integer, Seat> seats = roomInfo.getSeats();
         HashMap<String, User> newList = new HashMap<>();
 
-        seats.put(headCount+1, Seat.builder()
+        int seat = findEmptySeat(roomInfo.getSeats());
+        seats.put(seat, Seat.builder()
                                     .available(false)
                                     .nickname(enterDTO.getNickname())
                                     .build());
@@ -97,8 +97,8 @@ public class RoomService {
             newList.putAll(roomInfo.getParticipant());
             user.setHost(false);
         }
-
         newList.put(user.getNickname(), user);
+
         roomInfo.setParticipant(newList);
         roomInfo.setHeadCount(headCount+1);
         roomInfo.setSeats(seats);
@@ -165,7 +165,8 @@ public class RoomService {
         }
 
         // 해당 자리 초기화
-        seats.put(exitDTO.getSeatNumber(), Seat.builder().available(true).nickname(null).build());
+        seats.put(exitDTO.getSeatNumber(), Seat.builder().available(true).nickname("").build());
+        room.setSeats(seats);
 
         // 방장 위임
         List<String> temp = new ArrayList<>(room.getParticipant().keySet());
@@ -214,7 +215,7 @@ public class RoomService {
 
         // 해당 플레이어 삭제, HeadCount, 자리 사용가능으로 변경
         players.remove(kickDTO.getKickPlayer());
-        seats.put(kickDTO.getSeatNumber(), Seat.builder().available(true).nickname(null).build());
+        seats.put(kickDTO.getSeatNumber(), Seat.builder().available(true).nickname("").build());
         room.setParticipant(players);
         room.setSeats(seats);
         room.setHeadCount(room.getHeadCount()-1);
@@ -311,7 +312,16 @@ public class RoomService {
     @Operation(summary = "방 정보 전송")
     public void sendRoomInfo(String roomCode, Room roomInfo){
 
-        List<User> users = new ArrayList<>(roomInfo.getParticipant().values());
+        User[] users = new User[GAME_MAX_PLAYER];
+        HashMap<Integer, Seat> list = roomInfo.getSeats();
+
+        for(int i = 0; i < roomInfo.getMaxHeadCount(); i++){
+            if(list.get(i).getNickname().equals("")){
+                users[i] = null;
+                continue;
+            }
+            users[i] = roomInfo.getParticipant().get(list.get(i).getNickname());
+        }
 
         MessageDTO messageDTO = MessageDTO.builder()
                 .type("ROOM_INFO")
@@ -332,10 +342,10 @@ public class RoomService {
     public HashMap<Integer, Seat> seatInit(){
         HashMap<Integer, Seat> seats = new HashMap<>();
 
-        for(int i = 1; i <= 8; i++){
+        for(int i = 0; i < 8; i++){
             seats.put(i, Seat.builder()
                             .available(true)
-                            .nickname(null)
+                            .nickname("")
                             .build());
         }
 
@@ -358,6 +368,17 @@ public class RoomService {
         if(!user.isHost()){
             throw new NotHostException("권한이 없습니다.");
         }
+    }
 
+    public int findEmptySeat(HashMap<Integer, Seat> users){
+
+        for(Integer i : users.keySet()){
+            if(users.get(i).getNickname().equals("")){
+                log.info("빈 자리 : "+i);
+                return i;
+            }
+        }
+
+        return -1;
     }
 }
