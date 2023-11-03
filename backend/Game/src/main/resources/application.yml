@@ -1,6 +1,6 @@
 server:
   hostname: k9d208.p.ssafy.io
-  port: 9220
+  port: 9200
 
 spring:
   config:
