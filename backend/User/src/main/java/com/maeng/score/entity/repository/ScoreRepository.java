@@ -1,4 +1,4 @@
-package com.maeng.score.repository;
+package com.maeng.score.entity.repository;
 
 import com.maeng.score.entity.Score;
 import org.springframework.data.jpa.repository.JpaRepository;
