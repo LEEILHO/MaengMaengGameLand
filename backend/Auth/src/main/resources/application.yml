@@ -1,8 +1,10 @@
 server:
-  hostname: localhost
+  hostname: maengland.com
   port: 9110
 
 spring:
+  config:
+    import: configserver:http://${server.hostname}:8880
   application:
     name: maeng-auth-service
   cloud:
@@ -10,9 +12,13 @@ spring:
       name: maeng
       profile: auth
 
+
 eureka:
   client:
     service-url:
       defaultZone: http://${server.hostname}:8761/eureka/
   instance:
     hostname: ${server.hostname}
+logging:
+  level:
+    root: debug
