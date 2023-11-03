@@ -36,6 +36,9 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+
 	// redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.7.10'
 
@@ -44,6 +47,14 @@ dependencies {
 
 	// config
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
+
+	// websocket
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'org.webjars:stomp-websocket:2.3.4'
+
+	// rabbitMQ
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+	implementation 'org.springframework.boot:spring-boot-starter-reactor-netty:2.6.4'
 }
 
 
