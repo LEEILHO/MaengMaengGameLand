@@ -5,7 +5,7 @@ import com.maeng.game.domain.jwac.emums.Tier;
 import com.maeng.game.domain.lobby.service.LobbyService;
 import com.maeng.game.domain.room.dto.*;
 import com.maeng.game.domain.room.entity.Game;
-import com.maeng.game.domain.room.entity.Player;
+import com.maeng.game.domain.room.entity.User;
 import com.maeng.game.domain.room.entity.Room;
 import com.maeng.game.domain.room.entity.Seat;
 import com.maeng.game.domain.room.exception.*;
@@ -44,7 +44,6 @@ public class RoomService {
     public String createRoom(CreateRoomDTO createRoomDTO){
 
         String roomCode = UUID.randomUUID().toString().replace("-", "").substring(0, 6);
-        HashMap<Integer, Seat> seats = this.seatInit();
 
         Room room = Room.builder()
                 .id(roomCode)
@@ -56,7 +55,7 @@ public class RoomService {
                 .participant(null)
                 .gameCategory(createRoomDTO.getGameCategory())
                 .channelTire(createRoomDTO.getChannelTire())
-                .seats(seats)
+                .seats(this.seatInit())
                 .build();
 
         roomRepository.save(room);
@@ -75,9 +74,9 @@ public class RoomService {
             throw new PullRoomException("플레이어가 가득 찬 방입니다.");
         }
 
-        // 방이 가득차지 않았으면 headCount++ 후 Player 추가해주기
+        // 방이 가득차지 않았으면 headCount++ 후 User 추가해주기
         int headCount = roomInfo.getHeadCount();
-        Player player = Player.builder()
+        User user = User.builder()
                 .nickname(enterDTO.getNickname())
                 .ready(false)
                 .host(true)
@@ -86,19 +85,20 @@ public class RoomService {
                 .build();
 
         HashMap<Integer, Seat> seats = roomInfo.getSeats();
-        HashMap<String, Player> newList = new HashMap<>();
+        HashMap<String, User> newList = new HashMap<>();
 
-        seats.put(headCount+1, Seat.builder()
+        int seat = findEmptySeat(roomInfo.getSeats());
+        seats.put(seat, Seat.builder()
                                     .available(false)
                                     .nickname(enterDTO.getNickname())
                                     .build());
 
         if(roomInfo.getParticipant() != null) { // 방장이 아닐 경우
             newList.putAll(roomInfo.getParticipant());
-            player.setHost(false);
+            user.setHost(false);
         }
+        newList.put(user.getNickname(), user);
 
-        newList.put(player.getNickname(), player);
         roomInfo.setParticipant(newList);
         roomInfo.setHeadCount(headCount+1);
         roomInfo.setSeats(seats);
@@ -114,13 +114,14 @@ public class RoomService {
         Room room = getCurrentRoom(roomCode);
 
         // 해당 닉네임이 host이면 게임 시작
-        Player player = room.getParticipant().get(playerDTO.getNickname());
-        if(!player.isHost()){
+        User user = room.getParticipant().get(playerDTO.getNickname());
+        if(!user.isHost()){
             throw new NotHostException("방장만 게임을 시작할 수 있습니다.");
         }
 
         // 방장도 ready 상태로 변경
-        this.readyPlayer(roomCode, ReadyDTO.builder().roomCode(roomCode).nickname(player.getNickname()).ready(true).build());
+        this.readyPlayer(roomCode, ReadyDTO.builder().roomCode(roomCode).nickname(user.getNickname()).ready(true).build());
+        room = this.getCurrentRoom(roomCode);
         this.checkCount(room.getGameCategory(), room.getHeadCount()); // 최소 인원 확인
         this.checkReady(room.getParticipant()); // 플레이어 레디 상태 확인
         this.start(room, roomCode); // 게임시작
@@ -132,11 +133,11 @@ public class RoomService {
 
         // 방 정보에서 해당 플레이어 레디 상태 바꾸고
         Room room = getCurrentRoom(roomCode);
-        HashMap<String, Player> players = room.getParticipant();
-        Player player = players.get(readyDTO.getNickname());
+        HashMap<String, User> players = room.getParticipant();
+        User user = players.get(readyDTO.getNickname());
 
-        player.setReady(readyDTO.isReady());
-        players.put(player.getNickname(), player);
+        user.setReady(readyDTO.isReady());
+        players.put(user.getNickname(), user);
         room.setParticipant(players);
         roomRepository.save(room);
 
@@ -148,9 +149,9 @@ public class RoomService {
     public void exitRoom(String roomCode, ExitDTO exitDTO){
         Room room = getCurrentRoom(roomCode);
 
-        HashMap<String, Player> players = room.getParticipant();
+        HashMap<String, User> players = room.getParticipant();
         HashMap<Integer, Seat> seats = room.getSeats();
-        Player player = players.get(exitDTO.getNickname());
+        User user = players.get(exitDTO.getNickname());
 
         players.remove(exitDTO.getNickname());
         room.setParticipant(players);
@@ -164,12 +165,13 @@ public class RoomService {
         }
 
         // 해당 자리 초기화
-        seats.put(exitDTO.getSeatNumber(), Seat.builder().available(true).nickname(null).build());
+        seats.put(exitDTO.getSeatNumber(), Seat.builder().available(true).nickname("").build());
+        room.setSeats(seats);
 
         // 방장 위임
         List<String> temp = new ArrayList<>(room.getParticipant().keySet());
-        if(player.isHost()){ // 나간 사람이 방장이면 남은 사람 중 한 명을 방장으로
-            Player nextHost = players.get(temp.get(0));
+        if(user.isHost()){ // 나간 사람이 방장이면 남은 사람 중 한 명을 방장으로
+            User nextHost = players.get(temp.get(0));
             nextHost.setHost(true);
         }
         roomRepository.save(room);
@@ -208,12 +210,12 @@ public class RoomService {
         Room room = this.getCurrentRoom(roomCode);
         checkHost(room, kickDTO.getNickname()); // 방장 권한 확인
 
-        HashMap<String, Player> players = room.getParticipant();
+        HashMap<String, User> players = room.getParticipant();
         HashMap<Integer, Seat> seats = room.getSeats();
 
         // 해당 플레이어 삭제, HeadCount, 자리 사용가능으로 변경
         players.remove(kickDTO.getKickPlayer());
-        seats.put(kickDTO.getSeatNumber(), Seat.builder().available(true).nickname(null).build());
+        seats.put(kickDTO.getSeatNumber(), Seat.builder().available(true).nickname("").build());
         room.setParticipant(players);
         room.setSeats(seats);
         room.setHeadCount(room.getHeadCount()-1);
@@ -238,11 +240,11 @@ public class RoomService {
     public void start(Room room, String roomCode){
         // TODO : gameCode 만들기
         String gameCode = UUID.randomUUID().toString().replace("-", "").substring(0, 16);
-        List<Player> players = new ArrayList<>(room.getParticipant().values());
+        List<User> users = new ArrayList<>(room.getParticipant().values());
         GameStartDTO gameStartDTO = GameStartDTO.builder()
                 .roomCode(roomCode)
                 .headCount(room.getHeadCount())
-                .participant(players)
+                .participant(users)
                 .gameCode(gameCode)
                 .build();
 
@@ -281,12 +283,12 @@ public class RoomService {
         }
     }
 
-    public void checkReady(HashMap<String, Player> participant){
+    public void checkReady(HashMap<String, User> participant){
         // 모든 플레이어 ready 확인
-        List<Player> players = new ArrayList<>(participant.values());
+        List<User> users = new ArrayList<>(participant.values());
 
-        for(Player player : players){
-            if(!player.isReady()){
+        for(User user : users){
+            if(!user.isReady()){
                 throw new NotReadyPlayerException("모든 플레이어가 준비되어야 합니다.");
             }
         }
@@ -310,7 +312,16 @@ public class RoomService {
     @Operation(summary = "방 정보 전송")
     public void sendRoomInfo(String roomCode, Room roomInfo){
 
-        List<Player> players = new ArrayList<>(roomInfo.getParticipant().values());
+        User[] users = new User[roomInfo.getMaxHeadCount()];
+        HashMap<Integer, Seat> list = roomInfo.getSeats();
+
+        for(int i = 0; i < roomInfo.getMaxHeadCount(); i++){
+            if(list.get(i).getNickname().equals("")){
+                users[i] = null;
+                continue;
+            }
+            users[i] = roomInfo.getParticipant().get(list.get(i).getNickname());
+        }
 
         MessageDTO messageDTO = MessageDTO.builder()
                 .type("ROOM_INFO")
@@ -318,7 +329,7 @@ public class RoomService {
                         .title(roomInfo.getTitle())
                         .roomCode(roomCode)
                         .gameCategory(roomInfo.getGameCategory())
-                        .participant(players)
+                        .participant(users)
                         .headCount(roomInfo.getHeadCount())
                         .maxHeadCount(roomInfo.getMaxHeadCount())
                         .publicRoom(roomInfo.isPublicRoom())
@@ -331,10 +342,10 @@ public class RoomService {
     public HashMap<Integer, Seat> seatInit(){
         HashMap<Integer, Seat> seats = new HashMap<>();
 
-        for(int i = 1; i <= 8; i++){
+        for(int i = 0; i < 8; i++){
             seats.put(i, Seat.builder()
                             .available(true)
-                            .nickname(null)
+                            .nickname("")
                             .build());
         }
 
@@ -352,11 +363,22 @@ public class RoomService {
     }
 
     public void checkHost(Room room, String nickname){
-        Player player = room.getParticipant().get(nickname);
+        User user = room.getParticipant().get(nickname);
 
-        if(!player.isHost()){
+        if(!user.isHost()){
             throw new NotHostException("권한이 없습니다.");
         }
+    }
 
+    public int findEmptySeat(HashMap<Integer, Seat> users){
+
+        for(Integer i : users.keySet()){
+            if(users.get(i).getNickname().equals("")){
+                log.info("빈 자리 : "+i);
+                return i;
+            }
+        }
+
+        return -1;
     }
 }

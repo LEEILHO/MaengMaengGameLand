@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Player implements Serializable {
+public class User implements Serializable {
     private String nickname;
     private boolean ready;
     private boolean host;
