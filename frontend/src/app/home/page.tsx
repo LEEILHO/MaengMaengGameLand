@@ -23,10 +23,6 @@ const Home = () => {
     router.push(url, { scroll: false })
   }, [])
 
-  useEffect(() => {
-    initUser()
-  }, [])
-
   return (
     <>
       <S.HomeContainer>
