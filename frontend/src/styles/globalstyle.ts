@@ -6,6 +6,7 @@ const GlobalStyle = createGlobalStyle`
 
   *{
     box-sizing: border-box;
+    overscroll-behavior-x: none;
   }
 
   * {
