@@ -19,7 +19,7 @@ import com.maeng.game.domain.jwac.dto.JwacItemResultDTO;
 import com.maeng.game.domain.jwac.dto.JwacRoundPlayerInfoDTO;
 import com.maeng.game.domain.jwac.dto.JwacRoundResultDto;
 import com.maeng.game.domain.jwac.dto.PlayerInfo;
-import com.maeng.game.domain.jwac.emums.Jwerly;
+import com.maeng.game.domain.jwac.emums.Jewelry;
 import com.maeng.game.domain.jwac.entity.History;
 import com.maeng.game.domain.jwac.entity.Jwac;
 import com.maeng.game.domain.jwac.entity.Player;
@@ -52,7 +52,7 @@ public class JwacService {
 			.currentRound(0)
 			.maxRound(maxRound)
 			.bidAmounts(new HashMap<>())
-			.jwerly(setRandomJwerly(maxRound))
+			.jewelry(setRandomJewelry(maxRound))
 			.players(setPlayer(playerInfo))
 			.build();
 
@@ -62,7 +62,7 @@ public class JwacService {
 	}
 
 	@Transactional
-	public void bidJwerly(String gameCode, JwacBidInfoDto jwacBidInfoDto) {
+	public void bidJewelry(String gameCode, JwacBidInfoDto jwacBidInfoDto) {
 		Jwac jwac = jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
 
 		History history = History.builder()
@@ -85,12 +85,12 @@ public class JwacService {
 	}
 
 	@Transactional
-	public Jwerly nextRound(String gameCode) {
+	public Jewelry nextRound(String gameCode) {
 		Jwac jwac = jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
 
 		if(hasNextRound(jwac)) {
 			jwacRedisRepository.save(jwac);
-			return jwac.getJwerly().get(jwac.getCurrentRound());
+			return jwac.getJewelry().get(jwac.getCurrentRound());
 		}
 
 		return null;
@@ -121,16 +121,16 @@ public class JwacService {
 		return (int)(Math.random() * (MAX_ROUND - MIN_ROUND)) + MIN_ROUND;
 	}
 
-	public Map<Integer, Jwerly> setRandomJwerly(int maxRound) {
-		Map<Integer, Jwerly> jwerly = new HashMap<>();
+	public Map<Integer, Jewelry> setRandomJewelry(int maxRound) {
+		Map<Integer, Jewelry> jewelry = new HashMap<>();
 		for(int i = 1; i <= maxRound; i++) {
 			if(i == 10) {
-				jwerly.put(i, Jwerly.SPECIAL);
+				jewelry.put(i, Jewelry.SPECIAL);
 				continue;
 			}
-			jwerly.put(i, Jwerly.values()[(int)(Math.random() * 4) + 1]);
+			jewelry.put(i, Jewelry.values()[(int)(Math.random() * 4) + 1]);
 		}
-		return jwerly;
+		return jewelry;
 	}
 
 	public Map<String, Player> setPlayer(List<PlayerInfo> playerInfo) {
@@ -280,7 +280,7 @@ public class JwacService {
 			Player mostBidderPlayer = jwac.getPlayers().get(mostBidder);
 			mostBidderPlayer.getHistory().get(currentRound).roundWin();
 			mostBidderPlayer.addTotalBidAmount(mostBidAmount);
-			mostBidderPlayer.addScore(getScore(jwac.getJwerly().get(currentRound)));
+			mostBidderPlayer.addScore(getScore(jwac.getJewelry().get(currentRound)));
 		}
 
 		if (!leastBidder.isEmpty()) {
@@ -292,18 +292,18 @@ public class JwacService {
 
 	public JwacItemResultDTO getSpecialItemResult(String gameCode, String mostBidder) {
 		Jwac jwac = jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
-		Map<Integer, Jwerly> jwerly = jwac.getJwerly();
+		Map<Integer, Jewelry> jewelry = jwac.getJewelry();
 		int currentRound = jwac.getCurrentRound();
 		int maxRound = jwac.getMaxRound();
 
-		Map<Jwerly, Integer> itemResult = new HashMap<>();
-		itemResult.put(Jwerly.SAPPHIRE, 0);
-		itemResult.put(Jwerly.RUBY, 0);
-		itemResult.put(Jwerly.EMERALD, 0);
-		itemResult.put(Jwerly.DIAMOND, 0);
+		Map<Jewelry, Integer> itemResult = new HashMap<>();
+		itemResult.put(Jewelry.SAPPHIRE, 0);
+		itemResult.put(Jewelry.RUBY, 0);
+		itemResult.put(Jewelry.EMERALD, 0);
+		itemResult.put(Jewelry.DIAMOND, 0);
 
 		for(int i = currentRound; i <= maxRound; i++) {
-			itemResult.put(jwerly.get(i), itemResult.get(jwerly.get(i)) + 1);
+			itemResult.put(jewelry.get(i), itemResult.get(jewelry.get(i)) + 1);
 		}
 
 		return JwacItemResultDTO.builder()
@@ -325,8 +325,8 @@ public class JwacService {
 		return true;
 	}
 
-	public int getScore(Jwerly jwerly) {
-		return jwerly.getIndex();
+	public int getScore(Jewelry jewelry) {
+		return jewelry.getIndex();
 	}
 
 	public String findGameWinner(Map<String, Player> players) {

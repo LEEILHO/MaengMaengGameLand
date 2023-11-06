@@ -1,5 +1,5 @@
 package com.maeng.record.domain.record.enums;
 
-public enum Jwerly {
+public enum Jewelry {
 	SPECIAL, RUBY, SAPPHIRE, EMERALD, DIAMOND
 }

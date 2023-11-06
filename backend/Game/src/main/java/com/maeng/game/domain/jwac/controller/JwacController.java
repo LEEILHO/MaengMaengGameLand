@@ -17,7 +17,7 @@ import com.maeng.game.domain.jwac.dto.JwacNicknameDto;
 import com.maeng.game.domain.jwac.dto.JwacRoundResultDto;
 import com.maeng.game.domain.jwac.dto.JwacTimerInfoDTO;
 import com.maeng.game.domain.jwac.dto.PlayerInfo;
-import com.maeng.game.domain.jwac.emums.Jwerly;
+import com.maeng.game.domain.jwac.emums.Jewelry;
 import com.maeng.game.domain.jwac.emums.Tier;
 import com.maeng.game.domain.jwac.service.EnterService;
 import com.maeng.game.domain.jwac.service.JwacService;
@@ -68,7 +68,7 @@ public class JwacController {
 	@MessageMapping("game.jwac.bid.{gameCode}")
 	public void bid(@DestinationVariable String gameCode, JwacBidInfoDto jwacBidInfoDto) {
 		log.info("bid");
-		jwacService.bidJwerly(gameCode, jwacBidInfoDto);
+		jwacService.bidJewelry(gameCode, jwacBidInfoDto);
 	}
 
 	@MessageMapping("game.jwac.time.{gameCode}")
@@ -85,12 +85,12 @@ public class JwacController {
 				.build());
 
 			// 다음 라운드
-			Jwerly nextJwerly = jwacService.nextRound(gameCode);
-			if(nextJwerly != null) {
+			Jewelry nextJewelry = jwacService.nextRound(gameCode);
+			if(nextJewelry != null) {
 				JwacTimerInfoDTO timerInfo = timerService.timerStart(gameCode);
 				timerInfo.setRound(jwacRoundResult.getRound() + 1);
-				timerInfo.setJwerly(nextJwerly);
-				timerInfo.setJwerlyScore(nextJwerly.getIndex());
+				timerInfo.setJewelry(nextJewelry);
+				timerInfo.setJewelryScore(nextJewelry.getIndex());
 
 				template.convertAndSend(Game_EXCHANGE_NAME, "jwac."+gameCode, MessageDTO.builder()
 					.type("GAME_ROUND_START")
