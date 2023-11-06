@@ -8,10 +8,10 @@ import { ThemeProvider } from 'styled-components'
 
 const NextThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [isMobile, setIsMobile] = useState(false)
-  const { swipeLock } = useSwipeLock()
+
+  useSwipeLock()
 
   useEffect(() => {
-    swipeLock()
     // ios기반 모델 가로모드 설정
     function isIos() {
       if (typeof window !== 'undefined') {

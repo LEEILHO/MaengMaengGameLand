@@ -1,39 +1,34 @@
-import { useCallback } from 'react'
+import { useEffect } from 'react'
 
 const useSwipeLock = () => {
-  let touchStartX: number | null = null
-  let touchEndX: number | null = null
+  useEffect(() => {
+    let startX: number
 
-  const swipeLock = useCallback(() => {
-    document.addEventListener('touchstart', (event: TouchEvent) => {
-      // 터치 시작 지점을 저장
-      touchStartX = event.touches[0].clientX
-    })
+    const handleTouchStart = (e: TouchEvent) => {
+      startX = e.touches[0].clientX
+    }
 
-    document.addEventListener('touchmove', (event: TouchEvent) => {
-      // 터치 이동 중일 때 스와이프 동작을 막음
-      event.preventDefault()
-    })
+    const handleTouchMove = (e: TouchEvent) => {
+      const endX = e.touches[0].clientX
+      const deltaX = startX - endX
 
-    document.addEventListener('touchend', (event: TouchEvent) => {
-      // 터치 끝 지점을 저장
-      touchEndX = event.changedTouches[0].clientX
-
-      // 스와이프 거리를 계산
-      const swipeDistance = touchEndX! - touchStartX!
-
-      // 스와이프 거리가 특정 임계값 이상인 경우, 스와이프 동작을 처리하거나 이벤트를 막을 수 있습니다.
-      if (swipeDistance > 50) {
-        // 오른쪽으로 스와이프 (뒤로가기 방향)
-        event.preventDefault()
-      } else if (swipeDistance < -50) {
-        // 왼쪽으로 스와이프 (앞으로가기 방향)
-        event.preventDefault()
+      // 스와이프 감지 로직
+      if (deltaX > 50) {
+        // 왼쪽으로 스와이프 감지 시 뒤로가기 막기
+        e.preventDefault()
       }
-    })
+    }
+
+    document.addEventListener('touchstart', handleTouchStart)
+    document.addEventListener('touchmove', handleTouchMove)
+
+    return () => {
+      document.removeEventListener('touchstart', handleTouchStart)
+      document.removeEventListener('touchmove', handleTouchMove)
+    }
   }, [])
 
-  return { swipeLock }
+  return null
 }
 
 export default useSwipeLock
