@@ -15,8 +15,6 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
-import android.view.View.GONE
-import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
 import android.widget.RelativeLayout
@@ -56,7 +54,7 @@ class GameFragment :
     }
 
     private var player: View? = null
-    
+
     @Volatile
     private var playerPosition = MutableLiveData<Rect>()
     private var yPosition = 0F
@@ -121,7 +119,6 @@ class GameFragment :
 
     private fun initObserve() {
         playerPosition.observe(viewLifecycleOwner) { playerRect ->
-//            Log.d(TAG, "initObserve: $playerRect")
             // 점프하고 내려오는 중
             if (isGoingDown) {
                 checkVisiblePlatforms(playerRect)
@@ -155,33 +152,28 @@ class GameFragment :
                         (platform.y + platform.height).toInt()
                     )
 
-                    Log.d(TAG, "check: $playerRect $platformRect")
-//                    if (playerRect.right > platformRect.left && playerRect.left < platformRect.right && (playerRect.bottom - platformRect.top < 10) && (playerRect.bottom - platformRect.top >= 0)) {
-                    //(platformRect.top - playerRect.bottom < 20
                     if (playerRect.right > platformRect.left && playerRect.left < platformRect.right && (playerRect.bottom <= platformRect.top) && (platformRect.top - playerRect.bottom <= 40)) {
-//                            Log.d(TAG, "checkCollisions:  ${playerRect.bottom} ${platformRect.top}")
-//                            yPosition = screenHeight - platformRect.top.toFloat()
-//                        if (yPosition > platformRect.top.toFloat()) {
-//                            Log.d(TAG, "initObserve: scroll")
-//                            binding.gameScrollView.smoothScrollBy(
-//                                0,
-//                                -(platformRect.top).toInt()
-//                            )
-//                        }
+
+                        // 위로 올라갔을 때
+                        if (yPosition > platformRect.top.toFloat()) {
+                            Log.d(TAG, "initObserve: scroll")
+                            binding.gameScrollView.smoothScrollBy(
+                                0,
+                                -(yPosition - platformRect.top).toInt()
+                            )
+                        }
 
                         yPosition = platformRect.top.toFloat()
                         Log.d(TAG, "checkVisiblePlatforms: $playerRect $platformRect")
                         isCollided = true // 충돌 발생 플래그
 
-//                        valueAnimator.cancel()
-//                        valueAnimator.setFloatValues(yPosition, yPosition - JUMP_HEIGHT)
-//                        valueAnimator.start()
-//                        isGoingDown = false
-//                        platform.visibility = GONE
-
                         fallDownAnimator.cancel()
                         jumpUpAnimator.setFloatValues(yPosition, yPosition - JUMP_HEIGHT)
-                        fallDownAnimator.setFloatValues(yPosition - JUMP_HEIGHT, yPosition)
+//                        fallDownAnimator.setFloatValues(yPosition - JUMP_HEIGHT, yPosition)
+                        fallDownAnimator.setFloatValues(
+                            yPosition - JUMP_HEIGHT,
+                            yPosition + screenHeight
+                        )
                         jumpUpAnimator.start()
 //                        isGoingDown = false
 //                        platform.visibility = GONE
@@ -207,91 +199,21 @@ class GameFragment :
             playerPosition.value =
                 Rect(x.toInt(), y.toInt(), (x + width).toInt(), (y + height).toInt())
         }
-//        Log.d(TAG, "updatePlayerPosition: ${playerPosition.value}")
     }
 
 
     private var isGoingDown = false
-    private var beforeAnimateValue = 0F
-    private var animationCancelled = false
-
-    private fun initAnimation() {
-        if (!::valueAnimator.isInitialized) { // 초기화
-            valueAnimator = ValueAnimator().apply {
-                duration = 630
-                repeatCount = 1
-                repeatMode = ValueAnimator.REVERSE
-                interpolator = DecelerateInterpolator(1.2f)
-
-                addUpdateListener { animator ->
-
-                    val animatedValue = animator.animatedValue as Float
-                    player?.y = animatedValue - player?.height!!
-
-                    if (animatedValue >= beforeAnimateValue) {
-                        updatePlayerPosition()
-                        isGoingDown = true
-                    } else {
-                        isGoingDown = false
-                    }
-                    beforeAnimateValue = animatedValue
-                }
-
-
-                addListener(object : AnimatorListenerAdapter() {
-                    override fun onAnimationCancel(animation: Animator) {
-                        super.onAnimationCancel(animation)
-                        animationCancelled = true
-                    }
-
-                    override fun onAnimationEnd(animation: Animator) {
-                        super.onAnimationEnd(animation)
-
-                        if (animationCancelled) {
-                            animationCancelled = false
-                            return
-                        }
-
-                        // 현재 충돌 상태 로그
-                        Log.d(
-                            TAG,
-                            "onAnimationEnd: isCollided = $isCollided, isGoingDown = $isGoingDown"
-                        )
-
-                        if (!isCollided && isGoingDown) { // 추락
-                            Log.d(TAG, "onAnimationEnd: 추락! 플레이어의 높이를 0으로 설정")
-//                            fallingAnimation()
-
-                        } else if (isCollided && isGoingDown) { // 충돌한 경우, 다시 애니메이션 시작
-                            Log.d(
-                                TAG,
-                                "onAnimationEnd: 발판 충돌! yPosition: $yPosition ${playerPosition.value} "
-                            )
-
-                            isCollided = false  // 충돌 상태 리셋
-
-                            valueAnimator.setFloatValues(yPosition, yPosition - JUMP_HEIGHT)
-                            animation.start()
-                        }
-                    }
-                })
-            }
-        }
-
-        valueAnimator.setFloatValues(yPosition, yPosition - JUMP_HEIGHT)
-        valueAnimator.start()
-    }
-
     private lateinit var jumpUpAnimator: ValueAnimator
     private lateinit var fallDownAnimator: ValueAnimator
 
     private fun initJumpUpAnimation() {
         jumpUpAnimator = ValueAnimator.ofFloat(yPosition, yPosition - JUMP_HEIGHT).apply {
-            duration = 815 // 점프하는 데 걸리는 시간을 절반으로 설정
+            duration = 815
             interpolator = DecelerateInterpolator(1.2f)
             addUpdateListener { animator ->
                 val animatedValue = animator.animatedValue as Float
 //                isGoingDown = false
+//                player?.y = animatedValue - player?.height!!
                 player?.y = animatedValue - player?.height!!
             }
             addListener(object : AnimatorListenerAdapter() {
@@ -312,14 +234,13 @@ class GameFragment :
     private fun initFallDownAnimation() {
         if (!::fallDownAnimator.isInitialized) { // 초기화
             fallDownAnimator =
-                ValueAnimator.ofFloat(yPosition - JUMP_HEIGHT, yPosition + 100f).apply {
+                ValueAnimator.ofFloat(yPosition - JUMP_HEIGHT, yPosition + screenHeight).apply {
                     duration = 815 // 내려오는 데 걸리는 시간을 절반으로 설정
-                    interpolator = DecelerateInterpolator(1.2f)
+                    interpolator = DecelerateInterpolator()
                     addUpdateListener { animator ->
                         val animatedValue = animator.animatedValue as Float
-                        player?.y = animatedValue
+                        player?.y = animatedValue - player?.height!!
                         updatePlayerPosition()
-//                        Log.d(TAG, "initFallDownAnimation: ${player?.y} $isGoingDown")
 //                        isGoingDown = true // 내려오는 상태
                     }
                     addListener(object : AnimatorListenerAdapter() {
@@ -334,8 +255,6 @@ class GameFragment :
                                 // 추락 애니메이션 실행
                             } else {
                                 // 내려와서 충돌했다면 새로운 점프를 준비합니다.
-//                                isCollided = false // 충돌 상태 리셋
-//                                initJumpUpAnimation()
                                 isCollided = false  // 충돌 상태 리셋
 
                                 jumpUpAnimator.setFloatValues(yPosition, yPosition - JUMP_HEIGHT)
@@ -346,7 +265,7 @@ class GameFragment :
                     })
                 }
         }
-        fallDownAnimator.setFloatValues(yPosition - JUMP_HEIGHT, yPosition + 100f)
+        fallDownAnimator.setFloatValues(yPosition - JUMP_HEIGHT, yPosition + screenHeight)
         fallDownAnimator.start()
     }
 
