@@ -18,6 +18,15 @@
         android:fontFamily="@font/dunggeunmo"
         android:textColor="#FFFFFF"/>
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animationView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        app:lottie_rawRes="@raw/lottie_background"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true" />
+
     <ScrollView
         android:id="@+id/gameScrollView"
         android:fillViewport="true"

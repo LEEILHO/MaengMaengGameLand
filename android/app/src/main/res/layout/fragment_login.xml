@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.wear.widget.SwipeDismissFrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.wear.widget.SwipeDismissFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_swipe"
@@ -9,18 +8,18 @@
     android:layout_height="match_parent"
     tools:context=".GameFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.wear.widget.BoxInsetLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@drawable/icon_space">
 
-        <ImageView
-            android:id="@+id/imageView_player"
-            android:layout_width="@dimen/_40sdp"
-            android:layout_height="@dimen/_40sdp"
-            android:src="@drawable/icon_bunny"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:boxedEdges="top|left|right">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.wear.widget.BoxInsetLayout>
+
 </androidx.wear.widget.SwipeDismissFrameLayout>

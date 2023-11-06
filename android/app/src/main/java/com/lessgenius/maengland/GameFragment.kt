@@ -12,10 +12,10 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
 import android.view.animation.DecelerateInterpolator
+import android.view.animation.LinearInterpolator
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.ScrollView
@@ -180,8 +180,12 @@ class GameFragment :
                                 0,
                                 -(yPosition - platformRect.top).toInt()
                             )
-                            score.value = score.value?.plus(((yPosition - platformRect.top) / 10).toInt())
-                            Log.d(TAG, "checkVisiblePlatforms: ${score.value} ${yPosition - platformRect.top}")
+                            score.value =
+                                score.value?.plus(((yPosition - platformRect.top) / 10).toInt())
+                            Log.d(
+                                TAG,
+                                "checkVisiblePlatforms: ${score.value} ${yPosition - platformRect.top}"
+                            )
                         }
 
                         yPosition = platformRect.top.toFloat()
@@ -250,8 +254,8 @@ class GameFragment :
         if (!::fallDownAnimator.isInitialized) { // 초기화
             fallDownAnimator =
                 ValueAnimator.ofFloat(yPosition - JUMP_HEIGHT, yPosition + screenHeight).apply {
-                    duration = 815 // 내려오는 데 걸리는 시간을 절반으로 설정
-                    interpolator = DecelerateInterpolator()
+                    duration = 615 // 내려오는 데 걸리는 시간을 절반으로 설정
+                    interpolator = LinearInterpolator()
                     addUpdateListener { animator ->
                         val animatedValue = animator.animatedValue as Float
                         player?.y = animatedValue - player?.height!!

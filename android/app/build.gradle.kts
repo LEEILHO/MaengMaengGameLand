@@ -74,10 +74,10 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
     implementation ("androidx.activity:activity-ktx:1.7.2")
 
-    //liveData
+    // liveData
 //    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.4.1")
 
-    //framework ktx
+    // framework ktx
     implementation ("androidx.fragment:fragment-ktx:1.6.0")
 
     // Jetpack Navigation Kotlin
@@ -88,20 +88,23 @@ dependencies {
     // material ui
     implementation ("com.google.android.material:material:1.5.0")
 
-    //glide
+    // glide
     implementation ("com.github.bumptech.glide:glide:4.12.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
 
-    //hilt
+    // hilt
     implementation ("com.google.dagger:hilt-android:2.44")
     kapt ("com.google.dagger:hilt-compiler:2.44")
 
-    //room
+    // room
     val room_version = "2.4.3"
     implementation ("androidx.room:room-runtime:$room_version")
     kapt ("androidx.room:room-compiler:$room_version")
     implementation ("androidx.room:room-ktx:$room_version")
 
-    //sdp
+    // sdp
     implementation ("com.intuit.sdp:sdp-android:1.1.0")
+
+    // lottie
+    implementation ("com.airbnb.android:lottie:6.1.0")
 }
