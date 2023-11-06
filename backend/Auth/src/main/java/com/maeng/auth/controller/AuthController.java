@@ -1,9 +1,6 @@
 package com.maeng.auth.controller;
 
-import com.maeng.auth.dto.AuthAccessTokenResponse;
-import com.maeng.auth.dto.CodeDto;
-import com.maeng.auth.dto.OAuthToken;
-import com.maeng.auth.dto.WatchCodeDto;
+import com.maeng.auth.dto.*;
 import com.maeng.auth.service.AuthService;
 import com.maeng.auth.util.CookieManager;
 import io.swagger.v3.oas.annotations.Operation;
@@ -97,6 +94,13 @@ public class AuthController {
         logger.info("getWatchToken(), watchCode={}",watchCodeDto.getWatchCode());
         return ResponseEntity.ok().body(authService.getWatchToken(watchCodeDto.getWatchCode()));
     }
+
+    @GetMapping("/watch-token")
+    public ResponseEntity<?> getWatchRegenerate(@RequestBody WatchToken watchToken){
+        logger.info("getWatchToken(), watchAccessToken = {} , watchRefreshToken = {}", watchToken.getWatchAccessToken(),watchToken.getWatchRefreshToken());
+        return ResponseEntity.ok().body(authService.regenerateWatchToken(watchToken));
+    }
+
 
 
 

@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class WatchToken {
-    private String watchToken;
+    private String watchAccessToken;
+    private String watchRefreshToken;
 
 }

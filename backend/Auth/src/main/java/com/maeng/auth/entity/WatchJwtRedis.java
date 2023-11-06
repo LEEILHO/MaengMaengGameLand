@@ -16,7 +16,7 @@ import org.springframework.data.redis.core.RedisHash;
 public class WatchJwtRedis {
     @Id
     private String email;
-
-    private String watchToken;
+    private String watchAccessToken;
+    private String watchRefreshToken;
 
 }
