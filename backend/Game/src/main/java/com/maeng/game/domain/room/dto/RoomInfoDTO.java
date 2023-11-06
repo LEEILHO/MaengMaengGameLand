@@ -19,6 +19,7 @@ public class RoomInfoDTO implements Serializable {
     private int headCount;
     private int maxHeadCount;
     private boolean publicRoom;
-    private User[] participant;
+    //private User[] participant;
+    private SeatInfoDTO[] participant;
     private Game gameCategory;
 }

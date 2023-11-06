@@ -1,5 +1,6 @@
 package com.maeng.game.domain.room.service;
 
+import com.maeng.game.domain.awrsp.exception.GameSettingException;
 import com.maeng.game.domain.awrsp.service.AwrspService;
 import com.maeng.game.domain.jwac.emums.Tier;
 import com.maeng.game.domain.lobby.service.LobbyService;
@@ -247,17 +248,23 @@ public class RoomService {
                 .gameCode(gameCode)
                 .build();
 
+        boolean settingCheck = false;
+
         // 각 gameService의 start 호출
         if(room.getGameCategory().equals(Game.ALL_WIN_ROCK_SCISSOR_PAPER)){
-            awrspService.gameSetting(gameStartDTO);
+            settingCheck = awrspService.gameSetting(gameStartDTO);
         }
 
         if(room.getGameCategory().equals(Game.GOLD_SILVER_BRONZE)){
-            awrspService.gameSetting(gameStartDTO);
+            settingCheck = awrspService.gameSetting(gameStartDTO);
         }
 
         if(room.getGameCategory().equals(Game.JEWELRY_AUCTION)){
-            awrspService.gameSetting(gameStartDTO);
+            settingCheck = awrspService.gameSetting(gameStartDTO);
+        }
+
+        if(settingCheck){
+            throw new GameSettingException("게임 정보 초기화 실패");
         }
 
         template.convertAndSend(CHAT_EXCHANGE_NAME, "room."+roomCode, MessageDTO.builder()
@@ -314,15 +321,23 @@ public class RoomService {
     @Operation(summary = "방 정보 전송")
     public void sendRoomInfo(String roomCode, Room roomInfo){
 
-        User[] users = new User[roomInfo.getMaxHeadCount()];
+        //User[] users = new User[roomInfo.getMaxHeadCount()];
+        SeatInfoDTO[] users = new SeatInfoDTO[roomInfo.getMaxHeadCount()];
         HashMap<Integer, Seat> list = roomInfo.getSeats();
 
+        // TODO : 열려있는지도 저장
         for(int i = 0; i < roomInfo.getMaxHeadCount(); i++){
-            if(list.get(i).getNickname().equals("")){
-                users[i] = null;
-                continue;
+
+            User user = null;
+
+            if(!list.get(i).getNickname().equals("")){
+                user = roomInfo.getParticipant().get(list.get(i).getNickname());
             }
-            users[i] = roomInfo.getParticipant().get(list.get(i).getNickname());
+
+            users[i] = SeatInfoDTO.builder()
+                    .open(list.get(i).isAvailable())
+                    .user(user)
+                    .build();
         }
 
         MessageDTO messageDTO = MessageDTO.builder()
