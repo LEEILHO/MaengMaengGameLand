@@ -24,6 +24,6 @@ public interface FriendRepository extends JpaRepository<Friend, String> {
 	Optional<Object> findByRequesterAndRecipient(User requestUser, User recipUser);
 
 	@Query("SELECT f FROM friend f "
-		+ "WHERE f.requester.userSeq = :userSeq OR f.recipient.userSeq = :userSeq")
-	List<Friend> findAllFriendsByUser(Long userSeq);
+		+ "WHERE f.requester.email = :email OR f.recipient.email = :email")
+	List<Friend> findAllFriendsByUser(String email);
 }

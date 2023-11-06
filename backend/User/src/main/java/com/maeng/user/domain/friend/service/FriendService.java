@@ -14,14 +14,12 @@ import com.maeng.user.domain.friend.exception.FriendExceptionCode;
 import com.maeng.user.domain.friend.exception.FriendRequestException;
 import com.maeng.user.domain.friend.repository.FriendRepository;
 import com.maeng.user.domain.user.entity.User;
-import com.maeng.user.domain.user.respository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class FriendService {
-	private final UserRepository UserRepository;
 	private final FriendRepository friendRepository;
 
 	@Transactional
@@ -46,17 +44,16 @@ public class FriendService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<FriendDTO> getFriendList() {
-		User user  = UserRepository.findUserByEmail("seg412@naver.com").orElseThrow();
-		List<Friend> friends = friendRepository.findAllFriendsByUser(user.getUserSeq());
-		return friendToFriendDTO(user.getNickname(), friends);
+	public List<FriendDTO> getFriendList(String email) {
+		List<Friend> friends = friendRepository.findAllFriendsByUser(email);
+		return friendToFriendDTO(email, friends);
 	}
 
-	private List<FriendDTO> friendToFriendDTO(String nickname, List<Friend> friends) {
+	private List<FriendDTO> friendToFriendDTO(String email, List<Friend> friends) {
 		return friends.stream()
 			.map(friend -> FriendDTO.builder()
 				.id(friend.getFriendId())
-				.nickname(friend.getRecipient().getNickname().equals(nickname) ? friend.getRequester().getNickname() : friend.getRecipient().getNickname())
+				.nickname(friend.getRecipient().getEmail().equals(email) ? friend.getRequester().getNickname() : friend.getRecipient().getNickname())
 				.build())
 			.collect(Collectors.toList());
 	}
