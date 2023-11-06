@@ -12,7 +12,7 @@ self.addEventListener('activate', (e) => {
   console.log('👀 - activate', e)
 })
 
-self.addEventListener('push', (e) => {
+self.addEventListener('replace', (e) => {
   const message = e.data?.json()
   console.log('👀 - message', message)
 

@@ -14,7 +14,7 @@ const RoomItem = ({ title, curPeople, maxPeople, roomCode }: Props) => {
   const router = useRouter()
 
   const hnadleEnter = useCallback(() => {
-    router.push(`waiting-room/${roomCode}`)
+    router.replace(`waiting-room/${roomCode}`)
   }, [])
 
   return (

@@ -40,7 +40,7 @@ const CreateRoomModal = ({ closeModal }: Props) => {
       closeModal()
       // todo: 방 입장
       console.log(res)
-      router.push(`waiting-room/${res.roomCode}`)
+      router.replace(`waiting-room/${res.roomCode}`)
     })
   }, [title, roomType, channel, pathname])
 
