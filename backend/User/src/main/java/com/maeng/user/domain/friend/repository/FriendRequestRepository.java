@@ -1,5 +1,6 @@
 package com.maeng.user.domain.friend.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,4 +17,8 @@ public interface FriendRequestRepository extends JpaRepository<FriendRequest, St
 	Optional<FriendRequest> findByRequesterAndRecipient(User requester, User recipient);
 
 	void deleteByRequestId(UUID requestId);
+
+	List<FriendRequest> findAllByRecipientEmail(String recipientEmail);
+
+	List<FriendRequest> findAllByRequesterEmail(String requesterEmail);
 }
