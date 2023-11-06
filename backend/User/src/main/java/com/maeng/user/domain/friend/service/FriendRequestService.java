@@ -69,7 +69,7 @@ public class FriendRequestService {
 		return friendRequests.stream()
 			.map(request -> FriendDTO.builder()
 				.id(request.getRequestId())
-				.nickname(request.getRequester().getNickname())
+				.nickname(request.getRecipient().getNickname())
 				.build())
 			.collect(Collectors.toList());
 	}
@@ -78,7 +78,7 @@ public class FriendRequestService {
 		return friendRequests.stream()
 			.map(request -> FriendDTO.builder()
 				.id(request.getRequestId())
-				.nickname(request.getRecipient().getNickname())
+				.nickname(request.getRequester().getNickname())
 				.build())
 			.collect(Collectors.toList());
 	}
