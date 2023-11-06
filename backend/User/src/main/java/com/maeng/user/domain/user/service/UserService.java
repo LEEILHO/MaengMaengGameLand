@@ -81,6 +81,7 @@ public class UserService {
 
     @Transactional
     public User getUserByEmail(String email) {
+        logger.info("getUserByEmail(), email = {}", email);
         return userRepository.findUserByEmail(email)
                 .orElseThrow(() -> new UserException(UserExceptionCode.USER_NOT_FOUND));
     }
