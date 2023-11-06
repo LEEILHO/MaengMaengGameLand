@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 @Builder
@@ -22,6 +23,6 @@ public class Game {
     private LocalDateTime roundStartedAt;
     private int headCount;
     private int currentRound;
-    private List<Player> players;
+    private HashMap<String, Player> players;
     private Card[] problem;
 }
