@@ -16,3 +16,10 @@ export type GameCategoryType =
   | 'GOLD_SILVER_BRONZE'
 
 export type ChannelTireType = 'BRONZE' | 'SILVER' | 'GOLD' | 'UNRANKED'
+
+export type RoomType = {
+  roomCode: string
+  title: string
+  headCount: number
+  maxHeadCount: number
+}

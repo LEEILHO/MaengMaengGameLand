@@ -2,29 +2,46 @@ import * as S from '@styles/lobby/RoomList.styled'
 import RoomItem from './RoomItem'
 import RoomTypeButton from './RoomTypeButton'
 import { useCallback, useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { useSetRecoilState } from 'recoil'
-import { channelState } from '@atom/gameAtom'
-import { channelTypeChange } from '@utils/lobby/lobbyUtil'
+import { usePathname, useRouter } from 'next/navigation'
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
+import { channelState, gameTypeState } from '@atom/gameAtom'
+import { channelTypeChange, gameTypeChange } from '@utils/lobby/lobbyUtil'
+import useSocket from '@hooks/useSocketLobby'
+import { RoomType } from '@type/lobby/lobby.type'
+import { roomsState } from '@atom/lobbyAtom'
+import { loadRooms } from 'apis/lobby/lobbyApi'
 
 const RoomList = () => {
   const router = useRouter()
+  const pathname = usePathname()
   const [seletedRoomType, setSeletedRoomType] = useState<
     '자유' | '브론즈' | '실버' | '골드'
   >('자유')
-  const setChanel = useSetRecoilState(channelState)
+  const [rooms, setRooms] = useRecoilState(roomsState)
+  const [channel, setChannel] = useRecoilState(channelState)
+  const gameType = gameTypeChange(pathname.split('/')[1])
 
   const handleTypeButton = useCallback(
     (type: '자유' | '브론즈' | '실버' | '골드') => {
       setSeletedRoomType(type)
-      setChanel(channelTypeChange(type))
+      setChannel(channelTypeChange(type))
     },
     [],
   )
 
+  // 방 목록 불러오기
+  useEffect(() => {
+    console.log(`방 새로 불러오기 -> ${gameType}`)
+    if (!gameType || !channel) return
+    loadRooms(gameType, channel).then((res) => {
+      setRooms(res)
+      console.log(res)
+    })
+  }, [gameType, channel])
+
   // 초기 채널 설정
   useEffect(() => {
-    setChanel(channelTypeChange('자유'))
+    setChannel(channelTypeChange('자유'))
   }, [])
 
   return (
@@ -51,23 +68,27 @@ const RoomList = () => {
           handleTypeButton={handleTypeButton}
         />
       </S.TypeButtonRaw>
-      <S.RoomBox>
-        <RoomItem
-          title="1번방 1번방 1번방 1번방"
-          maxPeople="8"
-          curPeople="3"
-          onClick={() => {
-            router.push('/gsb/waiting-room/1')
-          }}
-        />
-        <RoomItem title="1번방 2번방 2번방 2번방" maxPeople="8" curPeople="2" />
-        <RoomItem title="3번방 3번방 3번방 3번방" maxPeople="8" curPeople="1" />
-        <RoomItem title="4번방 4번방 4번방 4번방" maxPeople="8" curPeople="8" />
-        <RoomItem title="1번방 1번방 1번방 1번방" maxPeople="8" curPeople="3" />
-        <RoomItem title="1번방 2번방 2번방 2번방" maxPeople="8" curPeople="2" />
-        <RoomItem title="3번방 3번방 3번방 3번방" maxPeople="8" curPeople="1" />
-        <RoomItem title="4번방 4번방 4번방 4번방" maxPeople="8" curPeople="8" />
-      </S.RoomBox>
+      <div
+        style={{
+          display: 'flex',
+          width: '100%',
+          height: '100%',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <S.RoomBox>
+          {rooms?.map((room) => (
+            <RoomItem
+              key={room.roomCode}
+              title={room.title}
+              maxPeople={room.maxHeadCount}
+              curPeople={room.headCount}
+              roomCode={room.roomCode}
+            />
+          ))}
+        </S.RoomBox>
+      </div>
     </S.RoomListContainer>
   )
 }

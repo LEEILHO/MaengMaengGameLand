@@ -17,9 +17,9 @@ export const RoomBox = styled.div`
   border-radius: 20px;
   background: rgba(50, 46, 46, 0.5);
   overflow-y: scroll;
-  padding: 20px 0;
+  padding: 20px;
   gap: 12px;
-  justify-content: center;
+  justify-content: flex-start;
 
   /* 스크롤 바 커스텀 */
   &::-webkit-scrollbar {
