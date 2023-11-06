@@ -40,7 +40,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer { // ST
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/maeng")
-                .setAllowedOriginPatterns("*").withSockJS();
+                .setAllowedOriginPatterns("*");//.withSockJS();
                 // 클라이언트에서 WebSocket에 접근할 수 있는 endPoint 지정 : ws://k9d208.p.ssafy.io:8080/maeng
                 // setAllowOriginPatterns : CORS 설정
     }

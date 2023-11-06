@@ -1,21 +1,25 @@
 package com.maeng.game.domain.lobby.controller;
 
+import com.maeng.game.domain.lobby.dto.RoomDTO;
 import com.maeng.game.domain.lobby.enums.ChannelTire;
 import com.maeng.game.domain.lobby.service.LobbyService;
 import com.maeng.game.domain.room.entity.Game;
 import lombok.RequiredArgsConstructor;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@RequestMapping("/api/v1/lobby")
 @RequiredArgsConstructor
-@Controller
+@RestController
 public class LobbyController {
 
     private final LobbyService lobbyService;
     // 방 리스트 조회
-    @MessageMapping("lobby.{game}.{channelTire}")
-    public void findAllRoom(@DestinationVariable Game game, @DestinationVariable ChannelTire channelTire){
-        lobbyService.findAllRoom(game, channelTire);
+    @GetMapping("/{game}/{channelTire}")
+    public ResponseEntity<List<RoomDTO>> findRoomList(@PathVariable Game game, @PathVariable ChannelTire channelTire){
+        List<RoomDTO> result = lobbyService.findRoomList(game, channelTire);
+        return ResponseEntity.ok(result);
     }
 }

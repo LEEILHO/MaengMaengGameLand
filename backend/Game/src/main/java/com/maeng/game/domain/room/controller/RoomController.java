@@ -1,6 +1,7 @@
 package com.maeng.game.domain.room.controller;
 
 import com.maeng.game.domain.room.dto.CreateRoomDTO;
+import com.maeng.game.domain.room.dto.RoomCodeDTO;
 import com.maeng.game.domain.room.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -21,12 +22,11 @@ public class RoomController {
 
     @Operation(summary = "대기방 생성")
     @PostMapping("/create")
-    public ResponseEntity<String> create(@RequestBody CreateRoomDTO createRoomDTO){
+    public ResponseEntity<RoomCodeDTO> create(@RequestBody CreateRoomDTO createRoomDTO){
 
-        log.info(createRoomDTO.toString());
         String roomCode = roomService.createRoom(createRoomDTO);
         log.info(roomCode);
 
-        return ResponseEntity.ok(roomCode);
+        return ResponseEntity.ok(RoomCodeDTO.builder().roomCode(roomCode).build());
     }
 }
