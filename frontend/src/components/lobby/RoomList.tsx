@@ -2,21 +2,24 @@ import * as S from '@styles/lobby/RoomList.styled'
 import RoomItem from './RoomItem'
 import RoomTypeButton from './RoomTypeButton'
 import { useCallback, useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import { channelState, gameTypeState } from '@atom/gameAtom'
-import { channelTypeChange } from '@utils/lobby/lobbyUtil'
+import { channelTypeChange, gameTypeChange } from '@utils/lobby/lobbyUtil'
 import useSocket from '@hooks/useSocketLobby'
 import { RoomType } from '@type/lobby/lobby.type'
 import { roomsState } from '@atom/lobbyAtom'
+import { loadRooms } from 'apis/lobby/lobbyApi'
 
 const RoomList = () => {
   const router = useRouter()
+  const pathname = usePathname()
   const [seletedRoomType, setSeletedRoomType] = useState<
     '자유' | '브론즈' | '실버' | '골드'
   >('자유')
-  const rooms = useRecoilValue(roomsState)
-  const setChannel = useSetRecoilState(channelState)
+  const [rooms, setRooms] = useRecoilState(roomsState)
+  const [channel, setChannel] = useRecoilState(channelState)
+  const gameType = gameTypeChange(pathname.split('/')[1])
 
   const handleTypeButton = useCallback(
     (type: '자유' | '브론즈' | '실버' | '골드') => {
@@ -25,6 +28,16 @@ const RoomList = () => {
     },
     [],
   )
+
+  // 방 목록 불러오기
+  useEffect(() => {
+    console.log(`방 새로 불러오기 -> ${gameType}`)
+    if (!gameType || !channel) return
+    loadRooms(gameType, channel).then((res) => {
+      setRooms(res)
+      console.log(res)
+    })
+  }, [gameType, channel])
 
   // 초기 채널 설정
   useEffect(() => {
@@ -71,6 +84,7 @@ const RoomList = () => {
               title={room.title}
               maxPeople={room.maxHeadCount}
               curPeople={room.headCount}
+              roomCode={room.roomCode}
             />
           ))}
         </S.RoomBox>

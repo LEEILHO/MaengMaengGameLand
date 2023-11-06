@@ -4,13 +4,22 @@ import { useRouter } from 'next/navigation'
 
 type Props = {
   size: number
+  handleBack?: () => void
 }
 
-const BackButton = ({ size }: Props) => {
+const BackButton = ({ size, handleBack }: Props) => {
   const router = useRouter()
 
   return (
-    <S.BackButton $size={size} onClick={() => router.back()}>
+    <S.BackButton
+      $size={size}
+      onClick={() => {
+        if (handleBack) {
+          handleBack()
+        }
+        router.back()
+      }}
+    >
       <S.BackButtonImage
         $size={size}
         src={images.common.header.back}

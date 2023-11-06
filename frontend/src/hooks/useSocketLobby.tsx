@@ -36,31 +36,34 @@ const useSocket = () => {
   }, [client.current, gameType, channel])
 
   // 소켓 연결
-  const connectSocket = useCallback(() => {
-    const sock = new SockJS(SOCKET_URL)
-    const StompClient = Stomp.over(() => sock)
-    console.log(sock)
-    sock.onmessage = (e) => {
-      console.log('맹맹', e.data)
-    }
-    client.current = StompClient
+  const connectSocket = useCallback(
+    (connectedFunction: () => void, disconnectedFunction: () => void) => {
+      const sock = new SockJS(SOCKET_URL)
+      const StompClient = Stomp.over(() => sock)
+      console.log(sock)
+      sock.onmessage = (e) => {
+        console.log('맹맹', e.data)
+      }
+      client.current = StompClient
 
-    // StompClient.debug = () => {}
+      // StompClient.debug = () => {}
 
-    // 연결 되면
-    client.current.connect(
-      {},
-      () => {
-        connectLobby()
-      },
-      // 연결 종료 시
-      () => {
-        disconnectLobby()
-      },
-    )
+      // 연결 되면
+      client.current.connect(
+        {},
+        () => {
+          connectedFunction()
+        },
+        // 연결 종료 시
+        () => {
+          disconnectedFunction()
+        },
+      )
 
-    setSockjs(sock)
-  }, [client.current, connectLobby, disconnectLobby])
+      setSockjs(sock)
+    },
+    [client.current],
+  )
 
   const disconnectSocket = useCallback(() => {
     client.current?.disconnect()
