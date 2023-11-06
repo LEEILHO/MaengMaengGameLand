@@ -136,8 +136,7 @@ public class RoomService {
         HashMap<String, User> players = room.getParticipant();
         User user = players.get(readyDTO.getNickname());
 
-//        user.setReady(readyDTO.isReady());
-        user.setReady(user.isReady() ? false : true);
+        user.setReady(!user.isReady());
         players.put(user.getNickname(), user);
         room.setParticipant(players);
         roomRepository.save(room);
