@@ -1,14 +1,13 @@
 package com.maeng.user.domain.friend.controller;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.maeng.user.domain.friend.dto.FriendDTO;
@@ -62,24 +61,24 @@ public class FriendController {
 	}
 
 	@PostMapping("/delete")
-	public ResponseEntity<Void> deleteFriend(@RequestHeader("userEmail") String email, @RequestParam UUID friendId) {
-		friendService.deleteFriend(email, friendId);
+	public ResponseEntity<Void> deleteFriend(@RequestHeader("userEmail") String email, @RequestBody FriendIdDTO friendIdDTO) {
+		friendService.deleteFriend(email, friendIdDTO);
 		return ResponseEntity.ok().build();
 	}
 
-	@PostMapping("/request/list")
+	@GetMapping("/request/list")
 	public ResponseEntity<List<FriendDTO>> getFriendRequestList(@RequestHeader("userEmail") String email) {
 		List<FriendDTO> friendRequestList = friendRequestService.getFriendRequestList(email);
 		return ResponseEntity.ok(friendRequestList);
 	}
 
-	@PostMapping("/receive/list")
+	@GetMapping("/receive/list")
 	public ResponseEntity<List<FriendDTO>> getFriendReceiveList(@RequestHeader("userEmail") String email) {
 		List<FriendDTO> friendReceiveList = friendRequestService.getFriendReceiveList(email);
 		return ResponseEntity.ok(friendReceiveList);
 	}
 
-	@PostMapping("/list")
+	@GetMapping("/list")
 	public ResponseEntity<List<FriendDTO>> getFriendList(@RequestHeader("userEmail") String email) {
 		List<FriendDTO> friendList = friendService.getFriendList(email);
 		return ResponseEntity.ok(friendList);

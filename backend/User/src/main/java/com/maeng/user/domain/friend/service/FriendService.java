@@ -1,13 +1,13 @@
 package com.maeng.user.domain.friend.service;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.maeng.user.domain.friend.dto.FriendDTO;
+import com.maeng.user.domain.friend.dto.FriendIdDTO;
 import com.maeng.user.domain.friend.entity.Friend;
 import com.maeng.user.domain.friend.entity.FriendRequest;
 import com.maeng.user.domain.friend.exception.FriendExceptionCode;
@@ -39,8 +39,8 @@ public class FriendService {
 	}
 
 	@Transactional
-	public void deleteFriend(String email, UUID friendId) {
-		friendRepository.deleteByFriendIdAndEmail(friendId, email);
+	public void deleteFriend(String email, FriendIdDTO friendIdDTO) {
+		friendRepository.deleteByFriendIdAndEmail(friendIdDTO.getId(), email);
 	}
 
 	@Transactional(readOnly = true)
