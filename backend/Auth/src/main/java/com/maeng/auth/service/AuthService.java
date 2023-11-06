@@ -1,10 +1,23 @@
 package com.maeng.auth.service;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maeng.auth.dto.CodeDto;
 import com.maeng.auth.dto.OAuthToken;
+import com.maeng.auth.dto.RecordInfoDto;
 import com.maeng.auth.dto.TokenInfoResponse;
 import com.maeng.auth.dto.WatchToken;
 import com.maeng.auth.entity.User;
@@ -17,22 +30,10 @@ import com.maeng.auth.repository.WatchRepository;
 import com.maeng.auth.repository.WatchTokenRepository;
 import com.maeng.auth.util.JwtProvider;
 import com.maeng.auth.util.JwtRedisManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import javax.servlet.http.HttpServletRequest;
-
 
 @Service
 public class AuthService {
-
+    private final RabbitTemplate rabbitTemplate;
     private final RestTemplate restTemplate;
     private final String clientId;
 
@@ -51,13 +52,14 @@ public class AuthService {
     private  final WatchRepository watchRepository;
 
     private final WatchTokenRepository watchTokenRepository;
-    public AuthService(RestTemplate restTemplate,
+    public AuthService(RabbitTemplate rabbitTemplate, RestTemplate restTemplate,
                        @Value("${spring.security.oauth2.client.registration.kakao.client-id}") String clientId,
                        @Value("${spring.security.oauth2.client.registration.kakao.client-secret}") String clientSecret ,
                        @Value("${spring.security.oauth2.client.provider.kakao.token-uri}") String accessTokenUrl,
                        @Value("${spring.security.oauth2.client.provider.kakao.user-info-uri}") String userInfoUrl,
                        JwtRedisManager jwtRedisManager, JwtProvider jwtProvider, UserRepository userRepository, WatchRepository watchRepository
                         ,WatchTokenRepository watchTokenRepository){
+        this.rabbitTemplate = rabbitTemplate;
         this.restTemplate = restTemplate;
         this.clientId = clientId;
         this.clientSecret = clientSecret;
@@ -101,6 +103,10 @@ public class AuthService {
         // 사용자가 처음 서비스를 이용하는 경우
         if (userRepository.findUserByEmail(userEmail).isEmpty()) {
             userRepository.save(user);
+            rabbitTemplate.convertAndSend("user", "register."+userEmail, RecordInfoDto.builder()
+                .email(userEmail)
+                .nickname(user.getNickname())
+                .build());
         }
 
 

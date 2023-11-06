@@ -52,6 +52,12 @@ dependencies {
 
 	// cloug config
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
+
+	// rabbitmq
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+	implementation 'org.springframework.boot:spring-boot-starter-reactor-netty:2.6.4'
+
 }
 
 
