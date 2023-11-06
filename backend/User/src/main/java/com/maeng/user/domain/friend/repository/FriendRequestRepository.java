@@ -12,11 +12,11 @@ import com.maeng.user.domain.user.entity.User;
 
 @Repository
 public interface FriendRequestRepository extends JpaRepository<FriendRequest, String> {
-	Optional<FriendRequest> findByRequestId(UUID requestId);
+	Optional<FriendRequest> findByRequestIdAndRequesterEmail(UUID requestId, String email);
 
 	Optional<FriendRequest> findByRequesterAndRecipient(User requester, User recipient);
 
-	void deleteByRequestId(UUID requestId);
+	void deleteByRequestIdAndRequesterEmail(UUID requestId, String email);
 
 	List<FriendRequest> findAllByRecipientEmail(String recipientEmail);
 

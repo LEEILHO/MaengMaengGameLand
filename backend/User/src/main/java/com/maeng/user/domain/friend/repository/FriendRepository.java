@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +14,12 @@ import com.maeng.user.domain.user.entity.User;
 
 @Repository
 public interface FriendRepository extends JpaRepository<Friend, String> {
-	void deleteByFriendId(UUID friendId);
+	@Modifying
+	@Query("DELETE FROM friend f "
+		+ "WHERE (f.friendId = :friendId AND f.recipient.email = :email) "
+		+ "OR (f.friendId = :friendId AND f.requester.email = :email)")
+	void deleteByFriendIdAndEmail(UUID friendId, String email);
+
 
 	Optional<Object> findByRequesterAndRecipient(User requestUser, User recipUser);
 

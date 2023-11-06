@@ -1,13 +1,13 @@
 package com.maeng.user.domain.friend.service;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.maeng.user.domain.friend.dto.FriendDTO;
+import com.maeng.user.domain.friend.dto.FriendIdDTO;
 import com.maeng.user.domain.friend.entity.FriendRequest;
 import com.maeng.user.domain.friend.exception.FriendExceptionCode;
 import com.maeng.user.domain.friend.exception.FriendRequestException;
@@ -39,8 +39,8 @@ public class FriendRequestService {
 	}
 
 	@Transactional
-	public FriendRequest acceptFriend(UUID requestId) {
-		FriendRequest friendRequest = friendRequestRepository.findByRequestId(requestId)
+	public FriendRequest acceptFriend(String email, FriendIdDTO friendIdDTO) {
+		FriendRequest friendRequest = friendRequestRepository.findByRequestIdAndRequesterEmail(friendIdDTO.getId(), email)
 			.orElseThrow(() -> new FriendRequestException(FriendExceptionCode.FRIEND_REQUEST_NOT_FOUND));
 
 		friendRequestRepository.delete(friendRequest);
@@ -49,15 +49,17 @@ public class FriendRequestService {
 	}
 
 	@Transactional
-	public void deleteFriendRequest(UUID requestId) {
-		friendRequestRepository.deleteByRequestId(requestId);
+	public void deleteFriendRequest(String email, FriendIdDTO friendIdDTO) {
+		friendRequestRepository.deleteByRequestIdAndRequesterEmail(friendIdDTO.getId(), email);
 	}
 
+	@Transactional(readOnly = true)
 	public List<FriendDTO> getFriendRequestList(String email) {
 		List<FriendRequest> friendRequests = friendRequestRepository.findAllByRequesterEmail(email);
 		return friendRequestRequesterToFriendDTO(friendRequests);
 	}
 
+	@Transactional(readOnly = true)
 	public List<FriendDTO> getFriendReceiveList(String email) {
 		List<FriendRequest> friendRequests = friendRequestRepository.findAllByRecipientEmail(email);
 		return friendRequestRecipientToFriendDTO(friendRequests);

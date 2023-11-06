@@ -5,11 +5,14 @@ import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.maeng.user.domain.friend.dto.FriendDTO;
+import com.maeng.user.domain.friend.dto.FriendIdDTO;
+import com.maeng.user.domain.friend.dto.FriendRequestDTO;
 import com.maeng.user.domain.friend.entity.FriendRequest;
 import com.maeng.user.domain.friend.service.FriendRequestService;
 import com.maeng.user.domain.friend.service.FriendService;
@@ -29,16 +32,16 @@ public class FriendController {
 	private final FriendRequestService friendRequestService;
 
 	@PostMapping("/request")
-	public void requestFriend(String requester, String recipient) {
-		User requestUser = userService.getUserByEmail(requester);
-		User recipUser = userService.getUserByEmail(recipient);
+	public void requestFriend(@RequestParam String email, @RequestBody FriendRequestDTO friendRequestDTO) {
+		User requestUser = userService.getUserByEmail(email);
+		User recipUser = userService.getUserByEmail(friendRequestDTO.getRecipientEmail());
 		friendService.checkFriend(requestUser, recipUser);
 		friendRequestService.requestFriend(requestUser, recipUser);
 	}
 
 	@PostMapping("/accept")
-	public ResponseEntity<?> acceptFriend(@RequestParam UUID requestId) {
-		FriendRequest friendRequest = friendRequestService.acceptFriend(requestId);
+	public ResponseEntity<?> acceptFriend(@RequestParam String email, @RequestBody FriendIdDTO friendIdDTO) {
+		FriendRequest friendRequest = friendRequestService.acceptFriend(email, friendIdDTO);
 
 		friendService.addFriend(friendRequest);
 
@@ -46,20 +49,20 @@ public class FriendController {
 	}
 
 	@PostMapping("/reject")
-	public ResponseEntity<Void> rejectFriend(@RequestParam UUID requestId) {
-		friendRequestService.deleteFriendRequest(requestId);
+	public ResponseEntity<Void> rejectFriend(@RequestParam String email, @RequestBody FriendIdDTO friendIdDTO) {
+		friendRequestService.deleteFriendRequest(email, friendIdDTO);
 		return ResponseEntity.ok().build();
 	}
 
 	@PostMapping("/cancel")
-	public ResponseEntity<Void> cancelRequest(@RequestParam UUID requestId) {
-		friendRequestService.deleteFriendRequest(requestId);
+	public ResponseEntity<Void> cancelRequest(@RequestParam String email, @RequestBody FriendIdDTO friendIdDTO) {
+		friendRequestService.deleteFriendRequest(email, friendIdDTO);
 		return ResponseEntity.ok().build();
 	}
 
 	@PostMapping("/delete")
-	public ResponseEntity<Void> deleteFriend(@RequestParam UUID friendId) {
-		friendService.deleteFriend(friendId);
+	public ResponseEntity<Void> deleteFriend(@RequestParam String email, @RequestParam UUID friendId) {
+		friendService.deleteFriend(email, friendId);
 		return ResponseEntity.ok().build();
 	}
 

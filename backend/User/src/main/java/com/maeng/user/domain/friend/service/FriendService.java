@@ -5,6 +5,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.maeng.user.domain.friend.dto.FriendDTO;
 import com.maeng.user.domain.friend.entity.Friend;
@@ -23,7 +24,7 @@ public class FriendService {
 	private final UserRepository UserRepository;
 	private final FriendRepository friendRepository;
 
-
+	@Transactional
 	public void checkFriend(User requestUser, User recipUser) {
 		friendRepository.findByRequesterAndRecipient(requestUser, recipUser)
 			.ifPresent(friend -> {
@@ -31,6 +32,7 @@ public class FriendService {
 			});
 	}
 
+	@Transactional
 	public void addFriend(FriendRequest friendRequest) {
 		friendRepository.save(Friend.builder()
 			.requester(friendRequest.getRequester())
@@ -38,10 +40,12 @@ public class FriendService {
 			.build());
 	}
 
-	public void deleteFriend(UUID friendId) {
-		friendRepository.deleteByFriendId(friendId);
+	@Transactional
+	public void deleteFriend(String email, UUID friendId) {
+		friendRepository.deleteByFriendIdAndEmail(friendId, email);
 	}
 
+	@Transactional(readOnly = true)
 	public List<FriendDTO> getFriendList() {
 		User user  = UserRepository.findUserByEmail("seg412@naver.com").orElseThrow();
 		List<Friend> friends = friendRepository.findAllFriendsByUser(user.getUserSeq());
