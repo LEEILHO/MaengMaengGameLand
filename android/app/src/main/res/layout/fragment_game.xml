@@ -7,6 +7,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".GameFragment">
+    <TextView
+        android:id="@+id/textview_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:layout_gravity="top|center"
+        android:text="0"
+        android:textSize="@dimen/_22sdp"
+        android:fontFamily="@font/dunggeunmo"
+        android:textColor="#FFFFFF"/>
 
     <ScrollView
         android:id="@+id/gameScrollView"

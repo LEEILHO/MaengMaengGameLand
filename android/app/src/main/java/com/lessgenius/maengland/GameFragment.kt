@@ -31,7 +31,7 @@ class GameFragment :
     BaseFragment<FragmentGameBinding>(FragmentGameBinding::bind, R.layout.fragment_game) {
 
     companion object {
-        const val JUMP_HEIGHT = 250F
+        const val JUMP_HEIGHT = 220F
     }
 
     private lateinit var swipeCallback: SwipeDismissFrameLayout.Callback
@@ -41,7 +41,6 @@ class GameFragment :
     private lateinit var sensor: Sensor
 
     // 애니메이션
-    private lateinit var valueAnimator: ValueAnimator
     private val xMoveAnimator: ValueAnimator by lazy {
         ValueAnimator().apply {
             duration = 100
@@ -57,6 +56,7 @@ class GameFragment :
 
     @Volatile
     private var playerPosition = MutableLiveData<Rect>()
+    private var score = MutableLiveData<Int>(0)
     private var yPosition = 0F
 
     // 화면의 크기
@@ -83,7 +83,8 @@ class GameFragment :
         // 스크롤 금지
 //        binding.gameScrollView.setOnTouchListener { _, _ -> true }
 
-//        binding.imageViewPlayer.bringToFront()
+        binding.imageViewPlayer.bringToFront()
+        binding.textviewScore.bringToFront()
 //        binding.root.bringChildToFront(binding.imageViewPlayer)
 //        binding.imageViewPlayer.elevation = 1f
     }
@@ -106,7 +107,7 @@ class GameFragment :
 //        Log.d(TAG, "onViewCreated: $screenWidth $screenHeight")
 
         // 스크롤 뷰
-        binding.gameLayout.layoutParams.height = screenHeight * 2
+        binding.gameLayout.layoutParams.height = screenHeight * 20
         binding.gameScrollView.post {
             binding.gameScrollView.fullScroll(ScrollView.FOCUS_DOWN)
         }
@@ -124,43 +125,63 @@ class GameFragment :
                 checkVisiblePlatforms(playerRect)
             }
         }
+
+        score.observe(viewLifecycleOwner) { newScore ->
+            // 현재 표시된 점수를 가져옵니다. (초기값은 '0'으로 가정)
+            val currentScore = binding.textviewScore.text.toString().toIntOrNull() ?: 0
+
+            // ValueAnimator를 사용하여 현재 점수에서 새 점수까지 애니메이션을 적용합니다.
+            val scoreAnimator = ValueAnimator.ofInt(currentScore, newScore).apply {
+                duration = 500 // 애니메이션 지속 시간을 설정합니다.
+                addUpdateListener { animator ->
+                    // 현재 애니메이션 값으로 텍스트 뷰를 업데이트합니다.
+                    binding.textviewScore.text = animator.animatedValue.toString()
+                }
+            }
+
+            scoreAnimator.start()
+        }
+
     }
 
     private var isCollided = false  // 충돌 감지 플래그
+
 
     private fun checkVisiblePlatforms(playerRect: Rect) {
         val scrollY = binding.gameScrollView.scrollY  // 현재 스크롤 위치
         val visibleHeight = binding.gameScrollView.height  // 스크롤뷰의 가시 범위 높이
 
-        // 화면에 보이는 범위의 상단과 하단 좌표
-        val visibleTop = scrollY
-        val visibleBottom = scrollY + visibleHeight
+        // 스크롤된 영역 아래의 발판을 찾기 위한 위치
+        val thresholdY = scrollY + visibleHeight
 
         for (i in 0 until binding.gameLayout.childCount) {
-            val platform = binding.gameLayout.getChildAt(i)
+            val platform = binding.gameLayout.getChildAt(i) ?: continue
 
-            if (platform.tag == "platform" && platform.visibility == View.VISIBLE) {
-                // 발판의 위치가 화면에 보이는 범위 안에 있는지 확인합니다.
-                if (platform.y + platform.height >= visibleTop && platform.y <= visibleBottom) {
-//                    Log.d(TAG,"checkVisiblePlatforms: $i ${platform.y} ${platform.height}, visible $visibleTop $visibleBottom")
+            if (platform.tag == "platform") {
+                val platformTop = platform.y
 
-                    // 이 범위 내의 발판만 체크하고, 필요한 로직을 수행합니다.
+                if (platformTop > thresholdY) {
+                    platform.visibility = View.GONE
+                } else if (platform.visibility == View.VISIBLE) {
+                    // 화면에 보이는 발판 처리 로직
                     val platformRect = Rect(
                         platform.x.toInt(),
-                        platform.y.toInt(),
+                        platformTop.toInt(),
                         (platform.x + platform.width).toInt(),
-                        (platform.y + platform.height).toInt()
+                        (platformTop + platform.height).toInt()
                     )
 
                     if (playerRect.right > platformRect.left && playerRect.left < platformRect.right && (playerRect.bottom <= platformRect.top) && (platformRect.top - playerRect.bottom <= 40)) {
-
-                        // 위로 올라갔을 때
+//
+//                        // 위로 올라갔을 때
                         if (yPosition > platformRect.top.toFloat()) {
                             Log.d(TAG, "initObserve: scroll")
                             binding.gameScrollView.smoothScrollBy(
                                 0,
                                 -(yPosition - platformRect.top).toInt()
                             )
+                            score.value = score.value?.plus(((yPosition - platformRect.top) / 10).toInt())
+                            Log.d(TAG, "checkVisiblePlatforms: ${score.value} ${yPosition - platformRect.top}")
                         }
 
                         yPosition = platformRect.top.toFloat()
@@ -169,22 +190,17 @@ class GameFragment :
 
                         fallDownAnimator.cancel()
                         jumpUpAnimator.setFloatValues(yPosition, yPosition - JUMP_HEIGHT)
-//                        fallDownAnimator.setFloatValues(yPosition - JUMP_HEIGHT, yPosition)
                         fallDownAnimator.setFloatValues(
                             yPosition - JUMP_HEIGHT,
                             yPosition + screenHeight
                         )
                         jumpUpAnimator.start()
-//                        isGoingDown = false
-//                        platform.visibility = GONE
                         break
                     }
                 }
             }
         }
-//        if (!isCollided && isGoingDown) {
-//            isCollided = false // 충돌하지 않음 상태 업데이트
-//        }
+
     }
 
 
@@ -209,11 +225,10 @@ class GameFragment :
     private fun initJumpUpAnimation() {
         jumpUpAnimator = ValueAnimator.ofFloat(yPosition, yPosition - JUMP_HEIGHT).apply {
             duration = 815
-            interpolator = DecelerateInterpolator(1.2f)
+            interpolator = DecelerateInterpolator(1.8f)
             addUpdateListener { animator ->
                 val animatedValue = animator.animatedValue as Float
 //                isGoingDown = false
-//                player?.y = animatedValue - player?.height!!
                 player?.y = animatedValue - player?.height!!
             }
             addListener(object : AnimatorListenerAdapter() {
@@ -241,18 +256,14 @@ class GameFragment :
                         val animatedValue = animator.animatedValue as Float
                         player?.y = animatedValue - player?.height!!
                         updatePlayerPosition()
-//                        isGoingDown = true // 내려오는 상태
                     }
                     addListener(object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(animation: Animator) {
                             super.onAnimationEnd(animation)
-                            // 내려온 후 처리 로직을 실행합니다.
-//                            isGoingDown = false // 내려온 상태 리셋
                             if (!isCollided) {
                                 // 충돌하지 않았으면 추락 처리
                                 Log.d(TAG, "fallDownAnimator: 추락! 플레이어의 높이를 0으로 설정")
-                                onPlayerFell()
-                                // 추락 애니메이션 실행
+                                onPlayerFell() // 추락
                             } else {
                                 // 내려와서 충돌했다면 새로운 점프를 준비합니다.
                                 isCollided = false  // 충돌 상태 리셋
@@ -272,7 +283,6 @@ class GameFragment :
 
     private fun onPlayerFell() {
         // 애니메이션 관련 리소스를 정리
-        // 리스너 해제 및 애니메이션 종료
         sensorManager.unregisterListener(listener)
         jumpUpAnimator.removeAllUpdateListeners()
         jumpUpAnimator.cancel()
@@ -298,7 +308,7 @@ class GameFragment :
             player?.scaleX = if (event.values[0] > 0) -1f else 1f
 
             // 센서의 움직임에 따라 이동할 위치
-            val movement = event.values[0] * 20
+            val movement = event.values[0] * 24
             var targetX = player?.x!! - movement
 
             if (targetX < -pWidth.value.toFloat()) {
@@ -364,11 +374,11 @@ class GameFragment :
             val originalHeight = drawable.intrinsicHeight
 
             // 이미지의 크기 설정
-            layoutParams.width = originalWidth / 3
-            layoutParams.height = originalHeight / 3
+            layoutParams.width = originalWidth / 4
+            layoutParams.height = originalHeight / 4
         }
 
-        platform.visibility = View.INVISIBLE
+        platform.visibility = View.GONE
 
         // 발판에 태그 설정
         platform.tag = "platform"
@@ -401,13 +411,6 @@ class GameFragment :
             Log.d(TAG, "init yPosition: ${player?.x} ${player?.y}")
         }
     }
-
-
-    private fun dpToPx(dp: Float): Float {
-        val metrics = resources.displayMetrics
-        return dp * (metrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
-    }
-
 
     override fun onResume() {
         super.onResume()
