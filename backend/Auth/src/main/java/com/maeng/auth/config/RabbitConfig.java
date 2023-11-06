@@ -28,7 +28,7 @@ public class RabbitConfig {
 
 	private static final String REGISTER_QUEUE_NAME = "register.queue";
 	private static final String REGISTER_EXCHANGE_NAME = "user";
-	private static final String REGISTER_ROUTING_KEY = "register.*";
+	private static final String REGISTER_ROUTING_KEY = "register.#";
 
 	@Bean
 	public Queue register_queue(){
