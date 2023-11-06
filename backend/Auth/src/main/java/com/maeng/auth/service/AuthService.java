@@ -140,21 +140,36 @@ public class AuthService {
 
         WatchRedis watchRedis = watchRepository.findByCode(code).orElseThrow(()
                 -> new AuthException(ExceptionCode.WATCH_CODE_FAILED));
-        WatchToken watchToken = new WatchToken(jwtProvider.generateWatchToken(watchRedis.getEmail()));
-        logger.info("getWatchToken(), email = {}, WatchToken = {}", watchRedis.getEmail(),watchToken);
+        WatchToken watchToken = new WatchToken(
+                jwtProvider.generateAccessToken(watchRedis.getEmail()), jwtProvider.generateRefreshToken(watchRedis.getEmail()));
+        logger.info("getWatchToken(), email = {}, WatchAccessToken = {}, watchRefreshToken = {}",
+                watchRedis.getEmail(),watchToken.getWatchAccessToken(), watchToken.getWatchRefreshToken());
 
         watchTokenRepository.save(WatchJwtRedis.builder()
                         .email(watchRedis.getEmail())
-                        .watchToken(watchToken.getWatchToken())
+                        .watchAccessToken(watchToken.getWatchAccessToken())
+                        .watchRefreshToken(watchToken.getWatchRefreshToken())
                 .build());
 
         return watchToken;
-
-
     }
 
-
-
+    public WatchToken regenerateWatchToken(WatchToken watchToken){
+        String refreshToken = watchToken.getWatchRefreshToken();
+        logger.info("regenerateWatchToken(), refreshToken = {}",refreshToken);
+        if (refreshToken == null || !jwtProvider.validateToken(refreshToken)) {
+            logger.info("검증 실패");
+            return null;
+        }
+        String email = jwtProvider.getUserId(refreshToken);
+        WatchToken newToken = new WatchToken(jwtProvider.generateAccessToken(email), jwtProvider.generateRefreshToken(email));
+        watchTokenRepository.save(WatchJwtRedis.builder()
+                        .email(email)
+                        .watchAccessToken(newToken.getWatchAccessToken())
+                        .watchRefreshToken(newToken.getWatchRefreshToken())
+                .build());
+        return newToken;
+    }
 
 
     /**
