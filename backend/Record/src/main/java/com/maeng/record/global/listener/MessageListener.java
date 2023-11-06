@@ -7,14 +7,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.maeng.record.domain.record.data.Jwac;
+import com.maeng.record.domain.record.dto.UserInfoDTO;
+import com.maeng.record.domain.record.service.GameUserService;
 import com.maeng.record.domain.record.service.JwacRecordService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MessageListener {
+	private final GameUserService gameUserService;
 	private final JwacRecordService jwacRecordService;
+
+	@RabbitListener(queues = "register.queue")
+	public void receiveMessage1(UserInfoDTO userInfo){
+		log.info("register = " + userInfo);
+		gameUserService.registerGameUser(userInfo);
+	}
 
 	@RabbitListener(queues = "record.queue")
 	public void receiveMessage(String message){

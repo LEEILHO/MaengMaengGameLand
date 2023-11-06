@@ -21,6 +21,9 @@ public class GameUser {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userSeq;
 
+	@Column(unique = true)
+	private String email;
+
 	@Column
 	private String nickname;
 }

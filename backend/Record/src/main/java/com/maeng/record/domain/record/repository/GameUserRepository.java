@@ -10,4 +10,6 @@ import com.maeng.record.domain.record.entity.GameUser;
 @Repository
 public interface GameUserRepository extends JpaRepository<GameUser, String> {
 	Optional<GameUser> findByNickname(String participant);
+
+	boolean existsByEmail(String email);
 }
