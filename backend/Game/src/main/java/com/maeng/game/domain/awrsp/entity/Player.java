@@ -4,12 +4,14 @@ import com.maeng.game.domain.jwac.emums.Tier;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
 @Builder
 @Data
+@ToString
 @AllArgsConstructor
 public class Player {
     private String nickname;

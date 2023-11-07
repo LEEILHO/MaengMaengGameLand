@@ -1,6 +1,7 @@
 package com.maeng.game.domain.awrsp.service;
 
 import com.maeng.game.domain.awrsp.dto.CardDTO;
+import com.maeng.game.domain.awrsp.dto.ResultDTO;
 import com.maeng.game.domain.awrsp.dto.SubmitDTO;
 import com.maeng.game.domain.awrsp.entity.*;
 import com.maeng.game.domain.awrsp.exception.NotFoundGameException;
@@ -40,13 +41,21 @@ public class AwrspService {
         // 플레이어 초기화
         HashMap<String, Player> players = new HashMap<>();
         for(User player : gameStartDTO.getParticipant()){
+            HashMap<Integer, History> history = new HashMap<>();
+            history.put(1, History.builder()
+                    .card(null)
+                    .win(0)
+                    .draw(0)
+                    .submitAt(null)
+                    .build());
+
             players.put(player.getNickname(), Player.builder()
                             .nickname(player.getNickname())
                             .tier(player.getTier())
                             .profileUrl(player.getProfileUrl())
                             .finish(false)
                             .finishedAt(null)
-                            .histories(null)
+                            .histories(history)
                     .build());
         }
 
@@ -69,13 +78,13 @@ public class AwrspService {
 
     @Operation(summary = "게임 참가")
     public void gameStart(String gameCode){
-        // TODO : 모든 참가자에게서 해당 요청을 받으면 게임 시작 -> 타이머 시작  / 문제 카드 전송
+        // 모든 참가자에게서 해당 요청을 받으면 게임 시작 -> 타이머 시작  / 문제 카드 전송
         Game game = getCurrentGame(gameCode);
         game.setCurrentRound(1); // 게임 시작이므로 1라운드로 변경
         awrspRepository.save(game);
 
-        // TODO : Submit 생성
-        submitRepository.save(Submit.builder().gameCode(gameCode).submit(new HashSet<>()).build());
+        // Submit 생성 : 값이 안들어가면 저장 안됨 -> 카드 제출할 때 없으면 생성해야 될 듯
+//        submitRepository.save(Submit.builder().gameCode(gameCode).submit(new HashSet<>()).build());
 
         MessageDTO messageDTO = MessageDTO.builder()
                 .type("AWRSP_CARD")
@@ -87,25 +96,121 @@ public class AwrspService {
 
     @Operation(summary = "카드 제출")
     public boolean submitCard(String gameCode, SubmitDTO submitDTO){
-        // TODO : 해당 라운드에 플레이어의 제출 카드 저장
+        Submit submit = this.getCurrentSubmit(gameCode);
+
         Game game = this.getCurrentGame(gameCode);
-        HashMap<String, Player> players = game.getPlayers();
-        Player player = players.get(submitDTO.getNickname());
-        HashMap<Integer, History> history = player.getHistories();
+        Player player = game.getPlayers().get(submitDTO.getNickname());
+        HashMap<Integer, History> histories = player.getHistories();
 
-        history.put(game.getCurrentRound(), History.builder()
-                        .card(submitDTO.getCard())
+        histories.put(game.getCurrentRound(),
+                History.builder()
                         .submitAt(submitDTO.getSubmitAt())
-                .build());
-
-        player.setHistories(history);
-        players.put(player.getNickname(), player);
-        game.setPlayers(players);
+                        .card(submitDTO.getCard())
+                        .win(0)
+                        .draw(0)
+                        .build());
+        player.setHistories(histories);
+        game.getPlayers().put(submitDTO.getNickname(), player);
         awrspRepository.save(game);
 
-        // TODO : 모든 플레이어가 제출했는지 확인 후 타이머 끝내고 다음 요청
-        Set<String> submit = submitRepository.findByGameCode(gameCode).getSubmit();
-        return submit.size() == game.getHeadCount();
+        submit.getSubmit().add(submitDTO.getNickname());
+        log.info(submit.toString());
+        submitRepository.save(submit);
+
+        return submit.getSubmit().size() == game.getHeadCount();
+    }
+
+    @Operation(summary = "모든 플레이어의 승 수 계산")
+    public void getWinCount(String gameCode){
+        log.info("승 수 계산");
+        Game game = this.getCurrentGame(gameCode);
+        HashMap<String, Player> players = game.getPlayers();
+        List<ResultDTO> resultAll = new ArrayList<>();
+
+        // TODO : 모든 플레이어의 승 수 구하기
+        for(Player player : players.values()){
+            Card[] cardSet = player.getHistories().get(game.getCurrentRound()).getCard();
+            if(cardSet == null){
+                player.getHistories().put(game.getCurrentRound(), History.builder()
+                        .card(new Card[CARD_COUNT])
+                        .win(0)
+                        .draw(0)
+                        .submitAt(null)
+                        .build());
+
+                resultAll.add(ResultDTO.builder()
+                        .nickname(player.getNickname())
+                        .win(0)
+                        .draw(0).build());
+
+                continue;
+            }
+
+            History history = player.getHistories().get(game.getCurrentRound());
+            for (int i = 0; i < CARD_COUNT; i++) {
+                int result = this.rockScissorPaper(game.getProblem()[i], cardSet[i]);
+                if (result == 1) {
+                    history.setWin(history.getWin() + 1);
+                }
+
+                if (result == 0) {
+                    history.setDraw(history.getDraw() + 1);
+                }
+            }
+
+            player.getHistories().put(game.getCurrentRound(), history);
+            game.getPlayers().put(player.getNickname(), player);
+            awrspRepository.save(game);
+
+            resultAll.add(ResultDTO.builder()
+                    .nickname(player.getNickname())
+                    .win(history.getWin())
+                    .draw(history.getDraw()).build());
+
+        }
+
+        awrspRepository.save(game);
+
+        MessageDTO messageDTO = MessageDTO.builder()
+                .type("CARD_RESULT")
+                .data(resultAll)
+                .build();
+
+        template.convertAndSend(GAME_EXCHANGE, "awrsp."+gameCode, messageDTO); // 정답 카드 공개
+    }
+
+    public int rockScissorPaper(Card problem, Card card){
+        // TODO : 가위바위보 이기면 1, 비기면 0, 지면 -1 반환
+        if(problem.equals(Card.PAPER)){
+            if(card.equals(Card.SCISSOR)){
+                return 1;
+            }
+
+            if(card.equals(Card.DRAW_PAPER)){
+                return 0;
+            }
+        }
+
+        if(problem.equals(Card.ROCK)){
+            if(card.equals(Card.PAPER)){
+                return 1;
+            }
+
+            if(card.equals(Card.DRAW_ROCK)){
+                return 0;
+            }
+        }
+
+        if(problem.equals(Card.SCISSOR)){
+            if(card.equals(Card.ROCK)) {
+                return 1;
+            }
+
+            if(card.equals(Card.DRAW_SCISSOR)){
+                return 0;
+            }
+        }
+        return -1;
     }
 
     public Card[] generateCard(){
@@ -138,4 +243,13 @@ public class AwrspService {
         return game;
     }
 
+    public Submit getCurrentSubmit(String gameCode){
+        Submit submit = submitRepository.findByGameCode(gameCode);
+
+        if(submit == null){
+            return Submit.builder().gameCode(gameCode).submit(new HashSet<>()).build();
+        }
+
+        return submit;
+    }
 }

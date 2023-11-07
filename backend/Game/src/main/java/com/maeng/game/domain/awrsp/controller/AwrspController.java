@@ -43,6 +43,7 @@ public class AwrspController {
     public void cardSubmit(@DestinationVariable String gameCode, SubmitDTO submitDTO){
         boolean finish = awrspService.submitCard(gameCode, submitDTO);
         if(finish){
+            awrspService.getWinCount(gameCode);
             awrspTimerService.timerStart(gameCode, "CARD_SUBMIT"); // 그 다음 타이머 호출
         }
     }
@@ -55,7 +56,7 @@ public class AwrspController {
         }
 
         if(type.equals("CARD_OPEN")){ // 정답 카드 공개 끝났을 때
-
+            awrspService.getWinCount(gameCode);
             return;
         }
 
