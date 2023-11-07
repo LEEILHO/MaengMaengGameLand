@@ -1,6 +1,7 @@
 package com.maeng.game.domain.jwac.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -214,11 +215,12 @@ public class JwacService {
 		return jwacRoundResultDto;
 	}
 
-	private Map<String, JwacRoundPlayerInfoDTO> getPlayerInfo(Map<String, Player> players) {
-		Map<String, JwacRoundPlayerInfoDTO> playerInfo = new HashMap<>();
+	private List<JwacRoundPlayerInfoDTO> getPlayerInfo(Map<String, Player> players) {
+		List<JwacRoundPlayerInfoDTO> playerInfo = new ArrayList<>();
 		for(String nickname : players.keySet()) {
 			Player player = players.get(nickname);
-			playerInfo.put(nickname, JwacRoundPlayerInfoDTO.builder()
+			playerInfo.add(JwacRoundPlayerInfoDTO.builder()
+				.nickname(nickname)
 				.score(player.getScore())
 				.bidSum(player.getTotalBidAmount())
 				.item(player.isSpecialItem())

@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class JwacRoundPlayerInfoDTO {
+	private String nickname;
 	private int score;
 	private boolean item;
 	private Long bidSum;

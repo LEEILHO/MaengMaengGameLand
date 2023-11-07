@@ -1,6 +1,6 @@
 package com.maeng.game.domain.jwac.dto;
 
-import java.util.Map;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,5 +13,5 @@ public class JwacGameResultDTO {
 	private String roomCode;
 	private String gameCode;
 	private String winner;
-	private Map<String, JwacRoundPlayerInfoDTO> players;
+	private List<JwacRoundPlayerInfoDTO> players;
 }
