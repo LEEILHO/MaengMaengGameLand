@@ -8,11 +8,18 @@ import CButton from '@components/common/clients/CButton'
 import { colors } from '@constants/colors'
 
 type Props = {
-  userSeq: number | undefined
+  nickname: string
+  isHost: boolean
+  handleKick: (kickPlayer: string) => void
   closeModal: () => void
 }
 
-const UserDetailModal = ({ userSeq, closeModal }: Props) => {
+const UserDetailModal = ({
+  nickname,
+  isHost,
+  handleKick,
+  closeModal,
+}: Props) => {
   useEffect(() => {
     // 유저정보 가져오는 코드
   }, [])
@@ -24,7 +31,7 @@ const UserDetailModal = ({ userSeq, closeModal }: Props) => {
       <S.UserDetail>
         <tr>
           <td>Name</td>
-          <td className="info">토오끼</td>
+          <td className="info">{nickname}</td>
         </tr>
         <tr>
           <td>Winrate</td>
@@ -44,14 +51,17 @@ const UserDetailModal = ({ userSeq, closeModal }: Props) => {
           text="친구 추가"
           backgroundColor={colors.button.blue}
         />
-        <CButton
-          height={36}
-          fontSize={16}
-          color="white"
-          radius={100}
-          text="강퇴"
-          backgroundColor={colors.button.red}
-        />
+        {isHost && (
+          <CButton
+            height={36}
+            fontSize={16}
+            color="white"
+            radius={100}
+            text="강퇴"
+            backgroundColor={colors.button.red}
+            onClick={() => handleKick(nickname)}
+          />
+        )}
       </S.BottomButtons>
     </S.UserDetailModalContainer>
   )

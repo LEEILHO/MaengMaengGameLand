@@ -1,7 +1,12 @@
-export type SeatInfo = {
-  userSeq: number
+export type Participant = {
   nickname: string
-  host: boolean
   ready: boolean
-  isClose: boolean
+  host: boolean
+  profileUrl: string
+  tier: string
+}
+
+export type SeatInfo = {
+  open: boolean
+  user: Participant
 }

@@ -1,19 +1,44 @@
-import React, { useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 
 import * as S from '@styles/waitingRoom/UpdateRoomModal.styled'
 import CButton from '@components/common/clients/CButton'
 import { colors } from '@constants/colors'
+import { useRecoilValue } from 'recoil'
+import { RoomInfoState } from '@atom/waitingRoomAtom'
+import useSocketWaitingRoom from '@hooks/useSocketWaitingRoom'
 
 type Props = {
   closeModal: () => void
+  handleUpdateRoom: (title: string, isPublic: boolean) => void
 }
 
-const UpdateRoomModal = ({ closeModal }: Props) => {
-  const [isPublic, setIsPublic] = useState(false)
+const UpdateRoomModal = ({ closeModal, handleUpdateRoom }: Props) => {
+  const roomInfo = useRecoilValue(RoomInfoState)
+  const [isPublic, setIsPublic] = useState<boolean>(true)
+  const [title, setTitle] = useState<string>('')
 
   const onTogglePublicButton = () => {
     setIsPublic(!isPublic)
   }
+
+  const onChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value)
+  }
+
+  const onClickUpdateButton = () => {
+    if (title) {
+      handleUpdateRoom(title, isPublic)
+      closeModal()
+    }
+  }
+
+  useEffect(() => {
+    if (roomInfo) {
+      setTitle(roomInfo?.title)
+      setIsPublic(roomInfo?.publicRoom)
+    }
+  }, [roomInfo])
+
   return (
     <S.UpdateRoomModalContainer>
       <S.TopRow>
@@ -21,7 +46,7 @@ const UpdateRoomModal = ({ closeModal }: Props) => {
       </S.TopRow>
       <S.SubRow>
         <S.SubTitle>방제목</S.SubTitle>
-        <S.RoomNameInput type="text" value={'제목 제목 제목 제목 제목'} />
+        <S.RoomNameInput type="text" value={title} onChange={onChangeTitle} />
       </S.SubRow>
       <S.SubRow>
         <S.SubTitle>공개 설정</S.SubTitle>
@@ -43,6 +68,7 @@ const UpdateRoomModal = ({ closeModal }: Props) => {
           color="white"
           backgroundColor={colors.button.blue}
           radius={50}
+          onClick={onClickUpdateButton}
         />
         <CButton
           width={85}
