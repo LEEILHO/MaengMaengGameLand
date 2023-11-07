@@ -147,7 +147,7 @@ public class RoomService {
 
     @Transactional
     @Operation(summary = "대기방 퇴장")
-    public void exitRoom(String roomCode, ExitDTO exitDTO){
+    public void exitRoom(String roomCode, PlayerDTO exitDTO){
         Room room = getCurrentRoom(roomCode);
 
         HashMap<String, User> players = room.getParticipant();
@@ -165,8 +165,16 @@ public class RoomService {
             return;
         }
 
+        // TODO : 자리 번호 찾기
+        int seatNumber = -1;
+        for(Integer i : seats.keySet()){
+            if(seats.get(i).getNickname().equals(exitDTO.getNickname())){
+                seatNumber = i;
+            }
+        }
+
         // 해당 자리 초기화
-        seats.put(exitDTO.getSeatNumber(), Seat.builder().available(true).nickname("").build());
+        seats.put(seatNumber, Seat.builder().available(true).nickname("").build());
         room.setSeats(seats);
 
         // 방장 위임
