@@ -54,7 +54,7 @@ public class RoomWebSocketController {
 
     @Operation(summary = "대기방 퇴장")
     @MessageMapping("room.exit.{roomCode}")
-    public void exit(@DestinationVariable String roomCode, ExitDTO exitDTO){
+    public void exit(@DestinationVariable String roomCode, PlayerDTO exitDTO){
         roomService.exitRoom(roomCode, exitDTO);
     }
 
