@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,8 +36,10 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 public class JwacService {
-	private final int MIN_ROUND = 15;
-	private final int MAX_ROUND = 25;
+	@Value("${game.jwac.round.min}")
+	private int MIN_ROUND;
+	@Value("${game.jwac.round.max}")
+	private int MAX_ROUND;
 
 	private final JwacRedisRepository jwacRedisRepository;
 
@@ -88,7 +90,6 @@ public class JwacService {
 	@Transactional
 	public JwacRoundResultDto endRound(String gameCode) {
 		Jwac jwac = jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
-
 		return roundResult(jwac);
 	}
 
@@ -168,7 +169,6 @@ public class JwacService {
 
 		// Step 1: 관련 데이터 추출
 		Map<String, History> result = new HashMap<>();
-		log.info("jwac.getPlayers().keySet(): {}", jwac.getPlayers().keySet());
 		for (String nickname : jwac.getPlayers().keySet()) {
 			result.put(nickname, null);
 			Player player = jwac.getPlayers().get(nickname);
@@ -207,11 +207,13 @@ public class JwacService {
 		// Step 6: 4라운드 마다 4라운드 동안의 입찰금 합계를 jwacRoundResult에 저장
 		Long bidSum = 0L;
 		if (currentRound >= 4) {
-			int start = (currentRound / 4 - 1) * 4 + 1;
-			for (int i = start; i < start + 4; i++) {
-				bidSum += jwac.getBidAmounts().getOrDefault(i, 0L);
+			if(jwac.getBidAmounts() != null) {
+				int start = (currentRound / 4 - 1) * 4 + 1;
+				for (int i = start; i < start + 4; i++) {
+					bidSum += jwac.getBidAmounts().getOrDefault(i, 0L);
+				}
+				jwacRoundResultDto.setRoundBidSum(bidSum);
 			}
-			jwacRoundResultDto.setRoundBidSum(bidSum);
 		}
 
 		jwacRedisRepository.save(jwac);
@@ -373,11 +375,6 @@ public class JwacService {
 			}
 		}
 		return winner;
-	}
-
-	public String generateGameCode() {
-		UUID uuid = UUID.randomUUID();
-		return uuid.toString().replaceAll("-", "").substring(0, 16);
 	}
 
 	public String getAllDataToJson(String gameCode) {
