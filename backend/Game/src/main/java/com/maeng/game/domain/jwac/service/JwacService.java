@@ -26,6 +26,8 @@ import com.maeng.game.domain.jwac.entity.Jwac;
 import com.maeng.game.domain.jwac.entity.Player;
 import com.maeng.game.domain.jwac.exception.GameNotFoundException;
 import com.maeng.game.domain.jwac.repository.JwacRedisRepository;
+import com.maeng.game.domain.room.dto.GameStartDTO;
+import com.maeng.game.domain.room.entity.User;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,28 +42,31 @@ public class JwacService {
 	private final JwacRedisRepository jwacRedisRepository;
 
 	@Transactional
-	public List<PlayerInfo> generateGame(String roomCode, List<PlayerInfo> playerInfo) {
-		String gameCode = generateGameCode();
-
+	public boolean gameSetting(GameStartDTO gameStartDTO) {
 		int maxRound = setRound();
 
 		Jwac jwac = Jwac.builder()
-			.gameCode(gameCode)
-			.roomCode(roomCode)
+			.gameCode(gameStartDTO.getGameCode())
+			.roomCode(gameStartDTO.getRoomCode())
 			.createAt(LocalDateTime.now())
-			.headCount(playerInfo.size())
+			.headCount(gameStartDTO.getHeadCount())
 			.currentRound(0)
 			.maxRound(maxRound)
 			.bidAmounts(new HashMap<>())
 			.jewelry(setRandomJewelry(maxRound))
-			.players(setPlayer(playerInfo))
+			.players(setPlayer(gameStartDTO.getParticipant()))
 			.build();
 
 		jwacRedisRepository.save(jwac);
 
 		// TODO : 게임 생성 알림
-		List<PlayerInfo> players = playerInfo;
-		return players;
+		return true;
+	}
+
+	@Transactional(readOnly = true)
+	public List<PlayerInfo> getGamePlayer(String gameCode) {
+		Jwac jwac = jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
+		return getGamePlayerInfo(jwac.getPlayers());
 	}
 
 	@Transactional
@@ -109,7 +114,7 @@ public class JwacService {
 			.roomCode(jwac.getRoomCode())
 			.gameCode(jwac.getGameCode())
 			.winner(findGameWinner(players))
-			.players(getPlayerInfo(players))
+			.players(getRoundPlayerInfo(players))
 			.build();
 	}
 
@@ -136,12 +141,12 @@ public class JwacService {
 		return jewelry;
 	}
 
-	public Map<String, Player> setPlayer(List<PlayerInfo> playerInfo) {
+	public Map<String, Player> setPlayer(List<User> playerInfo) {
 		Map<String, Player> players = new LinkedHashMap<>();
-		for(PlayerInfo info : playerInfo) {
-			players.put(info.getNickname(), Player.builder()
-					.profileUrl(info.getProfileUrl())
-					.tier(info.getTier())
+		for(User user : playerInfo) {
+			players.put(user.getNickname(), Player.builder()
+					.profileUrl(user.getProfileUrl())
+					.tier(user.getTier())
 					.score(0)
 					.totalBidAmount(0)
 					.specialItem(false)
@@ -197,7 +202,7 @@ public class JwacService {
 		}
 
 		// Step 5: 플레이어 점수를 jwacRoundResult에 저장
-		jwacRoundResultDto.setPlayers(getPlayerInfo(jwac.getPlayers()));
+		jwacRoundResultDto.setPlayers(getRoundPlayerInfo(jwac.getPlayers()));
 
 		// Step 6: 4라운드 마다 4라운드 동안의 입찰금 합계를 jwacRoundResult에 저장
 		Long bidSum = 0L;
@@ -215,7 +220,20 @@ public class JwacService {
 		return jwacRoundResultDto;
 	}
 
-	private List<JwacRoundPlayerInfoDTO> getPlayerInfo(Map<String, Player> players) {
+	private List<PlayerInfo> getGamePlayerInfo(Map<String, Player> players) {
+		List<PlayerInfo> playerInfo = new ArrayList<>();
+		for(String nickname : players.keySet()) {
+			Player player = players.get(nickname);
+			playerInfo.add(PlayerInfo.builder()
+				.nickname(nickname)
+				.profileUrl(player.getProfileUrl())
+				.tier(player.getTier())
+				.build());
+		}
+		return playerInfo;
+	}
+
+	private List<JwacRoundPlayerInfoDTO> getRoundPlayerInfo(Map<String, Player> players) {
 		List<JwacRoundPlayerInfoDTO> playerInfo = new ArrayList<>();
 		for(String nickname : players.keySet()) {
 			Player player = players.get(nickname);
