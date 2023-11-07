@@ -24,10 +24,10 @@ public class AwrspTimerService {
     private final TimerRepository timerRepository;
     private final AwrspRepository awrspRepository;
     private final String GAME_EXCHANGE = "game";
-    private final int CARD_OPEN = 15;
-    private final int CARD_SUBMIT = 60;
-    private final int PLAYER_WINS = 20;
-    private final int ALL_WINS = 10;
+    private static final int CARD_OPEN = 15;
+    private static final int CARD_SUBMIT = 60;
+    private static final int PLAYER_WINS = 20;
+    private static final int ALL_WINS = 10;
 
 
     @Operation(summary = "타이머 초기화")
@@ -52,9 +52,16 @@ public class AwrspTimerService {
 
         // 해당 닉네임 set에 넣기
         Timer timer = timerRepository.findByGameCode(gameCode);
-        Set<String> set = timer.getNicknames();
+        Set<String> set = new HashSet<>();
+
+        if(timer == null){
+            timer = Timer.builder().gameCode(gameCode).nicknames(set).build();
+        }
+
+        set = timer.getNicknames();
         set.add(timerDTO.getNickname());
         timer.setNicknames(set);
+        timerRepository.save(timer);
 
         // 모든 플레이어가 타이머 완료 되었으면 true 아니면 false
         return set.size() == getCurrentGame(gameCode).getHeadCount();
@@ -74,7 +81,7 @@ public class AwrspTimerService {
     public int getTimerSec(String type){
 
         if(type.equals("ENTER_GAME")){
-            return CARD_SUBMIT;
+            return CARD_OPEN;
         }
 
         if(type.equals("CARD_OPEN")){
