@@ -1,5 +1,6 @@
 'use client'
 
+import useSwipeLock from '@hooks/useSwipeLock'
 import GlobalStyle from '@styles/globalstyle'
 import theme from '@styles/theme'
 import { useEffect, useState } from 'react'
@@ -7,6 +8,8 @@ import { ThemeProvider } from 'styled-components'
 
 const NextThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [isMobile, setIsMobile] = useState(false)
+
+  useSwipeLock()
 
   useEffect(() => {
     // ios기반 모델 가로모드 설정

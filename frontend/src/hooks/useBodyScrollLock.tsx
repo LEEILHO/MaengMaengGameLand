@@ -2,6 +2,9 @@ import { useCallback } from 'react'
 
 const useBodyScrollLock = () => {
   let scrollPosition = 0
+  let touchStartX: number | null = null
+  let touchEndX: number | null = null
+
   const lockScroll = useCallback(() => {
     // for IOS safari
     scrollPosition = window.pageYOffset

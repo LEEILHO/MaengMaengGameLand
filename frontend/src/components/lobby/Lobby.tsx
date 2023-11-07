@@ -11,7 +11,7 @@ import CreateRoomModal from './CreateRoomModal'
 import useSocket from '@hooks/useSocketLobby'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import { channelState, gameTypeState } from '@atom/gameAtom'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { gameTypeChange } from '@utils/lobby/lobbyUtil'
 import { roomsState } from '@atom/lobbyAtom'
 
@@ -20,6 +20,7 @@ type Props = {
 }
 
 const Lobby = ({ title }: Props) => {
+  const router = useRouter()
   const pathname = usePathname()
   const { Modal, isOpen, closeModal, openModal } = useModal()
   const { connectSocket, disconnectSocket, connectLobby, disconnectLobby } =
@@ -27,9 +28,15 @@ const Lobby = ({ title }: Props) => {
   const [gameType, setGameType] = useRecoilState(gameTypeState)
   const channel = useRecoilValue(channelState)
   const setRooms = useSetRecoilState(roomsState)
+  const gamePath = pathname.split('/')[1]
+
+  const handleBack = useCallback(() => {
+    setRooms([])
+    router.replace('/home')
+  }, [])
 
   useEffect(() => {
-    setGameType(gameTypeChange(pathname.split('/')[1]))
+    setGameType(gameTypeChange(gamePath))
   }, [pathname])
 
   useEffect(() => {
@@ -52,7 +59,7 @@ const Lobby = ({ title }: Props) => {
           <RoomList />
         </S.RoomListContainer>
         <S.ButtonRow>
-          <BackButton size={44} handleBack={() => setRooms([])} />
+          <BackButton size={44} handleBack={handleBack} />
           <CButton
             text="방 생성"
             backgroundColor="rgba(0, 163, 255, 1)"

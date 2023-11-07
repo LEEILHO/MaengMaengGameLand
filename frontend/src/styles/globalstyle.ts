@@ -6,6 +6,7 @@ const GlobalStyle = createGlobalStyle`
 
   *{
     box-sizing: border-box;
+    /* overscroll-behavior-x: none; */
   }
 
   * {
@@ -30,10 +31,8 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    position: fixed;
     overflow: hidden;
-    /* 뒤로가기 앞으로 가기 방지 */
-    overscroll-behavior-x: none;
+    overscroll-behavior: contain;
   }
 
   html,body {

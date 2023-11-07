@@ -22,7 +22,7 @@ export default function loginRedirect() {
           console.log('response: ', res)
           setAccessToken({ accessToken: res.accessToken })
           localStorage.setItem('login', 'true')
-          router.push('/home')
+          router.replace('/home')
         })
         .catch((err) => {
           console.log('error: ', err)
