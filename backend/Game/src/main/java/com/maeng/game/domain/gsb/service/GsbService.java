@@ -1,5 +1,8 @@
 package com.maeng.game.domain.gsb.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.maeng.game.domain.gsb.dto.PlayerSeqDto;
 import com.maeng.game.domain.gsb.entity.Gsb;
 import com.maeng.game.domain.gsb.entity.Player;
@@ -8,6 +11,7 @@ import com.maeng.game.domain.gsb.repository.GsbRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,19 +49,15 @@ public class GsbService {
 
         return cards;
     }
-
+    @Transactional
     public void setSeq(String gameCode, PlayerSeqDto playerSeqDto){
         Gsb gsb = gsbRepository.findById(gameCode).orElseThrow();
 
         // seq 존재 하지 않을 때
         StartCard[] startCards = gsb.getStartCards();
         Map<Integer,Player> players = gsb.getPlayers();
-//        System.out.println(players);
         int s = startCards[playerSeqDto.getSeq()].getSeq();
-        System.out.println(s);
         int seq = playerSeqDto.getSeq() ;
-        System.out.println(seq);
-        System.out.println(startCards[seq].isSelected());
         if(players == null){
             players = new HashMap<>();
         }
@@ -84,14 +84,14 @@ public class GsbService {
             gsbRepository.save(gsb);
 
         }
+    }
+    public Gsb setGsb(String gameCode) {
+        Gsb gsb = gsbRepository.findById(gameCode).orElseThrow();
+        gsb.nextRound();
+        gsb.setCurrentPlayer(gsb.getPlayers().get(0).getNickname());
+        gsbRepository.save(gsb);
 
-        /* TODO: 초기 게임정보 세팅 */
-
-
-
-
-
-
+        return gsb;
 
     }
 
@@ -99,6 +99,19 @@ public class GsbService {
         Gsb gsb = gsbRepository.findById(gameCode).orElseThrow();
         return gsb;
 
+    }
+    public String getDataToJson(String gameCode) {
+        Gsb gsb = gsbRepository.findById(gameCode).orElseThrow();
+        String json = "";
+        try{
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+            json = objectMapper.writeValueAsString(gsb);
+        } catch (Exception e){
+            log.error("json error : {} ", e.getMessage());
+        }
+        return json;
     }
 
 }

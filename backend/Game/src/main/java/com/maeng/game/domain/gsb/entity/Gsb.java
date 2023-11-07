@@ -19,7 +19,13 @@ public class Gsb {
     private LocalDateTime roundStartAt;
     private int currentRound;
     private int carryOverChips;
+    private String currentPlayer;
     private StartCard[] startCards;
     private Map<Integer, Player> players;
 
+
+    public void nextRound() {
+        this.currentRound++;
+//        this.roundStartAt = LocalDateTime.now();
+    }
 }

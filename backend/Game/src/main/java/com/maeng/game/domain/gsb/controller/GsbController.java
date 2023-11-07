@@ -51,13 +51,32 @@ public class GsbController {
     @MessageMapping("game.gsb.set-player.{gameCode}")
     public void setPlayer(@DestinationVariable String gameCode, PlayerSeqDto playerSeqDto){
         gsbService.setSeq(gameCode,playerSeqDto);
+        StartCard [] cards = gsbService.getInfo(gameCode).getStartCards();
+        template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode, MessageDTO.builder()
+                .type("플레이어순서")
+                .data(cards)
+                .build());
+
         // 모든 플레이어 세팅 완료
-        if(gsbService.getInfo(gameCode).getPlayers().size()==2){
+        if(gsbService.getInfo(gameCode).getPlayers() != null && gsbService.getInfo(gameCode).getPlayers().size()==2){
+            Gsb gsb = gsbService.setGsb(gameCode);
+
             template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode, MessageDTO.builder()
                     .type("게임정보")
-                    .data(gsbService.getInfo(gameCode)).build());
+                    .data(gsb)
+                    .build());
         }
 
+
+    }
+
+
+    @MessageMapping("game.gsb.setStar.{gameCode}")
+    public void setStar(@DestinationVariable String gameCode) {
+        /*TODO: 선 플레이어일 때*/
+
+
+        /*TODO: 후 플레이어일 때*/
 
     }
     @GetMapping
