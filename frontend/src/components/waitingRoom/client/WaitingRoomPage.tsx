@@ -14,6 +14,8 @@ import { SeatInfo } from '@type/waitingRoom/seat.type'
 import useModal from '@hooks/useModal'
 import UpdateRoomModal from './UpdateRoomModal'
 import BackButton from '@components/common/clients/BackButton'
+import { useCallback } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
 
 const user = {
   userSeq: 1,
@@ -24,6 +26,9 @@ const user = {
 }
 
 const WaitingRoomPage = () => {
+  const router = useRouter()
+  const pathname = usePathname()
+  const gamePath = pathname.split('/')[1]
   const { Modal, isOpen, openModal, closeModal } = useModal()
   const [isHost, setIsHost] = useState(false)
   const [dummyParticipant, setDummyParticipant] = useState<SeatInfo[]>([
@@ -85,6 +90,10 @@ const WaitingRoomPage = () => {
     },
   ])
 
+  const handleBack = useCallback(() => {
+    router.replace(`/${gamePath}/lobby`)
+  }, [])
+
   const onClickEmptySeat = (index: number) => {
     let newDummyParticipant = [...dummyParticipant]
     newDummyParticipant.map((participant, newIndex) => {
@@ -94,9 +103,6 @@ const WaitingRoomPage = () => {
   }
 
   useEffect(() => {
-    // authHttp.get(`v1/user/info`).then((res) => {
-    //   console.log(res)
-    // })
     dummyParticipant.map((participant) => {
       if (participant.host) {
         if (participant.userSeq === user.userSeq) {
@@ -125,7 +131,7 @@ const WaitingRoomPage = () => {
           </S.PlayerList>
         </S.Contents>
         <S.BottomButtons>
-          <BackButton size={44} />
+          <BackButton size={44} handleBack={handleBack} />
           <S.ButtonRelatedGame>
             <CButton
               height={48}

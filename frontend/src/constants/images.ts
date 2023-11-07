@@ -33,6 +33,18 @@ export const images = {
   lobby: {
     close: '/images/lobby/ic-close-modal.png',
   },
+  gsb: {
+    allChipsBet: '/images/gsb/all-chips-bet.png',
+    background: '/images/gsb/background.png',
+    goldStar: '/images/gsb/gold-star.png',
+    silverStar: '/images/gsb/silver-star.png',
+    bronzeStar: '/images/gsb/bronze-star.png',
+    chip: '/images/gsb/chip.png',
+    chips: '/images/gsb/chips.png',
+    cardBack: '/images/gsb/card-back.png',
+    cardFrontHu: '/images/gsb/card-front-hu.png',
+    cardFrontSun: '/images/gsb/card-front-sun.png',
+  },
   gameRoom: {
     jwac: {
       backGround: '/images/gameRoom/background-jwac.png',

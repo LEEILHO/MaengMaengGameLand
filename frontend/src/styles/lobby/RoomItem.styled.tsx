@@ -2,7 +2,7 @@ import { styled } from 'styled-components'
 
 export const RoomItemContainer = styled.div`
   display: flex;
-  flex-basis: 45%;
+  flex-basis: 48%;
   flex-direction: column;
   border-radius: 20px;
   border: 1px solid #5d5555;

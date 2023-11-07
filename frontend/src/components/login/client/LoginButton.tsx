@@ -3,10 +3,7 @@
 import React from 'react'
 import * as S from '@styles/login/LoginButton.styled'
 import { images } from '@constants/constants'
-
-// kakao_login
-const KAKAO_REDIRECT_URI = 'https://maengland.com/login/kakao'
-const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID}&redirect_uri=${KAKAO_REDIRECT_URI}&response_type=code`
+import { KAKAO_AUTH_URL } from '@constants/baseUrl'
 
 const onClickLoginBtn = () => {
   window.location.href = KAKAO_AUTH_URL
