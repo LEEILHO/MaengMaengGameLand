@@ -106,6 +106,14 @@ public class JwacService {
 	}
 
 	@Transactional
+	public Jewelry gameStart(String gameCode) {
+		Jwac jwac = jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
+		jwac.setCurrentRound(1);
+		jwacRedisRepository.save(jwac);
+		return jwac.getJewelry().get(jwac.getCurrentRound());
+	}
+
+	@Transactional
 	public JwacGameResultDTO endGame(String gameCode) {
 		Jwac jwac = jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
 
