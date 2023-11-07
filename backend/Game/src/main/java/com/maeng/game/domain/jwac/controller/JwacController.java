@@ -53,7 +53,7 @@ public class JwacController {
 					.build())
 				.build());
 
-			Jewelry nextJewelry = jwacService.nextRound(gameCode);
+			Jewelry nextJewelry = jwacService.gameStart(gameCode);
 			JwacTimerInfoDTO timerInfo = timerService.timerStart(gameCode);
 			timerInfo.setRound(1);
 			timerInfo.setJewelry(nextJewelry);
