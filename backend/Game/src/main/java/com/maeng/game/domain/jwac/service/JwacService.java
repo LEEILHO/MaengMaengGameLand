@@ -39,7 +39,7 @@ public class JwacService {
 	private final JwacRedisRepository jwacRedisRepository;
 
 	@Transactional
-	public void generateGame(String roomCode, List<PlayerInfo> playerInfo) {
+	public List<PlayerInfo> generateGame(String roomCode, List<PlayerInfo> playerInfo) {
 		String gameCode = generateGameCode();
 
 		int maxRound = setRound();
@@ -59,6 +59,8 @@ public class JwacService {
 		jwacRedisRepository.save(jwac);
 
 		// TODO : 게임 생성 알림
+		List<PlayerInfo> players = playerInfo;
+		return players;
 	}
 
 	@Transactional

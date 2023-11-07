@@ -10,7 +10,9 @@ import com.maeng.game.domain.jwac.entity.Enter;
 import com.maeng.game.domain.jwac.repository.EnterRedisRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EnterService {
@@ -22,14 +24,15 @@ public class EnterService {
 			.orElse(Enter.builder().gameCode(gameCode).nicknames(new HashSet<>()).build());
 
 		enter.getNicknames().add(jwacNicknameDto.getNickname());
-
+		log.info(enter.toString());
 		boolean allEnter = (enter.getNicknames().size() == headCount);
 
 		if(allEnter) {
 			enter.getNicknames().clear();
+			enterRedisRepository.delete(enter);
+		} else {
+			enterRedisRepository.save(enter);
 		}
-
-		enterRedisRepository.save(enter);
 
 		return allEnter;
 	}
