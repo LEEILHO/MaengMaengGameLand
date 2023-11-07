@@ -51,34 +51,47 @@ public class GsbService {
 
         // seq 존재 하지 않을 때
         StartCard[] startCards = gsb.getStartCards();
-//        Map<Integer,Player> players = gsb.getPlayers();
+        Map<Integer,Player> players = gsb.getPlayers();
 //        System.out.println(players);
         int s = startCards[playerSeqDto.getSeq()].getSeq();
         System.out.println(s);
         int seq = playerSeqDto.getSeq() ;
         System.out.println(seq);
         System.out.println(startCards[seq].isSelected());
-        if(!startCards[seq].isSelected()) {
+        if(players == null){
+            players = new HashMap<>();
+        }
+        System.out.println(players.containsKey(0));
+        if(!startCards[seq].isSelected() && !players.containsKey(s)) {
             boolean duplicated = false;
             for(StartCard startCard : startCards) {
 
-                if(playerSeqDto.getNickName().equals(startCard.getNickname())){
+                if(playerSeqDto.getNickname().equals(startCard.getNickname())){
                     duplicated = true;
                 }
             }
             // 중복이 아니라면
             if(!duplicated){
                 // 데이터 넣기
-//                players.put(s, Player.builder()
-//                        .profileUrl("프로필사진").currentGold(3).currentSilver(10).currentBronze(20).currentChips(40).build());
+                players.put(s, Player.builder().nickname(playerSeqDto.getNickname())
+                        .profileUrl("프로필사진").currentGold(3).currentSilver(10).currentBronze(20).currentChips(40).build());
 
                 // 선택 처리
                 startCards[seq].setSelected(true);
-                startCards[seq].setNickname(playerSeqDto.getNickName());
+                startCards[seq].setNickname(playerSeqDto.getNickname());
             }
+            gsb.setPlayers(players);
             gsbRepository.save(gsb);
-            
+
         }
+
+        /* TODO: 초기 게임정보 세팅 */
+
+
+
+
+
+
 
     }
 

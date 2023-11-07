@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PlayerSeqDto {
-    private String nickName;
+    private String nickname;
     private int seq;
 }

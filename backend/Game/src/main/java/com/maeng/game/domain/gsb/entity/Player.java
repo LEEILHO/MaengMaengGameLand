@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class Player {
+    private String nickname;
     private String profileUrl;
     private Tier tier;
     private int currentChips;

@@ -40,7 +40,7 @@ public class GsbController {
             // 숫자 카드 랜덤 전송
             StartCard [] cards = gsbService.getStartCards(gameCode);
             template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode, MessageDTO.builder()
-                    .type("PlayerSeq")
+                    .type("플레이어순서")
                     .data(cards)
                     .build());
 
@@ -50,8 +50,14 @@ public class GsbController {
 
     @MessageMapping("game.gsb.set-player.{gameCode}")
     public void setPlayer(@DestinationVariable String gameCode, PlayerSeqDto playerSeqDto){
-
         gsbService.setSeq(gameCode,playerSeqDto);
+        // 모든 플레이어 세팅 완료
+        if(gsbService.getInfo(gameCode).getPlayers().size()==2){
+            template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode, MessageDTO.builder()
+                    .type("게임정보")
+                    .data(gsbService.getInfo(gameCode)).build());
+        }
+
 
     }
     @GetMapping
