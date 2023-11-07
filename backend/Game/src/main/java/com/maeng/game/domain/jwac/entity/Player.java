@@ -26,12 +26,4 @@ public class Player {
 	public void addTotalBidAmount(long bidAmount) {
 		this.totalBidAmount += bidAmount;
 	}
-
-	public void useSpecialItem() {
-		this.specialItem = false;
-	}
-
-	public void addSpecialItem() {
-		this.specialItem = true;
-	}
 }
