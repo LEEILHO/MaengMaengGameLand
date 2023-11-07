@@ -42,7 +42,6 @@ const useSocketWaitingRoom = () => {
       } else if (response.type == 'GAME_START') {
         const result = response as socketResponseType<string>
         console.log('게임방 코드 : ', result.data)
-        router.replace(`/${gameType}/game-room/${result.data}`)
       }
     })
   }, [client.current, roomCode])

@@ -4,7 +4,6 @@ import React, { useCallback, useEffect, useState } from 'react'
 
 import * as S from '@styles/waitingRoom/WaitingRoom.styled'
 import spaceAnimation from 'assets/lotties/background.json'
-import { authHttp } from '@utils/http'
 import WaitingRoomHeader from './WaitingRoomHeader'
 import PlayerCard from './PlayerCard'
 import CButton from '@components/common/clients/CButton'
@@ -23,6 +22,7 @@ import { userState } from '@atom/userAtom'
 const WaitingRoomPage = () => {
   const router = useRouter()
   const roomId = usePathname().split('/')[3]
+  const gameType = usePathname().split('/')[1]
   const user = useRecoilValue(userState)
   const {
     connectSocket,
@@ -44,6 +44,11 @@ const WaitingRoomPage = () => {
   const [seats, setSeats] = useState<SeatInfo[]>([])
   const [isHost, setIsHost] = useState(false)
   const [mySeatNumber, setMySeatNumber] = useState<number>(0)
+
+  const handleBack = useCallback(() => {
+    handleExit()
+    router.replace(`/${gameType}/lobby`)
+  }, [])
 
   useEffect(() => {
     if (roomId) {
@@ -102,7 +107,7 @@ const WaitingRoomPage = () => {
           </S.PlayerList>
         </S.Contents>
         <S.BottomButtons>
-          <BackButton size={44} handleBack={handleExit} />
+          <BackButton size={44} handleBack={handleBack} />
           <S.ButtonRelatedGame>
             {isHost ? (
               <>
