@@ -16,4 +16,7 @@ const withPWA = require('next-pwa')({
   buildExcludes: [/app-build-manifest.json$/],
 })
 
-module.exports = withPWA(nextConfig)
+module.exports = withPWA({
+  output: 'standalone',
+  ...nextConfig,
+});
