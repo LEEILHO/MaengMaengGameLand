@@ -52,7 +52,8 @@ const useAxiosInterceptor = () => {
       } catch (error) {
         console.error('엑세스 토큰 재발급 실패: ', error)
         // 이후 로그인 화면으로 이동시키기
-        // window.location.href = '/login'
+        localStorage.removeItem('login')
+        window.location.href = '/login'
       }
     }
     return config

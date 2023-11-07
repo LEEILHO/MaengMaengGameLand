@@ -3,7 +3,7 @@
 import * as S from '@styles/gsb/DragAndDrop.styled'
 import { useEffect, useState } from 'react'
 import { images } from '@constants/images'
-import { StarListType, StarStatus } from '@type/gsb/game.type'
+import { StarListType, StarStatus } from '@type/gsb/gsb.type'
 import { Draggable, Droppable } from 'react-beautiful-dnd'
 
 type Props = {

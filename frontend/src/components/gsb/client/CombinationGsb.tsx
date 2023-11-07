@@ -2,7 +2,7 @@
 
 import * as S from '@styles/gsb/CombinationGsb.styled'
 import { images } from '@constants/images'
-import { StarListType, StarStatus } from '@type/gsb/game.type'
+import { StarListType, StarStatus } from '@type/gsb/gsb.type'
 import { useEffect, useState } from 'react'
 import { DropResult } from 'react-beautiful-dnd'
 import DragAndDrop from './DragAndDrop'

@@ -1,7 +1,15 @@
 export type TurnListType = {
-  first: boolean
+  seq: number
+  nickname: string | null
   selected: boolean
 }
+
+export type RoundType =
+  | 'ChoiceTurn'
+  | 'Combination'
+  | 'Waiting'
+  | 'Betting'
+  | 'Result'
 
 export type StarStatus = 'in' | 'out'
 
