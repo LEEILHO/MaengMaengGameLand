@@ -23,7 +23,7 @@ public class AwrspTimerService {
     private final RabbitTemplate template;
     private final TimerRepository timerRepository;
     private final AwrspRepository awrspRepository;
-    private final String GAME_EXCHANGE = "game";
+    private final static String GAME_EXCHANGE = "game";
     private static final int CARD_OPEN = 15;
     private static final int CARD_SUBMIT = 60;
     private static final int PLAYER_WINS = 20;
