@@ -1,8 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import * as S from '@styles/waitingRoom/Chatting.styled'
+import { useRecoilValue } from 'recoil'
+import { userState } from '@atom/userAtom'
+import { usePathname } from 'next/navigation'
+import { ChatListState } from '@atom/chatAtom'
 
-const Chatting = () => {
+type Props = {
+  handleSendChat: (msg: string) => void
+}
+
+const Chatting = ({ handleSendChat }: Props) => {
   const [newMessage, setNewMessage] = useState('')
+  const chatList = useRecoilValue(ChatListState)
+  const chatEndRef = useRef<HTMLDivElement | null>(null)
 
   const onChangeMessage = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewMessage(e.target.value)
@@ -11,20 +21,26 @@ const Chatting = () => {
   const onKeyDownEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       if (newMessage) {
-        console.log(newMessage)
+        handleSendChat(newMessage)
+
         setNewMessage('')
       }
     }
   }
 
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [chatList])
+
   return (
     <S.ChattingContainer>
       <S.MessageArea>
-        <S.ChatBubble>
-          맹박사 : 맹박사님을 아세요???맹박사님을 아세요???맹박사님을
-          아세요???맹박사님을 아세요???맹박사님을 아세요???맹박사님을
-          아세요???맹박사님을 아세요???
-        </S.ChatBubble>
+        {chatList?.map((chat) => (
+          <S.ChatBubble>
+            {chat.nickname} : {chat.message}
+          </S.ChatBubble>
+        ))}
+        <div ref={chatEndRef}></div>
       </S.MessageArea>
       <S.ChattingInput
         type="text"

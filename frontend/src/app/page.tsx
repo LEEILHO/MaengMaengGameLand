@@ -7,7 +7,7 @@ export default function Home() {
   const router = useRouter()
   return (
     <>
-      <HomeContainer onClick={() => router.push('/home')}>
+      <HomeContainer onClick={() => router.replace('/home')}>
         Hello World!
       </HomeContainer>
     </>
