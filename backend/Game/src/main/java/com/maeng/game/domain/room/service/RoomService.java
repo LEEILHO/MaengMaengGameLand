@@ -90,7 +90,7 @@ public class RoomService {
 
         int seat = findEmptySeat(roomInfo.getSeats());
         seats.put(seat, Seat.builder()
-                                    .available(false)
+                                    .available(true)
                                     .nickname(enterDTO.getNickname())
                                     .build());
 
@@ -197,7 +197,7 @@ public class RoomService {
         // 자리 상태, MaxHeadCount 변경
         Seat seat = room.getSeats().get(seatDTO.getSeatNumber());
         room.setMaxHeadCount(seat.isAvailable() ? room.getMaxHeadCount() - 1 : room.getMaxHeadCount() + 1);
-        seat.setAvailable(!seat.isAvailable());
+        seat.setAvailable(!seat.isAvailable()); // 자리 상태 변경
         room.getSeats().put(seatDTO.getSeatNumber(), seat);
         roomRepository.save(room);
 
@@ -263,7 +263,7 @@ public class RoomService {
             settingCheck = awrspService.gameSetting(gameStartDTO);
         }
 
-        if(settingCheck){
+        if(!settingCheck){
             throw new GameSettingException("게임 정보 초기화 실패");
         }
 
@@ -297,7 +297,12 @@ public class RoomService {
         List<User> users = new ArrayList<>(participant.values());
 
         for(User user : users){
+            if(user == null){
+                continue;
+            }
+
             if(!user.isReady()){
+                log.info(user.getNickname());
                 throw new NotReadyPlayerException("모든 플레이어가 준비되어야 합니다.");
             }
         }
@@ -321,12 +326,11 @@ public class RoomService {
     @Operation(summary = "방 정보 전송")
     public void sendRoomInfo(String roomCode, Room roomInfo){
 
-        //User[] users = new User[roomInfo.getMaxHeadCount()];
-        SeatInfoDTO[] users = new SeatInfoDTO[roomInfo.getMaxHeadCount()];
+        SeatInfoDTO[] users = new SeatInfoDTO[GAME_MAX_PLAYER];
         HashMap<Integer, Seat> list = roomInfo.getSeats();
 
         // TODO : 열려있는지도 저장
-        for(int i = 0; i < roomInfo.getMaxHeadCount(); i++){
+        for(int i = 0; i < GAME_MAX_PLAYER; i++){
 
             User user = null;
 
