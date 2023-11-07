@@ -6,5 +6,4 @@ import lombok.Data;
 public class KickDTO {
     private String nickname;
     private String kickPlayer;
-    private int seatNumber;
 }

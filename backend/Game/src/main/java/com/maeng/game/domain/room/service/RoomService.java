@@ -223,8 +223,15 @@ public class RoomService {
         HashMap<Integer, Seat> seats = room.getSeats();
 
         // 해당 플레이어 삭제, HeadCount, 자리 사용가능으로 변경
+        int seatNumber = 0;
+        for(Integer i : seats.keySet()){
+            if(seats.get(i).getNickname().equals(kickDTO.getKickPlayer())){
+                seatNumber = i;
+            }
+        }
+
         players.remove(kickDTO.getKickPlayer());
-        seats.put(kickDTO.getSeatNumber(), Seat.builder().available(true).nickname("").build());
+        seats.put(seatNumber, Seat.builder().available(true).nickname("").build());
         room.setParticipant(players);
         room.setSeats(seats);
         room.setHeadCount(room.getHeadCount()-1);
