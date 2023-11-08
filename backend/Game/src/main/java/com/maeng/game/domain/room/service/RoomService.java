@@ -1,5 +1,8 @@
 package com.maeng.game.domain.room.service;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -101,7 +104,7 @@ public class RoomService {
                 .nickname(enterDTO.getNickname())
                 .ready(false)
                 .host(true)
-                .profileUrl("넣어야 됨")
+                .profileUrl(getProfileUrl(enterDTO.getNickname()))
                 .tier(Tier.GOLD) // TODO : 플레이어 정보 가져오기(프로필 사진, 티어)
                 .build();
 
@@ -436,5 +439,28 @@ public class RoomService {
         }
 
         return -1;
+    }
+
+    private String getProfileUrl(String nickname) {
+        try {
+            String imageUrl = "https://maengland.com/api/v1/user/prifile"; // 이미지 URL
+
+            URL url = new URL(imageUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                // 이미지 URL 반환
+                return imageUrl;
+            } else {
+                // 이미지 다운로드 실패 시 에러 메시지 반환
+                return "";
+            }
+        } catch (IOException e) {
+            // 예외 처리
+            log.info("프로필 사진 가져오기 실패");
+            return "";
+        }
     }
 }
