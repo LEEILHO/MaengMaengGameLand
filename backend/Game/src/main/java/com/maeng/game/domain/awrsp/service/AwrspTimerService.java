@@ -32,15 +32,6 @@ public class AwrspTimerService {
     private static final int PLAYER_WINS = 20;
     private static final int ALL_WINS = 10;
 
-
-    @Operation(summary = "타이머 초기화")
-    public void timerInit(String gameCode){
-        timerRepository.save(Timer.builder()
-                .gameCode(gameCode)
-                .nicknames(new HashSet<>())
-                .build());
-    }
-
     @Operation(summary = "타이머 시작")
     public void timerStart(String gameCode, String type){
         MessageDTO messageDTO = MessageDTO.builder()
