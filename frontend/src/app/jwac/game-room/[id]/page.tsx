@@ -25,7 +25,8 @@ import JewelryInfomationModal from '@components/gameRoom/jwac/JewelryInfomationM
 import useDidMountEffect from '@hooks/useDidMoundEffect'
 
 const page = () => {
-  const { connectSocket, handleBid, timeOver } = useSocketJWAC()
+  const { connectSocket, disconnectSocket, handleBid, timeOver } =
+    useSocketJWAC()
   const { Modal, isOpen, closeModal, openModal } = useModal()
   const pathname = usePathname().split('game-room/')[1]
   const [isLoading, setIsLoading] = useState(true) // 사람들이 모두 들어오기 전에 로딩 페이지를 보여줄지 말지
@@ -66,7 +67,10 @@ const page = () => {
     if (user) {
       connectSocket(pathname, user.nickname)
     }
-  }, [])
+    return () => {
+      disconnectSocket()
+    }
+  }, [pathname, user])
 
   // 라운드가 시작되고 3초간 경매 보석 정보 보여주기
   useDidMountEffect(() => {

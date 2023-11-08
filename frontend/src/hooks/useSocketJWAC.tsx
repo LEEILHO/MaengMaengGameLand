@@ -15,7 +15,7 @@ import {
   RoundResultType,
   SpecialItemResultType,
 } from '@type/gameRoom/jwac.type'
-import { useCallback, useState, useRef } from 'react'
+import { useRef } from 'react'
 import { useRecoilState, useSetRecoilState } from 'recoil'
 import SockJS from 'sockjs-client'
 
@@ -126,7 +126,7 @@ const useSocketJWAC = () => {
     })
   }
 
-  const connectSocket = useCallback((code: string, nickname: string) => {
+  const connectSocket = (code: string, nickname: string) => {
     const sock = new SockJS(SOCKET_URL)
     const StompClient = Stomp.over(() => sock)
 
@@ -140,10 +140,15 @@ const useSocketJWAC = () => {
       },
       () => {},
     )
-  }, [])
+  }
+
+  const disconnectSocket = () => {
+    client.current?.disconnect()
+  }
 
   return {
     connectSocket,
+    disconnectSocket,
     handleBid,
     timeOver,
   }
