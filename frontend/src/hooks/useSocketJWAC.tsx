@@ -111,6 +111,7 @@ const useSocketJWAC = () => {
           }
         })
         setRoundTotalData(data)
+        console.log('[업데이트 된 플레이어 리스트]', newPlayerList)
         setPlayerList(newPlayerList)
       }
 
