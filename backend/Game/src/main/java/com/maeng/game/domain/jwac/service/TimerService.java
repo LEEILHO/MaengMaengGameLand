@@ -3,6 +3,7 @@ package com.maeng.game.domain.jwac.service;
 import java.util.HashSet;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.maeng.game.domain.jwac.dto.JwacNicknameDto;
@@ -19,7 +20,7 @@ public class TimerService {
 
 	private final static int ROUND_TIME = 20;
 
-	@Transactional
+	@Transactional(isolation = Isolation.SERIALIZABLE)
 	public boolean timerEnd(String gameCode, int headCount, JwacNicknameDto jwacNicknameDto) {
 		Timer timer = timerRedisRepository.findById(gameCode)
 			.orElse(Timer.builder().gameCode(gameCode).nicknames(new HashSet<>()).build());
