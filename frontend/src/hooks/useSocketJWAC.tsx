@@ -15,14 +15,14 @@ import {
   RoundResultType,
   SpecialItemResultType,
 } from '@type/gameRoom/jwac.type'
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { useRecoilState, useSetRecoilState } from 'recoil'
 import SockJS from 'sockjs-client'
 
 const useSocketJWAC = () => {
   const client = useRef<CompatClient>()
   const [playerList, setPlayerList] = useRecoilState(jwacPlayerListState)
-  const [roundData, setRoundData] = useRecoilState(jwacRoundState)
+  const [roundData, setRoundData] = useState<RoundDataType | null>(null)
   const setRoundTotalData = useSetRecoilState(jwacRoundResultState)
   const setJewelryItem = useSetRecoilState(jwacJewelryItemState)
 
@@ -152,6 +152,7 @@ const useSocketJWAC = () => {
     disconnectSocket,
     handleBid,
     timeOver,
+    roundData,
   }
 }
 

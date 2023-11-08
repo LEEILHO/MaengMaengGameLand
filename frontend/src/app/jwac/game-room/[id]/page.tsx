@@ -25,7 +25,7 @@ import JewelryInfomationModal from '@components/gameRoom/jwac/JewelryInfomationM
 import useDidMountEffect from '@hooks/useDidMoundEffect'
 
 const page = () => {
-  const { connectSocket, disconnectSocket, handleBid, timeOver } =
+  const { connectSocket, disconnectSocket, handleBid, timeOver, roundData } =
     useSocketJWAC()
   const { Modal, isOpen, closeModal, openModal } = useModal()
   const pathname = usePathname().split('game-room/')[1]
@@ -34,7 +34,6 @@ const page = () => {
   const [isRoundEnd, setIsRoundEnd] = useState(false)
   const [bidMoney, setBidMoney] = useState(0)
   const user = useRecoilValue(userState)
-  const roundData = useRecoilValue(jwacRoundState)
   const players = useRecoilValue(jwacPlayerListState)
   const myData = useMemo(
     () => players.filter((player) => player.nickname === user?.nickname)[0],
@@ -71,6 +70,10 @@ const page = () => {
       disconnectSocket()
     }
   }, [pathname, user])
+
+  useEffect(() => {
+    console.log('[라운드 데이터 변경]', roundData)
+  }, [roundData])
 
   // 라운드가 시작되고 3초간 경매 보석 정보 보여주기
   useDidMountEffect(() => {
@@ -122,7 +125,6 @@ const page = () => {
           <Timer
             size="80"
             fontSize="14"
-            // time={roundData.time}
             time={roundData.time}
             timeOverHandle={handleTimeOver}
           />
