@@ -22,6 +22,7 @@ import JWACRoundStartDisplay from '@components/gameRoom/jwac/JWACRoundStartDispl
 import JWACRoundResultDisplay from '@components/gameRoom/jwac/JWACRoundResultDisplay'
 import useModal from '@hooks/useModal'
 import JewelryInfomationModal from '@components/gameRoom/jwac/JewelryInfomationModal'
+import useDidMountEffect from '@hooks/useDidMoundEffect'
 
 const page = () => {
   const { connectSocket, handleBid, timeOver } = useSocketJWAC()
@@ -66,7 +67,7 @@ const page = () => {
   }, [])
 
   // 라운드가 시작되고 3초간 경매 보석 정보 보여주기
-  useEffect(() => {
+  useDidMountEffect(() => {
     setIsRoundStart(true)
     // 3초 후에 isRoundStart를 false로 변경
     const timeoutId = setTimeout(() => {
@@ -77,13 +78,12 @@ const page = () => {
       clearTimeout(timeoutId) // cleanup 시 clearTimeout을 호출하여 타이머를 제거
     }
   }, [roundData])
-
   // 라운드가 끝나고 3초간 경매 결과 보여주기
-  useEffect(() => {
+  useDidMountEffect(() => {
     setIsRoundEnd(true)
     const timeoutId = setTimeout(() => {
       setIsRoundEnd(false)
-    }, 3000)
+    }, 1500)
 
     return () => {
       clearTimeout(timeoutId)
