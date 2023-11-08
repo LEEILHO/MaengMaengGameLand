@@ -1,10 +1,10 @@
 {
-  "name": "ManegManegGameLand",
-  "short_name": "mmGameLand",
+  "name": "맹맹게임랜드",
+  "short_name": "맹맹게임랜드",
   "display": "fullscreen",
   "orientation": "landscape",
-  "theme_color": "#FFFFFF",
-  "background_color": "#FFFFFF",
+  "theme_color": "##AED2FF",
+  "background_color": "#AED2FF",
   "start_url": "/login",
   "scope": ".",
   "icons": [

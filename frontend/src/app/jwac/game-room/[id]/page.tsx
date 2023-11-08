@@ -45,7 +45,9 @@ const page = () => {
   }, [roundResult])
 
   const handleTimeOver = useCallback(() => {
-    timeOver(pathname, myData.nickname)
+    if (user) {
+      timeOver(pathname, user.nickname)
+    }
   }, [pathname])
 
   const handleBidMody = useCallback(
@@ -58,7 +60,9 @@ const page = () => {
   console.log(pathname)
 
   useEffect(() => {
-    connectSocket(pathname, myData.nickname)
+    if (user) {
+      connectSocket(pathname, user.nickname)
+    }
   }, [])
 
   // 라운드가 시작되고 3초간 경매 보석 정보 보여주기
@@ -86,7 +90,7 @@ const page = () => {
     }
   }, [roundResult])
 
-  if (!roundData || !players) return <div>loading...</div>
+  if (!user || !roundData || !players) return <div>loading...</div>
 
   return (
     <>
@@ -161,7 +165,7 @@ const page = () => {
               backgroundColor="#7000FF"
               fontSize={14}
               height={32}
-              onClick={() => handleBid(pathname, myData.nickname, bidMoney)}
+              onClick={() => handleBid(pathname, user.nickname, bidMoney)}
             />
           </S.ButtonRow>
         </S.NoteContainer>
