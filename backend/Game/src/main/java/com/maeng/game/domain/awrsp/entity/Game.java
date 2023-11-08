@@ -8,7 +8,6 @@ import org.springframework.data.redis.core.RedisHash;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 
 @Builder
 @Data
@@ -25,4 +24,5 @@ public class Game {
     private int currentRound;
     private HashMap<String, Player> players;
     private Card[] problem;
+    private int finishCount;
 }

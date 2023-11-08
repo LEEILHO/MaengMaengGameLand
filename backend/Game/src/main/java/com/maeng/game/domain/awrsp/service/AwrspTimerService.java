@@ -10,12 +10,15 @@ import com.maeng.game.domain.jwac.entity.Timer;
 import com.maeng.game.domain.room.dto.MessageDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class AwrspTimerService {
@@ -23,38 +26,37 @@ public class AwrspTimerService {
     private final RabbitTemplate template;
     private final TimerRepository timerRepository;
     private final AwrspRepository awrspRepository;
-    private final String GAME_EXCHANGE = "game";
-    private final int CARD_OPEN = 15;
-    private final int CARD_SUBMIT = 60;
-    private final int PLAYER_WINS = 20;
-    private final int ALL_WINS = 10;
-
-
-    @Operation(summary = "타이머 초기화")
-    public void timerInit(String gameCode){
-        timerRepository.save(Timer.builder()
-                .gameCode(gameCode)
-                .nicknames(new HashSet<>())
-                .build());
-    }
+    private final static String GAME_EXCHANGE = "game";
+    private static final int CARD_SUBMIT = 60;
+    private static final int DRAW_CARD = 10;
+    private static final int PLAYER_WINS = 20;
+    private static final int ALL_WINS = 10;
 
     @Operation(summary = "타이머 시작")
     public void timerStart(String gameCode, String type){
         MessageDTO messageDTO = MessageDTO.builder()
-                .type(type)
-                .data(getTimerSec(type))
+                .type("TIMER")
+                .data(this.getTimerSec(type))
                 .build();
         template.convertAndSend(GAME_EXCHANGE, "awrsp."+gameCode, messageDTO);
     }
 
+    @Transactional
     @Operation(summary = "타이머 종료")
     public boolean timerEnd(String gameCode, TimerDTO timerDTO){
 
         // 해당 닉네임 set에 넣기
-        Timer timer = timerRepository.findByGameCode(gameCode);
-        Set<String> set = timer.getNicknames();
+        Timer timer = timerRepository.findById(gameCode).orElse(null);
+        Set<String> set = new HashSet<>();
+
+        if(timer == null){ // 이미 있으면 가져오기
+            timer = Timer.builder().gameCode(gameCode).nicknames(set).build();
+        }
+
+        set = timer.getNicknames();
         set.add(timerDTO.getNickname());
         timer.setNicknames(set);
+        timerRepository.save(timer);
 
         // 모든 플레이어가 타이머 완료 되었으면 true 아니면 false
         return set.size() == getCurrentGame(gameCode).getHeadCount();
@@ -70,14 +72,14 @@ public class AwrspTimerService {
         return game;
     }
 
-    @Operation(summary = "타이머 타입에 따른 다음 타이머 시간 조회")
+    @Operation(summary = "타이머 타입에 따른 타이머 시간 조회")
     public int getTimerSec(String type){
 
-        if(type.equals("ENTER_GAME")){
-            return CARD_SUBMIT;
+        if(type.equals("ENTER_GAME")){ // 해당 타이머가 끝났다는 신호
+            return DRAW_CARD;
         }
 
-        if(type.equals("CARD_OPEN")){
+        if(type.equals("DRAW_CARD")){
             return CARD_SUBMIT;
         }
 

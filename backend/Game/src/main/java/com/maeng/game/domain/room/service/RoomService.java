@@ -68,7 +68,7 @@ public class RoomService {
 
     @Transactional
     @Operation(summary = "대기방 생성")
-    public String createRoom(CreateRoomDTO createRoomDTO){
+    public synchronized String createRoom(CreateRoomDTO createRoomDTO){
 
         String roomCode = UUID.randomUUID().toString().replace("-", "").substring(0, 6);
 
@@ -94,7 +94,7 @@ public class RoomService {
 
     @Transactional
     @Operation(summary = "대기방 입장")
-    public void enterRoom(String roomCode, EnterDTO enterDTO){
+    public synchronized void enterRoom(String roomCode, EnterDTO enterDTO){
         Room roomInfo = this.getCurrentRoom(roomCode);
 
         if(roomInfo.getHeadCount() == GAME_MAX_PLAYER){
@@ -156,7 +156,7 @@ public class RoomService {
 
     @Transactional
     @Operation(summary = "플레이어 레디")
-    public Room readyPlayer(String roomCode, PlayerDTO readyDTO){
+    public synchronized Room readyPlayer(String roomCode, PlayerDTO readyDTO){
 
         // 방 정보에서 해당 플레이어 레디 상태 바꾸고
         Room room = getCurrentRoom(roomCode);
@@ -173,7 +173,7 @@ public class RoomService {
 
     @Transactional
     @Operation(summary = "대기방 퇴장")
-    public void exitRoom(String roomCode, PlayerDTO exitDTO){
+    public synchronized void exitRoom(String roomCode, PlayerDTO exitDTO){
         Room room = getCurrentRoom(roomCode);
 
         HashMap<String, User> players = room.getParticipant();

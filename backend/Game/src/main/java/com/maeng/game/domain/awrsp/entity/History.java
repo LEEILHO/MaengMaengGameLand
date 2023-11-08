@@ -2,10 +2,12 @@ package com.maeng.game.domain.awrsp.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Builder
+@Data
 @AllArgsConstructor
 public class History {
     private LocalDateTime submitAt; // 제출 시간
