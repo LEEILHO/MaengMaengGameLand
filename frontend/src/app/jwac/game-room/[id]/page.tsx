@@ -107,7 +107,7 @@ const page = () => {
             </S.CumulativePrice>
           )}
         </S.NewsContainer>
-        {myData?.item && (
+        {myData.item !== undefined && (
           <S.ItemContainer onClick={openModal}>
             <S.ItemIcon src={images.gameRoom.jwac.checkIcon} alt="보석확인권" />
           </S.ItemContainer>
