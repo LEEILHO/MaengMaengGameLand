@@ -58,7 +58,9 @@ const page = () => {
     [],
   )
 
-  console.log(pathname)
+  useEffect(() => {
+    console.log(myData)
+  }, [myData])
 
   useEffect(() => {
     if (user) {
