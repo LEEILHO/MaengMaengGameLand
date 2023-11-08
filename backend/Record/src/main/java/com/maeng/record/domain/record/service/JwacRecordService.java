@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
-import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -41,7 +40,6 @@ public class JwacRecordService {
 	private final GameParticipantRepository gameParticipantRepository;
 
 	public void saveJwacRecord(Jwac jwac) {
-		jwac.setGameCode(UUID.randomUUID().toString().replace("-", "").substring(0, 16));
 		Game game = createGame(jwac.getGameCode(), jwac.getCreateAt());
 
 		Map<String, GameParticipant> participants = createGameParticipant(game, new ArrayList<>(jwac.getPlayers().keySet()), jwac);
