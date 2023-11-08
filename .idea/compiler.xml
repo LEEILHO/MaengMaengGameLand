@@ -10,19 +10,5 @@
         <module name="Game.main" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="Awrsp" target="11" />
-      <module name="Awrsp.main" target="11" />
-      <module name="Awrsp.test" target="11" />
-      <module name="Gsb" target="11" />
-      <module name="Gsb.main" target="11" />
-      <module name="Gsb.test" target="11" />
-      <module name="Jwac" target="11" />
-      <module name="Jwac.main" target="11" />
-      <module name="Jwac.test" target="11" />
-      <module name="Lobby" target="11" />
-      <module name="Lobby.main" target="11" />
-      <module name="Lobby.test" target="11" />
-    </bytecodeTargetLevel>
   </component>
 </project>

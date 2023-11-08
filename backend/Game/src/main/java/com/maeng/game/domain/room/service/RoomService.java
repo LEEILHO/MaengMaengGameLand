@@ -1,26 +1,45 @@
 package com.maeng.game.domain.room.service;
 
-import com.maeng.game.domain.awrsp.exception.GameSettingException;
-import com.maeng.game.domain.awrsp.service.AwrspService;
-import com.maeng.game.domain.jwac.emums.Tier;
-import com.maeng.game.domain.lobby.service.LobbyService;
-import com.maeng.game.domain.room.dto.*;
-import com.maeng.game.domain.room.entity.Game;
-import com.maeng.game.domain.room.entity.User;
-import com.maeng.game.domain.room.entity.Room;
-import com.maeng.game.domain.room.entity.Seat;
-import com.maeng.game.domain.room.exception.*;
-import com.maeng.game.domain.room.repository.RoomRepository;
-import io.swagger.v3.oas.annotations.Operation;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.*;
+import com.maeng.game.domain.awrsp.exception.GameSettingException;
+import com.maeng.game.domain.awrsp.service.AwrspService;
+import com.maeng.game.domain.jwac.emums.Tier;
+import com.maeng.game.domain.jwac.service.JwacService;
+import com.maeng.game.domain.lobby.service.LobbyService;
+import com.maeng.game.domain.room.dto.CreateRoomDTO;
+import com.maeng.game.domain.room.dto.EnterDTO;
+import com.maeng.game.domain.room.dto.GameStartDTO;
+import com.maeng.game.domain.room.dto.KickDTO;
+import com.maeng.game.domain.room.dto.MessageDTO;
+import com.maeng.game.domain.room.dto.PlayerDTO;
+import com.maeng.game.domain.room.dto.RoomInfoDTO;
+import com.maeng.game.domain.room.dto.RoomStateDTO;
+import com.maeng.game.domain.room.dto.SeatDTO;
+import com.maeng.game.domain.room.dto.SeatInfoDTO;
+import com.maeng.game.domain.room.entity.Game;
+import com.maeng.game.domain.room.entity.Room;
+import com.maeng.game.domain.room.entity.Seat;
+import com.maeng.game.domain.room.entity.User;
+import com.maeng.game.domain.room.exception.MinHeadCountException;
+import com.maeng.game.domain.room.exception.NotFoundRoomException;
+import com.maeng.game.domain.room.exception.NotHostException;
+import com.maeng.game.domain.room.exception.NotReadyPlayerException;
+import com.maeng.game.domain.room.exception.PullRoomException;
+import com.maeng.game.domain.room.repository.RoomRepository;
+
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -28,6 +47,7 @@ import java.util.*;
 public class RoomService {
     private final RoomRepository roomRepository;
     private final AwrspService awrspService;
+    private final JwacService jwacService;
     private final LobbyService lobbyService;
     private final RabbitTemplate template;
     private final static String CHAT_EXCHANGE_NAME = "room";
@@ -275,7 +295,7 @@ public class RoomService {
         }
 
         if(room.getGameCategory().equals(Game.JEWELRY_AUCTION)){
-            settingCheck = awrspService.gameSetting(gameStartDTO);
+            settingCheck = jwacService.gameSetting(gameStartDTO);
         }
 
         if(!settingCheck){

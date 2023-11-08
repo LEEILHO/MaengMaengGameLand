@@ -20,7 +20,7 @@ public class TimerService {
 	private final static int ROUND_TIME = 20;
 
 	@Transactional
-	public boolean timerEnd(String gameCode, int headCount, JwacNicknameDto jwacNicknameDto) {
+	public synchronized boolean timerEnd(String gameCode, int headCount, JwacNicknameDto jwacNicknameDto) {
 		Timer timer = timerRedisRepository.findById(gameCode)
 			.orElse(Timer.builder().gameCode(gameCode).nicknames(new HashSet<>()).build());
 
@@ -30,9 +30,7 @@ public class TimerService {
 
 		timer.getNicknames().add(jwacNicknameDto.getNickname());
 
-		// TODO : 테스트를 위한 코드
-		// boolean timerEnd = (timer.getNicknames().size() == headCount);
-		boolean timerEnd = true;
+		boolean timerEnd = (timer.getNicknames().size() == headCount);
 		if(timerEnd) {
 			timer.getNicknames().clear();
 		}
@@ -48,5 +46,9 @@ public class TimerService {
 			.gameCode(gameCode)
 			.time(ROUND_TIME)
 			.build();
+	}
+
+	public void timerCreate(String gameCode) {
+		timerRedisRepository.save(Timer.builder().gameCode(gameCode).nicknames(new HashSet<>()).build());
 	}
 }
