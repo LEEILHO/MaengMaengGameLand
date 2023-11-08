@@ -47,4 +47,8 @@ public class TimerService {
 			.time(ROUND_TIME)
 			.build();
 	}
+
+	public void timerCreate(String gameCode) {
+		timerRedisRepository.save(Timer.builder().gameCode(gameCode).nicknames(new HashSet<>()).build());
+	}
 }

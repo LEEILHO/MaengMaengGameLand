@@ -47,6 +47,9 @@ public class JwacService {
 	@Value("${game.jwac.round.special}")
 	private int SPECIAL_ROUND;
 
+	private final TimerService timerService;
+	private final EnterService enterService;
+
 	private final JwacRedisRepository jwacRedisRepository;
 
 	@Transactional
@@ -66,6 +69,9 @@ public class JwacService {
 			.build();
 
 		jwacRedisRepository.save(jwac);
+
+		timerService.timerCreate(gameStartDTO.getGameCode());
+		enterService.enterCreate(gameStartDTO.getGameCode());
 
 		return true;
 	}

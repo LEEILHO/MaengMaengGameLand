@@ -21,8 +21,11 @@ public class EnterService {
 	@Transactional
 	public boolean enter(String gameCode, int headCount, JwacNicknameDto jwacNicknameDto) {
 		Enter enter = enterRedisRepository.findById(gameCode)
-			.orElse(Enter.builder().gameCode(gameCode).nicknames(new HashSet<>()).build());
+			.orElseThrow();
 
+		if(enter.getNicknames() == null) {
+			enter.setNicknames(new HashSet<>());
+		}
 		enter.getNicknames().add(jwacNicknameDto.getNickname());
 		log.info(enter.toString());
 		boolean allEnter = (enter.getNicknames().size() == headCount);
@@ -35,5 +38,9 @@ public class EnterService {
 		}
 
 		return allEnter;
+	}
+
+	public void enterCreate(String gameCode) {
+		enterRedisRepository.save(Enter.builder().gameCode(gameCode).nicknames(new HashSet<>()).build());
 	}
 }
