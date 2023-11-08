@@ -44,31 +44,24 @@ public class AwrspController {
         boolean finish = awrspService.submitCard(gameCode, submitDTO);
         if(finish){
             awrspService.getWinCount(gameCode);
-            awrspTimerService.timerStart(gameCode, "CARD_SUBMIT"); // 그 다음 타이머 호출
+            if(awrspService.checkGameOver(gameCode)){
+                awrspTimerService.timerStart(gameCode, "CARD_SUBMIT"); // 그 다음 타이머 호출
+            }else{
+                awrspService.sendGameResult(gameCode);
+            }
         }
     }
 
     @Operation(summary = "타입에 따른 게임 로직 함수 호출")
     public void callGameMethod(String gameCode, String type){
         if(type.equals("ENTER_GAME")){ // 게임 참가
+            log.info("라운드 시작");
             awrspService.gameStart(gameCode);
             return;
         }
 
         if(type.equals("CARD_OPEN")){ // 정답 카드 공개 끝났을 때
             awrspService.getWinCount(gameCode);
-            return;
-        }
-
-        if(type.equals("CARD_SUBMIT")){ // 카드 제출 끝났을 때
-            return;
-        }
-
-        if(type.equals("PLAYER_WINS")){ // 본인의 승 수 공개 끝났을 때
-            return;
-        }
-
-        if(type.equals("ALL_WINS")){ // 모든 플레이어의 승 수 공개 끝났을 때
             return;
         }
 

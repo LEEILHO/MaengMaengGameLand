@@ -10,12 +10,15 @@ import com.maeng.game.domain.jwac.entity.Timer;
 import com.maeng.game.domain.room.dto.MessageDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class AwrspTimerService {
@@ -47,14 +50,15 @@ public class AwrspTimerService {
         template.convertAndSend(GAME_EXCHANGE, "awrsp."+gameCode, messageDTO);
     }
 
+    @Transactional
     @Operation(summary = "타이머 종료")
     public boolean timerEnd(String gameCode, TimerDTO timerDTO){
 
         // 해당 닉네임 set에 넣기
-        Timer timer = timerRepository.findByGameCode(gameCode);
+        Timer timer = timerRepository.findById(gameCode).orElse(null);
         Set<String> set = new HashSet<>();
 
-        if(timer == null){
+        if(timer == null){ // 이미 있으면 가져오기
             timer = Timer.builder().gameCode(gameCode).nicknames(set).build();
         }
 

@@ -8,7 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface AwrspRepository extends CrudRepository<Game, String> {
-
     Optional<Game> findById(String gameCode);
 
 }

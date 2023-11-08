@@ -9,8 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResultDTO {
+public class RoundResultDTO {
     private String nickname;
-    private int win;
-    private int draw;
+    private boolean finish;
+    private int rank;
+    private RoundDetailDTO detail;
 }

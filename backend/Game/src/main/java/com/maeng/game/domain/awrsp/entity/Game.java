@@ -25,4 +25,5 @@ public class Game {
     private int currentRound;
     private HashMap<String, Player> players;
     private Card[] problem;
+    private int finishCount;
 }

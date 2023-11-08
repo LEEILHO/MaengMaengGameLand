@@ -13,9 +13,9 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@RedisHash("awrspSubmit")
-public class Submit {
+@RedisHash("rank")
+public class Rank {
     @Id
     private String gameCode;
-    private List<String> submit;
+    private List<String> rank;
 }
