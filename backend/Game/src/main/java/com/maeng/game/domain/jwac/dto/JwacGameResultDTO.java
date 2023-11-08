@@ -13,5 +13,5 @@ public class JwacGameResultDTO {
 	private String roomCode;
 	private String gameCode;
 	private List<String> rank;
-	private List<JwacRoundPlayerInfoDTO> players;
+	private List<PlayerInfo> players;
 }

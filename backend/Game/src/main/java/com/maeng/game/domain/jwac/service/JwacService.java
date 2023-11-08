@@ -19,7 +19,6 @@ import com.maeng.game.domain.jwac.dto.JwacBidInfoDto;
 import com.maeng.game.domain.jwac.dto.JwacGameResultDTO;
 import com.maeng.game.domain.jwac.dto.JwacItemResultDTO;
 import com.maeng.game.domain.jwac.dto.JwacRank;
-import com.maeng.game.domain.jwac.dto.JwacRoundPlayerInfoDTO;
 import com.maeng.game.domain.jwac.dto.JwacRoundResultDto;
 import com.maeng.game.domain.jwac.dto.PlayerInfo;
 import com.maeng.game.domain.jwac.emums.Jewelry;
@@ -244,16 +243,21 @@ public class JwacService {
 				.nickname(entry.getKey())
 				.profileUrl(entry.getValue().getProfileUrl())
 				.tier(entry.getValue().getTier())
+				.bidSum(entry.getValue().getTotalBidAmount())
+				.item(entry.getValue().isSpecialItem())
+				.score(entry.getValue().getScore())
 				.build())
 			.collect(Collectors.toList());
 	}
 
-	private List<JwacRoundPlayerInfoDTO> getRoundPlayerInfo(Map<String, Player> players) {
+	private List<PlayerInfo> getRoundPlayerInfo(Map<String, Player> players) {
 		return players.keySet().stream()
 			.map(nickname -> {
 				Player player = players.get(nickname);
-				return JwacRoundPlayerInfoDTO.builder()
+				return PlayerInfo.builder()
 					.nickname(nickname)
+					.profileUrl(player.getProfileUrl())
+					.tier(player.getTier())
 					.score(player.getScore())
 					.bidSum(player.getTotalBidAmount())
 					.item(player.isSpecialItem())

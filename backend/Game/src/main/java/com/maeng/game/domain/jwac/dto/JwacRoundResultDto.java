@@ -19,5 +19,5 @@ public class JwacRoundResultDto {
 	private int round;
 	private int jewelryScore;
 	private int penaltyScore;
-	private List<JwacRoundPlayerInfoDTO> players;
+	private List<PlayerInfo> players;
 }
