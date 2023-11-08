@@ -11,6 +11,7 @@ import { CompatClient, Stomp } from '@stomp/stompjs'
 import { socketResponseType } from '@type/common/common.type'
 import {
   GameInfoType,
+  PlayerType,
   RoundDataType,
   RoundResultType,
   SpecialItemResultType,
@@ -21,7 +22,7 @@ import SockJS from 'sockjs-client'
 
 const useSocketJWAC = () => {
   const client = useRef<CompatClient>()
-  const [playerList, setPlayerList] = useRecoilState(jwacPlayerListState)
+  const [playerList, setPlayerList] = useState<PlayerType[]>([])
   const [roundData, setRoundData] = useState<RoundDataType | null>(null)
   const setRoundTotalData = useSetRecoilState(jwacRoundResultState)
   const setJewelryItem = useSetRecoilState(jwacJewelryItemState)
@@ -153,6 +154,7 @@ const useSocketJWAC = () => {
     handleBid,
     timeOver,
     roundData,
+    playerList,
   }
 }
 

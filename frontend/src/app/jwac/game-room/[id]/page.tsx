@@ -25,8 +25,14 @@ import JewelryInfomationModal from '@components/gameRoom/jwac/JewelryInfomationM
 import useDidMountEffect from '@hooks/useDidMoundEffect'
 
 const page = () => {
-  const { connectSocket, disconnectSocket, handleBid, timeOver, roundData } =
-    useSocketJWAC()
+  const {
+    connectSocket,
+    disconnectSocket,
+    handleBid,
+    timeOver,
+    roundData,
+    playerList: players,
+  } = useSocketJWAC()
   const { Modal, isOpen, closeModal, openModal } = useModal()
   const pathname = usePathname().split('game-room/')[1]
   const [isLoading, setIsLoading] = useState(true) // 사람들이 모두 들어오기 전에 로딩 페이지를 보여줄지 말지
@@ -34,7 +40,6 @@ const page = () => {
   const [isRoundEnd, setIsRoundEnd] = useState(false)
   const [bidMoney, setBidMoney] = useState(0)
   const user = useRecoilValue(userState)
-  const players = useRecoilValue(jwacPlayerListState)
   const myData = useMemo(
     () => players.filter((player) => player.nickname === user?.nickname)[0],
     [players, user],
@@ -116,7 +121,7 @@ const page = () => {
             </S.CumulativePrice>
           )}
         </S.NewsContainer>
-        {myData.item !== undefined && (
+        {myData.item && (
           <S.ItemContainer onClick={openModal}>
             <S.ItemIcon src={images.gameRoom.jwac.checkIcon} alt="보석확인권" />
           </S.ItemContainer>
@@ -125,7 +130,7 @@ const page = () => {
           <Timer
             size="80"
             fontSize="14"
-            time={roundData.time}
+            roundData={roundData}
             timeOverHandle={handleTimeOver}
           />
         </S.TimerContainer>
