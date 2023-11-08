@@ -11,12 +11,16 @@ type Props = {
   size: string
   fontSize: string
   time: number
+  round: number
+  timeOverHandle: () => void
 }
 
 // todo : 20으로 되어있는 곳 값 props로 받아오기
-const Timer = ({ size, fontSize, time }: Props) => {
+const Timer = ({ size, fontSize, time, timeOverHandle, round }: Props) => {
   const [currentTime, setCurrentTime] = useState(0)
   const timeRemaining = time - currentTime
+
+  console.log(round)
 
   useEffect(() => {
     if (currentTime < time) {
@@ -25,6 +29,7 @@ const Timer = ({ size, fontSize, time }: Props) => {
     }
     if (currentTime === time) {
       console.log('타임 오버')
+      timeOverHandle()
     }
   }, [currentTime])
 
@@ -48,7 +53,7 @@ const Timer = ({ size, fontSize, time }: Props) => {
             color: `${timeRemaining > 5 ? 'white' : 'red'}`,
             fontSize: `${fontSize}px`,
             fontWeight: '700',
-            marginBottom: '24px',
+            marginBottom: '20px',
           }}
         >
           {secondsToMinutesAndSeconds(timeRemaining)}

@@ -33,7 +33,7 @@ const Test = () => {
           color="white"
           onClick={() => openModal()}
         ></CButton>
-        <Timer size="150" fontSize="24" time={10} />
+        {/* <Timer size="150" fontSize="24" time={10} /> */}
       </StyledTestContainer>
     </>
   )

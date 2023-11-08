@@ -35,11 +35,11 @@ export const TimerBackGround = styled.div<TimerIconProps>`
   border-radius: 50%;
 
   img {
-    width: 32px;
-    height: 32px;
-    margin-bottom: 12px;
+    width: 20px;
+    height: 20px;
+    margin-bottom: 8px;
     animation: ${(props) => props.$type === 'SHAKE' && 'shake 0.5s infinite'};
-
+    margin-top: 12px;
     @keyframes shake {
       0% {
         transform: translateX(0) rotate(5deg);
