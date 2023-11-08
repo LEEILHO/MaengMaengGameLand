@@ -1,5 +1,11 @@
 package com.maeng.game.domain.room.service;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -101,7 +107,7 @@ public class RoomService {
                 .nickname(enterDTO.getNickname())
                 .ready(false)
                 .host(true)
-                .profileUrl("넣어야 됨")
+                .profileUrl(getProfileUrl(enterDTO.getNickname()))
                 .tier(Tier.GOLD) // TODO : 플레이어 정보 가져오기(프로필 사진, 티어)
                 .build();
 
@@ -436,5 +442,39 @@ public class RoomService {
         }
 
         return -1;
+    }
+
+    public String getProfileUrl(String nickname) {
+        try {
+            String baseUrl = "https://maengland.com/api/v1/auth/profile";
+            String requestUrl = baseUrl + "/" + nickname;
+
+            URL url = new URL(requestUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                // HTTP 응답 본문을 문자열로 읽어 반환
+                try (InputStream inputStream = connection.getInputStream();
+                     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    return response.toString();
+                }
+            } else {
+                // 이미지 다운로드 실패 시 에러 메시지 반환
+                log.info(nickname + " 프로필 사진 가져오기 실패" + responseCode);
+
+                return "";
+            }
+        } catch (IOException e) {
+            // 예외 처리
+            log.info(nickname + " 프로필 사진 가져오기 실패");
+            return "";
+        }
     }
 }
