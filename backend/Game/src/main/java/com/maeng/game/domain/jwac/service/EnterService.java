@@ -3,6 +3,7 @@ package com.maeng.game.domain.jwac.service;
 import java.util.HashSet;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.maeng.game.domain.jwac.dto.JwacNicknameDto;
@@ -18,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 public class EnterService {
 	private final EnterRedisRepository enterRedisRepository;
 
-	@Transactional
+	@Transactional(isolation = Isolation.SERIALIZABLE)
 	public boolean enter(String gameCode, int headCount, JwacNicknameDto jwacNicknameDto) {
 		log.info("headCount: " + headCount);
 		Enter enter = enterRedisRepository.findById(gameCode)
@@ -35,8 +36,10 @@ public class EnterService {
 		if(allEnter) {
 			enter.getNicknames().clear();
 			enterRedisRepository.delete(enter);
+			log.info("delete(enter)");
 		} else {
 			enterRedisRepository.save(enter);
+			log.info("save(enter)");
 		}
 
 		return allEnter;
