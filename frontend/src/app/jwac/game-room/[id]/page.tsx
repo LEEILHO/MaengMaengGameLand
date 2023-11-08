@@ -59,8 +59,8 @@ const page = () => {
   )
 
   useEffect(() => {
-    console.log(myData)
-  }, [myData])
+    console.log('[플레이어 정보 변동]', players)
+  }, [players])
 
   useEffect(() => {
     if (user) {

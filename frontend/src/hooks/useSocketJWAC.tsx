@@ -97,6 +97,7 @@ const useSocketJWAC = () => {
       if (result.type === 'GAME_ROUND_START') {
         const data = result.data as RoundDataType
         console.log('게임 라운드 스타트', data)
+        console.log('[게임 라운드 스타트 이후 플레이어 정보]', playerList)
 
         setRoundData(data)
       }
