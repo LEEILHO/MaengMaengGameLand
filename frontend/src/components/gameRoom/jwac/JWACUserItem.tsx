@@ -1,12 +1,17 @@
 import { images } from '@constants/images'
 import * as S from '@styles/gameRoom/jwac/JWACUserItem.styled'
+import { PlayerType } from '@type/gameRoom/jwac.type'
 
-const JWACUserItem = () => {
+type Props = {
+  player: PlayerType
+}
+
+const JWACUserItem = ({ player }: Props) => {
   return (
     <S.JWACUserItemContainer>
-      <S.UserProfile src={images.waitingRoom.dummyRabbit} alt="프로필" />
-      <S.Username>김상근</S.Username>
-      <S.UserScore>13점</S.UserScore>
+      <S.UserProfile src={player.profileUrl} alt="프로필" />
+      <S.Username>{player.nickname}</S.Username>
+      <S.UserScore>{`${player.score}점`}</S.UserScore>
     </S.JWACUserItemContainer>
   )
 }

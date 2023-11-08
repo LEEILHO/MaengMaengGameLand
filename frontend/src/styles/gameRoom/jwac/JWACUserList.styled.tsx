@@ -10,6 +10,8 @@ export const JWACUserListContainer = styled.div`
   flex-wrap: wrap;
   justify-content: center;
   /* justify-content: space-around; */
-  padding: 16px 0;
+  padding-top: 30px;
+  padding-bottom: 12px;
+  /* margin-bottom: 12px; */
   gap: 10px;
 `

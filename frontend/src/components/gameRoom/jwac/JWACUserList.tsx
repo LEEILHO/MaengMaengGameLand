@@ -1,22 +1,25 @@
 import * as S from '@styles/gameRoom/jwac/JWACUserList.styled'
 import JWACUserItem from './JWACUserItem'
 import { Empty } from '@styles/gameRoom/jwac/JWACUserItem.styled'
+import { PlayerType } from '@type/gameRoom/jwac.type'
 
-const JWACUserList = () => {
+type Prosp = {
+  players: PlayerType[]
+}
+
+const JWACUserList = ({ players }: Prosp) => {
+  const emptyNum = 8 - players.length
+
   return (
     <S.JWACUserListContainer>
-      <JWACUserItem />
-      <JWACUserItem />
-      <JWACUserItem />
-      <JWACUserItem />
-      {/* <JWACUserItem />
-      <JWACUserItem /> */}
-      <Empty />
-      <Empty />
-      <Empty />
-      <Empty />
-      {/* <JWACUserItem />
-      <JWACUserItem /> */}
+      {players.map((player) => (
+        <JWACUserItem key={player.nickname} player={player} />
+      ))}
+      {Array(emptyNum)
+        .fill(0)
+        .map((_, index) => (
+          <Empty key={index} />
+        ))}
     </S.JWACUserListContainer>
   )
 }

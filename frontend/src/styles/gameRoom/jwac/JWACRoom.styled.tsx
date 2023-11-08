@@ -17,6 +17,18 @@ export const RoomContainer = styled.div`
   padding-right: 10%;
 `
 
+export const ItemContainer = styled.div`
+  display: flex;
+  position: absolute;
+  top: 12px;
+  right: 24px;
+`
+
+export const ItemIcon = styled.img`
+  width: 40px;
+  height: 40px;
+`
+
 export const NewsContainer = styled.div`
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.75);
@@ -30,12 +42,12 @@ export const NewsContainer = styled.div`
 `
 
 export const CumulativePrice = styled.p`
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
   color: white;
 
   @media screen and (max-width: 740px) {
-    font-size: 14px;
+    font-size: 12px;
   }
 `
 
@@ -44,6 +56,26 @@ export const DisplayBoardContainer = styled.div`
   margin-top: 56px;
   margin-bottom: 44px;
   width: 60%;
+  position: relative;
+`
+
+export const DisplayRoundFrame = styled.img`
+  width: 80%;
+  height: 66px;
+  position: absolute;
+  top: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+`
+
+export const RoundText = styled.p`
+  font-weight: 700;
+  font-size: 18px;
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
 `
 
 export const NoteContainer = styled.div`
@@ -127,6 +159,7 @@ export const CumlativeDiscriptionRow = styled.div`
 
 export const CumlativePrice = styled.p`
   margin-top: 6px;
+  text-align: right;
 `
 
 export const PriceInput = styled.input`

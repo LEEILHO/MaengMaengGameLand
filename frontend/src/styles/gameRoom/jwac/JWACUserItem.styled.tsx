@@ -7,12 +7,13 @@ export const JWACUserItemContainer = styled.div`
   border-radius: 8px;
   background: rgba(217, 217, 217, 0.5);
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  height: 40px;
   /* max-height: 42px; */
 `
 
 export const Empty = styled.div`
   flex-basis: 45%;
-  /* height: 42px; */
+  height: 40px;
 `
 
 export const UserProfile = styled.img`
