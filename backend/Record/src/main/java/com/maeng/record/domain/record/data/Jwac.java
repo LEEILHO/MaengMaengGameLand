@@ -1,6 +1,7 @@
 package com.maeng.record.domain.record.data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -44,6 +45,8 @@ public class Jwac {
 	@JsonProperty("players")
 	private Map<String, Player> players;
 
+	@JsonProperty("rank")
+	private List<String> rank;
 
 	@Data
 	@NoArgsConstructor
@@ -66,6 +69,7 @@ public class Jwac {
 
 		@JsonProperty("history")
 		private Map<Integer, History> history;
+
 	}
 
 	@Data

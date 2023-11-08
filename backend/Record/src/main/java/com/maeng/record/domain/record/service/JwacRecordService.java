@@ -2,13 +2,9 @@ package com.maeng.record.domain.record.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -65,36 +61,11 @@ public class JwacRecordService {
 	}
 
 	private Map<String, GameParticipant> createGameParticipant(Game game, List<String> participants, Jwac jwac) {
-		String mostBidder = null;
-		long mostBidAmount = 0L;
-		for(String participant : participants) {
-			long totalBidAmount = jwac.getPlayers().get(participant).getTotalBidAmount();
-
-			if(totalBidAmount > mostBidAmount) {
-				mostBidder = participant;
-				mostBidAmount = totalBidAmount;
-			}
-		}
-
-		Set<Integer> scores = new HashSet<>();
-		for(String participant : participants) {
-			if(!participant.equals(mostBidder)) {
-				scores.add(jwac.getPlayers().get(participant).getScore());
-			}
-		}
-
-		PriorityQueue<Integer> scoreQueue = new PriorityQueue<>(Collections.reverseOrder());
-		scoreQueue.addAll(scores);
-		Map<Integer, Integer> scoreRank = new HashMap<>();
-		for(int i = 1; i <= scores.size(); i++) {
-			scoreRank.put(scoreQueue.poll(), i);
-		}
-
 		List<GameParticipant> gameParticipants = new ArrayList<>();
 		for(String participant : participants) {
 			GameUser gameUser = getOrCreateUser(participant);
 			int score = jwac.getPlayers().get(participant).getScore();
-			int rank = scoreRank.get(score) == null ? scoreRank.size() + 1 : scoreRank.get(score);
+			int rank = jwac.getRank().indexOf(participant) + 1;
 			GameParticipant gameParticipant = GameParticipant.builder()
 				.game(game)
 				.gameUser(gameUser)
