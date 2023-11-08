@@ -22,7 +22,7 @@ public class EnterService {
 	public synchronized boolean enter(String gameCode, int headCount, JwacNicknameDto jwacNicknameDto) {
 		log.info("headCount: " + headCount);
 		Enter enter = enterRedisRepository.findById(gameCode)
-			.orElseThrow();
+			.orElse(Enter.builder().gameCode(gameCode).nicknames(new HashSet<>()).build());
 
 		if(enter.getNicknames() == null) {
 			log.info("enter.getNicknames() is null");
