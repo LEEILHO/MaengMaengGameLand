@@ -113,7 +113,7 @@ const page = () => {
             size="80"
             fontSize="14"
             // time={roundData.time}
-            time={100000}
+            time={roundData.time}
             timeOverHandle={handleTimeOver}
           />
         </S.TimerContainer>
