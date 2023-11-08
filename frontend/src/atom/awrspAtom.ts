@@ -10,3 +10,8 @@ export const DrawCardState = atom<RspType | null>({
   key: 'drawCard',
   default: null,
 })
+
+export const TimerState = atom<number>({
+  key: 'timerTime',
+  default: 0,
+})

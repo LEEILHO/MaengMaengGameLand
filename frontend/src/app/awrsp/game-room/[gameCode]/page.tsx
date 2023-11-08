@@ -10,9 +10,12 @@ import DrawCardModal from '@components/awrsp/client/DrawCardModal'
 import { useEffect } from 'react'
 import MyResult from '@components/awrsp/client/MyResult'
 import AllResultList from '@components/awrsp/client/AllResultList'
+import { useRecoilValue } from 'recoil'
+import { TimerState } from '@atom/awrspAtom'
 
 const AwrspGameRoom = () => {
   const { Modal, closeModal, isOpen, openModal } = useModal()
+  const timerTime = useRecoilValue(TimerState)
 
   useEffect(() => {
     openModal()
@@ -27,7 +30,7 @@ const AwrspGameRoom = () => {
         {/* <AllResultList /> */}
       </S.Content>
       <S.TimerContainer>
-        <Timer fontSize="16" size="96" time={1} />
+        <Timer fontSize="16" size="96" time={timerTime} />
       </S.TimerContainer>
       <Modal isOpen={isOpen}>
         <DrawCardModal closeModal={closeModal} />
