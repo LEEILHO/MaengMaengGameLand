@@ -15,7 +15,7 @@ import {
   RoundResultType,
   SpecialItemResultType,
 } from '@type/gameRoom/jwac.type'
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import { useRecoilState, useSetRecoilState } from 'recoil'
 import SockJS from 'sockjs-client'
 
@@ -25,6 +25,10 @@ const useSocketJWAC = () => {
   const [roundData, setRoundData] = useRecoilState(jwacRoundState)
   const setRoundTotalData = useSetRecoilState(jwacRoundResultState)
   const setJewelryItem = useSetRecoilState(jwacJewelryItemState)
+
+  useEffect(() => {
+    console.log('[훅 안에서 플레이어 리스트 변경]', playerList)
+  }, [playerList])
 
   /**
    * 게임 시작 시 서버로 게임 시작을 알린다.
