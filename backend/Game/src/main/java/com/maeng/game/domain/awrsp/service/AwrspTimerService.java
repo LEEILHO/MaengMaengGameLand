@@ -35,7 +35,7 @@ public class AwrspTimerService {
     @Operation(summary = "타이머 시작")
     public void timerStart(String gameCode, String type){
         MessageDTO messageDTO = MessageDTO.builder()
-                .type("TIMER")
+                .type(type)
                 .data(this.getTimerSec(type))
                 .build();
         template.convertAndSend(GAME_EXCHANGE, "awrsp."+gameCode, messageDTO);
