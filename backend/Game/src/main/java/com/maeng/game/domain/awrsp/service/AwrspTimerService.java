@@ -38,7 +38,7 @@ public class AwrspTimerService {
                 .type("TIMER")
                 .data(this.getTimerSec(type))
                 .build();
-        template.convertAndSend(GAME_EXCHANGE, "awrsp."+gameCode, getTimerSec(type));
+        template.convertAndSend(GAME_EXCHANGE, "awrsp."+gameCode, messageDTO);
     }
 
     @Transactional
