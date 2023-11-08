@@ -45,4 +45,20 @@ export const images = {
     cardFrontHu: '/images/gsb/card-front-hu.png',
     cardFrontSun: '/images/gsb/card-front-sun.png',
   },
+  gameRoom: {
+    jwac: {
+      backGround: '/images/gameRoom/background-jwac.png',
+      table: '/images/gameRoom/table.png',
+      money: '/images/gameRoom/ic-money.png',
+      roundFrame: '/images/gameRoom/frame-round.png',
+      noteFrame: '/images/gameRoom/frame-note.png',
+      showCase: '/images/gameRoom/showcase.jpg',
+      diamond: '/images/gameRoom/diamond.png',
+      emerald: '/images/gameRoom/emerald.png',
+      ruby: '/images/gameRoom/ruby.png',
+      sapphire: '/images/gameRoom/sapphire.png',
+      checkIcon: '/images/gameRoom/ic-check-item.png',
+      jewelryInfomationFrame: '/images/gameRoom/frame-jewelry-infomation.png',
+    },
+  },
 }
