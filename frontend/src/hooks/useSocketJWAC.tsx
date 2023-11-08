@@ -104,9 +104,9 @@ const useSocketJWAC = () => {
       // 게임 결과 받아서 업데이트
       if (result.type === 'GAME_ROUND_RESULT') {
         const data = result.data as RoundResultType
+        console.log('[기존 플레이어 리스트]', playerList)
+        console.log('[새로운 플레이어 리스트]', data.players)
         const newPlayerList = playerList.map((player) => {
-          console.log('[기존 플레이어]', player)
-          console.log('[플레이어 리스트]', data.players)
           return {
             ...player,
             ...data.players.filter((item) => item.nickname === player.nickname),
