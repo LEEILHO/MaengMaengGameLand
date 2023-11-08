@@ -3,7 +3,7 @@
   "short_name": "맹맹게임랜드",
   "display": "fullscreen",
   "orientation": "landscape",
-  "theme_color": "##AED2FF",
+  "theme_color": "#AED2FF",
   "background_color": "#AED2FF",
   "start_url": "/login",
   "scope": ".",
