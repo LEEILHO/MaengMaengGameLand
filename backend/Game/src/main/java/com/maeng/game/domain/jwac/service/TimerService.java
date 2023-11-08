@@ -30,9 +30,7 @@ public class TimerService {
 
 		timer.getNicknames().add(jwacNicknameDto.getNickname());
 
-		// TODO : 테스트를 위한 코드
-		// boolean timerEnd = (timer.getNicknames().size() == headCount);
-		boolean timerEnd = true;
+		boolean timerEnd = (timer.getNicknames().size() == headCount);
 		if(timerEnd) {
 			timer.getNicknames().clear();
 		}

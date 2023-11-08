@@ -6,7 +6,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.maeng.game.domain.jwac.dto.JwacBidInfoDto;
 import com.maeng.game.domain.jwac.dto.JwacGameInfoDTO;
@@ -27,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
-@RestController
 @RequiredArgsConstructor
 public class JwacController {
 	private final RabbitTemplate template;

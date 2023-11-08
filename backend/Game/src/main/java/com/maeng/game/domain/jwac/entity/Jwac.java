@@ -1,6 +1,7 @@
 package com.maeng.game.domain.jwac.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.annotation.Id;
@@ -26,6 +27,7 @@ public class Jwac {
 	private Map<Integer, Long> bidAmounts;
 	private Map<Integer, Jewelry> jewelry;
 	private Map<String, Player> players;
+	private List<String> rank;
 
 	public void nextRound() {
 		this.currentRound++;

@@ -1,9 +1,11 @@
 package com.maeng.game.domain.jwac.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +18,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.maeng.game.domain.jwac.dto.JwacBidInfoDto;
 import com.maeng.game.domain.jwac.dto.JwacGameResultDTO;
 import com.maeng.game.domain.jwac.dto.JwacItemResultDTO;
+import com.maeng.game.domain.jwac.dto.JwacRank;
 import com.maeng.game.domain.jwac.dto.JwacRoundPlayerInfoDTO;
 import com.maeng.game.domain.jwac.dto.JwacRoundResultDto;
 import com.maeng.game.domain.jwac.dto.PlayerInfo;
@@ -64,7 +67,6 @@ public class JwacService {
 
 		jwacRedisRepository.save(jwac);
 
-		// TODO : 게임 생성 알림
 		return true;
 	}
 
@@ -122,10 +124,15 @@ public class JwacService {
 
 		Map<String, Player> players = jwac.getPlayers();
 
+		List<String> rank = findGameRank(players);
+		System.out.println(rank.toString());
+
+		jwac.setRank(rank);
+
 		return JwacGameResultDTO.builder()
 			.roomCode(jwac.getRoomCode())
 			.gameCode(jwac.getGameCode())
-			.winner(findGameWinner(players))
+			.rank(rank)
 			.players(getRoundPlayerInfo(players))
 			.build();
 	}
@@ -359,26 +366,35 @@ public class JwacService {
 		return jewelry.getIndex();
 	}
 
-	public String findGameWinner(Map<String, Player> players) {
-		String winner = "";
-		long winnerBidAmount = -1L;
-		long maxBidAmount = -1L;
-		int maxScore = -Integer.MAX_VALUE;
+	public List<String> findGameRank(Map<String, Player> players) {
+		List<String> rank = new ArrayList<>();
+		long maxBidAmount = 0L;
+		String maxBidder = "";
+		PriorityQueue<JwacRank> pq = new PriorityQueue<>();
 		for(String nickname : players.keySet()) {
 			Player player = players.get(nickname);
-			int currentScore = player.getScore();
-			long currentTotalBidAmount = player.getTotalBidAmount();
-			// 낙찰금 총 합이 가장 큰 사람은 승리 X
-			if(maxBidAmount < currentTotalBidAmount) {
-				maxBidAmount = currentTotalBidAmount;
-			// 최고점, 동점일경우 더 적은 금액을 낸 사람이 승리
-			} else if(currentScore > maxScore || (currentScore == maxScore && currentTotalBidAmount < winnerBidAmount)) {
-				winner = nickname;
-				winnerBidAmount = currentTotalBidAmount;
-				maxScore = currentScore;
+			pq.add(JwacRank.builder()
+				.nickname(nickname)
+				.score(player.getScore())
+				.totalBidAmount(player.getTotalBidAmount())
+				.build());
+
+			if(maxBidAmount < player.getTotalBidAmount()) {
+				maxBidAmount = player.getTotalBidAmount();
+				maxBidder = nickname;
 			}
 		}
-		return winner;
+
+		while(!pq.isEmpty()) {
+			JwacRank jwacRank = pq.poll();
+			// 배팅금을 가장 많이 사용한 사람
+			if(!jwacRank.getNickname().equals(maxBidder)) {
+				rank.add(jwacRank.getNickname());
+			}
+		}
+		rank.add(maxBidder);
+
+		return rank;
 	}
 
 	public String getAllDataToJson(String gameCode) {
