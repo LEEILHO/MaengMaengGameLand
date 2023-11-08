@@ -4,10 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.maeng.game.domain.gsb.dto.PlayerSeqDto;
+import com.maeng.game.domain.gsb.dto.StarDto;
+import com.maeng.game.domain.gsb.dto.StarResponseDto;
 import com.maeng.game.domain.gsb.entity.Gsb;
+import com.maeng.game.domain.gsb.entity.History;
 import com.maeng.game.domain.gsb.entity.Player;
 import com.maeng.game.domain.gsb.entity.StartCard;
 import com.maeng.game.domain.gsb.repository.GsbRepository;
+import com.maeng.game.domain.room.dto.MessageDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,6 +27,9 @@ import java.util.Random;
 public class GsbService {
 
     private final GsbRepository gsbRepository;
+    private static final int GOLD_WEIGHT = 3;
+    private static final int SILVER_WEIGHT = 2;
+    private static final int BRONZE_Weight = 1;
 
     public StartCard[] getStartCards(String gameCode){
 
@@ -85,6 +92,175 @@ public class GsbService {
 
         }
     }
+    public MessageDTO setStar(String gameCode, StarDto starDto){
+        MessageDTO messageDTO = null;
+        Gsb gsb = getInfo(gameCode);
+        String curPlayer = gsb.getCurrentPlayer();
+        int curRound = gsb.getCurrentRound();
+        // 짝수 라운드
+        if(curRound%2==0){
+            log.info("짝수 라운드");
+            //1인덱스 플레이어가 선 플레이어
+            if(curPlayer.equals(gsb.getPlayers().get(1).getNickname())){
+                // 현재 플레이어가 선 플레이어일 때
+                History history = setStarFirst(curRound,1,gameCode, starDto);
+                Map<Integer, History>  historyMap = gsb.getPlayers().get(1).getHistories();
+                if( history != null){
+                    if(historyMap == null ){
+
+                        historyMap = new HashMap<>();
+
+                    }
+
+                    historyMap.put(curRound,history);
+                    gsb.getPlayers().get(1).setHistories(historyMap);
+
+                    messageDTO = MessageDTO.builder()
+                            .type("다음 플레이어 별 세팅")
+                            .data(StarResponseDto.builder()
+                                    .weight(gsb.getPlayers().get(1).getHistories().get(curRound).getWeight())
+                                    .nextPlayer(gsb.getPlayers().get(0).getNickname())
+                                    .build())
+                            .build();
+                    gsb.setCurrentPlayer(gsb.getPlayers().get(0).getNickname());
+
+                }
+            } else{
+                // 현재 플레이어가 후 플레이어일 때
+                History history = setStarSecond(curRound,0,gameCode, starDto);
+                Map<Integer, History>  historyMap = gsb.getPlayers().get(0).getHistories();
+
+                if( history != null){
+                    if(historyMap == null ){
+
+                        historyMap = new HashMap<>();
+
+                    }
+
+                    historyMap.put(curRound,history);
+                    gsb.getPlayers().get(0).setHistories(historyMap);
+
+                    messageDTO = MessageDTO.builder()
+                            .type("다음 플레이어 베팅 시작")
+                            .data(StarResponseDto.builder()
+                                    .weight(gsb.getPlayers().get(0).getHistories().get(curRound).getWeight())
+                                    .nextPlayer(gsb.getPlayers().get(1).getNickname())
+                                    .build())
+                            .build();
+                    gsb.setCurrentPlayer(gsb.getPlayers().get(1).getNickname());
+
+                }
+
+            }
+        } else{
+            log.info("홀수 라운드");
+            // 홀수 라운드
+            //0 인덱스 플레이어가 선 플레이어
+            if(curPlayer.equals(gsb.getPlayers().get(0).getNickname())){
+                log.info("선플레이어 ");
+
+                // 현재 플레이어가 선 플레이어일 때
+                History history = setStarFirst(curRound,0,gameCode, starDto);
+                Map<Integer, History>  historyMap = gsb.getPlayers().get(0).getHistories();
+                if( history != null){
+                    if(historyMap == null ){
+
+                        historyMap = new HashMap<>();
+
+                    }
+
+                    historyMap.put(curRound,history);
+                    gsb.getPlayers().get(0).setHistories(historyMap);
+                    messageDTO = MessageDTO.builder()
+                            .type("다음 플레이어 별 세팅")
+                            .data(StarResponseDto.builder()
+                                    .weight(gsb.getPlayers().get(0).getHistories().get(curRound).getWeight())
+                                    .nextPlayer(gsb.getPlayers().get(1).getNickname())
+                                    .build())
+                            .build();
+                    gsb.setCurrentPlayer(gsb.getPlayers().get(1).getNickname());
+                }
+            } else{
+                log.info("후플레이어");
+                History history = setStarSecond(curRound,1, gameCode, starDto);
+                Map<Integer, History>  historyMap = gsb.getPlayers().get(1).getHistories();
+                if( history != null){
+                    if(historyMap == null ){
+                        historyMap = new HashMap<>();
+
+                    }
+                    historyMap.put(curRound,history);
+                    gsb.getPlayers().get(1).setHistories(historyMap);
+
+                    messageDTO = MessageDTO.builder()
+                            .type("다음 플레이어 베팅 시작")
+                            .data(StarResponseDto.builder()
+                                    .weight(gsb.getPlayers().get(1).getHistories().get(curRound).getWeight())
+                                    .nextPlayer(gsb.getPlayers().get(0).getNickname())
+                                    .build())
+                            .build();
+                    gsb.setCurrentPlayer(gsb.getPlayers().get(0).getNickname());
+
+                }
+            }
+        }
+        gsbRepository.save(gsb);
+        return messageDTO;
+
+    }
+
+    // 선 플레이어 일때
+    public History setStarFirst(int round, int idx ,String gameCode, StarDto starDto){
+        int weight = getWeight(starDto);
+        if(weight<4 && weight >12){
+            // TODO: 들어올 수 없는 값 예외 처리
+            return null;
+        }
+        History history = History.builder()
+                .bronze(starDto.getBronze())
+                .silver(starDto.getSilver())
+                .gold(starDto.getGold())
+                .weight(weight)
+                .build();
+
+        return history;
+    }
+    // 후 플레이어 일 때
+    public History setStarSecond(int round,int idx, String gameCode, StarDto starDto){
+        int beforeIdx = -1;
+        if(idx==0){
+            beforeIdx =1;
+        } else{
+            beforeIdx =0;
+        }
+        int firstWeight = getInfo(gameCode).getPlayers().get(beforeIdx).getHistories().get(round).getWeight();
+
+        int weight = getWeight(starDto);
+        // 차이가 이상 3일 때
+        if(Math.abs(firstWeight - weight) >3 ){
+            // TODO: 들어올 수 없는 값 예외 처리
+            return null;
+        }
+
+        History history = History.builder()
+                .bronze(starDto.getBronze())
+                .silver(starDto.getSilver())
+                .gold(starDto.getGold())
+                .weight(weight)
+                .build();
+        return history;
+
+
+
+    }
+
+    public int getWeight(StarDto starDto){
+        return starDto.getGold()*GOLD_WEIGHT
+                + starDto.getSilver()*SILVER_WEIGHT
+                + starDto.getBronze() *BRONZE_Weight;
+    }
+     
+
     public Gsb setGsb(String gameCode) {
         Gsb gsb = gsbRepository.findById(gameCode).orElseThrow();
         gsb.nextRound();

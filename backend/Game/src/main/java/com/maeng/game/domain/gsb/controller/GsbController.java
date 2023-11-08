@@ -2,6 +2,7 @@ package com.maeng.game.domain.gsb.controller;
 
 import com.maeng.game.domain.gsb.dto.GsbNicknameDto;
 import com.maeng.game.domain.gsb.dto.PlayerSeqDto;
+import com.maeng.game.domain.gsb.dto.StarDto;
 import com.maeng.game.domain.gsb.entity.Gsb;
 import com.maeng.game.domain.gsb.entity.StartCard;
 import com.maeng.game.domain.gsb.service.GsbEnterService;
@@ -71,12 +72,15 @@ public class GsbController {
     }
 
 
-    @MessageMapping("game.gsb.setStar.{gameCode}")
-    public void setStar(@DestinationVariable String gameCode) {
-        /*TODO: 선 플레이어일 때*/
+    @MessageMapping("game.gsb.set-star.{gameCode}")
+    public void setStar(@DestinationVariable String gameCode, StarDto starDto) {
+
+        template.convertAndSend(Game_EXCHANGE_NAME, "gsb."+gameCode,gsbService.setStar( gameCode , starDto ));
 
 
-        /*TODO: 후 플레이어일 때*/
+    }
+    @MessageMapping("game.gbs.betting.{gameCode}")
+    public void setBet(@DestinationVariable String gameCode){
 
     }
     @GetMapping

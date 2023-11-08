@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Map;
+
 @Getter
 @Setter
 @Builder
@@ -16,6 +18,6 @@ public class Player {
     private int currentGold;
     private int currentSilver;
     private int currentBronze;
-    
+    private Map<Integer, History> histories;
 
 }
