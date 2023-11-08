@@ -8,7 +8,6 @@ import org.springframework.data.redis.core.RedisHash;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 
 @Builder
 @Data
