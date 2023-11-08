@@ -27,8 +27,8 @@ public class AwrspTimerService {
     private final TimerRepository timerRepository;
     private final AwrspRepository awrspRepository;
     private final static String GAME_EXCHANGE = "game";
-    private static final int CARD_OPEN = 15;
     private static final int CARD_SUBMIT = 60;
+    private static final int DRAW_CARD = 10;
     private static final int PLAYER_WINS = 20;
     private static final int ALL_WINS = 10;
 
@@ -44,10 +44,10 @@ public class AwrspTimerService {
     @Operation(summary = "타이머 시작")
     public void timerStart(String gameCode, String type){
         MessageDTO messageDTO = MessageDTO.builder()
-                .type(type)
-                .data(getTimerSec(type))
+                .type("TIMER")
+                .data(this.getTimerSec(type))
                 .build();
-        template.convertAndSend(GAME_EXCHANGE, "awrsp."+gameCode, messageDTO);
+        template.convertAndSend(GAME_EXCHANGE, "awrsp."+gameCode, getTimerSec(type));
     }
 
     @Transactional
@@ -81,14 +81,14 @@ public class AwrspTimerService {
         return game;
     }
 
-    @Operation(summary = "타이머 타입에 따른 다음 타이머 시간 조회")
+    @Operation(summary = "타이머 타입에 따른 타이머 시간 조회")
     public int getTimerSec(String type){
 
-        if(type.equals("ENTER_GAME")){
-            return CARD_OPEN;
+        if(type.equals("ENTER_GAME")){ // 해당 타이머가 끝났다는 신호
+            return DRAW_CARD;
         }
 
-        if(type.equals("CARD_OPEN")){
+        if(type.equals("DRAW_CARD")){
             return CARD_SUBMIT;
         }
 

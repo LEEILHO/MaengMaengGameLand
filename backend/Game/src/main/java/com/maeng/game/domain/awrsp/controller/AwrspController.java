@@ -33,8 +33,8 @@ public class AwrspController {
     public void timerEnd(@DestinationVariable String gameCode, TimerDTO timerDTO){
         boolean finish = awrspTimerService.timerEnd(gameCode, timerDTO);
         if(finish){
-            this.callGameMethod(gameCode, timerDTO.getType());
-            awrspTimerService.timerStart(gameCode, timerDTO.getType()); // 그 다음 타이머 호출
+            String type = this.callGameMethod(gameCode, timerDTO.getType());
+            awrspTimerService.timerStart(gameCode, type); // 그 다음 타이머 호출
         }
     }
 
@@ -45,7 +45,7 @@ public class AwrspController {
         if(finish){
             awrspService.getWinCount(gameCode);
             if(awrspService.checkGameOver(gameCode)){
-                awrspTimerService.timerStart(gameCode, "CARD_SUBMIT"); // 그 다음 타이머 호출
+                awrspTimerService.timerStart(gameCode, "PLAYER_WINS"); // 그 다음 타이머 호출
             }else{
                 awrspService.sendGameResult(gameCode);
             }
@@ -53,16 +53,20 @@ public class AwrspController {
     }
 
     @Operation(summary = "타입에 따른 게임 로직 함수 호출")
-    public void callGameMethod(String gameCode, String type){
+    public String callGameMethod(String gameCode, String type){
         if(type.equals("ENTER_GAME")){ // 게임 참가
-            log.info("라운드 시작");
-            awrspService.gameStart(gameCode);
-            return;
+            awrspService.enterGame(gameCode); // 라운드 초기화
+
+            if(awrspService.passDrawCard(gameCode)){ // 1~2라운드이면 카드제출로 바로 넘어가기
+                return "DRAW_CARD";
+            }
+            return type;
         }
 
-        if(type.equals("CARD_OPEN")){ // 정답 카드 공개 끝났을 때
+
+        if(type.equals("CARD_SUBMIT")){ // 정답 카드 공개 끝났을 때
             awrspService.getWinCount(gameCode);
-            return;
+            return type;
         }
 
         throw new TimerTypeException("잘못된 타이머 타입입니다.");

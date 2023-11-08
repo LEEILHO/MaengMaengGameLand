@@ -87,7 +87,7 @@ public class AwrspService {
 
     @Transactional
     @Operation(summary = "게임 참가")
-    public synchronized void gameStart(String gameCode){
+    public synchronized void enterGame(String gameCode){
         // 모든 참가자에게서 해당 요청을 받으면 게임 시작 -> 타이머 시작  / 문제 카드 전송
         log.info("모든 플레이어 참가 완료");
 
@@ -134,7 +134,6 @@ public class AwrspService {
         Game game = this.getCurrentGame(gameCode);
         Submit submit = this.getCurrentSubmit(gameCode);
         HashMap<String, Player> players = game.getPlayers();
-        List<RoundResultDTO> resultAll = new ArrayList<>();
         int currentRound = game.getCurrentRound();
 
         log.info("현재 라운드 : "+currentRound);
@@ -243,6 +242,12 @@ public class AwrspService {
 
     }
 
+    @Operation(summary = "1~2 라운드는 비김 카드 패스")
+    public boolean passDrawCard(String gameCode){
+        Game game = this.getCurrentGame(gameCode);
+        return game.getCurrentRound() < 3;
+    }
+
     @Transactional
     public int rockScissorPaper(Card problem, Card card){
         // TODO : 가위바위보 이기면 1, 비기면 0, 지면 -1 반환
@@ -298,7 +303,7 @@ public class AwrspService {
         return problem;
     }
 
-    @Transactional
+
     public Game getCurrentGame(String gameCode){
         Game game = awrspRepository.findById(gameCode).orElse(null);
 
@@ -309,7 +314,6 @@ public class AwrspService {
         return game;
     }
 
-    @Transactional
     public Submit getCurrentSubmit(String gameCode){
         Submit submit = submitRepository.findById(gameCode).orElse(null);
 
