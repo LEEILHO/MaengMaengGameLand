@@ -37,9 +37,8 @@ public class MessageListener {
 
 	@RabbitListener(queues = "jwac.queue")
 	public void receiveMessage2(String message){
-		Jwac jwac = null;
 		try {
-			jwac = objectMapper.readValue(message, Jwac.class);
+			Jwac jwac = objectMapper.readValue(message, Jwac.class);
 			jwacRecordService.saveJwacRecord(jwac);
 		} catch (Exception e) {
 			System.out.println("jwac json parsing error");
@@ -54,9 +53,8 @@ public class MessageListener {
 
 	@RabbitListener(queues = "awrsp.queue")
 	public void receiveMessage4(String message){
-		Awrsp awrap = null;
 		try {
-			awrap = objectMapper.readValue(message, Awrsp.class);
+			Awrsp awrap = objectMapper.readValue(message, Awrsp.class);
 			awrspRecordService.saveAwrspRecord(awrap);
 		} catch (Exception e) {
 			System.out.println("jwac json parsing error");
