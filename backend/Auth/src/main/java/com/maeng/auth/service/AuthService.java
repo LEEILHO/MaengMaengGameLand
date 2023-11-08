@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -245,9 +246,10 @@ public class AuthService {
         }
     }
 
-
-
-
-
-
+    @Transactional(readOnly = true)
+	public String getProfile(String nickname) {
+        User user = userRepository.findUserByNickname(nickname).orElseThrow(()
+                -> new AuthException(ExceptionCode.USER_NOT_FOUND));
+        return user.getProfile_image();
+	}
 }
