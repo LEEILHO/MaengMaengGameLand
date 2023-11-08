@@ -100,26 +100,23 @@ const useSocketJWAC = () => {
       // 게임 라운드 시작
       if (result.type === 'GAME_ROUND_START') {
         const data = result.data as RoundDataType
-        console.log('게임 라운드 스타트', data)
-        console.log('[게임 라운드 스타트 이후 플레이어 정보]', playerList)
-
         setRoundData(data)
       }
 
       // 게임 결과 받아서 업데이트
       if (result.type === 'GAME_ROUND_RESULT') {
         const data = result.data as RoundResultType
-        console.log('[기존 플레이어 리스트]', playerList)
-        console.log('[새로운 플레이어 리스트]', data.players)
-        const newPlayerList = playerList.map((player) => {
-          return {
-            ...player,
-            ...data.players.filter((item) => item.nickname === player.nickname),
-          }
-        })
         setRoundTotalData(data)
-        console.log('[업데이트 된 플레이어 리스트]', newPlayerList)
-        setPlayerList(newPlayerList)
+        setPlayerList((prev) =>
+          prev.map((player) => {
+            return {
+              ...player,
+              ...data.players.filter(
+                (item) => item.nickname === player.nickname,
+              ),
+            }
+          }),
+        )
       }
 
       // 보석 정보 확인권 아이템 정보 받기
