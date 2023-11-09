@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.PriorityQueue;
 import java.util.stream.Collectors;
 
@@ -134,9 +135,18 @@ public class JwacService {
 		return JwacGameResultDTO.builder()
 			.roomCode(jwac.getRoomCode())
 			.gameCode(jwac.getGameCode())
-			.rank(rank)
-			.players(getRoundPlayerInfo(players))
+			.rank(sortPlayersByRanking(rank, getRoundPlayerInfo(players)))
 			.build();
+	}
+
+	public List<PlayerInfo> sortPlayersByRanking(List<String> rank, List<PlayerInfo> players) {
+		return rank.stream()
+			.map(nickname -> players.stream()
+				.filter(player -> player.getNickname().equals(nickname))
+				.findFirst()
+				.orElse(null))
+			.filter(Objects::nonNull)
+			.collect(Collectors.toList());
 	}
 
 	@Transactional(readOnly = true)
