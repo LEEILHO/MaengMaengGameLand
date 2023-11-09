@@ -43,7 +43,7 @@ const page = () => {
   ) // 현재 플레이어의 정보
   const prevRound = useMemo(() => {
     if (!roundResult) return 0
-    return Math.floor(roundResult.round / 4)
+    return Math.floor(roundResult.round / 4) * 4
   }, [roundResult])
 
   const handleTimeOver = useCallback(() => {
@@ -170,6 +170,7 @@ const page = () => {
               type="number"
               value={bidMoney.toString()}
               onChange={handleBidMody}
+              max={999999999999}
             />
             <S.PriceUnit>원</S.PriceUnit>
           </S.PriceRow>

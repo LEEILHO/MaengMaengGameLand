@@ -24,7 +24,7 @@ const JWACRoundResultDisplay = ({ jewely, socre, roundResult }: Props) => {
     if (jewely === 'RUBY') return images.gameRoom.jwac.ruby
     if (jewely === 'EMERALD') return images.gameRoom.jwac.emerald
     if (jewely === 'SAPPHIRE') return images.gameRoom.jwac.sapphire
-    // if (jewely === 'SPECIAL') return '보석 정보 확인서'
+    if (jewely === 'SPECIAL') return images.gameRoom.jwac.jewelryInfomation
   }
 
   return (
@@ -32,23 +32,29 @@ const JWACRoundResultDisplay = ({ jewely, socre, roundResult }: Props) => {
       <S.JewelyDataRow>
         <S.Jewely src={getJewelySrc(jewely)} alt="" />
         <S.JewelyName $type={jewely}>{getJewelyName(jewely)}</S.JewelyName>
-        <S.JewelyCost $type={jewely}>{`${socre}점`}</S.JewelyCost>
+        {jewely !== 'SPECIAL' && (
+          <S.JewelyCost $type={jewely}>{`${socre}점`}</S.JewelyCost>
+        )}
       </S.JewelyDataRow>
       <S.DisplayRow>
         <S.SuccessfulBidder>낙찰자</S.SuccessfulBidder>
         <S.SuccessfulBidderName>
           {roundResult?.mostBidder}
         </S.SuccessfulBidderName>
-        <S.SuccessfulBidderScore>
-          {roundResult?.jewelryScore}
-        </S.SuccessfulBidderScore>
+        {jewely !== 'SPECIAL' && (
+          <S.SuccessfulBidderScore>
+            {roundResult?.jewelryScore}
+          </S.SuccessfulBidderScore>
+        )}
       </S.DisplayRow>
       <S.DisplayRow>
         <S.LowestPriceBidder>최저 금액 입찰자</S.LowestPriceBidder>
         <S.LowestPriceBidderName>
           {roundResult?.leastBidder}
         </S.LowestPriceBidderName>
-        <S.LowestPriceBidderScore>(-1)</S.LowestPriceBidderScore>
+        {jewely !== 'SPECIAL' && (
+          <S.LowestPriceBidderScore>(-1)</S.LowestPriceBidderScore>
+        )}
       </S.DisplayRow>
     </S.RoundResultDisplayContainer>
   )

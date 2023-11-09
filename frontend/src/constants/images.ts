@@ -59,6 +59,7 @@ export const images = {
       sapphire: '/images/gameRoom/sapphire.png',
       checkIcon: '/images/gameRoom/ic-check-item.png',
       jewelryInfomationFrame: '/images/gameRoom/frame-jewelry-infomation.png',
+      jewelryInfomation: '/images/gameRoom/jewelry-infomation.png',
     },
   },
 }
