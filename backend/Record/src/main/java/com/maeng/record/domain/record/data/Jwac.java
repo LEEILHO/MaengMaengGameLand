@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.maeng.record.domain.record.enums.Jwerly;
+import com.maeng.record.domain.record.enums.Jewelry;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -39,8 +39,8 @@ public class Jwac {
 	@JsonProperty("bidAmounts")
 	private Map<String, Integer> bidAmounts;
 
-	@JsonProperty("jwerly")
-	private Map<Integer, Jwerly> jwerly;
+	@JsonProperty("jewelry")
+	private Map<Integer, Jewelry> jewelry;
 
 	@JsonProperty("players")
 	private Map<String, Player> players;

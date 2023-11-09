@@ -17,7 +17,7 @@ import com.maeng.record.domain.record.entity.GameUser;
 import com.maeng.record.domain.record.entity.JwacRound;
 import com.maeng.record.domain.record.entity.JwacRoundBid;
 import com.maeng.record.domain.record.enums.GameCategoty;
-import com.maeng.record.domain.record.enums.Jwerly;
+import com.maeng.record.domain.record.enums.Jewelry;
 import com.maeng.record.domain.record.repository.GameParticipantRepository;
 import com.maeng.record.domain.record.repository.GameRepository;
 import com.maeng.record.domain.record.repository.GameUserRepository;
@@ -40,7 +40,7 @@ public class JwacRecordService {
 
 		Map<String, GameParticipant> participants = createGameParticipant(game, new ArrayList<>(jwac.getPlayers().keySet()), jwac);
 
-		Map<Integer, JwacRound> jwacRounds = createJwacRound(game, jwac.getMaxRound(), jwac.getJwerly());
+		Map<Integer, JwacRound> jwacRounds = createJwacRound(game, jwac.getMaxRound(), jwac.getJewelry());
 
 		List<JwacRoundBid> jwacRoundBids = createJwacBid(jwac.getPlayers(), participants, jwacRounds);
 
@@ -96,13 +96,13 @@ public class JwacRecordService {
 		return gameUser;
 	}
 
-	private Map<Integer, JwacRound> createJwacRound(Game game, Integer maxRound, Map<Integer, Jwerly> jwerly) {
+	private Map<Integer, JwacRound> createJwacRound(Game game, Integer maxRound, Map<Integer, Jewelry> jewelry) {
 		Map<Integer, JwacRound> jwacRounds = new HashMap<>();
 		for(int round = 1; round <= maxRound; round++) {
 			JwacRound jwacRound = JwacRound.builder()
 				.game(game)
 				.round(round)
-				.jwerly(jwerly.get(round))
+				.jewelry(jewelry.get(round))
 				.build();
 
 			jwacRounds.put(round, jwacRound);

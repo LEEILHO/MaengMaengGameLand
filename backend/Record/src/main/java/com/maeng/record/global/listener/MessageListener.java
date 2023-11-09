@@ -41,14 +41,14 @@ public class MessageListener {
 			Jwac jwac = objectMapper.readValue(message, Jwac.class);
 			jwacRecordService.saveJwacRecord(jwac);
 		} catch (Exception e) {
-			System.out.println("jwac json parsing error");
+			log.info("jwac json parsing error");
 		}
 
 	}
 
 	@RabbitListener(queues = "gsb.queue")
 	public void receiveMessage3(String message){
-		System.out.println("gsb = " + message);
+		log.info("gsb = " + message);
 	}
 
 	@RabbitListener(queues = "awrsp.queue")
@@ -57,7 +57,7 @@ public class MessageListener {
 			Awrsp awrap = objectMapper.readValue(message, Awrsp.class);
 			awrspRecordService.saveAwrspRecord(awrap);
 		} catch (Exception e) {
-			System.out.println("jwac json parsing error");
+			log.info("jwac json parsing error");
 		}
 	}
 }
