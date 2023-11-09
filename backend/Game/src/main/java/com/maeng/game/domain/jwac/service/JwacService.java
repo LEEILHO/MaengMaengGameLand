@@ -46,6 +46,9 @@ public class JwacService {
 	@Value("${game.jwac.round.special}")
 	private int SPECIAL_ROUND;
 
+	@Value("${game.jwac.score.penalty}")
+	private int PENALTY_SCORE;
+
 	private final JwacRedisRepository jwacRedisRepository;
 
 	@Transactional
@@ -302,7 +305,7 @@ public class JwacService {
 		for (String nickname : result.keySet()) {
 			History currentItem = result.get(nickname);
 			if(currentItem == null) {
-				jwac.getPlayers().get(nickname).addScore(-1);
+				jwac.getPlayers().get(nickname).addScore(PENALTY_SCORE);
 				leastBidder = "";
 				leastBidAmount = -1;
 				continue;
@@ -332,7 +335,7 @@ public class JwacService {
 		if (!leastBidder.isEmpty()) {
 			Player leastBidderPlayer = jwac.getPlayers().get(leastBidder);
 			leastBidderPlayer.getHistory().get(currentRound).roundLose();
-			leastBidderPlayer.addScore(-1);
+			leastBidderPlayer.addScore(PENALTY_SCORE);
 		}
 	}
 
