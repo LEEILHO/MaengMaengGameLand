@@ -31,6 +31,7 @@ const page = () => {
     handleBid,
     timeOver,
     roundData,
+    roundResult,
     playerList: players,
   } = useSocketJWAC()
   const { Modal, isOpen, closeModal, openModal } = useModal()
@@ -44,7 +45,6 @@ const page = () => {
     () => players.filter((player) => player.nickname === user?.nickname)[0],
     [players, user],
   ) // 현재 플레이어의 정보
-  const roundResult = useRecoilValue(jwacRoundResultState)
   const prevRound = useMemo(() => {
     if (!roundResult) return 0
     return Math.floor(roundResult.round / 4)
@@ -65,7 +65,8 @@ const page = () => {
 
   useEffect(() => {
     console.log('[플레이어 정보 변동]', players)
-  }, [players])
+    console.log('[내 정보]', myData)
+  }, [players, myData])
 
   useEffect(() => {
     if (user) {
@@ -148,6 +149,7 @@ const page = () => {
             <JWACRoundResultDisplay
               jewely={roundData.jewelry}
               socre={roundData.jewelryScore}
+              roundResult={roundResult}
             />
           )}
           {!isRoundStart && !isRoundEnd && <JWACUserList players={players} />}

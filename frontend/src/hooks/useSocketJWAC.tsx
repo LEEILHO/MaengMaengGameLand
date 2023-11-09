@@ -24,7 +24,7 @@ const useSocketJWAC = () => {
   const client = useRef<CompatClient>()
   const [playerList, setPlayerList] = useState<PlayerType[]>([])
   const [roundData, setRoundData] = useState<RoundDataType | null>(null)
-  const setRoundTotalData = useSetRecoilState(jwacRoundResultState)
+  const [roundResult, setRoundResult] = useState<RoundResultType | null>(null)
   const setJewelryItem = useSetRecoilState(jwacJewelryItemState)
 
   useEffect(() => {
@@ -94,13 +94,13 @@ const useSocketJWAC = () => {
       // 게임 라운드 시작
       if (result.type === 'GAME_ROUND_START') {
         const data = result.data as RoundDataType
-        setRoundData(data)
+        setRoundData((prev) => data)
       }
 
       // 게임 결과 받아서 업데이트
       if (result.type === 'GAME_ROUND_RESULT') {
         const data = result.data as RoundResultType
-        setRoundTotalData(data)
+        setRoundResult(() => data)
         setPlayerList((prev) => data.players)
       }
 
@@ -138,6 +138,7 @@ const useSocketJWAC = () => {
     handleBid,
     timeOver,
     roundData,
+    roundResult,
     playerList,
   }
 }

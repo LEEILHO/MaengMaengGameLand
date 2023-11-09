@@ -1,17 +1,16 @@
 import { jwacRoundResultState } from '@atom/jwacAtom'
 import { images } from '@constants/images'
 import * as S from '@styles/gameRoom/jwac/JWACRoundResultDisplay.styled'
-import { JewelryType } from '@type/gameRoom/jwac.type'
+import { JewelryType, RoundResultType } from '@type/gameRoom/jwac.type'
 import { useRecoilValue } from 'recoil'
 
 type Props = {
   jewely: JewelryType
   socre: number
+  roundResult: RoundResultType | null
 }
 
-const JWACRoundResultDisplay = ({ jewely, socre }: Props) => {
-  const roundResult = useRecoilValue(jwacRoundResultState)
-
+const JWACRoundResultDisplay = ({ jewely, socre, roundResult }: Props) => {
   const getJewelyName = (jewely: JewelryType) => {
     if (jewely === 'DIAMOND') return '다이아몬드'
     if (jewely === 'RUBY') return '루비'

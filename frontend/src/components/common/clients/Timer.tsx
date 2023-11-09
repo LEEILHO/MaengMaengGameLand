@@ -33,7 +33,7 @@ const Timer = ({ size, fontSize, time, timeOverHandle, round }: Props) => {
       console.log('타임 오버')
       timeOverHandle()
     }
-  }, [currentTime])
+  }, [currentTime, time, timeOverHandle])
 
   useEffect(() => {
     console.log(time - currentTime)
