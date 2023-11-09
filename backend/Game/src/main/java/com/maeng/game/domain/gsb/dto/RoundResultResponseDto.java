@@ -10,6 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class RoundResultResponseDto {
+    private int currentRound;
+    private int nextRound;
+    private String nextPlayer;
+
 
     private boolean isDraw;
 
