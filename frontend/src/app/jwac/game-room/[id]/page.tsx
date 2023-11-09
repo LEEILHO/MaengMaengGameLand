@@ -182,6 +182,8 @@ const page = () => {
                   value={bidMoney.toString()}
                   onChange={handleBidMody}
                   max={999999999999}
+                  maxLength={12}
+                  min={0}
                 />
                 <S.PriceUnit>원</S.PriceUnit>
               </S.PriceRow>

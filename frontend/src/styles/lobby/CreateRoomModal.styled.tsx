@@ -45,6 +45,7 @@ export const SubTitle = styled.h6`
   font-size: 16px;
   margin-right: 14px;
   width: 66px;
+  min-width: 66px;
   text-align: center;
 
   &.title {
@@ -105,10 +106,10 @@ export const SettingButton = styled.div<SettingButtonProps>`
           z-index: 2;
           background-color: #7000ff;
           width: 52px;
+          border-radius: 4px;
         `
       : css`
-          z-index: 1 back;
-          border-radius: 0px 4px 4px 0px;
+          z-index: 1;
           background: #aed2ff;
           width: 56px;
         `}
