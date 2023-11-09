@@ -1,18 +1,18 @@
-package com.lessgenius.maengland
+package com.lessgenius.maengland.ui
 
 import android.animation.ValueAnimator
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.wear.widget.SwipeDismissFrameLayout
+import com.lessgenius.maengland.R
 import com.lessgenius.maengland.base.BaseFragment
 import com.lessgenius.maengland.databinding.FragmentStartupBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class StartUpFragment : BaseFragment<FragmentStartupBinding>(
     FragmentStartupBinding::bind, R.layout.fragment_startup
 ) {
@@ -20,7 +20,7 @@ class StartUpFragment : BaseFragment<FragmentStartupBinding>(
     private lateinit var navController: NavController
     private lateinit var swipeCallback: SwipeDismissFrameLayout.Callback
 
-    private lateinit var valueAnimator : ValueAnimator
+    private lateinit var valueAnimator: ValueAnimator
 
     private var screenHeight: Int = 0
 

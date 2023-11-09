@@ -1,4 +1,4 @@
-package com.lessgenius.maengland
+package com.lessgenius.maengland.ui
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -21,12 +21,14 @@ import android.widget.RelativeLayout
 import android.widget.ScrollView
 import androidx.lifecycle.MutableLiveData
 import androidx.wear.widget.SwipeDismissFrameLayout
+import com.lessgenius.maengland.R
 import com.lessgenius.maengland.base.BaseFragment
 import com.lessgenius.maengland.databinding.FragmentGameBinding
-
+import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "GameFragment_김진영"
 
+@AndroidEntryPoint
 class GameFragment :
     BaseFragment<FragmentGameBinding>(FragmentGameBinding::bind, R.layout.fragment_game) {
 
