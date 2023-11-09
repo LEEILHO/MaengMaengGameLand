@@ -60,6 +60,7 @@ export const images = {
       checkIcon: '/images/gameRoom/ic-check-item.png',
       jewelryInfomationFrame: '/images/gameRoom/frame-jewelry-infomation.png',
       backWhite: '/images/gameRoom/ic-back-white.png',
+      jewelryInfomation: '/images/gameRoom/jewelry-infomation.png',
     },
   },
 }

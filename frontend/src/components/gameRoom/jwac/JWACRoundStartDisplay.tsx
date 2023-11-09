@@ -21,14 +21,16 @@ const JWACRoundStartDisplay = ({ jewely, socre }: Props) => {
     if (jewely === 'RUBY') return images.gameRoom.jwac.ruby
     if (jewely === 'EMERALD') return images.gameRoom.jwac.emerald
     if (jewely === 'SAPPHIRE') return images.gameRoom.jwac.sapphire
-    // if (jewely === 'SPECIAL') return '보석 정보 확인서'
+    if (jewely === 'SPECIAL') return images.gameRoom.jwac.jewelryInfomation
   }
 
   return (
     <S.RoundStartDisplayContainer>
       <S.Jewely src={getJewelySrc(jewely)} alt="" />
       <S.JewelyName $type={jewely}>{getJewelyName(jewely)}</S.JewelyName>
-      <S.JewelyCost $type={jewely}>{`${socre}점`}</S.JewelyCost>
+      {jewely !== 'SPECIAL' && (
+        <S.JewelyCost $type={jewely}>{`${socre}점`}</S.JewelyCost>
+      )}
     </S.RoundStartDisplayContainer>
   )
 }

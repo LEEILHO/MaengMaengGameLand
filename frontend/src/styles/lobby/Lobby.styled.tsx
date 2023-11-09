@@ -27,7 +27,7 @@ export const RoomListContainer = styled.div`
   display: flex;
   align-items: center;
   position: absolute;
-  top: 10%;
+  top: 15%;
 `
 
 export const ButtonRow = styled.div`

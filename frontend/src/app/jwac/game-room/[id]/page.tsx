@@ -9,11 +9,6 @@ import CButton from '@components/common/clients/CButton'
 import JWACUserList from '@components/gameRoom/jwac/JWACUserList'
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useRecoilValue } from 'recoil'
-import {
-  jwacPlayerListState,
-  jwacRoundResultState,
-  jwacRoundState,
-} from '@atom/jwacAtom'
 import { formatKoreanCurrency, jewelryToLottie } from '@utils/gameRoom/jwacUtil'
 import { userState } from '@atom/userAtom'
 import { usePathname } from 'next/navigation'
@@ -22,31 +17,40 @@ import JWACRoundStartDisplay from '@components/gameRoom/jwac/JWACRoundStartDispl
 import JWACRoundResultDisplay from '@components/gameRoom/jwac/JWACRoundResultDisplay'
 import useModal from '@hooks/useModal'
 import JewelryInfomationModal from '@components/gameRoom/jwac/JewelryInfomationModal'
+import useDidMountEffect from '@hooks/useDidMoundEffect'
 import JWACResult from '@components/gameRoom/jwac/JWACResult'
 
 const page = () => {
-  const { connectSocket, handleBid, timeOver } = useSocketJWAC()
+  const {
+    connectSocket,
+    disconnectSocket,
+    handleBid,
+    timeOver,
+    roundData,
+    roundResult,
+    playerList: players,
+  } = useSocketJWAC()
   const { Modal, isOpen, closeModal, openModal } = useModal()
   const pathname = usePathname().split('game-room/')[1]
   const [isLoading, setIsLoading] = useState(true) // 사람들이 모두 들어오기 전에 로딩 페이지를 보여줄지 말지
   const [isRoundStart, setIsRoundStart] = useState(false)
   const [isRoundEnd, setIsRoundEnd] = useState(false)
+  const [isSubmit, setIsSubmit] = useState(true)
   const [bidMoney, setBidMoney] = useState(0)
   const user = useRecoilValue(userState)
-  const roundData = useRecoilValue(jwacRoundState)
-  const players = useRecoilValue(jwacPlayerListState)
   const myData = useMemo(
     () => players.filter((player) => player.nickname === user?.nickname)[0],
     [players, user],
   ) // 현재 플레이어의 정보
-  const roundResult = useRecoilValue(jwacRoundResultState)
   const prevRound = useMemo(() => {
     if (!roundResult) return 0
-    return Math.floor(roundResult.round / 4)
+    return Math.floor(roundResult.round / 4) * 4
   }, [roundResult])
 
   const handleTimeOver = useCallback(() => {
-    timeOver(pathname, myData.nickname)
+    if (user) {
+      timeOver(pathname, user.nickname)
+    }
   }, [pathname])
 
   const handleBidMody = useCallback(
@@ -56,14 +60,36 @@ const page = () => {
     [],
   )
 
-  console.log(pathname)
+  const handleSubmit = () => {
+    if (user) {
+      handleBid(pathname, user.nickname, bidMoney)
+    }
+    setIsSubmit(false)
+    setBidMoney(0)
+  }
 
   useEffect(() => {
-    connectSocket(pathname, myData.nickname)
-  }, [])
+    console.log('[플레이어 정보 변동]', players)
+    console.log('[내 정보]', myData)
+  }, [players, myData])
+
+  useEffect(() => {
+    if (user) {
+      connectSocket(pathname, user.nickname)
+    }
+    return () => {
+      disconnectSocket()
+    }
+  }, [pathname, user])
+
+  // 다음 라운드 시작 시
+  useEffect(() => {
+    console.log('[라운드 데이터 변경]', roundData)
+    setIsSubmit(true)
+  }, [roundData])
 
   // 라운드가 시작되고 3초간 경매 보석 정보 보여주기
-  useEffect(() => {
+  useDidMountEffect(() => {
     setIsRoundStart(true)
     // 3초 후에 isRoundStart를 false로 변경
     const timeoutId = setTimeout(() => {
@@ -74,20 +100,20 @@ const page = () => {
       clearTimeout(timeoutId) // cleanup 시 clearTimeout을 호출하여 타이머를 제거
     }
   }, [roundData])
-
-  // 라운드가 끝나고 3초간 경매 결과 보여주기
-  useEffect(() => {
+  // 라운드가 끝나고 1.5초간 경매 결과 보여주기
+  useDidMountEffect(() => {
+    console.log('[라운드 종료]')
     setIsRoundEnd(true)
     const timeoutId = setTimeout(() => {
       setIsRoundEnd(false)
-    }, 3000)
+    }, 1500)
 
     return () => {
       clearTimeout(timeoutId)
     }
   }, [roundResult])
 
-  if (!roundData || !players) return <div>loading...</div>
+  if (!user || !roundData || !players) return <div>loading...</div>
 
   return (
     <>
@@ -98,9 +124,11 @@ const page = () => {
         <S.NewsContainer>
           {roundResult && (
             <S.CumulativePrice>
-              {`${prevRound} Round 기준 경매가 : ${formatKoreanCurrency(
-                roundResult.roundBidSum,
-              )}`}
+              {prevRound !== 0
+                ? `${prevRound}Round 기준 경매가 : ${formatKoreanCurrency(
+                    roundResult.roundBidSum,
+                  )}`
+                : '4Round마다 누적 라운드 금액이 공개됩니다.'}
             </S.CumulativePrice>
           )}
         </S.NewsContainer>
@@ -113,24 +141,25 @@ const page = () => {
           <Timer
             size="80"
             fontSize="14"
-            // time={roundData.time}
-            time={100000}
+            time={roundData.time}
+            round={roundData.round}
             timeOverHandle={handleTimeOver}
           />
         </S.TimerContainer>
         <S.DisplayBoardContainer>
           <S.DisplayRoundFrame src={images.gameRoom.jwac.roundFrame} />
           <S.RoundText>{`${roundData.round} Round`}</S.RoundText>
-          {isRoundStart && (
+          {!isRoundEnd && isRoundStart && (
             <JWACRoundStartDisplay
               jewely={roundData.jewelry}
               socre={roundData.jewelryScore}
             />
           )}
-          {!isRoundStart && isRoundEnd && (
+          {isRoundEnd && (
             <JWACRoundResultDisplay
               jewely={roundData.jewelry}
               socre={roundData.jewelryScore}
+              roundResult={roundResult}
             />
           )}
           {!isRoundStart && !isRoundEnd && <JWACUserList players={players} />}
@@ -140,8 +169,9 @@ const page = () => {
           <S.PriceRow>
             <S.PriceInput
               type="number"
-              value={bidMoney}
+              value={bidMoney.toString()}
               onChange={handleBidMody}
+              max={999999999999}
             />
             <S.PriceUnit>원</S.PriceUnit>
           </S.PriceRow>
@@ -155,15 +185,28 @@ const page = () => {
             </S.CumlativePrice>
           </S.CumlativeAmountCotainer>
           <S.ButtonRow>
-            <CButton
-              text="제출"
-              color="white"
-              radius={24}
-              backgroundColor="#7000FF"
-              fontSize={14}
-              height={32}
-              onClick={() => handleBid(pathname, myData.nickname, bidMoney)}
-            />
+            {isSubmit ? (
+              <CButton
+                text="제출"
+                color="white"
+                radius={24}
+                backgroundColor="#7000FF"
+                fontSize={14}
+                height={32}
+                onClick={handleSubmit}
+              />
+            ) : (
+              <CButton
+                text="제출 완료"
+                color="white"
+                radius={24}
+                backgroundColor="#bababa"
+                fontSize={14}
+                height={32}
+                onClick={() => {}}
+                disabled
+              />
+            )}
           </S.ButtonRow>
         </S.NoteContainer>
         <S.ShowCaseCatainer>
