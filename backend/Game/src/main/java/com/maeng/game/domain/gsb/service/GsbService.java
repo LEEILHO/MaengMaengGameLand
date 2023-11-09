@@ -442,7 +442,7 @@ public class GsbService {
         if(player1History.getBettingChips()>player2History.getBettingChips()){
             winner = 0;
 
-        } else if( player1History.getBettingChips()>player2History.getBettingChips()){
+        } else if( player1History.getBettingChips() < player2History.getBettingChips()){
             winner = 1;
 
         } else{
@@ -497,7 +497,7 @@ public class GsbService {
                             .nextRound(currentRound+1)
                             .nextPlayer(nextPlayer)
                             .timer(30)
-                            .isDraw(false)
+                            .draw(false)
                             .winner(player1.getNickname())
                             .winnerGold(player1Gold)
                             .winnerSilver(player1Silver)
@@ -525,7 +525,7 @@ public class GsbService {
                             .nextRound(currentRound+1)
                             .nextPlayer(nextPlayer)
                             .timer(30)
-                            .isDraw(false)
+                            .draw(false)
                             .winner(player2.getNickname())
                             .winnerGold(player2Gold)
                             .winnerSilver(player2Silver)
@@ -547,7 +547,7 @@ public class GsbService {
                             .currentRound(currentRound)
                             .nextRound(currentRound+1)
                             .nextPlayer(nextPlayer)
-                            .isDraw(true)
+                            .draw(true)
                             .build())
                     .build();
 

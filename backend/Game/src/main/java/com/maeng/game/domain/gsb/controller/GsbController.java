@@ -81,12 +81,14 @@ public class GsbController {
     @MessageMapping("game.gsb.betting.{gameCode}")
     public void setBet(@DestinationVariable String gameCode, BettingDto bettingDto){
         /*TODO: 베팅 DTO 반환 */
+        MessageDTO messageDTO = gsbService.setBet(gameCode,bettingDto);
 
-        template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode,gsbService.setBet(gameCode,bettingDto));
+        template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode,messageDTO);
 
         /*TODO: 라운드가 종료 되었으면 라운드 결과 반환 + 다음플레이어 해야할 일 반환*/
 
-        if(gsbService.endRound(gameCode)){
+
+        if(messageDTO.getType().equals("베팅 종료")||gsbService.endRound(gameCode)){
             template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode,gsbService.getRoundResult(gameCode));
         }
     }
