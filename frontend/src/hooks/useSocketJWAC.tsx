@@ -10,6 +10,7 @@ import { SOCKET_URL } from '@constants/baseUrl'
 import { CompatClient, Stomp } from '@stomp/stompjs'
 import { socketResponseType } from '@type/common/common.type'
 import {
+  GameEndResponseType,
   GameInfoType,
   RoundDataType,
   RoundResultType,
@@ -118,6 +119,11 @@ const useSocketJWAC = () => {
       if (result.type === 'GAME_SPECIAL_ITEM_RESULT') {
         const data = result.data as SpecialItemResultType
         setJewelryItem(data.itemResult)
+      }
+
+      // 게임 종료
+      if (result.type === 'Game_END') {
+        const data = result.data as GameEndResponseType
       }
     })
   }

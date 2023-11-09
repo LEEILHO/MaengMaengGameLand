@@ -22,6 +22,7 @@ import JWACRoundStartDisplay from '@components/gameRoom/jwac/JWACRoundStartDispl
 import JWACRoundResultDisplay from '@components/gameRoom/jwac/JWACRoundResultDisplay'
 import useModal from '@hooks/useModal'
 import JewelryInfomationModal from '@components/gameRoom/jwac/JewelryInfomationModal'
+import JWACResult from '@components/gameRoom/jwac/JWACResult'
 
 const page = () => {
   const { connectSocket, handleBid, timeOver } = useSocketJWAC()
@@ -171,6 +172,17 @@ const page = () => {
             <Lottie animationData={jewelryToLottie(roundData.jewelry)} loop />
           </S.JewelContainer>
         </S.ShowCaseCatainer>
+
+        {/* 결과화면 렌더링 */}
+        {
+          <>
+            <JWACResult />
+            <S.BackButton
+              src={images.gameRoom.jwac.backWhite}
+              alt="로비로 나가기"
+            />
+          </>
+        }
       </S.RoomContainer>
     </>
   )
