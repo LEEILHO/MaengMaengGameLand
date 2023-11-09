@@ -13,19 +13,22 @@ public class RoundResultResponseDto {
     private int currentRound;
     private int nextRound;
     private String nextPlayer;
+    private int timer;
 
 
-    private boolean isDraw;
+    private boolean draw;
 
     private String winner;
     private int winnerGold;
     private int winnerSilver;
     private int winnerBronze;
+    private int currentWinnerChips;
 
     private String loser;
     private int loserGold;
     private int loserSilver;
     private int loserBronze;
+    private int currentLoserChips;
 
 
 

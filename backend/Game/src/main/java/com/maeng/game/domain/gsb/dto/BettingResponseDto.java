@@ -15,4 +15,5 @@ public class BettingResponseDto {
     private String currentPlayer;
     private int currentChips;
     private int totalChips;
+    private int timer;
 }

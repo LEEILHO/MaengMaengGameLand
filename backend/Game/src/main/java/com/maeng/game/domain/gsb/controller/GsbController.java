@@ -68,8 +68,6 @@ public class GsbController {
                     .data(gsb)
                     .build());
         }
-
-
     }
 
 
@@ -86,17 +84,11 @@ public class GsbController {
 
         template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode,gsbService.setBet(gameCode,bettingDto));
 
-
-
         /*TODO: 라운드가 종료 되었으면 라운드 결과 반환 + 다음플레이어 해야할 일 반환*/
 
         if(gsbService.endRound(gameCode)){
             template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode,gsbService.getRoundResult(gameCode));
-
-
         }
-
-
     }
     @GetMapping
     public ResponseEntity<?> test(){

@@ -6,14 +6,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class StarResponseDto {
-
-
-    private int weight;
-    private String nextPlayer;
+public class RoundDto {
+    private int round;
+    private int firstPlayer;
     private int timer;
-
 }
