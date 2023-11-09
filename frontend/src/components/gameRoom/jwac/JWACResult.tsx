@@ -1,8 +1,13 @@
 import * as S from '@styles/gameRoom/jwac/JWACResult.styled'
 import JWACResultUser from './JWACResultUser'
 import { images } from '@constants/images'
+import { PlayerResultType } from '@type/gameRoom/jwac.type'
 
-const JWACResult = () => {
+type Props = {
+  gameResult: PlayerResultType[]
+}
+
+const JWACResult = ({ gameResult }: Props) => {
   return (
     <S.JWACResultContainer>
       <S.DiscriptionRow>
@@ -11,11 +16,9 @@ const JWACResult = () => {
         <S.MoneyTitle>사용 금액</S.MoneyTitle>
       </S.DiscriptionRow>
       <S.PlayerListContainer>
-        {Array(8)
-          .fill(0)
-          .map(() => (
-            <JWACResultUser />
-          ))}
+        {gameResult.map((player) => (
+          <JWACResultUser player={player} />
+        ))}
       </S.PlayerListContainer>
     </S.JWACResultContainer>
   )

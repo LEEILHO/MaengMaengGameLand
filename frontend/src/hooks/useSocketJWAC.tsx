@@ -12,6 +12,7 @@ import { socketResponseType } from '@type/common/common.type'
 import {
   GameEndResponseType,
   GameInfoType,
+  PlayerResultType,
   PlayerType,
   RoundDataType,
   RoundResultType,
@@ -26,6 +27,8 @@ const useSocketJWAC = () => {
   const [playerList, setPlayerList] = useState<PlayerType[]>([])
   const [roundData, setRoundData] = useState<RoundDataType | null>(null)
   const [roundResult, setRoundResult] = useState<RoundResultType | null>(null)
+  const [gameResult, setGameResult] = useState<PlayerResultType[]>([])
+  const [isGameEnd, setIsGameEnd] = useState(false)
   const setJewelryItem = useSetRecoilState(jwacJewelryItemState)
 
   useEffect(() => {
@@ -114,6 +117,8 @@ const useSocketJWAC = () => {
       // 게임 종료
       if (result.type === 'Game_END') {
         const data = result.data as GameEndResponseType
+        setGameResult(data.rank)
+        setIsGameEnd(true)
       }
     })
   }
@@ -146,6 +151,8 @@ const useSocketJWAC = () => {
     roundData,
     roundResult,
     playerList,
+    isGameEnd,
+    gameResult,
   }
 }
 

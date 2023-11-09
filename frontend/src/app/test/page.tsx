@@ -81,7 +81,7 @@ const Test = () => {
         </motion.div> */}
 
         {/* <Timer size="150" fontSize="24" time={10} /> */}
-        <JWACResult />
+        {/* <JWACResult /> */}
       </StyledTestContainer>
     </>
   )

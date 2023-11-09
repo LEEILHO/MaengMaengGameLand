@@ -1,16 +1,22 @@
 import { images } from '@constants/constants'
 import * as S from '@styles/gameRoom/jwac/JWACResultUser.styled'
+import { PlayerResultType } from '@type/gameRoom/jwac.type'
+import { formatKoreanCurrency } from '@utils/gameRoom/jwacUtil'
 
-const JWACResultUser = () => {
+type Props = {
+  player: PlayerResultType
+}
+
+const JWACResultUser = ({ player }: Props) => {
   return (
     <S.ResultUserContainer>
       <S.Rank>1</S.Rank>
       <S.UserData>
-        <S.UserProfileImage src={images.login.maengland} alt="프로필이미지" />
-        <S.UserName>ksg2388</S.UserName>
+        <S.UserProfileImage src={player.profileUrl} alt="프로필이미지" />
+        <S.UserName>{player.nickname}</S.UserName>
       </S.UserData>
-      <S.Score>13</S.Score>
-      <S.Money>1200억 3000만 5000원</S.Money>
+      <S.Score>{player.score}</S.Score>
+      <S.Money>{formatKoreanCurrency(player.bidSum)}</S.Money>
     </S.ResultUserContainer>
   )
 }
