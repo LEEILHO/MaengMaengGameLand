@@ -147,7 +147,7 @@ public class RoomService {
         }
 
         // 방장도 ready 상태로 변경
-        this.readyPlayer(roomCode, PlayerDTO.builder().nickname(user.getNickname()).build());
+        // this.readyPlayer(roomCode, PlayerDTO.builder().nickname(user.getNickname()).build());
         room = this.getCurrentRoom(roomCode);
         this.checkCount(room.getGameCategory(), room.getHeadCount()); // 최소 인원 확인
         this.checkReady(room.getParticipant()); // 플레이어 레디 상태 확인
@@ -339,6 +339,10 @@ public class RoomService {
 
         for(User user : users){
             if(user == null){
+                continue;
+            }
+
+            if(user.isHost()){
                 continue;
             }
 
