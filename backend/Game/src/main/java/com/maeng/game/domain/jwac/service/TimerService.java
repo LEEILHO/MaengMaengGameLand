@@ -19,7 +19,7 @@ public class TimerService {
 	private final TimerRedisRepository timerRedisRepository;
 
 	@Value("${game.jwac.round.time}")
-	private static int ROUND_TIME;
+	private int ROUND_TIME;
 
 	@Transactional
 	public synchronized boolean timerEnd(String gameCode, int headCount, JwacNicknameDto jwacNicknameDto) {
