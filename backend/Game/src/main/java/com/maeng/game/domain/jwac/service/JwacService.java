@@ -132,6 +132,8 @@ public class JwacService {
 
 		jwac.setRank(rank);
 
+		jwacRedisRepository.save(jwac);
+
 		return JwacGameResultDTO.builder()
 			.roomCode(jwac.getRoomCode())
 			.gameCode(jwac.getGameCode())
