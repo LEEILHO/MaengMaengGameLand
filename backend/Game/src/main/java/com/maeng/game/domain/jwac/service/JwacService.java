@@ -217,10 +217,15 @@ public class JwacService {
 
 		}
 
-		// Step 5: 플레이어 점수를 jwacRoundResult에 저장
+		// Step 5: 특수 아이템 사용자에게 아이템 권한 부여
+		if(currentRound == SPECIAL_ROUND) {
+			jwac.getPlayers().get(mostBidder).setSpecialItem(true);
+		}
+
+		// Step 6: 플레이어 점수를 jwacRoundResult에 저장
 		jwacRoundResultDto.setPlayers(getRoundPlayerInfo(jwac.getPlayers()));
 
-		// Step 6: 4라운드 마다 4라운드 동안의 입찰금 합계를 jwacRoundResult에 저장
+		// Step 7: 4라운드 마다 4라운드 동안의 입찰금 합계를 jwacRoundResult에 저장
 		Long bidSum = 0L;
 		if (currentRound >= 4) {
 			if(jwac.getBidAmounts() != null) {
@@ -233,7 +238,6 @@ public class JwacService {
 		}
 
 		jwacRedisRepository.save(jwac);
-
 
 		return jwacRoundResultDto;
 	}
@@ -332,12 +336,9 @@ public class JwacService {
 		}
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public JwacItemResultDTO getSpecialItemResult(String gameCode, String mostBidder) {
 		Jwac jwac = jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
-		jwac.getPlayers().get(mostBidder).setSpecialItem(true);
-		jwacRedisRepository.save(jwac);
-
 		Map<Integer, Jewelry> jewelry = jwac.getJewelry();
 		int currentRound = jwac.getCurrentRound();
 		int maxRound = jwac.getMaxRound();
