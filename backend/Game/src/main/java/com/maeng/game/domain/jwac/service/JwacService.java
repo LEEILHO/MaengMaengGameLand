@@ -193,6 +193,7 @@ public class JwacService {
 			.gameCode(jwac.getGameCode())
 			.roundBidSum(-1L)
 			.round(jwac.getCurrentRound())
+			.jewelry(jwac.getJewelry().get(jwac.getCurrentRound()))
 			.jewelryScore(getScore(jwac.getJewelry().get(jwac.getCurrentRound())))
 			.build();
 
