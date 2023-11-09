@@ -21,11 +21,13 @@ import com.maeng.auth.dto.OAuthToken;
 import com.maeng.auth.dto.RecordInfoDto;
 import com.maeng.auth.dto.TokenInfoResponse;
 import com.maeng.auth.dto.WatchToken;
+import com.maeng.auth.entity.Fcm;
 import com.maeng.auth.entity.User;
 import com.maeng.auth.entity.WatchJwtRedis;
 import com.maeng.auth.entity.WatchRedis;
 import com.maeng.auth.exception.AuthException;
 import com.maeng.auth.exception.ExceptionCode;
+import com.maeng.auth.repository.FcmRepository;
 import com.maeng.auth.repository.UserRepository;
 import com.maeng.auth.repository.WatchRepository;
 import com.maeng.auth.repository.WatchTokenRepository;
@@ -53,13 +55,15 @@ public class AuthService {
     private  final WatchRepository watchRepository;
 
     private final WatchTokenRepository watchTokenRepository;
+
+    private final FcmRepository fcmRepository;
     public AuthService(RabbitTemplate rabbitTemplate, RestTemplate restTemplate,
                        @Value("${spring.security.oauth2.client.registration.kakao.client-id}") String clientId,
                        @Value("${spring.security.oauth2.client.registration.kakao.client-secret}") String clientSecret ,
                        @Value("${spring.security.oauth2.client.provider.kakao.token-uri}") String accessTokenUrl,
                        @Value("${spring.security.oauth2.client.provider.kakao.user-info-uri}") String userInfoUrl,
                        JwtRedisManager jwtRedisManager, JwtProvider jwtProvider, UserRepository userRepository, WatchRepository watchRepository
-                        ,WatchTokenRepository watchTokenRepository){
+                        ,WatchTokenRepository watchTokenRepository, FcmRepository fcmRepository){
         this.rabbitTemplate = rabbitTemplate;
         this.restTemplate = restTemplate;
         this.clientId = clientId;
@@ -71,7 +75,7 @@ public class AuthService {
         this.userRepository = userRepository;
         this.watchRepository = watchRepository;
         this.watchTokenRepository =watchTokenRepository;
-
+        this.fcmRepository = fcmRepository;
 
     }
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -115,6 +119,11 @@ public class AuthService {
         OAuthToken oAuthToken = new OAuthToken(jwtProvider.generateAccessToken(userEmail),
                 jwtProvider.generateRefreshToken(userEmail));
         jwtRedisManager.storeJwt(userEmail, oAuthToken.getRefreshToken());
+
+        //Fcm token 저장
+        Fcm fcm = fcmRepository.findByUser(user).orElse(Fcm.builder().user(user).build());
+        fcm.setFcmToken(codeDto.getFcmToken());
+        fcmRepository.save(fcm);
 
         return oAuthToken;
     }
