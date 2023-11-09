@@ -255,6 +255,18 @@ public class AwrspService {
         return game.getCurrentRound() < 3;
     }
 
+    @Operation(summary = "라운드 정보")
+    public void sendRound(String gameCode){
+        Game game = this.getCurrentGame(gameCode);
+
+        MessageDTO messageDTO = MessageDTO.builder()
+                .type("ROUND")
+                .data(game.getCurrentRound())
+                .build();
+
+        template.convertAndSend(GAME_EXCHANGE, "awrsp."+gameCode, messageDTO);
+    }
+
     @Transactional
     public int rockScissorPaper(Card problem, Card card){
         // TODO : 가위바위보 이기면 1, 비기면 0, 지면 -1 반환

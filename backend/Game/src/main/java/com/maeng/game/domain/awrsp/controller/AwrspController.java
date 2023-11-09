@@ -29,7 +29,7 @@ public class AwrspController {
     }
 
     @Operation(summary = "타이머 종료")
-    @MessageMapping("awrsp.timer.{gameCode}")
+    @MessageMapping("game.awrsp.timer.{gameCode}")
     public void timerEnd(@DestinationVariable String gameCode, TimerDTO timerDTO){
         boolean finish = awrspTimerService.timerEnd(gameCode, timerDTO);
         if(finish){
@@ -39,7 +39,7 @@ public class AwrspController {
     }
 
     @Operation(summary = "카드 제출")
-    @MessageMapping("awrsp.submit.{gameCode}")
+    @MessageMapping("game.awrsp.submit.{gameCode}")
     public void cardSubmit(@DestinationVariable String gameCode, SubmitDTO submitDTO){
         boolean finish = awrspService.submitCard(gameCode, submitDTO);
         if(finish){
@@ -56,6 +56,7 @@ public class AwrspController {
     public String callGameMethod(String gameCode, String type){
         if(type.equals("ENTER_GAME")){ // 게임 참가
             awrspService.enterGame(gameCode); // 라운드 초기화
+            awrspService.sendRound(gameCode); // 라운드 정보
 
             if(awrspService.passDrawCard(gameCode)){ // 1~2라운드이면 카드제출로 바로 넘어가기
                 return "DRAW_CARD";

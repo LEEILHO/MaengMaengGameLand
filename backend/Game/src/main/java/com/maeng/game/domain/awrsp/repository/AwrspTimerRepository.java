@@ -5,5 +5,5 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TimerRepository extends CrudRepository<Timer, String> {
+public interface AwrspTimerRepository extends CrudRepository<Timer, String> {
 }
