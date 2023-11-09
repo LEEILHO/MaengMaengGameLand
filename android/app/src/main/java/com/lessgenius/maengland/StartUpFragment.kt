@@ -77,7 +77,9 @@ class StartUpFragment : BaseFragment<FragmentStartupBinding>(
 
     override fun onResume() {
         super.onResume()
-
+        if (::valueAnimator.isInitialized && valueAnimator.isPaused) {
+            valueAnimator.start()
+        }
     }
 
     override fun onPause() {
