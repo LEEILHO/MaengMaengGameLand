@@ -46,6 +46,9 @@ public class JwacService {
 	@Value("${game.jwac.round.special}")
 	private int SPECIAL_ROUND;
 
+	@Value("${game.jwac.score.penalty}")
+	private int PENALTY_SCORE;
+
 	private final JwacRedisRepository jwacRedisRepository;
 
 	@Transactional
@@ -178,6 +181,7 @@ public class JwacService {
 			.gameCode(jwac.getGameCode())
 			.roundBidSum(-1L)
 			.round(jwac.getCurrentRound())
+			.jewelryScore(getScore(jwac.getJewelry().get(jwac.getCurrentRound())))
 			.build();
 
 		int currentRound = jwac.getCurrentRound();
@@ -216,10 +220,15 @@ public class JwacService {
 
 		}
 
-		// Step 5: 플레이어 점수를 jwacRoundResult에 저장
+		// Step 5: 특수 아이템 사용자에게 아이템 권한 부여
+		if(currentRound == SPECIAL_ROUND) {
+			jwac.getPlayers().get(mostBidder).setSpecialItem(true);
+		}
+
+		// Step 6: 플레이어 점수를 jwacRoundResult에 저장
 		jwacRoundResultDto.setPlayers(getRoundPlayerInfo(jwac.getPlayers()));
 
-		// Step 6: 4라운드 마다 4라운드 동안의 입찰금 합계를 jwacRoundResult에 저장
+		// Step 7: 4라운드 마다 4라운드 동안의 입찰금 합계를 jwacRoundResult에 저장
 		Long bidSum = 0L;
 		if (currentRound >= 4) {
 			if(jwac.getBidAmounts() != null) {
@@ -232,7 +241,6 @@ public class JwacService {
 		}
 
 		jwacRedisRepository.save(jwac);
-
 
 		return jwacRoundResultDto;
 	}
@@ -297,7 +305,7 @@ public class JwacService {
 		for (String nickname : result.keySet()) {
 			History currentItem = result.get(nickname);
 			if(currentItem == null) {
-				jwac.getPlayers().get(nickname).addScore(-1);
+				jwac.getPlayers().get(nickname).addScore(PENALTY_SCORE);
 				leastBidder = "";
 				leastBidAmount = -1;
 				continue;
@@ -327,10 +335,11 @@ public class JwacService {
 		if (!leastBidder.isEmpty()) {
 			Player leastBidderPlayer = jwac.getPlayers().get(leastBidder);
 			leastBidderPlayer.getHistory().get(currentRound).roundLose();
-			leastBidderPlayer.addScore(-1);
+			leastBidderPlayer.addScore(PENALTY_SCORE);
 		}
 	}
 
+	@Transactional(readOnly = true)
 	public JwacItemResultDTO getSpecialItemResult(String gameCode, String mostBidder) {
 		Jwac jwac = jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
 		Map<Integer, Jewelry> jewelry = jwac.getJewelry();
