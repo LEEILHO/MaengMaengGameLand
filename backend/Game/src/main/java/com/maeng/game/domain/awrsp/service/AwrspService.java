@@ -120,9 +120,11 @@ public class AwrspService {
         awrspRepository.save(game);
 
         // Submit에 제출 등록
-        submit.getSubmit().add(submitDTO.getNickname());
-        log.info(submit.toString());
-        submitRepository.save(submit);
+        if(!submit.getSubmit().contains(submitDTO.getNickname())){
+            submit.getSubmit().add(submitDTO.getNickname());
+            log.info(submit.toString());
+            submitRepository.save(submit);
+        }
 
         return submit.getSubmit().size() == game.getHeadCount();
     }
@@ -162,6 +164,7 @@ public class AwrspService {
                 rank.getRank().add(player.getNickname());
                 rankRepository.save(rank);
 
+                player.setRank(rank.getRank().size());
                 player.setFinish(true);
                 player.setFinishedAt(history.getSubmitAt()); // 일단 제출한 시간으로 끝난 시간 저장
                 game.setFinishCount(game.getFinishCount()+1);
@@ -203,7 +206,8 @@ public class AwrspService {
     @Operation(summary = "게임 종료 확인")
     public boolean checkGameOver(String gameCode){
         Game game = this.getCurrentGame(gameCode);
-        return game.getFinishCount() >= 4 && game.getCurrentRound() >= MAX_ROUND;
+        log.info("승리한 사람 : "+game.getFinishCount());
+        return game.getFinishCount() >= 4 || game.getCurrentRound() >= MAX_ROUND;
     }
 
     @Transactional
