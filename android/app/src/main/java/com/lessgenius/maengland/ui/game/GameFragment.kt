@@ -1,4 +1,4 @@
-package com.lessgenius.maengland.ui
+package com.lessgenius.maengland.ui.game
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter

@@ -1,4 +1,4 @@
-package com.lessgenius.maengland.ui
+package com.lessgenius.maengland.ui.startup
 
 import android.animation.ValueAnimator
 import android.os.Bundle
