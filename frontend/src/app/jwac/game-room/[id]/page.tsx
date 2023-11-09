@@ -11,7 +11,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useRecoilValue } from 'recoil'
 import { formatKoreanCurrency, jewelryToLottie } from '@utils/gameRoom/jwacUtil'
 import { userState } from '@atom/userAtom'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import useSocketJWAC from '@hooks/useSocketJWAC'
 import JWACRoundStartDisplay from '@components/gameRoom/jwac/JWACRoundStartDisplay'
 import JWACRoundResultDisplay from '@components/gameRoom/jwac/JWACRoundResultDisplay'
@@ -34,6 +34,7 @@ const page = () => {
   } = useSocketJWAC()
   const { Modal, isOpen, closeModal, openModal } = useModal()
   const pathname = usePathname().split('game-room/')[1]
+  const router = useRouter()
   const [isLoading, setIsLoading] = useState(true) // 사람들이 모두 들어오기 전에 로딩 페이지를 보여줄지 말지
   const [isRoundStart, setIsRoundStart] = useState(false)
   const [isRoundEnd, setIsRoundEnd] = useState(false)
@@ -240,6 +241,9 @@ const page = () => {
             <S.BackButton
               src={images.gameRoom.jwac.backWhite}
               alt="로비로 나가기"
+              onClick={() => {
+                router.replace('/jwac/lobby')
+              }}
             />
           </>
         )}
