@@ -100,12 +100,16 @@ public class AwrspService {
     @Transactional
     @Operation(summary = "카드 제출")
     public synchronized boolean submitCard(String gameCode, SubmitDTO submitDTO){
-        Submit submit = this.getCurrentSubmit(gameCode);
         log.info("플레이어 "+submitDTO.getNickname()+" "+Arrays.toString(submitDTO.getCard()));
 
+        Submit submit = this.getCurrentSubmit(gameCode);
         Game game = this.getCurrentGame(gameCode);
         Player player = game.getPlayers().get(submitDTO.getNickname());
         HashMap<Integer, History> histories = player.getHistories();
+
+        if(submit.getSubmit().contains(submitDTO.getNickname())){
+            return submit.getSubmit().size() == game.getHeadCount();
+        }
 
         // 플레이어 히스토리에 제출 카드 저장
         histories.put(game.getCurrentRound(),
@@ -120,11 +124,10 @@ public class AwrspService {
         awrspRepository.save(game);
 
         // Submit에 제출 등록
-        if(!submit.getSubmit().contains(submitDTO.getNickname())){
-            submit.getSubmit().add(submitDTO.getNickname());
-            log.info(submit.toString());
-            submitRepository.save(submit);
-        }
+
+        submit.getSubmit().add(submitDTO.getNickname());
+        log.info(submit.toString());
+        submitRepository.save(submit);
 
         return submit.getSubmit().size() == game.getHeadCount();
     }

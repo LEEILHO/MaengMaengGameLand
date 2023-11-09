@@ -59,7 +59,12 @@ public class AwrspTimerService {
         timerRepository.save(timer);
 
         // 모든 플레이어가 타이머 완료 되었으면 true 아니면 false
-        return set.size() == getCurrentGame(gameCode).getHeadCount();
+        if(set.size() == getCurrentGame(gameCode).getHeadCount()){
+            timerRepository.delete(timer); // 타이머 지우고
+            return true;
+        }
+
+        return false;
     }
 
     public Game getCurrentGame(String gameCode){
