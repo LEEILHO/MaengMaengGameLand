@@ -96,7 +96,7 @@ const page = () => {
     // 3초 후에 isRoundStart를 false로 변경
     const timeoutId = setTimeout(() => {
       setIsRoundStart(false)
-    }, 3000) // 3초를 밀리초로 설정
+    }, 10000) // 3초를 밀리초로 설정
 
     return () => {
       clearTimeout(timeoutId) // cleanup 시 clearTimeout을 호출하여 타이머를 제거
@@ -108,7 +108,7 @@ const page = () => {
     setIsRoundEnd(true)
     const timeoutId = setTimeout(() => {
       setIsRoundEnd(false)
-    }, 1500)
+    }, 5000)
 
     return () => {
       clearTimeout(timeoutId)
@@ -162,10 +162,10 @@ const page = () => {
                   socre={roundData.jewelryScore}
                 />
               )}
-              {isRoundEnd && (
+              {isRoundEnd && roundResult && (
                 <JWACRoundResultDisplay
-                  jewely={roundData.jewelry}
-                  socre={roundData.jewelryScore}
+                  jewely={roundResult.jewelry}
+                  socre={roundResult.jewelryScore}
                   roundResult={roundResult}
                 />
               )}
@@ -184,6 +184,9 @@ const page = () => {
                 />
                 <S.PriceUnit>원</S.PriceUnit>
               </S.PriceRow>
+              <S.CurrentPriceRow>
+                {formatKoreanCurrency(bidMoney)}
+              </S.CurrentPriceRow>
               <S.CumlativeAmountCotainer>
                 <S.CumlativeDiscriptionRow>
                   <img src={images.gameRoom.jwac.money} alt="누적 금액" />
