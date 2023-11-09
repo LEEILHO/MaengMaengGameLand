@@ -12,6 +12,5 @@ import lombok.Data;
 public class JwacGameResultDTO {
 	private String roomCode;
 	private String gameCode;
-	private List<String> rank;
-	private List<PlayerInfo> players;
+	private List<PlayerInfo> rank;
 }
