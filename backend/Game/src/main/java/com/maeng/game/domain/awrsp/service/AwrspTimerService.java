@@ -34,6 +34,7 @@ public class AwrspTimerService {
 
     @Operation(summary = "타이머 시작")
     public void timerStart(String gameCode, String type){
+        log.info(type);
         template.convertAndSend(GAME_EXCHANGE, "awrsp."+gameCode, this.getTimerSec(type));
     }
 
