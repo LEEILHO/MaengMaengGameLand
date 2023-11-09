@@ -46,7 +46,7 @@ public class AwrspController {
         if(finish){
             awrspService.getWinCount(gameCode);
             if(!awrspService.checkGameOver(gameCode)){
-                awrspTimerService.timerStart(gameCode, "PLAYER_WINS"); // 그 다음 타이머 호출
+                awrspTimerService.timerStart(gameCode, "CARD_SUBMIT"); // 그 다음 타이머 호출
             }else{
                 awrspService.sendGameResult(gameCode);
                 awrspService.sendGameResultToRecode(gameCode);

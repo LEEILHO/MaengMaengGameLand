@@ -214,8 +214,8 @@ public class AwrspService {
     public boolean checkGameOver(String gameCode){
         Game game = this.getCurrentGame(gameCode);
         log.info("승리한 사람 : "+game.getFinishCount());
-        return game.getFinishCount() >= 4 || game.getCurrentRound() >= MAX_ROUND;
-                //|| (game.getHeadCount() - game.getFinishCount()) == 1;
+        return game.getFinishCount() >= 4 || game.getCurrentRound() >= MAX_ROUND
+                || (game.getHeadCount() - game.getFinishCount()) == 1;
     }
 
     @Transactional
@@ -271,7 +271,7 @@ public class AwrspService {
         template.convertAndSend(GAME_EXCHANGE, "awrsp."+gameCode, messageDTO);
     }
 
-    @Operation(summary = "게임 내역 recode-service로 전송")
+    @Operation(summary = "게임 내역 record-service로 전송")
     public void sendGameResultToRecode(String gameCode){
         Game game = this.getCurrentGame(gameCode);
 
@@ -280,7 +280,7 @@ public class AwrspService {
             objectMapper.registerModule(new JavaTimeModule()); // 날짜 인식하게 하고
             objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // 문자열로 만들게
             String json = objectMapper.writeValueAsString(game);
-            template.convertAndSend(RECORD_EXCHANGE_NAME, "awrsp.", json);
+            template.convertAndSend(RECORD_EXCHANGE_NAME, "awrsp."+gameCode, json);
         } catch (Exception e) {
             log.error("json error : {}", e.getMessage());
         }
