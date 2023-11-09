@@ -20,25 +20,15 @@ export function jewelryToLottie(jewelry: JewelryType) {
 }
 
 export function formatKoreanCurrency(amount: number): string {
-  const units = ['억', '만', '천', '백', '십', '원']
-  const digits = amount.toString().split('').reverse()
-  let result = ''
+  const koreanUnits = ['조', '억', '만', '원']
+  const unit = 10000
+  let answer = ''
 
-  if (amount === -1) return '0원'
-
-  for (let i = 0; i < digits.length; i++) {
-    if (digits[i] !== '0') {
-      result = digits[i] + units[i] + result
-    } else if (i === 4) {
-      result = '만' + result
-    } else if (i === 8) {
-      result = '억' + result
-    }
+  while (amount > 0) {
+    const mod = amount % unit
+    const modToString = mod.toString().replace(/(\d)(\d{3})/, '$1,$2')
+    amount = Math.floor(amount / unit)
+    answer = `${modToString}${koreanUnits.pop()}${answer}`
   }
-
-  if (amount < 10000) {
-    result += '원'
-  }
-
-  return result
+  return answer
 }

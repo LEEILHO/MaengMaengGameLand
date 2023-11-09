@@ -20,7 +20,10 @@ const Timer = ({ size, fontSize, time, timeOverHandle, round }: Props) => {
   const [currentTime, setCurrentTime] = useState(0)
   const timeRemaining = time - currentTime
 
-  console.log(round)
+  useEffect(() => {
+    console.log('[라운드 변경]', round)
+    setCurrentTime(0)
+  }, [round])
 
   useEffect(() => {
     if (currentTime < time) {
@@ -31,7 +34,7 @@ const Timer = ({ size, fontSize, time, timeOverHandle, round }: Props) => {
       console.log('타임 오버')
       timeOverHandle()
     }
-  }, [currentTime])
+  }, [currentTime, time, timeOverHandle])
 
   useEffect(() => {
     console.log(time - currentTime)

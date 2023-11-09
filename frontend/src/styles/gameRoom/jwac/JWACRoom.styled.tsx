@@ -227,3 +227,11 @@ export const JewelContainer = styled.div`
     left: 10px;
   }
 `
+
+export const BackButton = styled.img`
+  position: absolute;
+  bottom: 12px;
+  right: 24px;
+  height: 40px;
+  width: 40px;
+`

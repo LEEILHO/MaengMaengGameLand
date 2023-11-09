@@ -10,7 +10,9 @@ import { SOCKET_URL } from '@constants/baseUrl'
 import { CompatClient, Stomp } from '@stomp/stompjs'
 import { socketResponseType } from '@type/common/common.type'
 import {
+  GameEndResponseType,
   GameInfoType,
+  PlayerResultType,
   PlayerType,
   RoundDataType,
   RoundResultType,
@@ -24,7 +26,9 @@ const useSocketJWAC = () => {
   const client = useRef<CompatClient>()
   const [playerList, setPlayerList] = useState<PlayerType[]>([])
   const [roundData, setRoundData] = useState<RoundDataType | null>(null)
-  const setRoundTotalData = useSetRecoilState(jwacRoundResultState)
+  const [roundResult, setRoundResult] = useState<RoundResultType | null>(null)
+  const [gameResult, setGameResult] = useState<PlayerResultType[]>([])
+  const [isGameEnd, setIsGameEnd] = useState(false)
   const setJewelryItem = useSetRecoilState(jwacJewelryItemState)
 
   useEffect(() => {
@@ -87,43 +91,34 @@ const useSocketJWAC = () => {
       // 유저 초기 세팅
       if (result.type === 'GAME_INFO') {
         const data = result.data as GameInfoType
-        const initPlayers = data.playerInfo.map((player) => {
-          return {
-            score: 0,
-            item: false,
-            bidSum: 0,
-            ...player,
-          }
-        })
+        const initPlayers = data.playerInfo.map((player) => ({ ...player }))
         setPlayerList(initPlayers)
       }
 
       // 게임 라운드 시작
       if (result.type === 'GAME_ROUND_START') {
         const data = result.data as RoundDataType
-        setRoundData(data)
+        setRoundData((prev) => data)
       }
 
       // 게임 결과 받아서 업데이트
       if (result.type === 'GAME_ROUND_RESULT') {
         const data = result.data as RoundResultType
-        setRoundTotalData(data)
-        setPlayerList((prev) =>
-          prev.map((player) => {
-            return {
-              ...player,
-              ...data.players.filter(
-                (item) => item.nickname === player.nickname,
-              ),
-            }
-          }),
-        )
+        setRoundResult(() => data)
+        setPlayerList((prev) => data.players)
       }
 
       // 보석 정보 확인권 아이템 정보 받기
       if (result.type === 'GAME_SPECIAL_ITEM_RESULT') {
         const data = result.data as SpecialItemResultType
         setJewelryItem(data.itemResult)
+      }
+
+      // 게임 종료
+      if (result.type === 'Game_END') {
+        const data = result.data as GameEndResponseType
+        setGameResult(data.rank)
+        setIsGameEnd(true)
       }
     })
   }
@@ -154,7 +149,10 @@ const useSocketJWAC = () => {
     handleBid,
     timeOver,
     roundData,
+    roundResult,
     playerList,
+    isGameEnd,
+    gameResult,
   }
 }
 

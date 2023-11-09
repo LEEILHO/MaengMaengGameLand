@@ -28,7 +28,7 @@ const getColor = (type: JewelryType) => {
     `
   }
   return `
-    color: black;
+    color: white;
   `
 }
 
@@ -54,7 +54,7 @@ const getGradientColor = (type: JewelryType) => {
     `
   }
   return `
-    color: black;
+    color: white;
   `
 }
 

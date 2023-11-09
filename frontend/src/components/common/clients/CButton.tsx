@@ -28,6 +28,7 @@ const CButton = ({
       width={width}
       radius={radius}
       $backgroundColor={backgroundColor}
+      $disabled={rest.disabled ? rest.disabled : false}
       {...rest}
     >
       <S.Text color={color} fontSize={fontSize}>
