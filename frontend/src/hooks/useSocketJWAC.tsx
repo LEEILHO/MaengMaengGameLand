@@ -87,14 +87,7 @@ const useSocketJWAC = () => {
       // 유저 초기 세팅
       if (result.type === 'GAME_INFO') {
         const data = result.data as GameInfoType
-        const initPlayers = data.playerInfo.map((player) => {
-          return {
-            score: 0,
-            item: false,
-            bidSum: 0,
-            ...player,
-          }
-        })
+        const initPlayers = data.playerInfo.map((player) => ({ ...player }))
         setPlayerList(initPlayers)
       }
 
@@ -108,16 +101,7 @@ const useSocketJWAC = () => {
       if (result.type === 'GAME_ROUND_RESULT') {
         const data = result.data as RoundResultType
         setRoundTotalData(data)
-        setPlayerList((prev) =>
-          prev.map((player) => {
-            return {
-              ...player,
-              ...data.players.filter(
-                (item) => item.nickname === player.nickname,
-              ),
-            }
-          }),
-        )
+        setPlayerList((prev) => data.players)
       }
 
       // 보석 정보 확인권 아이템 정보 받기
