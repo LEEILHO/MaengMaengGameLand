@@ -26,7 +26,7 @@ public class Fcm {
 	private Long fcmSeq;
 
 	@OneToOne
-	@JoinColumn(name = "userSeq")
+	@JoinColumn(name = "user_seq")
 	private User user;
 
 	@Column

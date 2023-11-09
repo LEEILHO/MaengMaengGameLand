@@ -121,6 +121,8 @@ public class AuthService {
         jwtRedisManager.storeJwt(userEmail, oAuthToken.getRefreshToken());
 
         //Fcm token 저장
+        user = userRepository.findUserByEmail(userEmail).orElseThrow(()
+                -> new AuthException(ExceptionCode.USER_NOT_FOUND));
         Fcm fcm = fcmRepository.findByUser(user).orElse(Fcm.builder().user(user).build());
         fcm.setFcmToken(codeDto.getFcmToken());
         fcmRepository.save(fcm);
