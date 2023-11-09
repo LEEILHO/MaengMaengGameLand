@@ -51,3 +51,18 @@ export type SpecialItemResultType = {
   itemResult: JewelryItemType
   nickname: string
 }
+
+export type PlayerResultType = {
+  nickname: string
+  profileUrl: string
+  tier: TireType
+  score: number
+  item: boolean
+  bidSum: number
+}
+
+export type GameEndResponseType = {
+  roomCode: string
+  gameCode: string
+  rank: PlayerResultType[]
+}

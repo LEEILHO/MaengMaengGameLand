@@ -18,6 +18,7 @@ import JWACRoundResultDisplay from '@components/gameRoom/jwac/JWACRoundResultDis
 import useModal from '@hooks/useModal'
 import JewelryInfomationModal from '@components/gameRoom/jwac/JewelryInfomationModal'
 import useDidMountEffect from '@hooks/useDidMoundEffect'
+import JWACResult from '@components/gameRoom/jwac/JWACResult'
 
 const page = () => {
   const {
@@ -28,6 +29,8 @@ const page = () => {
     roundData,
     roundResult,
     playerList: players,
+    isGameEnd,
+    gameResult,
   } = useSocketJWAC()
   const { Modal, isOpen, closeModal, openModal } = useModal()
   const pathname = usePathname().split('game-room/')[1]
@@ -120,100 +123,123 @@ const page = () => {
         <JewelryInfomationModal />
       </Modal>
       <S.RoomContainer>
-        <S.NewsContainer>
-          {roundResult && (
-            <S.CumulativePrice>
-              {prevRound !== 0
-                ? `${prevRound}Round 기준 경매가 : ${formatKoreanCurrency(
-                    roundResult.roundBidSum,
-                  )}`
-                : '4Round마다 누적 라운드 금액이 공개됩니다.'}
-            </S.CumulativePrice>
-          )}
-        </S.NewsContainer>
-        {myData.item && (
-          <S.ItemContainer onClick={openModal}>
-            <S.ItemIcon src={images.gameRoom.jwac.checkIcon} alt="보석확인권" />
-          </S.ItemContainer>
-        )}
-        <S.TimerContainer>
-          <Timer
-            size="80"
-            fontSize="14"
-            time={roundData.time}
-            round={roundData.round}
-            timeOverHandle={handleTimeOver}
-          />
-        </S.TimerContainer>
-        <S.DisplayBoardContainer>
-          <S.DisplayRoundFrame src={images.gameRoom.jwac.roundFrame} />
-          <S.RoundText>{`${roundData.round} Round`}</S.RoundText>
-          {!isRoundEnd && isRoundStart && (
-            <JWACRoundStartDisplay
-              jewely={roundData.jewelry}
-              socre={roundData.jewelryScore}
-            />
-          )}
-          {isRoundEnd && (
-            <JWACRoundResultDisplay
-              jewely={roundData.jewelry}
-              socre={roundData.jewelryScore}
-              roundResult={roundResult}
-            />
-          )}
-          {!isRoundStart && !isRoundEnd && <JWACUserList players={players} />}
-        </S.DisplayBoardContainer>
-        <S.NoteContainer>
-          <S.Discription>희망 낙찰가를 제시해주세요</S.Discription>
-          <S.PriceRow>
-            <S.PriceInput
-              type="number"
-              value={bidMoney.toString()}
-              onChange={handleBidMody}
-              max={999999999999}
-            />
-            <S.PriceUnit>원</S.PriceUnit>
-          </S.PriceRow>
-          <S.CumlativeAmountCotainer>
-            <S.CumlativeDiscriptionRow>
-              <img src={images.gameRoom.jwac.money} alt="누적 금액" />
-              누적 사용 금액
-            </S.CumlativeDiscriptionRow>
-            <S.CumlativePrice>
-              {formatKoreanCurrency(myData.bidSum)}
-            </S.CumlativePrice>
-          </S.CumlativeAmountCotainer>
-          <S.ButtonRow>
-            {isSubmit ? (
-              <CButton
-                text="제출"
-                color="white"
-                radius={24}
-                backgroundColor="#7000FF"
-                fontSize={14}
-                height={32}
-                onClick={handleSubmit}
-              />
-            ) : (
-              <CButton
-                text="제출 완료"
-                color="white"
-                radius={24}
-                backgroundColor="#bababa"
-                fontSize={14}
-                height={32}
-                onClick={() => {}}
-                disabled
-              />
+        {!isGameEnd && (
+          <>
+            <S.NewsContainer>
+              {roundResult && (
+                <S.CumulativePrice>
+                  {prevRound !== 0
+                    ? `${prevRound}Round 기준 경매가 : ${formatKoreanCurrency(
+                        roundResult.roundBidSum,
+                      )}`
+                    : '4Round마다 누적 라운드 금액이 공개됩니다.'}
+                </S.CumulativePrice>
+              )}
+            </S.NewsContainer>
+            {myData.item && (
+              <S.ItemContainer onClick={openModal}>
+                <S.ItemIcon
+                  src={images.gameRoom.jwac.checkIcon}
+                  alt="보석확인권"
+                />
+              </S.ItemContainer>
             )}
-          </S.ButtonRow>
-        </S.NoteContainer>
-        <S.ShowCaseCatainer>
-          <S.Table src={images.gameRoom.jwac.table} alt="테이블" />
-          <S.JewelContainer>
-            <Lottie animationData={jewelryToLottie(roundData.jewelry)} loop />
-          </S.JewelContainer>
-        </S.ShowCaseCatainer>
+            <S.TimerContainer>
+              <Timer
+                size="80"
+                fontSize="14"
+                time={roundData.time}
+                round={roundData.round}
+                timeOverHandle={handleTimeOver}
+              />
+            </S.TimerContainer>
+            <S.DisplayBoardContainer>
+              <S.DisplayRoundFrame src={images.gameRoom.jwac.roundFrame} />
+              <S.RoundText>{`${roundData.round} Round`}</S.RoundText>
+              {!isRoundEnd && isRoundStart && (
+                <JWACRoundStartDisplay
+                  jewely={roundData.jewelry}
+                  socre={roundData.jewelryScore}
+                />
+              )}
+              {isRoundEnd && (
+                <JWACRoundResultDisplay
+                  jewely={roundData.jewelry}
+                  socre={roundData.jewelryScore}
+                  roundResult={roundResult}
+                />
+              )}
+              {!isRoundStart && !isRoundEnd && (
+                <JWACUserList players={players} />
+              )}
+            </S.DisplayBoardContainer>
+            <S.NoteContainer>
+              <S.Discription>희망 낙찰가를 제시해주세요</S.Discription>
+              <S.PriceRow>
+                <S.PriceInput
+                  type="number"
+                  value={bidMoney.toString()}
+                  onChange={handleBidMody}
+                  max={999999999999}
+                />
+                <S.PriceUnit>원</S.PriceUnit>
+              </S.PriceRow>
+              <S.CumlativeAmountCotainer>
+                <S.CumlativeDiscriptionRow>
+                  <img src={images.gameRoom.jwac.money} alt="누적 금액" />
+                  누적 사용 금액
+                </S.CumlativeDiscriptionRow>
+                <S.CumlativePrice>
+                  {formatKoreanCurrency(myData.bidSum)}
+                </S.CumlativePrice>
+              </S.CumlativeAmountCotainer>
+              <S.ButtonRow>
+                {isSubmit ? (
+                  <CButton
+                    text="제출"
+                    color="white"
+                    radius={24}
+                    backgroundColor="#7000FF"
+                    fontSize={14}
+                    height={32}
+                    onClick={handleSubmit}
+                  />
+                ) : (
+                  <CButton
+                    text="제출 완료"
+                    color="white"
+                    radius={24}
+                    backgroundColor="#bababa"
+                    fontSize={14}
+                    height={32}
+                    onClick={() => {}}
+                    disabled
+                  />
+                )}
+              </S.ButtonRow>
+            </S.NoteContainer>
+            <S.ShowCaseCatainer>
+              <S.Table src={images.gameRoom.jwac.table} alt="테이블" />
+              <S.JewelContainer>
+                <Lottie
+                  animationData={jewelryToLottie(roundData.jewelry)}
+                  loop
+                />
+              </S.JewelContainer>
+            </S.ShowCaseCatainer>
+          </>
+        )}
+
+        {/* 결과화면 렌더링 */}
+        {isGameEnd && (
+          <>
+            <JWACResult gameResult={gameResult} />
+            <S.BackButton
+              src={images.gameRoom.jwac.backWhite}
+              alt="로비로 나가기"
+            />
+          </>
+        )}
       </S.RoomContainer>
     </>
   )
