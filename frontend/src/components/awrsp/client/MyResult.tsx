@@ -1,38 +1,40 @@
 'use client'
 
-import { RspCardListState } from '@atom/awrspAtom'
+import { PlayerResultState, RspCardListState } from '@atom/awrspAtom'
+import { userState } from '@atom/userAtom'
 import { images } from '@constants/images'
 import * as S from '@styles/awrsp/MyResult.styled'
-import { RspType } from '@type/awrsp/awrsp.type'
 import { getRspImageUrl } from '@utils/awrsp/awrspUtil'
-import { useCallback, useEffect } from 'react'
-import { useRecoilState } from 'recoil'
+import { useEffect, useState } from 'react'
+import { useRecoilValue } from 'recoil'
 
 const MyResult = () => {
-  const [cardList, setCardList] = useRecoilState(RspCardListState)
+  const cardList = useRecoilValue(RspCardListState)
+  const playerRoundResult = useRecoilValue(PlayerResultState)
+  const user = useRecoilValue(userState)
 
   useEffect(() => {
-    setCardList([
-      'ROCK',
-      'SCISSOR',
-      'ROCK',
-      'PAPER',
-      'DRAW_PAPER',
-      'PAPER',
-      'SCISSOR',
-      'ROCK',
-    ])
+    console.log(playerRoundResult)
   }, [])
 
-  return (
-    <S.MyResultContainer>
-      <S.WinCount>3승</S.WinCount>
-      <S.CardList>
-        {cardList?.map((card, index) => (
-          <S.RspCard src={getRspImageUrl(card)} alt={card} key={card + index} />
-        ))}
-      </S.CardList>
-    </S.MyResultContainer>
+  return playerRoundResult?.map(
+    (result) =>
+      result.nickname === user?.nickname && (
+        <S.MyResultContainer key={result.nickname}>
+          <S.WinCount>
+            {result.detail.win}승 {result.detail.draw === 1 && '1비김'}
+          </S.WinCount>
+          <S.CardList>
+            {cardList?.map((card, index) => (
+              <S.RspCard
+                src={getRspImageUrl(card)}
+                alt={card}
+                key={card + index}
+              />
+            ))}
+          </S.CardList>
+        </S.MyResultContainer>
+      ),
   )
 }
 

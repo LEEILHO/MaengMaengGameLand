@@ -23,7 +23,7 @@ const Timer = ({ size, fontSize, time, timeOverHandle, round }: Props) => {
   useEffect(() => {
     console.log('[라운드 변경]', round)
     setCurrentTime(0)
-  }, [round])
+  }, [round, time])
 
   useEffect(() => {
     if (currentTime < time) {

@@ -5,18 +5,18 @@ import { images } from '@constants/images'
 import * as S from '@styles/awrsp/DrawCardModal.styled'
 import { RspType } from '@type/awrsp/awrsp.type'
 import { useCallback } from 'react'
-import { useSetRecoilState } from 'recoil'
+import { useRecoilState } from 'recoil'
 
 type Props = {
   closeModal: () => void
 }
 
 const DrawCardModal = ({ closeModal }: Props) => {
-  const setDrawCard = useSetRecoilState(DrawCardState)
+  const [drawCard, setDrawCard] = useRecoilState(DrawCardState)
 
   const onClickDrawCard = useCallback((cardType: RspType) => {
     console.log(cardType)
-    setDrawCard(cardType)
+    setDrawCard({ ...drawCard, drawCard: cardType })
     closeModal()
   }, [])
 

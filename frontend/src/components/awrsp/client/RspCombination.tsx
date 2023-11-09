@@ -1,10 +1,16 @@
 'use client'
 
-import { DrawCardState } from '@atom/awrspAtom'
+import { DrawCardState, RspCardListState } from '@atom/awrspAtom'
 import CButton from '@components/common/clients/CButton'
 import { colors } from '@constants/colors'
+import useSocketAWRSP from '@hooks/useSocketAWRSP'
 import * as S from '@styles/awrsp/RspCombination.styled'
-import { CardListType, CardStatus, CardType } from '@type/awrsp/awrsp.type'
+import {
+  CardListType,
+  CardStatus,
+  CardType,
+  RspType,
+} from '@type/awrsp/awrsp.type'
 import { getRspImageUrl } from '@utils/awrsp/awrspUtil'
 import { useEffect, useState } from 'react'
 import {
@@ -13,11 +19,17 @@ import {
   DropResult,
   Droppable,
 } from 'react-beautiful-dnd'
-import { useRecoilValue } from 'recoil'
+import { useRecoilState, useSetRecoilState } from 'recoil'
 
-const RspCombination = () => {
+type Props = {
+  handleCardSubmit: (combCard: RspType[]) => void
+}
+
+const RspCombination = ({ handleCardSubmit }: Props) => {
+  const setRspCardList = useSetRecoilState(RspCardListState)
   const [enabled, setEnabled] = useState(false)
-  const drawCard = useRecoilValue(DrawCardState)
+  const [drawCard, setDrawCard] = useRecoilState(DrawCardState)
+
   const rock: CardType[] = [...Array(3)].map((_, i) => ({
     id: `Rock${i}`,
     status: 'out',
@@ -33,6 +45,7 @@ const RspCombination = () => {
     status: 'out',
     rsp: 'PAPER',
   }))
+
   const [cardList, setCardList] = useState<CardListType>({
     out: [...rock, ...scissors, ...paper],
 
@@ -71,8 +84,34 @@ const RspCombination = () => {
       return card.rsp
     })
 
-    console.log(RspCombination)
+    setRspCardList(RspCombination)
+    handleCardSubmit(RspCombination)
   }
+
+  useEffect(() => {
+    if (drawCard.drawCard) {
+      const draw: CardType = {
+        id: drawCard.drawCard,
+        status: 'out',
+        rsp: drawCard.drawCard,
+      }
+      const _cardList = cardList
+
+      if (drawCard.drawCard === 'DRAW_PAPER') {
+        _cardList['out'].splice(6, 1)
+        _cardList['out'].splice(6, 0, draw)
+      } else if (drawCard.drawCard === 'DRAW_SCISSOR') {
+        _cardList['out'].splice(3, 1)
+        _cardList['out'].splice(3, 0, draw)
+      } else if (drawCard.drawCard === 'DRAW_ROCK') {
+        _cardList['out'].splice(0, 1)
+        _cardList['out'].splice(0, 0, draw)
+      }
+
+      setCardList(_cardList)
+      setDrawCard({ ...drawCard, isSetting: true })
+    }
+  }, [drawCard.drawCard])
 
   useEffect(() => {
     const animation = requestAnimationFrame(() => setEnabled(true))
@@ -83,7 +122,7 @@ const RspCombination = () => {
     }
   }, [])
 
-  if (!enabled) return null
+  if (!enabled || !drawCard.isSetting) return null
 
   return (
     <>
