@@ -2,6 +2,7 @@ package com.maeng.game.domain.jwac.service;
 
 import java.util.HashSet;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +18,8 @@ import lombok.RequiredArgsConstructor;
 public class TimerService {
 	private final TimerRedisRepository timerRedisRepository;
 
-	private final static int ROUND_TIME = 20;
+	@Value("${game.jwac.round.time}")
+	private static int ROUND_TIME;
 
 	@Transactional
 	public synchronized boolean timerEnd(String gameCode, int headCount, JwacNicknameDto jwacNicknameDto) {
