@@ -21,6 +21,7 @@ import java.util.Arrays;
 public class AwrspController {
     private final AwrspService awrspService;
     private final AwrspTimerService awrspTimerService;
+
     @Operation(summary = "[테스트용] 정답 카드 생성")
     @MessageMapping("awrsp.create")
     public void start(){
@@ -48,6 +49,7 @@ public class AwrspController {
                 awrspTimerService.timerStart(gameCode, "PLAYER_WINS"); // 그 다음 타이머 호출
             }else{
                 awrspService.sendGameResult(gameCode);
+                awrspService.sendGameResultToRecode(gameCode);
             }
         }
     }

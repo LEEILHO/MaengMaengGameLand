@@ -1,5 +1,8 @@
 package com.maeng.game.domain.awrsp.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.maeng.game.domain.awrsp.dto.GameResultDTO;
 import com.maeng.game.domain.awrsp.dto.RoundDetailDTO;
 import com.maeng.game.domain.awrsp.dto.RoundResultDTO;
@@ -32,6 +35,7 @@ public class AwrspService {
     private final SubmitRepository submitRepository;
     private final RankRepository rankRepository;
     private final RabbitTemplate template;
+    private final static String RECORD_EXCHANGE_NAME = "record";
     private static final String GAME_EXCHANGE = "game";
     private static final int CARD_COUNT = 7;
     private static final int MAX_ROUND = 15;
@@ -210,8 +214,8 @@ public class AwrspService {
     public boolean checkGameOver(String gameCode){
         Game game = this.getCurrentGame(gameCode);
         log.info("승리한 사람 : "+game.getFinishCount());
-        return game.getFinishCount() >= 4 || game.getCurrentRound() >= MAX_ROUND
-                || (game.getHeadCount() - game.getFinishCount()) == 1;
+        return game.getFinishCount() >= 4 || game.getCurrentRound() >= MAX_ROUND;
+                //|| (game.getHeadCount() - game.getFinishCount()) == 1;
     }
 
     @Transactional
@@ -265,6 +269,21 @@ public class AwrspService {
                 .build();
 
         template.convertAndSend(GAME_EXCHANGE, "awrsp."+gameCode, messageDTO);
+    }
+
+    @Operation(summary = "게임 내역 recode-service로 전송")
+    public void sendGameResultToRecode(String gameCode){
+        Game game = this.getCurrentGame(gameCode);
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule()); // 날짜 인식하게 하고
+            objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // 문자열로 만들게
+            String json = objectMapper.writeValueAsString(game);
+            template.convertAndSend(RECORD_EXCHANGE_NAME, "awrsp.", json);
+        } catch (Exception e) {
+            log.error("json error : {}", e.getMessage());
+        }
     }
 
     @Transactional
