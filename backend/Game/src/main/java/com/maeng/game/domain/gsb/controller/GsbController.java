@@ -1,7 +1,9 @@
 package com.maeng.game.domain.gsb.controller;
 
+import com.maeng.game.domain.gsb.dto.BettingDto;
 import com.maeng.game.domain.gsb.dto.GsbNicknameDto;
 import com.maeng.game.domain.gsb.dto.PlayerSeqDto;
+import com.maeng.game.domain.gsb.dto.StarDto;
 import com.maeng.game.domain.gsb.entity.Gsb;
 import com.maeng.game.domain.gsb.entity.StartCard;
 import com.maeng.game.domain.gsb.service.GsbEnterService;
@@ -66,18 +68,29 @@ public class GsbController {
                     .data(gsb)
                     .build());
         }
-
-
     }
 
 
-    @MessageMapping("game.gsb.setStar.{gameCode}")
-    public void setStar(@DestinationVariable String gameCode) {
-        /*TODO: 선 플레이어일 때*/
+    @MessageMapping("game.gsb.set-star.{gameCode}")
+    public void setStar(@DestinationVariable String gameCode, StarDto starDto) {
+
+        template.convertAndSend(Game_EXCHANGE_NAME, "gsb."+gameCode,gsbService.setStar( gameCode , starDto ));
 
 
-        /*TODO: 후 플레이어일 때*/
+    }
+    @MessageMapping("game.gsb.betting.{gameCode}")
+    public void setBet(@DestinationVariable String gameCode, BettingDto bettingDto){
+        /*TODO: 베팅 DTO 반환 */
+        MessageDTO messageDTO = gsbService.setBet(gameCode,bettingDto);
 
+        template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode,messageDTO);
+
+        /*TODO: 라운드가 종료 되었으면 라운드 결과 반환 + 다음플레이어 해야할 일 반환*/
+
+
+        if(messageDTO.getType().equals("베팅 종료")||gsbService.endRound(gameCode)){
+            template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode,gsbService.getRoundResult(gameCode));
+        }
     }
     @GetMapping
     public ResponseEntity<?> test(){
