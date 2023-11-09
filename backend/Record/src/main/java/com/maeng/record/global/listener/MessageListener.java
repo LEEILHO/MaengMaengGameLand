@@ -3,6 +3,7 @@ package com.maeng.record.global.listener;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maeng.record.domain.record.data.Awrsp;
 import com.maeng.record.domain.record.data.Jwac;
@@ -36,11 +37,15 @@ public class MessageListener {
 	}
 
 	@RabbitListener(queues = "jwac.queue")
-	public void receiveMessage2(String message){
+	public void receiveMessage2(String message) throws JsonProcessingException {
+		Jwac jwac = null;
 		try {
-			Jwac jwac = objectMapper.readValue(message, Jwac.class);
+			jwac = objectMapper.readValue(message, Jwac.class);
 			jwacRecordService.saveJwacRecord(jwac);
 		} catch (Exception e) {
+			log.info(message);
+			log.info(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jwac));
+			e.printStackTrace();
 			log.info("jwac json parsing error");
 		}
 

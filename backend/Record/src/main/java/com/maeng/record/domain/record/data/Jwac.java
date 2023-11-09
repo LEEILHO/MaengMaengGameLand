@@ -37,7 +37,7 @@ public class Jwac {
 	private int maxRound;
 
 	@JsonProperty("bidAmounts")
-	private Map<String, Integer> bidAmounts;
+	private Map<String, Long> bidAmounts;
 
 	@JsonProperty("jewelry")
 	private Map<Integer, Jewelry> jewelry;
