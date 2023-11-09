@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/startUpFragment"
-        android:name="com.lessgenius.maengland.StartUpFragment"
+        android:name="com.lessgenius.maengland.ui.startup.StartUpFragment"
         android:label="fragment_startup"
         tools:layout="@layout/fragment_startup" >
         <action
@@ -19,12 +19,12 @@
     </fragment>
     <fragment
         android:id="@+id/gameFragment"
-        android:name="com.lessgenius.maengland.GameFragment"
+        android:name="com.lessgenius.maengland.ui.game.GameFragment"
         android:label="fragment_game"
         tools:layout="@layout/fragment_game" />
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.lessgenius.maengland.LoginFragment"
+        android:name="com.lessgenius.maengland.ui.login.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" />
 </navigation>

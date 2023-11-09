@@ -6,7 +6,7 @@
     android:id="@+id/layout_swipe"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GameFragment">
+    tools:context=".ui.startup.StartUpFragment">
 
     <androidx.wear.widget.BoxInsetLayout
         android:layout_width="match_parent"
