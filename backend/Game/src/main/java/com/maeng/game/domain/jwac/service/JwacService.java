@@ -178,6 +178,7 @@ public class JwacService {
 			.gameCode(jwac.getGameCode())
 			.roundBidSum(-1L)
 			.round(jwac.getCurrentRound())
+			.jewelryScore(getScore(jwac.getJewelry().get(jwac.getCurrentRound())))
 			.build();
 
 		int currentRound = jwac.getCurrentRound();
@@ -331,8 +332,12 @@ public class JwacService {
 		}
 	}
 
+	@Transactional
 	public JwacItemResultDTO getSpecialItemResult(String gameCode, String mostBidder) {
 		Jwac jwac = jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
+		jwac.getPlayers().get(mostBidder).setSpecialItem(true);
+		jwacRedisRepository.save(jwac);
+
 		Map<Integer, Jewelry> jewelry = jwac.getJewelry();
 		int currentRound = jwac.getCurrentRound();
 		int maxRound = jwac.getMaxRound();

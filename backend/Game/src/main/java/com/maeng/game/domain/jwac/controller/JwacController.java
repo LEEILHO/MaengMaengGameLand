@@ -3,6 +3,7 @@ package com.maeng.game.domain.jwac.controller;
 import java.util.List;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
@@ -28,6 +29,11 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequiredArgsConstructor
 public class JwacController {
+
+	@Value("${game.jwac.round.special}")
+	private int SPECIAL_ROUND;
+
+
 	private final RabbitTemplate template;
 
 	private final JwacService jwacService;
@@ -101,7 +107,7 @@ public class JwacController {
 
 				// 10 라운드에서 아이템 결과 전송
 				log.info("round : " + jwacRoundResult.getRound());
-				if(jwacRoundResult.getRound() == 10) {
+				if(jwacRoundResult.getRound() == SPECIAL_ROUND) {
 					JwacItemResultDTO itemResult = jwacService.getSpecialItemResult(gameCode, jwacRoundResult.getMostBidder());
 
 					template.convertAndSend(Game_EXCHANGE_NAME, "jwac." + gameCode, MessageDTO.builder()
