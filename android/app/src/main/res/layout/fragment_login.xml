@@ -13,13 +13,59 @@
         android:layout_height="match_parent"
         android:background="@drawable/icon_space">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <ScrollView
+            android:id="@+id/gameScrollView"
+            android:fillViewport="true"
+            android:scrollbars="none"
+            android:nestedScrollingEnabled="false"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:boxedEdges="top|left|right">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:boxedEdges="top|left|right">
+                <TextView
+                    android:id="@+id/textview_login"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="LOGIN"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:textSize="@dimen/_28sdp"
+                    android:fontFamily="@font/dunggeunmo"
+                    android:textColor="#FFFFFF"/>
+
+                <TextView
+                    android:id="@+id/textview_login_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:text="맹맹게임랜드에서 로그인 코드를 발급받으세요."
+                    android:textAlignment="center"
+                    app:layout_constraintTop_toBottomOf="@id/textview_login"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:textSize="@dimen/_14sdp"
+                    android:fontFamily="@font/dunggeunmo"
+                    android:textColor="#FFFFFF"/>
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/textview_login_content"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:hint="enter code"
+                    android:fontFamily="@font/dunggeunmo"
+                    android:inputType="number"/>
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
+
     </androidx.wear.widget.BoxInsetLayout>
 
 </androidx.wear.widget.SwipeDismissFrameLayout>
