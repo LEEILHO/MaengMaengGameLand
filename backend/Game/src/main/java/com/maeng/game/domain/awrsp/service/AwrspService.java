@@ -34,7 +34,7 @@ public class AwrspService {
     private final RabbitTemplate template;
     private static final String GAME_EXCHANGE = "game";
     private static final int CARD_COUNT = 7;
-    private static final int MAX_ROUND = 1;
+    private static final int MAX_ROUND = 15;
     private static final Card[] cards = { Card.ROCK, Card.ROCK, Card.ROCK,
                                             Card.SCISSOR, Card.SCISSOR, Card.SCISSOR,
                                             Card.PAPER, Card.PAPER, Card.PAPER};
