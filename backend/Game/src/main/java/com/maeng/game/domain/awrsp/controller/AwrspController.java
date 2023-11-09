@@ -72,6 +72,6 @@ public class AwrspController {
             return type;
         }
 
-        throw new TimerTypeException("잘못된 타이머 타입입니다.");
+        return type;
     }
 }
