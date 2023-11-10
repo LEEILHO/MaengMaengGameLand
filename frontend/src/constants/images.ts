@@ -10,6 +10,7 @@ export const images = {
       dummyProfile: '/images/common/dummyProfile.png',
       alarm: '/images/common/ic-alarm.png',
       back: '/images/common/ic-arrow-back.png',
+      timer: '/images/common/ic-timer.png',
     },
     leftArrow: '/images/common/ic-left-arrow.png',
   },
@@ -49,6 +50,7 @@ export const images = {
     cardBack: '/images/gsb/card-back.png',
     cardFrontHu: '/images/gsb/card-front-hu.png',
     cardFrontSun: '/images/gsb/card-front-sun.png',
+    mul: '/images/gsb/ic-x.png',
   },
   awrsp: {
     background: '/images/awrsp/background.png',
