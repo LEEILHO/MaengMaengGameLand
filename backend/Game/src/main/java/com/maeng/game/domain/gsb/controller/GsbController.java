@@ -34,6 +34,7 @@ public class GsbController {
 
     @MessageMapping("game.gsb.enter.{gameCode}")
     public void enter(@DestinationVariable String gameCode, GsbNicknameDto nicknameDto){
+        log.info("enter(), gameCode = {}, nickname = {}", gameCode, nicknameDto.getNickname());
 
         int headCount = 2;
         // 2명이 들어왔다면
@@ -52,6 +53,7 @@ public class GsbController {
 
     @MessageMapping("game.gsb.set-player.{gameCode}")
     public void setPlayer(@DestinationVariable String gameCode, PlayerSeqDto playerSeqDto){
+        log.info("setPlayer(), gameCode = {}, playerNickName = {}, playerSeq = {}",gameCode,playerSeqDto.getNickname(),playerSeqDto.getSeq());
         gsbService.setSeq(gameCode,playerSeqDto);
         StartCard [] cards = gsbService.getInfo(gameCode).getStartCards();
         template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode, MessageDTO.builder()
@@ -73,24 +75,43 @@ public class GsbController {
 
     @MessageMapping("game.gsb.set-star.{gameCode}")
     public void setStar(@DestinationVariable String gameCode, StarDto starDto) {
-
+        log.info("setStar(), gameCode = {}, gold = {}, silver = {}, bronze = {}",gameCode,starDto.getGold(),starDto.getSilver(),starDto.getBronze());
         template.convertAndSend(Game_EXCHANGE_NAME, "gsb."+gameCode,gsbService.setStar( gameCode , starDto ));
 
 
     }
     @MessageMapping("game.gsb.betting.{gameCode}")
     public void setBet(@DestinationVariable String gameCode, BettingDto bettingDto){
+        log.info("setBet()");
         /*TODO: 베팅 DTO 반환 */
         MessageDTO messageDTO = gsbService.setBet(gameCode,bettingDto);
 
         template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode,messageDTO);
 
-        /*TODO: 라운드가 종료 되었으면 라운드 결과 반환 + 다음플레이어 해야할 일 반환*/
+        // 베팅 포기로 인하여 라운드가 종료된 경우
+        if(messageDTO.getType().equals("베팅 포기")){
 
-
-        if(messageDTO.getType().equals("베팅 종료")||gsbService.endRound(gameCode)){
-            template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode,gsbService.getRoundResult(gameCode));
+            template.convertAndSend(Game_EXCHANGE_NAME, "gsb." + gameCode, gsbService.getGiveUpRoundResult(gameCode));
+            // 게임이 종료될 경우
+            if(gsbService.endGame(gameCode)){
+                template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode,gsbService.getEndGame(gameCode));
+            }
         }
+
+        // 라운드가 정상적으로 종료된 경우
+        if(gsbService.endRound(gameCode)){
+            template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode,gsbService.getRoundResult(gameCode));
+            // 게임이 종료될 경우
+            if(gsbService.endGame(gameCode)){
+                template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode,gsbService.getEndGame(gameCode));
+            }
+        }
+
+
+    }
+    @MessageMapping("game.gsb.end-timer.{gameCode}")
+    public void endTimer(String gameCode){
+        log.info("endTimer()");
     }
     @GetMapping
     public ResponseEntity<?> test(){

@@ -10,7 +10,6 @@ import com.maeng.game.domain.room.dto.GameStartDTO;
 import com.maeng.game.domain.room.dto.MessageDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,32 +55,12 @@ public class GsbService {
     }
 
     public StartCard[] getStartCards(String gameCode){
-
-//        StartCard[] cards = new StartCard[2];
-//        for (int i = 0; i < 2; i++) {
-//            cards[i] = StartCard.builder().seq(i).selected(false).build();
-//        }
-//        Random random = new Random();
-//        for (int i = cards.length - 1; i > 0; i--) {
-//            int j = random.nextInt(i + 1); // 0부터 i까지 무작위 인덱스 선택
-//            // i와 j 위치의 요소 교환
-//            StartCard temp = cards[i];
-//            cards[i] = cards[j];
-//            cards[j] = temp;
-//        }
-//        Map<Integer, Player> players = new HashMap<>();
-//        // 게임 정보 세팅
-//        Gsb gsb = Gsb.builder()
-//                .gameCode(gameCode)
-//                .startCards(cards)
-//                .players(players)
-//                .build();
-//        gsbRepository.save(gsb);
-
+        log.info("getStartCards(), gameCode = {}", gameCode);
         return getInfo(gameCode).getStartCards();
     }
     @Transactional
     public void setSeq(String gameCode, PlayerSeqDto playerSeqDto){
+        log.info("setSeq(), gameCode = {}, playerSeq = {}, playerNick = {}",gameCode,playerSeqDto.getSeq(),playerSeqDto.getNickname());
         Gsb gsb = gsbRepository.findById(gameCode).orElseThrow();
 
         // seq 존재 하지 않을 때
@@ -127,6 +106,8 @@ public class GsbService {
     }
     @Transactional
     public MessageDTO setStar(String gameCode, StarDto starDto){
+        log.info("setStar(), gameCode = {}, gold = {}, silver = {}, bronze = {}", gameCode, starDto.getGold()
+                , starDto.getSilver(), starDto.getBronze());
         MessageDTO messageDTO = null;
         Gsb gsb = getInfo(gameCode);
         String curPlayer = gsb.getCurrentPlayer();
@@ -136,6 +117,7 @@ public class GsbService {
             log.info("짝수 라운드");
             //1인덱스 플레이어가 선 플레이어
             if(curPlayer.equals(gsb.getPlayers().get(1).getNickname())){
+                log.info("선 플레이어");
                 // 현재 플레이어가 선 플레이어일 때
                 History history = setStarFirst(gameCode, starDto);
                 Map<Integer, History>  historyMap = gsb.getPlayers().get(1).getHistories();
@@ -152,6 +134,7 @@ public class GsbService {
                     int bronze =gsb.getPlayers().get(0).getCurrentBronze();
                     if (getWeight(starDto) -2 > getWeight(gold,silver,bronze)){
                         /*TODO: 게임 종료 로직 + 타입*/
+                        log.info("후 플레이어가 무게 맛출 수 없어 게임 종료");
 
                         return MessageDTO.builder()
                                 .type("게임 결과")
@@ -181,6 +164,7 @@ public class GsbService {
                 }
             } else{
                 // 현재 플레이어가 후 플레이어일 때
+                log.info("후 플레이어");
                 History history = setStarSecond(curRound,0,gameCode, starDto);
                 Map<Integer, History>  historyMap = gsb.getPlayers().get(0).getHistories();
 
@@ -188,19 +172,6 @@ public class GsbService {
                     if(historyMap == null ){
 
                         historyMap = new HashMap<>();
-
-                    }
-                    int gold = gsb.getPlayers().get(1).getCurrentGold();
-                    int silver = gsb.getPlayers().get(1).getCurrentSilver();
-                    int bronze =gsb.getPlayers().get(1).getCurrentBronze();
-                    if (getWeight(starDto) -2 > getWeight(gold,silver,bronze)){
-                        /*TODO: 게임 종료 로직 + 타입*/
-
-                        return MessageDTO.builder()
-                                .type("게임 결과")
-                                .data(getGameResult(gameCode))
-                                .build();
-
 
                     }
                     history.setBettingChips(3);
@@ -239,6 +210,18 @@ public class GsbService {
                     if(historyMap == null ){
 
                         historyMap = new HashMap<>();
+
+                    }
+                    int gold = gsb.getPlayers().get(1).getCurrentGold();
+                    int silver = gsb.getPlayers().get(1).getCurrentSilver();
+                    int bronze =gsb.getPlayers().get(1).getCurrentBronze();
+                    if (getWeight(starDto) -2 > getWeight(gold,silver,bronze)){
+                        /*TODO: 게임 종료 로직 + 타입*/
+                        log.info("후 플레이어가 무게 맛출 수 없어 게임 종료");
+                        return MessageDTO.builder()
+                                .type("게임 결과")
+                                .data(getGameResult(gameCode))
+                                .build();
 
                     }
                     history.setBettingChips(3);
@@ -298,9 +281,11 @@ public class GsbService {
 
     // 선 플레이어 일때
     public History setStarFirst(String gameCode, StarDto starDto){
+        log.info("선 플레이어 세팅");
         int weight = getWeight(starDto);
         if(weight<4 || weight >12){
             // TODO: 들어올 수 없는 값 예외 처리
+            log.info("들어 올 수 없는 값");
             return null;
         }
         History history = History.builder()
@@ -314,6 +299,7 @@ public class GsbService {
     }
     // 후 플레이어 일 때
     public History setStarSecond(int round,int idx, String gameCode, StarDto starDto){
+        log.info("후 플레이어 세팅");
         int beforeIdx = -1;
         if(idx==0){
             beforeIdx =1;
@@ -326,6 +312,7 @@ public class GsbService {
         // 차이가 이상 3일 때
         if(Math.abs(firstWeight - weight) >3 ){
             // TODO: 들어올 수 없는 값 예외 처리
+            log.info("들어 올 수 없는 값");
             return null;
         }
 
@@ -354,6 +341,7 @@ public class GsbService {
 
 
     public MessageDTO setBet(String gameCode, BettingDto bettingDto){
+        log.info("setBet(), gameCode = {}, giveUp = {}, chips = {}", gameCode, bettingDto.isGiveUp(), bettingDto.getBettingChips());
         Gsb gsb = getInfo(gameCode);
         MessageDTO messageDto = null;
         String currentPlayer = gsb.getCurrentPlayer();
@@ -371,7 +359,7 @@ public class GsbService {
         // 베팅 포기
         if(bettingDto.isGiveUp()){
             /*TODO: 베팅 포기 로직 추가*/
-
+            log.info("베팅 포기");
             messageDto =  MessageDTO.builder()
                     .type("베팅 포기")
                     .build();
@@ -390,20 +378,19 @@ public class GsbService {
             if(currentRoundMyChips==3 && currentRoundYourChips ==3){
                 if( bettingDto.getBettingChips() > gsb.getPlayers().get(myIdx).getCurrentChips()
                         || bettingDto.getBettingChips() > gsb.getPlayers().get(nextIdx).getCurrentChips()){
-                    System.out.println("예외");
+                    log.info("예외");
                     return null;
                 }
             } else{
                 // 선 플레이어가 아닐 때
                 if(bettingDto.getBettingChips() > gsb.getPlayers().get(myIdx)
                         .getCurrentChips() || bettingDto.getBettingChips() + currentRoundMyChips < currentRoundYourChips){
-                    System.out.println("예외");
+                    log.info("예외");
                     return null;
                 }
             }
 
-
-            System.out.println("일반적인");
+            log.info("일반적인 베팅");
             gsb.setCarryOverChips(gsb.getCarryOverChips()+bettingDto.getBettingChips());
             gsb.getPlayers().get(myIdx).setCurrentChips(gsb.getPlayers().get(myIdx).getCurrentChips() - bettingDto.getBettingChips());
             log.info("chips 로그  ={}",gsb.getPlayers().get(myIdx).getCurrentChips());
@@ -454,15 +441,20 @@ public class GsbService {
 
     }
     public boolean endRound(String gameCode){
+        log.info("endRound(), gameCode = {}",gameCode);
         Gsb gsb = getInfo(gameCode);
         int currentRound = gsb.getCurrentRound();
-        if(gsb.getPlayers().get(0).getHistories().get(currentRound).getBettingChips()==
+        if((gsb.getPlayers().get(0).getHistories().get(currentRound)==null &&
+                gsb.getPlayers().get(1).getHistories().get(currentRound) == null)
+                                        ||gsb.getPlayers().get(0).getHistories().get(currentRound).getBettingChips()==
                 gsb.getPlayers().get(1).getHistories().get(currentRound).getBettingChips()){
             return true;
         }
+
         return false;
     }
     public MessageDTO getRoundResult(String gameCode){
+        log.info("getRoundResult() , gameCode = {}", gameCode);
         Gsb gsb = getInfo(gameCode);
         int currentRound = gsb.getCurrentRound();
         Player player1 = gsb.getPlayers().get(0);
@@ -476,41 +468,35 @@ public class GsbService {
         int player2Silver = player2History.getSilver();
         int player2Bronze = player2History.getBronze();
         int winner = -1;
-        if(player1History.getBettingChips()>player2History.getBettingChips()){
+        if(player1Gold>player2Gold){
+            //1 승리
             winner = 0;
-
-        } else if( player1History.getBettingChips() < player2History.getBettingChips()){
+        } else if(player1Gold<player2Gold){
+            //2 승리
             winner = 1;
-
         } else{
-
-            if(player1Gold>player2Gold){
+            if(player1Silver> player2Silver){
                 //1 승리
                 winner = 0;
-            } else if(player1Gold<player2Gold){
-                //2 승리
+            } else if(player1Silver < player2Silver){
+                // 2승리
                 winner = 1;
             } else{
-                if(player1Silver> player2Silver){
+                if(player1Bronze > player2Bronze){
                     //1 승리
                     winner = 0;
-                } else if(player1Silver < player2Silver){
-                    // 2승리
+                } else if(player1Bronze < player2Bronze ){
+                    //2 승리
                     winner = 1;
-                } else{
-                    if(player1Bronze > player2Bronze){
-                        //1 승리
-                        winner = 0;
-                    } else if(player1Bronze < player2Bronze ){
-                        //2 승리
-                        winner = 1;
-                    }
                 }
             }
         }
 
-        MessageDTO messageDTO = null;
-        String nextPlayer = null;
+
+
+
+        MessageDTO messageDTO;
+        String nextPlayer;
         // 다음 라운드가 짝수
         if((currentRound+1) %2 ==0){
             nextPlayer = player2.getNickname();
@@ -519,13 +505,12 @@ public class GsbService {
         }
 
         if(winner==0){
+            log.info("1번 플레이어 승리");
             player1.setCurrentChips(player1.getCurrentChips() + gsb.getCarryOverChips());
-            player1History.setChipsChange(gsb.getCarryOverChips());
-            player2History.setChipsChange(-gsb.getCarryOverChips());
+            player1History.setChipsChange(gsb.getCarryOverChips() - player1History.getBettingChips());
+            player2History.setChipsChange(-player2History.getBettingChips());
             player1History.setWinDrawLose(WinDrawLose.WIN);
             player2History.setWinDrawLose(WinDrawLose.LOSE);
-
-
             gsb.setCarryOverChips(0);
             messageDTO = MessageDTO.builder()
                     .type("라운드 결과")
@@ -549,9 +534,11 @@ public class GsbService {
                     .build();
 
         } else if(winner==1){
+            log.info("2번 플레이어 승리");
+            /*TODO: 전 라운드가 비겼는지 확인*/
             player2.setCurrentChips(player2.getCurrentChips() + gsb.getCarryOverChips());
-            player1History.setChipsChange(-gsb.getCarryOverChips());
-            player2History.setChipsChange(+gsb.getCarryOverChips());
+            player1History.setChipsChange(-player1History.getBettingChips());
+            player2History.setChipsChange(gsb.getCarryOverChips()-player2History.getBettingChips());
             player1History.setWinDrawLose(WinDrawLose.LOSE);
             player2History.setWinDrawLose(WinDrawLose.WIN);
             gsb.setCarryOverChips(0);
@@ -567,24 +554,34 @@ public class GsbService {
                             .winnerGold(player2Gold)
                             .winnerSilver(player2Silver)
                             .winnerBronze(player2Bronze)
+                            .currentWinnerChips(player2.getCurrentChips())
                             .loser(player1.getNickname())
                             .loserGold(player1Gold)
                             .loserSilver(player1Silver)
                             .loserBronze(player1Bronze)
+                            .currentLoserChips(player1.getCurrentChips())
                             .build())
                     .build();
 
         } else{
+            log.info("비김");
             player1History.setWinDrawLose(WinDrawLose.DRAW);
+            player1History.setChipsChange(-player1History.getBettingChips());
             player2History.setWinDrawLose(WinDrawLose.DRAW);
+            player2History.setChipsChange(-player2History.getBettingChips());
+
             messageDTO = MessageDTO.builder()
-                    .type("라운드 결과")
-                    .data(RoundResultResponseDto.builder()
+                    .type("라운드 결과 비김")
+                    .data(RoundDrawResultResponseDto.builder()
                             .timer(30)
                             .currentRound(currentRound)
                             .nextRound(currentRound+1)
                             .nextPlayer(nextPlayer)
                             .draw(true)
+                            .player1(player1.getNickname())
+                            .currentPlayer1Chips(player1.getCurrentChips())
+                            .player2(player2.getNickname())
+                            .currentPlayer2Chips(player2.getCurrentChips())
                             .build())
                     .build();
 
@@ -593,17 +590,68 @@ public class GsbService {
         gsb.nextRound();
         gsb.setCurrentPlayer(nextPlayer);
         gsbRepository.save(gsb);
-        if(endGame(gameCode)){
-            /*TODO: 종료 */
-            messageDTO = MessageDTO.builder()
+        return messageDTO;
+
+    }
+
+    public MessageDTO getGiveUpRoundResult(String gameCode){
+        log.info("getGiveUpRoundResult() gameCode = {}" , gameCode);
+        MessageDTO messageDTO = null;
+        Gsb gsb = getInfo(gameCode);
+        int currentRound = gsb.getCurrentRound();
+        String giveUpPlayer = gsb.getCurrentPlayer();
+        log.info("베팅 포기한 플레이어 = {}",giveUpPlayer);
+        Player winnerPlayer;
+        Player loserPlayer;
+        if(gsb.getPlayers().get(0).getNickname().equals(giveUpPlayer)){
+            winnerPlayer = gsb.getPlayers().get(1);
+            loserPlayer = gsb.getPlayers().get(0);
+        } else{
+            winnerPlayer = gsb.getPlayers().get(0);
+            loserPlayer = gsb.getPlayers().get(1);
+        }
+        String nextPlayer;
+        // 다음 라운드가 짝수
+        if((currentRound+1) %2 ==0){
+            nextPlayer = gsb.getPlayers().get(1).getNickname();
+        } else{
+            nextPlayer = gsb.getPlayers().get(0).getNickname();
+        }
+
+        History winnerHistory = winnerPlayer.getHistories().get(currentRound);
+        History loserHistory = loserPlayer.getHistories().get(currentRound);
+        winnerPlayer.setCurrentChips(winnerPlayer.getCurrentChips() +gsb.getCarryOverChips());
+        winnerHistory.setChipsChange(gsb.getCarryOverChips() - winnerHistory.getBettingChips());
+        loserHistory.setChipsChange(-loserHistory.getBettingChips());
+        winnerHistory.setWinDrawLose(WinDrawLose.LOSE);
+        loserHistory.setWinDrawLose(WinDrawLose.WIN);
+        gsb.setCarryOverChips(0);
+        messageDTO = MessageDTO.
+                builder()
+                .type("게임 포기 라운드 결과")
+                .data(GiveUpResponseDto.builder()
+                        .nextRound(gsb.getCurrentRound())
+                        .nextPlayer(nextPlayer)
+                        .timer(30)
+                        .winner(winnerPlayer.getNickname())
+                        .currentWinnerChips(winnerPlayer.getCurrentChips())
+                        .loser(loserPlayer.getNickname())
+                        .currentLoserChips(loserPlayer.getCurrentChips())
+                        .build())
+                .build();
+
+        // 다음 라운드
+        gsb.nextRound();
+        gsb.setCurrentPlayer(nextPlayer);
+        gsbRepository.save(gsb);
+        return messageDTO;
+
+    }
+    public MessageDTO getEndGame(String gameCode){
+        return MessageDTO.builder()
                     .type("게임 결과")
                     .data(getGameResult(gameCode))
                     .build();
-
-
-        }
-        return messageDTO;
-
     }
 
     // 라운드가 종료되었을 때 종료 조건 체크
@@ -671,6 +719,8 @@ public class GsbService {
         gsbRepository.save(gsb);
         return gameResultDto;
     }
+
+
 
 
 
