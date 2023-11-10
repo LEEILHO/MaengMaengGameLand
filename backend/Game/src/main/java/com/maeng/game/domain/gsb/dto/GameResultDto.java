@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class GameResultDto {
 
-    private boolean isDraw;
+    private boolean draw;
 
     private String winner;
     private int winnerChips;
