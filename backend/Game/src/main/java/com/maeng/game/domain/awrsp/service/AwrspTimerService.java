@@ -59,7 +59,7 @@ public class AwrspTimerService {
         Game game = getCurrentGame(gameCode);
 
         // 모든 플레이어가 타이머 완료 되었으면 true 아니면 false
-        if(set.size() == (game.getHeadCount() - game.getFinishCount())) {
+        if(set.size() >= (game.getHeadCount() - game.getFinishCount())) {
             awrspTimerRepository.delete(timer); // 타이머 지우고
             return true;
         }
