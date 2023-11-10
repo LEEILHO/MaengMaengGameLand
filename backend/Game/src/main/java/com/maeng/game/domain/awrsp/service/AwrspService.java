@@ -282,6 +282,8 @@ public class AwrspService {
             objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // 문자열로 만들게
             String json = objectMapper.writeValueAsString(game);
             template.convertAndSend(RECORD_EXCHANGE_NAME, "awrsp."+gameCode, json);
+
+            log.info("게임 결과 record-service에 전송 : "+json);
         } catch (Exception e) {
             log.error("json error : {}", e.getMessage());
         }
