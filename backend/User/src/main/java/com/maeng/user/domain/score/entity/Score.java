@@ -1,37 +1,48 @@
 package com.maeng.user.domain.score.entity;
 
-import com.maeng.user.domain.user.entity.User;
-import lombok.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
 import org.hibernate.annotations.ColumnDefault;
 
-import javax.persistence.*;
+import com.maeng.user.domain.score.enums.GameCategory;
+import com.maeng.user.domain.score.enums.Tier;
+import com.maeng.user.domain.user.entity.User;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Getter
 @Entity(name = "scores")
 public class Score {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "score_seq")
     private long scoreSeq;
 
     @ManyToOne
     @JoinColumn(name = "user_seq")
     private User user;
 
-
     @Column(name = "score")
     private int score;
 
-    @Column(name = "tier")
-    @Enumerated(EnumType.STRING)
     @ColumnDefault("BRONZE")
+    @Enumerated(EnumType.STRING)
     private Tier tier;
 
-    @ManyToOne
-    @JoinColumn(name = "game_categories")
+    @Enumerated(EnumType.STRING)
     private GameCategory gameCategory;
 
 

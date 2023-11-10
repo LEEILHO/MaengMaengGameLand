@@ -29,7 +29,6 @@ public class UserController {
         logger.info("myDetail(), userEmail = {}", userEmail);
 
         return ResponseEntity.ok().body(userService.getUserDetail(userEmail));
-
     }
 
     @GetMapping("/watch")
@@ -38,7 +37,6 @@ public class UserController {
 
         return ResponseEntity.ok().body(userService.getWatchCode(userEmail));
     }
-
 
     @PostMapping("/edit/nickname")
     public ResponseEntity<Void> editNickname(@RequestHeader("userEmail") String userEmail, String nickname) {

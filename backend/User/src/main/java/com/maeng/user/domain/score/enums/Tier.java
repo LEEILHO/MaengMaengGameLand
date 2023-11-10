@@ -1,4 +1,4 @@
-package com.maeng.user.domain.score.entity;
+package com.maeng.user.domain.score.enums;
 
 public enum Tier {
     BRONZE,

@@ -1,6 +1,6 @@
 package com.maeng.user.domain.user.dto;
 
-import com.maeng.user.domain.score.entity.Tier;
+import com.maeng.user.domain.score.enums.Tier;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
