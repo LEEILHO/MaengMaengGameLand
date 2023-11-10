@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maeng.record.domain.record.data.Awrsp;
 import com.maeng.record.domain.record.data.Jwac;
+import com.maeng.record.domain.record.dto.NicknameEditDTO;
 import com.maeng.record.domain.record.dto.UserInfoDTO;
 import com.maeng.record.domain.record.service.AwrspRecordService;
 import com.maeng.record.domain.record.service.GameUserService;
@@ -29,6 +30,12 @@ public class MessageListener {
 	public void receiveMessage1(UserInfoDTO userInfo){
 		log.info("register = " + userInfo);
 		gameUserService.registerGameUser(userInfo);
+	}
+
+	@RabbitListener(queues = "edit.queue")
+	public void receiveMessage2(NicknameEditDTO nicknameEditDTO){
+		log.info("edit = " + nicknameEditDTO);
+		gameUserService.editGameUser(nicknameEditDTO);
 	}
 
 	@RabbitListener(queues = "record.queue")

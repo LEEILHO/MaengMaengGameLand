@@ -2,6 +2,7 @@ package com.maeng.record.domain.record.service;
 
 import org.springframework.stereotype.Service;
 
+import com.maeng.record.domain.record.dto.NicknameEditDTO;
 import com.maeng.record.domain.record.dto.UserInfoDTO;
 import com.maeng.record.domain.record.entity.GameUser;
 import com.maeng.record.domain.record.repository.GameUserRepository;
@@ -22,5 +23,11 @@ public class GameUserService {
 			.email(userinfo.getEmail())
 			.nickname(userinfo.getNickname())
 			.build());
+	}
+
+	public void editGameUser(NicknameEditDTO nicknameEditDTO) {
+		GameUser gameUser = gameUserRepository.findByNickname(nicknameEditDTO.getOldNickname()).orElseThrow();
+		gameUser.setNickname(nicknameEditDTO.getNewNickname());
+		gameUserRepository.save(gameUser);
 	}
 }
