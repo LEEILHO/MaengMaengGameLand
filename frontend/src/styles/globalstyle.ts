@@ -4,11 +4,6 @@ import reset from 'styled-reset'
 const GlobalStyle = createGlobalStyle`
   ${reset}
 
-  *{
-    box-sizing: border-box;
-    /* overscroll-behavior-x: none; */
-  }
-
   * {
     box-sizing: border-box;
     /* 텍스트 터치 막기 */
