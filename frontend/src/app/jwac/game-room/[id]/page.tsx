@@ -11,7 +11,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useRecoilValue } from 'recoil'
 import { formatKoreanCurrency, jewelryToLottie } from '@utils/gameRoom/jwacUtil'
 import { userState } from '@atom/userAtom'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import useSocketJWAC from '@hooks/useSocketJWAC'
 import JWACRoundStartDisplay from '@components/gameRoom/jwac/JWACRoundStartDisplay'
 import JWACRoundResultDisplay from '@components/gameRoom/jwac/JWACRoundResultDisplay'
@@ -34,6 +34,7 @@ const page = () => {
   } = useSocketJWAC()
   const { Modal, isOpen, closeModal, openModal } = useModal()
   const pathname = usePathname().split('game-room/')[1]
+  const router = useRouter()
   const [isLoading, setIsLoading] = useState(true) // 사람들이 모두 들어오기 전에 로딩 페이지를 보여줄지 말지
   const [isRoundStart, setIsRoundStart] = useState(false)
   const [isRoundEnd, setIsRoundEnd] = useState(false)
@@ -96,7 +97,7 @@ const page = () => {
     // 3초 후에 isRoundStart를 false로 변경
     const timeoutId = setTimeout(() => {
       setIsRoundStart(false)
-    }, 3000) // 3초를 밀리초로 설정
+    }, 10000) // 3초를 밀리초로 설정
 
     return () => {
       clearTimeout(timeoutId) // cleanup 시 clearTimeout을 호출하여 타이머를 제거
@@ -108,7 +109,7 @@ const page = () => {
     setIsRoundEnd(true)
     const timeoutId = setTimeout(() => {
       setIsRoundEnd(false)
-    }, 1500)
+    }, 5000)
 
     return () => {
       clearTimeout(timeoutId)
@@ -162,10 +163,10 @@ const page = () => {
                   socre={roundData.jewelryScore}
                 />
               )}
-              {isRoundEnd && (
+              {isRoundEnd && roundResult && (
                 <JWACRoundResultDisplay
-                  jewely={roundData.jewelry}
-                  socre={roundData.jewelryScore}
+                  jewely={roundResult.jewelry}
+                  socre={roundResult.jewelryScore}
                   roundResult={roundResult}
                 />
               )}
@@ -181,9 +182,14 @@ const page = () => {
                   value={bidMoney.toString()}
                   onChange={handleBidMody}
                   max={999999999999}
+                  maxLength={12}
+                  min={0}
                 />
                 <S.PriceUnit>원</S.PriceUnit>
               </S.PriceRow>
+              <S.CurrentPriceRow>
+                {formatKoreanCurrency(bidMoney)}
+              </S.CurrentPriceRow>
               <S.CumlativeAmountCotainer>
                 <S.CumlativeDiscriptionRow>
                   <img src={images.gameRoom.jwac.money} alt="누적 금액" />
@@ -237,6 +243,9 @@ const page = () => {
             <S.BackButton
               src={images.gameRoom.jwac.backWhite}
               alt="로비로 나가기"
+              onClick={() => {
+                router.replace('/jwac/lobby')
+              }}
             />
           </>
         )}

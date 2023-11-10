@@ -35,6 +35,7 @@ export interface RoundResultType {
   leastBidder: string
   roundBidSum: number
   round: number
+  jewelry: JewelryType
   jewelryScore: number
   panaltyScore: number
   players: PlayerType[]

@@ -43,7 +43,7 @@ const JWACRoundResultDisplay = ({ jewely, socre, roundResult }: Props) => {
         </S.SuccessfulBidderName>
         {jewely !== 'SPECIAL' && (
           <S.SuccessfulBidderScore>
-            {roundResult?.jewelryScore}
+            {`(+${roundResult?.jewelryScore})`}
           </S.SuccessfulBidderScore>
         )}
       </S.DisplayRow>

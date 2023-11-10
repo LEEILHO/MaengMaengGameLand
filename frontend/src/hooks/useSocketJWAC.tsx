@@ -115,7 +115,7 @@ const useSocketJWAC = () => {
       }
 
       // 게임 종료
-      if (result.type === 'Game_END') {
+      if (result.type === 'GAME_END') {
         const data = result.data as GameEndResponseType
         setGameResult(data.rank)
         setIsGameEnd(true)
