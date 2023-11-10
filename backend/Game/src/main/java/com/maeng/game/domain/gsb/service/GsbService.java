@@ -28,6 +28,7 @@ public class GsbService {
     private static final int BRONZE_Weight = 1;
 
     public boolean gameSetting(GameStartDTO gameStartDTO){
+        log.info("gameSetting() , gameCode = {}",gameStartDTO.getGameCode());
         StartCard[] cards = new StartCard[2];
         for (int i = 0; i < 2; i++) {
             cards[i] = StartCard.builder().seq(i).selected(false).build();
@@ -72,7 +73,7 @@ public class GsbService {
             players = new HashMap<>();
         }
         System.out.println(players.containsKey(0));
-        if(!startCards[seq].isSelected() && !players.containsKey(s)) {
+        if(!startCards[seq].isSelected() && ! players.containsKey(s)) {
             boolean duplicated = false;
             for(StartCard startCard : startCards) {
                 if(playerSeqDto.getNickname().equals(startCard.getNickname())){
@@ -92,7 +93,7 @@ public class GsbService {
                 // 데이터 넣기
                 players.put(s, Player.builder().nickname(playerSeqDto.getNickname())
                         .profileUrl(gsb.getParticipiants().get(idx).getProfileUrl())
-                                .tier(gsb.getParticipiants().get(idx).getTier())
+                                .tier(gsb.getParticipiants().get(idx).getTier()).currentWeight(0)
                         .currentGold(3).currentSilver(10).currentBronze(20).currentChips(40).build());
 
                 // 선택 처리
@@ -154,6 +155,7 @@ public class GsbService {
                     messageDTO = MessageDTO.builder()
                             .type("다음 플레이어 별 세팅")
                             .data(StarResponseDto.builder()
+                                    .currentPlayer(gsb.getCurrentPlayer())
                                     .timer(30)
                                     .weight(gsb.getPlayers().get(1).getHistories().get(curRound).getWeight())
                                     .nextPlayer(gsb.getPlayers().get(0).getNickname())
@@ -186,6 +188,7 @@ public class GsbService {
                     messageDTO = MessageDTO.builder()
                             .type("다음 플레이어 베팅 시작")
                             .data(StarResponseDto.builder()
+                                    .currentPlayer(gsb.getCurrentPlayer())
                                     .timer(30)
                                     .weight(gsb.getPlayers().get(0).getHistories().get(curRound).getWeight())
                                     .nextPlayer(gsb.getPlayers().get(1).getNickname())
@@ -236,6 +239,7 @@ public class GsbService {
                     messageDTO = MessageDTO.builder()
                             .type("다음 플레이어 별 세팅")
                             .data(StarResponseDto.builder()
+                                    .currentPlayer(gsb.getCurrentPlayer())
                                     .timer(30)
                                     .weight(gsb.getPlayers().get(0).getHistories().get(curRound).getWeight())
                                     .nextPlayer(gsb.getPlayers().get(1).getNickname())
@@ -264,6 +268,7 @@ public class GsbService {
                     messageDTO = MessageDTO.builder()
                             .type("다음 플레이어 베팅 시작")
                             .data(StarResponseDto.builder()
+                                    .currentPlayer(gsb.getCurrentPlayer())
                                     .timer(30)
                                     .weight(gsb.getPlayers().get(1).getHistories().get(curRound).getWeight())
                                     .nextPlayer(gsb.getPlayers().get(0).getNickname())

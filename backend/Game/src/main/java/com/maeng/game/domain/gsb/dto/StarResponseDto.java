@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class StarResponseDto {
 
-
+    private String currentPlayer;
     private int weight;
     private String nextPlayer;
     private int timer;
