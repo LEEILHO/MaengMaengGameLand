@@ -8,17 +8,27 @@ import { usePathname } from 'next/navigation'
 import { socketResponseType } from '@type/common/common.type'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { userState } from '@atom/userAtom'
-import { DisplayMessageState, TurnCardState } from '@atom/gsbAtom'
-import { TurnListType } from '@type/gsb/gsb.type'
+import {
+  AllBetChipsState,
+  CurrentPlayerState,
+  DisplayMessageState,
+  PlayersState,
+  RoundState,
+  TurnCardState,
+} from '@atom/gsbAtom'
+import { InitGameType, TurnListType } from '@type/gsb/gsb.type'
 
 const useSocketGsb = () => {
-  const [sockjs, setSockjs] = useState<WebSocket>()
   const client = useRef<CompatClient>()
   const gameCode = usePathname().split('/')[3]
 
   const user = useRecoilValue(userState)
   const setDisplayMessage = useSetRecoilState(DisplayMessageState)
   const setTurnList = useSetRecoilState(TurnCardState)
+  const setCurrentPlayer = useSetRecoilState(CurrentPlayerState)
+  const setPlayers = useSetRecoilState(PlayersState)
+  const setAllBetChips = useSetRecoilState(AllBetChipsState)
+  const setRound = useSetRecoilState(RoundState)
 
   // 금은동 게임 구독
   const connectGsb = useCallback(() => {
@@ -32,6 +42,15 @@ const useSocketGsb = () => {
       if (response.type === '플레이어순서') {
         const result = response as socketResponseType<TurnListType[]>
         setTurnList(result.data)
+        setRound('ChoiceTurn')
+      }
+
+      // 게임 초기값 받아오기
+      else if (response.type === '게임정보') {
+        const result = response as socketResponseType<InitGameType>
+        setCurrentPlayer(result.data.currentPlayer)
+        setPlayers(result.data.players)
+        setAllBetChips(result.data.carryOverChips)
       }
     })
   }, [client.current, gameCode])
@@ -68,8 +87,6 @@ const useSocketGsb = () => {
           // 게임 나가기
         },
       )
-
-      setSockjs(sock)
     },
     [client.current],
   )
@@ -92,9 +109,11 @@ const useSocketGsb = () => {
     })
   }, [client.current])
 
-  // 선후공 카드 선택
-  // 선택한 카드의 인덱스를 전달
-  // 카드 seq == 0이면 선공카드
+  /**
+   * 선후공 카드 선택
+   * 선택한 카드의 인덱스를 전달
+   * 카드 seq == 0이면 선공카드
+   */
   const handleChoiceTurnCard = useCallback(
     (index: number) => {
       console.log('선후공 카드 선택 : ', index)
@@ -112,7 +131,6 @@ const useSocketGsb = () => {
 
   return {
     client,
-    sockjs,
     connectSocket,
     disconnectSocket,
     connectGsb,

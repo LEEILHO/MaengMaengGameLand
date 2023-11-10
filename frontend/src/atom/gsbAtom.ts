@@ -1,4 +1,4 @@
-import { RoundType, TurnListType } from '@type/gsb/gsb.type'
+import { Player, RoundType, TurnListType } from '@type/gsb/gsb.type'
 import { atom } from 'recoil'
 
 export const TurnCardState = atom<TurnListType[] | null>({
@@ -13,5 +13,20 @@ export const RoundState = atom<RoundType | null>({
 
 export const DisplayMessageState = atom<string | null>({
   key: 'displayMessage',
+  default: null,
+})
+
+export const CurrentPlayerState = atom<String | null>({
+  key: 'currentPlayer',
+  default: null,
+})
+
+export const AllBetChipsState = atom<number | null>({
+  key: 'allBetChips',
+  default: null,
+})
+
+export const PlayersState = atom<Player | null>({
+  key: 'players',
   default: null,
 })

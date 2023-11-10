@@ -36,7 +36,6 @@ const GameRoom = () => {
   const [minBet, setMinBet] = useState<number>(1)
 
   useEffect(() => {
-    setRound('ChoiceTurn')
     connectSocket(connectGsb, disconnectGsb)
     return () => {
       disconnectSocket()
@@ -58,7 +57,6 @@ const GameRoom = () => {
         </S.Content>
         <PlayerCard nickname="김진영" chipsPlayerHas={30} weight={0} />
       </S.CenterRow>
-      {/* 베팅라운드이고 내가 베팅할 차례일 때 활성화 */}
       {/* <Betting minBet={minBet} chipsPlayerHas={30} /> */}
       {round === 'ChoiceTurn' && (
         <TurnCard handleChoiceTurnCard={handleChoiceTurnCard} />
