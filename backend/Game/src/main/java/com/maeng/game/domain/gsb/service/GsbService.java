@@ -444,10 +444,13 @@ public class GsbService {
         log.info("endRound(), gameCode = {}",gameCode);
         Gsb gsb = getInfo(gameCode);
         int currentRound = gsb.getCurrentRound();
-        if(gsb.getPlayers().get(0).getHistories().get(currentRound).getBettingChips()==
+        if((gsb.getPlayers().get(0).getHistories().get(currentRound)==null &&
+                gsb.getPlayers().get(1).getHistories().get(currentRound) == null)
+                                        ||gsb.getPlayers().get(0).getHistories().get(currentRound).getBettingChips()==
                 gsb.getPlayers().get(1).getHistories().get(currentRound).getBettingChips()){
             return true;
         }
+
         return false;
     }
     public MessageDTO getRoundResult(String gameCode){
