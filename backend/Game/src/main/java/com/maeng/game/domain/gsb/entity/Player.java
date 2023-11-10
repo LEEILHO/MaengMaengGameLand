@@ -18,6 +18,7 @@ public class Player {
     private int currentGold;
     private int currentSilver;
     private int currentBronze;
+    private int currentWeight;
     private Map<Integer, History> histories;
 
 }
