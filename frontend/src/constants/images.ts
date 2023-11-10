@@ -50,6 +50,16 @@ export const images = {
     cardFrontHu: '/images/gsb/card-front-hu.png',
     cardFrontSun: '/images/gsb/card-front-sun.png',
   },
+  awrsp: {
+    background: '/images/awrsp/background.png',
+    scissorsCard: '/images/awrsp/scissors-card.png',
+    scissorsDrawCard: '/images/awrsp/scissors-draw-card.png',
+    rockCard: '/images/awrsp/rock-card.png',
+    rockDrawCard: '/images/awrsp/rock-draw-card.png',
+    paperCard: '/images/awrsp/paper-card.png',
+    paperDrawCard: '/images/awrsp/paper-draw-card.png',
+    roundDisplay: '/images/awrsp/round-display.png',
+  },
   gameRoom: {
     jwac: {
       backGround: '/images/gameRoom/background-jwac.png',
@@ -64,6 +74,8 @@ export const images = {
       sapphire: '/images/gameRoom/sapphire.png',
       checkIcon: '/images/gameRoom/ic-check-item.png',
       jewelryInfomationFrame: '/images/gameRoom/frame-jewelry-infomation.png',
+      backWhite: '/images/gameRoom/ic-back-white.png',
+      jewelryInfomation: '/images/gameRoom/jewelry-infomation.png',
     },
   },
 }

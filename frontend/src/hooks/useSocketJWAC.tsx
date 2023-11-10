@@ -10,21 +10,30 @@ import { SOCKET_URL } from '@constants/baseUrl'
 import { CompatClient, Stomp } from '@stomp/stompjs'
 import { socketResponseType } from '@type/common/common.type'
 import {
+  GameEndResponseType,
   GameInfoType,
+  PlayerResultType,
+  PlayerType,
   RoundDataType,
   RoundResultType,
   SpecialItemResultType,
 } from '@type/gameRoom/jwac.type'
-import { useCallback, useState, useRef } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { useRecoilState, useSetRecoilState } from 'recoil'
 import SockJS from 'sockjs-client'
 
 const useSocketJWAC = () => {
   const client = useRef<CompatClient>()
-  const [playerList, setPlayerList] = useRecoilState(jwacPlayerListState)
-  const [roundData, setRoundData] = useRecoilState(jwacRoundState)
-  const setRoundTotalData = useSetRecoilState(jwacRoundResultState)
+  const [playerList, setPlayerList] = useState<PlayerType[]>([])
+  const [roundData, setRoundData] = useState<RoundDataType | null>(null)
+  const [roundResult, setRoundResult] = useState<RoundResultType | null>(null)
+  const [gameResult, setGameResult] = useState<PlayerResultType[]>([])
+  const [isGameEnd, setIsGameEnd] = useState(false)
   const setJewelryItem = useSetRecoilState(jwacJewelryItemState)
+
+  useEffect(() => {
+    console.log('[훅 안에서 플레이어 리스트 변경]', playerList)
+  }, [playerList])
 
   /**
    * 게임 시작 시 서버로 게임 시작을 알린다.
@@ -82,36 +91,21 @@ const useSocketJWAC = () => {
       // 유저 초기 세팅
       if (result.type === 'GAME_INFO') {
         const data = result.data as GameInfoType
-        const initPlayers = data.playerInfo.map((player) => {
-          return {
-            score: 0,
-            item: false,
-            bidSum: 0,
-            ...player,
-          }
-        })
+        const initPlayers = data.playerInfo.map((player) => ({ ...player }))
         setPlayerList(initPlayers)
       }
 
       // 게임 라운드 시작
       if (result.type === 'GAME_ROUND_START') {
         const data = result.data as RoundDataType
-        console.log('게임 라운드 스타트', data)
-
-        setRoundData(data)
+        setRoundData((prev) => data)
       }
 
       // 게임 결과 받아서 업데이트
       if (result.type === 'GAME_ROUND_RESULT') {
         const data = result.data as RoundResultType
-        const newPlayerList = playerList.map((player) => {
-          return {
-            ...player,
-            ...data.players.filter((item) => item.nickname === player.nickname),
-          }
-        })
-        setRoundTotalData(data)
-        setPlayerList(newPlayerList)
+        setRoundResult(() => data)
+        setPlayerList((prev) => data.players)
       }
 
       // 보석 정보 확인권 아이템 정보 받기
@@ -119,10 +113,17 @@ const useSocketJWAC = () => {
         const data = result.data as SpecialItemResultType
         setJewelryItem(data.itemResult)
       }
+
+      // 게임 종료
+      if (result.type === 'GAME_END') {
+        const data = result.data as GameEndResponseType
+        setGameResult(data.rank)
+        setIsGameEnd(true)
+      }
     })
   }
 
-  const connectSocket = useCallback((code: string, nickname: string) => {
+  const connectSocket = (code: string, nickname: string) => {
     const sock = new SockJS(SOCKET_URL)
     const StompClient = Stomp.over(() => sock)
 
@@ -136,12 +137,22 @@ const useSocketJWAC = () => {
       },
       () => {},
     )
-  }, [])
+  }
+
+  const disconnectSocket = () => {
+    client.current?.disconnect()
+  }
 
   return {
     connectSocket,
+    disconnectSocket,
     handleBid,
     timeOver,
+    roundData,
+    roundResult,
+    playerList,
+    isGameEnd,
+    gameResult,
   }
 }
 

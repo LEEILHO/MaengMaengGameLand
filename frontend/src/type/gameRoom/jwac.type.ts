@@ -1,27 +1,17 @@
 import { TireType } from '@type/common/common.type'
 
-export interface PlayerResponseType {
+export interface GameInfoType {
+  gameCode: string
+  playerInfo: PlayerType[]
+}
+
+export interface PlayerType {
+  score: number
+  item: boolean
+  bidSum: number
   nickname: string
   profileUrl: string
   tier: TireType
-}
-
-export interface GameInfoType {
-  gameCode: string
-  playerInfo: PlayerResponseType[]
-}
-
-export interface PlayerScoreType {
-  nickname: string
-  score: number
-  item: boolean
-  bidSum: number
-}
-
-export interface PlayerType extends PlayerResponseType {
-  score: number
-  item: boolean
-  bidSum: number
 }
 
 export type JewelryType =
@@ -45,9 +35,10 @@ export interface RoundResultType {
   leastBidder: string
   roundBidSum: number
   round: number
+  jewelry: JewelryType
   jewelryScore: number
   panaltyScore: number
-  players: PlayerScoreType[]
+  players: PlayerType[]
 }
 
 export type JewelryItemType = {
@@ -60,4 +51,19 @@ export type JewelryItemType = {
 export type SpecialItemResultType = {
   itemResult: JewelryItemType
   nickname: string
+}
+
+export type PlayerResultType = {
+  nickname: string
+  profileUrl: string
+  tier: TireType
+  score: number
+  item: boolean
+  bidSum: number
+}
+
+export type GameEndResponseType = {
+  roomCode: string
+  gameCode: string
+  rank: PlayerResultType[]
 }

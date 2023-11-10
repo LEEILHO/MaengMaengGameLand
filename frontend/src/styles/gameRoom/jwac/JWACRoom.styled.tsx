@@ -130,6 +130,16 @@ export const ButtonRow = styled.div`
   }
 `
 
+export const CurrentPriceRow = styled.div`
+  display: flex;
+  width: 100%;
+  margin-top: 24px;
+  padding: 0 12px;
+  justify-content: end;
+  font-size: 14px;
+  font-weight: 700;
+`
+
 export const CumlativeAmountCotainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -226,4 +236,12 @@ export const JewelContainer = styled.div`
     bottom: 28px;
     left: 10px;
   }
+`
+
+export const BackButton = styled.img`
+  position: absolute;
+  bottom: 12px;
+  right: 24px;
+  height: 40px;
+  width: 40px;
 `

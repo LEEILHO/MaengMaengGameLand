@@ -1,13 +1,14 @@
 'use client'
 
 import React from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 interface ButtonProps extends React.HTMLProps<HTMLButtonElement> {
   height?: number
   width?: number
   radius?: number
   $backgroundColor: string
+  $disabled?: boolean
 }
 
 interface TextProps {
@@ -43,10 +44,14 @@ export const Button = styled.button<ButtonProps>`
     4px 38px 62px 0px rgba(0, 0, 0, 0.5),
     -3px -4px 7px 0px rgba(255, 255, 255, 0.15) inset;
 
-  &:active {
-    transform: translateY(4px);
-    filter: brightness(0.7);
-  }
+  ${(props) =>
+    !props.$disabled &&
+    css`
+      &:active {
+        transform: translateY(4px);
+        filter: brightness(0.7);
+      }
+    `}
 `
 
 export const Text = styled.p<TextProps>`
