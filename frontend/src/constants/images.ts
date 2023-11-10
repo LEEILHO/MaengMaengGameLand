@@ -13,6 +13,11 @@ export const images = {
     },
     leftArrow: '/images/common/ic-left-arrow.png',
   },
+  index: {
+    background: '/images/index/background-index.png',
+    icon: '/images/index/ic-main.png',
+    donwloadComplete: '/images/index/ic-download-complete.png',
+  },
   waitingRoom: {
     header: {
       lock: '/images/common/ic-lock.png',
