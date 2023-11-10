@@ -133,7 +133,7 @@ public class AwrspService {
         log.info(submit.toString());
         submitRepository.save(submit);
 
-        return submit.getSubmit().size() == game.getHeadCount();
+        return submit.getSubmit().size() == (game.getHeadCount() - game.getFinishCount());
     }
 
     @Transactional
