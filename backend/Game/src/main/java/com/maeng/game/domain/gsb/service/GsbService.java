@@ -693,7 +693,7 @@ public class GsbService {
         player2.setCurrentChips(player2.getCurrentChips() + coin2);
         if (player1.getCurrentChips()> player2.getCurrentChips()){
             gameResultDto = GameResultDto.builder()
-                    .isDraw(false)
+                    .draw(false)
                     .winner(player1.getNickname())
                     .winnerChips(player1.getCurrentChips())
                     .loser(player2.getNickname())
@@ -701,7 +701,7 @@ public class GsbService {
                     .build();
         } else if (player1.getCurrentChips()< player2.getCurrentChips()){
             gameResultDto = GameResultDto.builder()
-                    .isDraw(false)
+                    .draw(false)
                     .winner(player2.getNickname())
                     .winnerChips(player2.getCurrentChips())
                     .loser(player1.getNickname())
@@ -709,7 +709,7 @@ public class GsbService {
                     .build();
         } else {
             gameResultDto = GameResultDto.builder()
-                    .isDraw(true)
+                    .draw(true)
                     .winner(player1.getNickname())
                     .winnerChips(player1.getCurrentChips())
                     .loser(player2.getNickname())
