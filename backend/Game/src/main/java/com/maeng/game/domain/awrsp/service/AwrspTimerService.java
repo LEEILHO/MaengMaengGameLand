@@ -30,7 +30,7 @@ public class AwrspTimerService {
     private static final int CARD_SUBMIT = 60;
     private static final int DRAW_CARD = 10;
     private static final int PLAYER_WINS = 20;
-    private static final int ALL_WINS = 10;
+    private static final int ALL_WINS = 5;
 
     @Operation(summary = "타이머 시작")
     public void timerStart(String gameCode, String type){
