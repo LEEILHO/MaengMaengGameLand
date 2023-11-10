@@ -310,6 +310,10 @@ public class RoomService {
 
         template.convertAndSend(CHAT_EXCHANGE_NAME, "room."+roomCode, MessageDTO.builder()
                 .type("GAME_START").data(gameCode).build());
+
+        // 게임 시작하면 비공개 방으로 변경
+        room.setPublicRoom(false);
+        roomRepository.save(room);
     }
 
     public void checkCount(Game game, int headCount){
