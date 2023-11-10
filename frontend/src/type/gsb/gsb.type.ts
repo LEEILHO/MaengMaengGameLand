@@ -29,7 +29,7 @@ export type ParticipiantType = {
 export type Turn = '0' | '1'
 
 export type Player = {
-  [key in Turn]: PlayerInfoType[]
+  [key in Turn]: PlayerInfoType
 }
 
 export type InitGameType = {

@@ -16,7 +16,12 @@ import BarTimer from '@components/common/clients/BarTimer'
 import useSocketGsb from '@hooks/useSocketGsb'
 import { usePathname } from 'next/navigation'
 import { useRecoilState, useRecoilValue } from 'recoil'
-import { DisplayMessageState, RoundState } from '@atom/gsbAtom'
+import {
+  DisplayMessageState,
+  MyState,
+  OpponentState,
+  RoundState,
+} from '@atom/gsbAtom'
 
 const GameRoom = () => {
   const {
@@ -30,10 +35,9 @@ const GameRoom = () => {
 
   // 전광판 하나로 해서 상황에 따라 메세지만 바꾸기
   const displayMessage = useRecoilValue(DisplayMessageState)
-
-  const [round, setRound] = useRecoilState(RoundState)
-
-  const [minBet, setMinBet] = useState<number>(1)
+  const round = useRecoilValue(RoundState)
+  const my = useRecoilValue(MyState)
+  const opponent = useRecoilValue(OpponentState)
 
   useEffect(() => {
     connectSocket(connectGsb, disconnectGsb)
@@ -49,13 +53,13 @@ const GameRoom = () => {
         <BarTimer time={10} />
       </S.TopRow>
       <S.CenterRow>
-        <PlayerCard nickname="심은진" chipsPlayerHas={30} weight={0} />
+        <PlayerCard player={my} />
         <S.Content>
-          {/* <CombinationGsb /> */}
+          {round === 'Combination' && <CombinationGsb />}
           {/* <BettingStatus betChips={[3, 3]} /> */}
           {/* <RoundResult /> */}
         </S.Content>
-        <PlayerCard nickname="김진영" chipsPlayerHas={30} weight={0} />
+        <PlayerCard player={opponent} />
       </S.CenterRow>
       {/* <Betting minBet={minBet} chipsPlayerHas={30} /> */}
       {round === 'ChoiceTurn' && (

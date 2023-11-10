@@ -6,17 +6,18 @@ import SockJS from 'sockjs-client'
 import { SOCKET_URL } from '@constants/baseUrl'
 import { usePathname } from 'next/navigation'
 import { socketResponseType } from '@type/common/common.type'
-import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import { userState } from '@atom/userAtom'
 import {
   AllBetChipsState,
   CurrentPlayerState,
   DisplayMessageState,
-  PlayersState,
+  MyState,
+  OpponentState,
   RoundState,
   TurnCardState,
 } from '@atom/gsbAtom'
-import { InitGameType, TurnListType } from '@type/gsb/gsb.type'
+import { InitGameType, Player, Turn, TurnListType } from '@type/gsb/gsb.type'
 
 const useSocketGsb = () => {
   const client = useRef<CompatClient>()
@@ -25,8 +26,9 @@ const useSocketGsb = () => {
   const user = useRecoilValue(userState)
   const setDisplayMessage = useSetRecoilState(DisplayMessageState)
   const setTurnList = useSetRecoilState(TurnCardState)
-  const setCurrentPlayer = useSetRecoilState(CurrentPlayerState)
-  const setPlayers = useSetRecoilState(PlayersState)
+  const [currentPlayer, setCurrentPlayer] = useRecoilState(CurrentPlayerState)
+  const setMy = useSetRecoilState(MyState)
+  const setOpponent = useSetRecoilState(OpponentState)
   const setAllBetChips = useSetRecoilState(AllBetChipsState)
   const setRound = useSetRecoilState(RoundState)
 
@@ -49,8 +51,22 @@ const useSocketGsb = () => {
       else if (response.type === '게임정보') {
         const result = response as socketResponseType<InitGameType>
         setCurrentPlayer(result.data.currentPlayer)
-        setPlayers(result.data.players)
         setAllBetChips(result.data.carryOverChips)
+        const players = result.data.players as Player
+
+        Object.keys(players).map((key) => {
+          if (players[key as Turn].nickname == user?.nickname)
+            setMy(players[key as Turn])
+          else setOpponent(players[key as Turn])
+        })
+
+        if (user?.nickname === currentPlayer) {
+          setRound('Combination')
+          setDisplayMessage('금은동을 조합해서 올려주세요')
+        } else {
+          setRound('Waiting')
+          setDisplayMessage('상대방이 금은동을 조합합니다')
+        }
       }
     })
   }, [client.current, gameCode])
@@ -99,7 +115,7 @@ const useSocketGsb = () => {
   const handleEnterGsb = useCallback(() => {
     console.log('금은동 게임 참가 : ', user?.nickname)
 
-    setDisplayMessage('카드를 뒤집어 선공을 정해주세요.')
+    setDisplayMessage('카드를 뒤집어 선공을 정해주세요')
     console.log()
     client.current?.publish({
       destination: `/pub/game.gsb.enter.${gameCode}`,
