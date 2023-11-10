@@ -5,10 +5,8 @@ interface SettingButtonProps {
 }
 
 export const CreateRoomModalContainer = styled.div`
-  max-width: 373px;
-  max-height: 262px;
-  width: 60vw;
-  height: 75vh;
+  width: 410px;
+  height: 280px;
   border-radius: 24px;
   background: #f8f8f8;
   box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.25);
@@ -23,7 +21,7 @@ export const TopRow = styled.div`
   justify-content: center;
   text-align: center;
   position: relative;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 `
 
 export const Title = styled.h2`
@@ -45,7 +43,9 @@ export const SubTitle = styled.h6`
   font-size: 16px;
   margin-right: 14px;
   width: 66px;
+  /* min-width: 66px; */
   text-align: center;
+  margin-left: 24px;
 
   &.title {
     letter-spacing: 3.2px;
@@ -57,7 +57,7 @@ export const SubRow = styled.div`
   height: auto;
   display: flex;
   justify-content: center;
-  padding: 0 24px;
+  /* padding: 0 24px; */
   align-items: center;
   margin-top: 24px;
 `
@@ -70,6 +70,7 @@ export const RoomNameInput = styled.input`
   font-size: 14px;
   font-weight: 500;
   padding: 0 12px;
+  margin-right: 24px;
 `
 
 export const ButtonRow = styled.div`
@@ -105,10 +106,10 @@ export const SettingButton = styled.div<SettingButtonProps>`
           z-index: 2;
           background-color: #7000ff;
           width: 52px;
+          border-radius: 4px;
         `
       : css`
-          z-index: 1 back;
-          border-radius: 0px 4px 4px 0px;
+          z-index: 1;
           background: #aed2ff;
           width: 56px;
         `}

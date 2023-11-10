@@ -24,11 +24,18 @@ export function formatKoreanCurrency(amount: number): string {
   const unit = 10000
   let answer = ''
 
+  if (amount === 0) return '0원'
+
   while (amount > 0) {
     const mod = amount % unit
     const modToString = mod.toString().replace(/(\d)(\d{3})/, '$1,$2')
     amount = Math.floor(amount / unit)
-    answer = `${modToString}${koreanUnits.pop()}${answer}`
+    if (modToString === '0') {
+      koreanUnits.pop()
+    } else {
+      answer = `${modToString}${koreanUnits.pop()} ${answer}`
+    }
   }
+
   return answer
 }

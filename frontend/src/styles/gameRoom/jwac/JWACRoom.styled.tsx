@@ -130,6 +130,16 @@ export const ButtonRow = styled.div`
   }
 `
 
+export const CurrentPriceRow = styled.div`
+  display: flex;
+  width: 100%;
+  margin-top: 24px;
+  padding: 0 12px;
+  justify-content: end;
+  font-size: 14px;
+  font-weight: 700;
+`
+
 export const CumlativeAmountCotainer = styled.div`
   display: flex;
   flex-direction: column;
