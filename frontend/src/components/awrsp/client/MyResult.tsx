@@ -21,18 +21,24 @@ const MyResult = () => {
     (result) =>
       result.nickname === user?.nickname && (
         <S.MyResultContainer key={result.nickname}>
-          <S.WinCount>
-            {result.detail.win}승 {result.detail.draw === 1 && '1비김'}
-          </S.WinCount>
-          <S.CardList>
-            {cardList?.map((card, index) => (
-              <S.RspCard
-                src={getRspImageUrl(card)}
-                alt={card}
-                key={card + index}
-              />
-            ))}
-          </S.CardList>
+          {result.detail ? (
+            <>
+              <S.WinCount>
+                {result.detail.win}승 {result.detail.draw === 1 && '1비김'}
+              </S.WinCount>
+              <S.CardList>
+                {cardList?.map((card, index) => (
+                  <S.RspCard
+                    src={getRspImageUrl(card)}
+                    alt={card}
+                    key={card + index}
+                  />
+                ))}
+              </S.CardList>
+            </>
+          ) : (
+            <S.WinCount>미제출</S.WinCount>
+          )}
         </S.MyResultContainer>
       ),
   )

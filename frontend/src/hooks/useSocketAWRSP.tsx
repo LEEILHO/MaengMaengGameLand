@@ -113,19 +113,19 @@ const useSocketAWRSP = () => {
   const handleTimeOver = useCallback(
     (step: StepType) => {
       console.log('종료되는 단계 : ', step)
-      client.current?.publish({
-        destination: `/pub/game.awrsp.timer.${gameCode}`,
-        body: JSON.stringify({
-          nickname: user?.nickname,
-          type: step,
-        }),
-      })
-
       if (step === 'ALL_WINS') {
         // 다음 라운드 시작을 알림
         setStep('ENTER_GAME')
         setTimerTime(20)
         handleRoundStart()
+      } else {
+        client.current?.publish({
+          destination: `/pub/game.awrsp.timer.${gameCode}`,
+          body: JSON.stringify({
+            nickname: user?.nickname,
+            type: step,
+          }),
+        })
       }
     },
     [client.current],

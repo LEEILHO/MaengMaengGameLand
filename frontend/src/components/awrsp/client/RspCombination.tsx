@@ -29,6 +29,7 @@ const RspCombination = ({ handleCardSubmit }: Props) => {
   const setRspCardList = useSetRecoilState(RspCardListState)
   const [enabled, setEnabled] = useState(false)
   const [drawCard, setDrawCard] = useRecoilState(DrawCardState)
+  const [isSubmit, setIsSubmit] = useState(false)
 
   const rock: CardType[] = [...Array(3)].map((_, i) => ({
     id: `Rock${i}`,
@@ -84,6 +85,7 @@ const RspCombination = ({ handleCardSubmit }: Props) => {
       return card.rsp
     })
 
+    setIsSubmit(true)
     setRspCardList(RspCombination)
     handleCardSubmit(RspCombination)
   }
@@ -141,11 +143,12 @@ const RspCombination = ({ handleCardSubmit }: Props) => {
                       draggableId={card.id}
                       index={index}
                     >
-                      {(provided) => (
+                      {(provided, snapshot) => (
                         <S.DragCard
                           ref={provided.innerRef}
                           {...provided.dragHandleProps}
                           {...provided.draggableProps}
+                          isDragging={snapshot.isDragging}
                         >
                           <img src={getRspImageUrl(card.rsp)} alt={card.rsp} />
                         </S.DragCard>
@@ -168,11 +171,12 @@ const RspCombination = ({ handleCardSubmit }: Props) => {
                       draggableId={card.id}
                       index={index}
                     >
-                      {(provided) => (
+                      {(provided, snapshot) => (
                         <S.DragCard
                           ref={provided.innerRef}
                           {...provided.dragHandleProps}
                           {...provided.draggableProps}
+                          isDragging={snapshot.isDragging}
                         >
                           <img src={getRspImageUrl(card.rsp)} alt={card.rsp} />
                         </S.DragCard>
@@ -187,16 +191,28 @@ const RspCombination = ({ handleCardSubmit }: Props) => {
         </DragDropContext>
       </S.Container>
       <S.BottomButton>
-        <CButton
-          backgroundColor={colors.button.purple}
-          width={76}
-          height={32}
-          color="white"
-          fontSize={16}
-          text="제출"
-          radius={64}
-          onClick={onClickSubmitButton}
-        />
+        {isSubmit ? (
+          <CButton
+            backgroundColor={colors.greyScale.grey300}
+            width={100}
+            height={36}
+            color="white"
+            fontSize={16}
+            text="제출 완료"
+            radius={64}
+          />
+        ) : (
+          <CButton
+            backgroundColor={colors.button.purple}
+            width={100}
+            height={36}
+            color="white"
+            fontSize={16}
+            text="제출"
+            radius={64}
+            onClick={onClickSubmitButton}
+          />
+        )}
       </S.BottomButton>
     </>
   )
