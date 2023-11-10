@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import com.maeng.game.domain.gsb.service.GsbService;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,7 @@ public class RoomService {
     private final RoomRepository roomRepository;
     private final AwrspService awrspService;
     private final JwacService jwacService;
+    private final GsbService gsbService;
     private final LobbyService lobbyService;
     private final RabbitTemplate template;
     private final static String CHAT_EXCHANGE_NAME = "room";
@@ -297,7 +299,7 @@ public class RoomService {
         }
 
         if(room.getGameCategory().equals(Game.GOLD_SILVER_BRONZE)){
-            settingCheck = awrspService.gameSetting(gameStartDTO);
+            settingCheck = gsbService.gameSetting(gameStartDTO);
         }
 
         if(room.getGameCategory().equals(Game.JEWELRY_AUCTION)){
