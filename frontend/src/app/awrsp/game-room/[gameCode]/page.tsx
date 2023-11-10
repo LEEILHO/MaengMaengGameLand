@@ -44,7 +44,7 @@ const AwrspGameRoom = () => {
   }, [])
 
   useEffect(() => {
-    openModal()
+    if (step === 'DRAW_CARD') openModal()
   }, [step])
 
   return (
@@ -59,8 +59,8 @@ const AwrspGameRoom = () => {
       </S.Content>
       <S.TimerContainer>
         <Timer
-          fontSize="16"
-          size="96"
+          fontSize="12"
+          size="72"
           time={timerTime}
           round={round}
           timeOverHandle={timeOverHandle}

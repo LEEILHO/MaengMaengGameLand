@@ -18,7 +18,7 @@ export const DragDropContextDiv = styled.div`
 `
 
 export const InDropArea = styled.div`
-  width: 568px;
+  width: 90%;
   height: 142px;
 
   display: flex;
@@ -37,10 +37,16 @@ export const OutDropArea = styled.div`
 `
 
 export const DragCard = styled.div`
-  display: flex;
   img {
     width: 64px;
     height: 96px;
+  }
+
+  @media screen and (max-width: 700px) {
+    img {
+      width: 48px;
+      height: 80px;
+    }
   }
 `
 
