@@ -3,6 +3,7 @@ import RecoilRootProvider from '@components/common/RecoilRootProvider'
 import NextThemeProvider from '@components/common/NextThemeProvider'
 import RootStyleRegistry from '@styles/StyledComponentsRegistry'
 import StyledComponentsRegistry from '@styles/StyledComponentsRegistry'
+import BGMProvider from '@components/common/BGMProvider'
 
 export const metadata: Metadata = {
   viewport:
@@ -34,7 +35,7 @@ export default function RootLayout({
         <StyledComponentsRegistry>
           <NextThemeProvider>
             <RecoilRootProvider>
-              {children}
+              <BGMProvider>{children}</BGMProvider>
               <div id="portal"></div>
             </RecoilRootProvider>
           </NextThemeProvider>
