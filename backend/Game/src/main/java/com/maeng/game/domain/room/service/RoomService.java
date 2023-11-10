@@ -150,7 +150,7 @@ public class RoomService {
         // this.readyPlayer(roomCode, PlayerDTO.builder().nickname(user.getNickname()).build());
         room = this.getCurrentRoom(roomCode);
         this.checkCount(room.getGameCategory(), room.getHeadCount()); // 최소 인원 확인
-        this.checkReady(room.getParticipant()); // 플레이어 레디 상태 확인
+        //this.checkReady(room.getParticipant()); // 플레이어 레디 상태 확인
         this.start(room, roomCode); // 게임시작
     }
 

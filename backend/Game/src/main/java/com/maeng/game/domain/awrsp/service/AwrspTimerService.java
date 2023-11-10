@@ -42,6 +42,7 @@ public class AwrspTimerService {
     @Operation(summary = "타이머 종료")
     public boolean timerEnd(String gameCode, TimerDTO timerDTO){
 
+        log.info(timerDTO.toString());
         // 해당 닉네임 set에 넣기
         Timer timer = awrspTimerRepository.findById(gameCode).orElse(null);
         Set<String> set = new HashSet<>();

@@ -181,6 +181,7 @@ public class AwrspService {
             player.getHistories().put(currentRound, history);
             game.getPlayers().put(player.getNickname(), player);
             awrspRepository.save(game);
+            submitRepository.delete(submit);
         }
 
         // 라운드 결과 생성 및 전송
