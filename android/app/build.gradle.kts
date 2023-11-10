@@ -109,6 +109,9 @@ dependencies {
     // lottie
     implementation("com.airbnb.android:lottie:6.1.0")
 
+    // dataStore
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
 
 }
 //kapt {

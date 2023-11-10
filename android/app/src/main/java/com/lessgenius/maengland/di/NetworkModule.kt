@@ -3,6 +3,7 @@ package com.lessgenius.maengland.di
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.intuit.sdp.BuildConfig
+import com.lessgenius.maengland.data.datasource.local.PreferencesManager
 import com.lessgenius.maengland.data.datasource.remote.AccountService
 import com.lessgenius.maengland.data.interceptor.RequestInterceptor
 import com.lessgenius.maengland.data.interceptor.ResponseInterceptor
@@ -25,19 +26,26 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideOkHttpClient(): OkHttpClient =
+    fun provideOkHttpClient(
+        requestInterceptor: RequestInterceptor,
+        responseInterceptor: ResponseInterceptor
+    ): OkHttpClient =
         OkHttpClient.Builder()
             .readTimeout(5000, TimeUnit.MILLISECONDS)
             .connectTimeout(5000, TimeUnit.MILLISECONDS)
-            .addInterceptor(ResponseInterceptor()) // Refresh Token
-            .addInterceptor(RequestInterceptor()) // JWT 자동 헤더 전송
+            .addInterceptor(requestInterceptor) // Refresh Token
+            .addInterceptor(responseInterceptor) // JWT 자동 헤더 전송
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             .build()
 
     @Singleton
     @Provides
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
-        val gson : Gson = GsonBuilder()
+    fun provideRetrofit(
+        okHttpClient: OkHttpClient,
+        requestInterceptor: RequestInterceptor,
+        responseInterceptor: ResponseInterceptor
+    ): Retrofit {
+        val gson: Gson = GsonBuilder()
             .setLenient()
             .create()
         return Retrofit.Builder()
@@ -50,6 +58,6 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideAccountService(retrofit: Retrofit) : AccountService =
+    fun provideAccountService(retrofit: Retrofit): AccountService =
         retrofit.create(AccountService::class.java)
 }

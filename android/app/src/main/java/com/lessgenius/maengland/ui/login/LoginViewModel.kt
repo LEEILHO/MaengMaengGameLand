@@ -15,11 +15,22 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(private val accountRepository: AccountRepository) :
     ViewModel() {
-        private var _loginResponse = MutableStateFlow<NetworkResult<Token>>(NetworkResult.Idle)
-        val loginResponse = _loginResponse.asStateFlow()
+    private var _loginResponse = MutableStateFlow<NetworkResult<Token>>(NetworkResult.Idle)
+    val loginResponse = _loginResponse.asStateFlow()
 
+    private var _loginStatusResponse = MutableStateFlow<Token?>(null)
+    val loginStatusResponse = _loginStatusResponse.asStateFlow()
 
     fun login(code: String) = viewModelScope.launch {
         _loginResponse.emit(accountRepository.login(RequestCode(code)))
+    }
+
+    fun updateToken(token: Token) = viewModelScope.launch {
+        accountRepository.updateJwtTokens(token)
+        _loginStatusResponse.emit(accountRepository.getLoginStatus())
+    }
+
+    fun getLoginStatus() = viewModelScope.launch {
+        _loginStatusResponse.emit(accountRepository.getLoginStatus())
     }
 }

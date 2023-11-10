@@ -1,6 +1,7 @@
 package com.lessgenius.maengland.data.datasource.remote
 
 
+import com.lessgenius.maengland.data.model.RefreshTokenRequest
 import com.lessgenius.maengland.data.model.RequestCode
 import com.lessgenius.maengland.data.model.Token
 import retrofit2.http.Body
@@ -10,4 +11,7 @@ interface AccountService {
 
     @POST("auth/watch")
     suspend fun login(@Body watchCode: RequestCode): Token
+
+    @POST("auth/watch-token")
+    suspend fun postRefreshToken(@Body watchRefreshToken: RefreshTokenRequest): Token
 }

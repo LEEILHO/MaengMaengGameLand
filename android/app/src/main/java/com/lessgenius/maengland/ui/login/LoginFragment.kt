@@ -15,6 +15,7 @@ import com.lessgenius.maengland.data.model.NetworkResult
 import com.lessgenius.maengland.databinding.FragmentLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
 
 private const val TAG = "LoginFragment_김진영"
@@ -49,6 +50,7 @@ class LoginFragment :
 
 
     private fun initListener() {
+        loginViewModel.getLoginStatus()
         binding.edittextCode.setOnKeyListener { v, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
                 Log.d(TAG, "initListener: enter")
@@ -64,12 +66,20 @@ class LoginFragment :
                 when (result) {
                     is NetworkResult.Success -> {
                         Log.d(TAG, "로그인 성공!: ${result.data}")
+                        loginViewModel.updateToken(result.data)
                     }
 
                     else -> {}
                 }
             }
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            loginViewModel.loginStatusResponse.collect { result ->
+                Log.d(TAG, "initObserver: $result")
+            }
+        }
+
     }
 
     override fun onResume() {
