@@ -6,6 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.maeng.game.domain.gsb.dto.*;
 import com.maeng.game.domain.gsb.entity.*;
 import com.maeng.game.domain.gsb.repository.GsbRepository;
+import com.maeng.game.domain.room.dto.GameStartDTO;
 import com.maeng.game.domain.room.dto.MessageDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,8 +28,7 @@ public class GsbService {
     private static final int SILVER_WEIGHT = 2;
     private static final int BRONZE_Weight = 1;
 
-    public StartCard[] getStartCards(String gameCode){
-
+    public boolean gameSetting(GameStartDTO gameStartDTO){
         StartCard[] cards = new StartCard[2];
         for (int i = 0; i < 2; i++) {
             cards[i] = StartCard.builder().seq(i).selected(false).build();
@@ -44,13 +44,41 @@ public class GsbService {
         Map<Integer, Player> players = new HashMap<>();
         // 게임 정보 세팅
         Gsb gsb = Gsb.builder()
-                .gameCode(gameCode)
+                .gameCode(gameStartDTO.getGameCode())
+                .roomCode(gameStartDTO.getRoomCode())
                 .startCards(cards)
                 .players(players)
+                .participiants(gameStartDTO.getParticipant())
                 .build();
         gsbRepository.save(gsb);
 
-        return cards;
+        return true;
+    }
+
+    public StartCard[] getStartCards(String gameCode){
+
+//        StartCard[] cards = new StartCard[2];
+//        for (int i = 0; i < 2; i++) {
+//            cards[i] = StartCard.builder().seq(i).selected(false).build();
+//        }
+//        Random random = new Random();
+//        for (int i = cards.length - 1; i > 0; i--) {
+//            int j = random.nextInt(i + 1); // 0부터 i까지 무작위 인덱스 선택
+//            // i와 j 위치의 요소 교환
+//            StartCard temp = cards[i];
+//            cards[i] = cards[j];
+//            cards[j] = temp;
+//        }
+//        Map<Integer, Player> players = new HashMap<>();
+//        // 게임 정보 세팅
+//        Gsb gsb = Gsb.builder()
+//                .gameCode(gameCode)
+//                .startCards(cards)
+//                .players(players)
+//                .build();
+//        gsbRepository.save(gsb);
+
+        return getInfo(gameCode).getStartCards();
     }
     @Transactional
     public void setSeq(String gameCode, PlayerSeqDto playerSeqDto){
@@ -75,9 +103,18 @@ public class GsbService {
             }
             // 중복이 아니라면
             if(!duplicated){
+                int idx = -1;
+                if(gsb.getParticipiants().get(0).getNickname().equals(playerSeqDto.getNickname())){
+                    idx = 0;
+                } else{
+                    idx = 1;
+                }
+
                 // 데이터 넣기
                 players.put(s, Player.builder().nickname(playerSeqDto.getNickname())
-                        .profileUrl("프로필사진").currentGold(3).currentSilver(10).currentBronze(20).currentChips(40).build());
+                        .profileUrl(gsb.getParticipiants().get(idx).getProfileUrl())
+                                .tier(gsb.getParticipiants().get(idx).getTier())
+                        .currentGold(3).currentSilver(10).currentBronze(20).currentChips(40).build());
 
                 // 선택 처리
                 startCards[seq].setSelected(true);
