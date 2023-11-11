@@ -42,8 +42,8 @@ export const OutDropArea = styled.div`
 
 export const DragCard = styled.div<DragProps>`
   img {
-    width: 64px;
-    height: 96px;
+    width: 56px;
+    height: 90px;
 
     transform: ${(props) => (props.isDragging ? 'scale(1.2)' : '')};
     transition: ${(props) => (props.isDragging ? '0.3s' : '')};
@@ -51,8 +51,8 @@ export const DragCard = styled.div<DragProps>`
 
   @media screen and (max-width: 700px) {
     img {
-      width: 48px;
-      height: 80px;
+      width: 44px;
+      height: 78px;
     }
   }
 `

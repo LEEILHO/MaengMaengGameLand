@@ -57,8 +57,3 @@ export const TimerContainer = styled.div`
   top: 20px;
   right: 20px;
 `
-
-export const RspCard = styled.img`
-  width: 74px;
-  height: 104px;
-`

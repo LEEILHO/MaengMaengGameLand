@@ -99,18 +99,7 @@ const RspCombination = ({ handleCardSubmit }: Props) => {
       }
       const _cardList = cardList
 
-      if (drawCard.drawCard === 'DRAW_PAPER') {
-        _cardList['out'].splice(6, 1)
-        _cardList['out'].splice(6, 0, draw)
-      } else if (drawCard.drawCard === 'DRAW_SCISSOR') {
-        _cardList['out'].splice(3, 1)
-        _cardList['out'].splice(3, 0, draw)
-      } else if (drawCard.drawCard === 'DRAW_ROCK') {
-        _cardList['out'].splice(0, 1)
-        _cardList['out'].splice(0, 0, draw)
-      }
-
-      setCardList(_cardList)
+      setCardList({ ..._cardList, out: [..._cardList['out'], draw] })
       setDrawCard({ ...drawCard, isSetting: true })
     }
   }, [drawCard.drawCard])
