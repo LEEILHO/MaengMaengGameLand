@@ -49,3 +49,9 @@ export type DrawCardType = {
   drawCard: RspType | null
   isSetting: boolean
 }
+
+export type HistoryType = {
+  round: number
+  detail: RoundResultType
+  rspList: RspType[] | null
+}

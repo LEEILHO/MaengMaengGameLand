@@ -1,20 +1,41 @@
 'use client'
 
-import { PlayerResultState, RspCardListState } from '@atom/awrspAtom'
+import {
+  HistoryState,
+  PlayerResultState,
+  RoundState,
+  RspCardListState,
+} from '@atom/awrspAtom'
 import { userState } from '@atom/userAtom'
 import { images } from '@constants/images'
 import * as S from '@styles/awrsp/MyResult.styled'
+import { HistoryType } from '@type/awrsp/awrsp.type'
 import { getRspImageUrl } from '@utils/awrsp/awrspUtil'
 import { useEffect, useState } from 'react'
-import { useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 
 const MyResult = () => {
   const cardList = useRecoilValue(RspCardListState)
   const playerRoundResult = useRecoilValue(PlayerResultState)
   const user = useRecoilValue(userState)
+  const [history, setHistory] = useRecoilState(HistoryState)
+  const round = useRecoilValue(RoundState)
 
   useEffect(() => {
     console.log(playerRoundResult)
+
+    playerRoundResult?.map((result) => {
+      if (result.nickname === user?.nickname) {
+        const newHistory: HistoryType = {
+          round: round,
+          detail: result.detail,
+          rspList: cardList,
+        }
+
+        setHistory([...history, newHistory])
+        return
+      }
+    })
   }, [])
 
   return playerRoundResult?.map(

@@ -14,6 +14,7 @@ import { useRecoilValue } from 'recoil'
 import { RoundState, StepState, TimerState } from '@atom/awrspAtom'
 import useSocketAWRSP from '@hooks/useSocketAWRSP'
 import useDidMountEffect from '@hooks/useDidMoundEffect'
+import HistoryModal from '@components/awrsp/client/HistoryModal'
 
 const AwrspGameRoom = () => {
   const {
@@ -24,6 +25,12 @@ const AwrspGameRoom = () => {
     handleCardSubmit,
   } = useSocketAWRSP()
   const { Modal, closeModal, isOpen, openModal } = useModal()
+  const {
+    Modal: HModal,
+    closeModal: closeHistoryModal,
+    isOpen: isHistoryOpen,
+    openModal: openHistoryModal,
+  } = useModal()
   const timerTime = useRecoilValue(TimerState)
   const step = useRecoilValue(StepState)
   const round = useRecoilValue(RoundState)
@@ -66,10 +73,17 @@ const AwrspGameRoom = () => {
           timeOverHandle={timeOverHandle}
         />
       </S.TimerContainer>
+      <S.HistoryButton onClick={openHistoryModal}>
+        <img src={images.awrsp.history} alt="기록" />
+      </S.HistoryButton>
 
       <Modal isOpen={isOpen}>
         <DrawCardModal closeModal={closeModal} />
       </Modal>
+
+      <HModal isOpen={isHistoryOpen} closeModal={closeHistoryModal}>
+        <HistoryModal closeModal={closeHistoryModal} />
+      </HModal>
     </S.AwrspGameRoomContainer>
   )
 }

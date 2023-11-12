@@ -57,3 +57,23 @@ export const TimerContainer = styled.div`
   top: 20px;
   right: 20px;
 `
+
+export const HistoryButton = styled.button`
+  width: 44px;
+  height: 44px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background-color: rgba(255, 195, 68, 1);
+  box-shadow: 0px 4px 4px 0px rgba(255, 255, 255, 0.4) inset;
+
+  position: fixed;
+  bottom: 20px;
+  left: 40px;
+
+  img {
+    width: 28px;
+    height: 28px;
+  }
+`

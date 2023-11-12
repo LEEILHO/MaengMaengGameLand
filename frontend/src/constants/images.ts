@@ -61,6 +61,7 @@ export const images = {
     paperCard: '/images/awrsp/paper-card.png',
     paperDrawCard: '/images/awrsp/paper-draw-card.png',
     roundDisplay: '/images/awrsp/round-display.png',
+    history: '/images/awrsp/ic-history.png',
   },
   gameRoom: {
     jwac: {
