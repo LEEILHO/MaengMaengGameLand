@@ -14,9 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -720,7 +718,18 @@ public class GsbService {
         int coin2 = getWeight(player2.getCurrentGold(),player2.getCurrentSilver(),player2.getCurrentBronze());
         player1.setCurrentChips(player1.getCurrentChips() + coin1);
         player2.setCurrentChips(player2.getCurrentChips() + coin2);
+        List<Result> results = new ArrayList<>();
+
         if (player1.getCurrentChips()> player2.getCurrentChips()){
+            results.add(Result.builder()
+                            .nickname(player1.getNickname())
+                            .winDrawLose(WinDrawLose.WIN)
+                            .resultChips(player1.getCurrentChips())
+                    .build());
+            results.add(Result.builder()
+                    .nickname(player2.getNickname())
+                    .winDrawLose(WinDrawLose.LOSE)
+                    .resultChips(player2.getCurrentChips()).build());
             gameResultDto = GameResultDto.builder()
                     .draw(false)
                     .winner(player1.getNickname())
@@ -728,7 +737,18 @@ public class GsbService {
                     .loser(player2.getNickname())
                     .loserChips(player2.getCurrentChips())
                     .build();
+
+
         } else if (player1.getCurrentChips()< player2.getCurrentChips()){
+            results.add(Result.builder()
+                    .nickname(player1.getNickname())
+                    .winDrawLose(WinDrawLose.LOSE)
+                    .resultChips(player1.getCurrentChips())
+                    .build());
+            results.add(Result.builder()
+                    .nickname(player2.getNickname())
+                    .winDrawLose(WinDrawLose.WIN)
+                    .resultChips(player2.getCurrentChips()).build());
             gameResultDto = GameResultDto.builder()
                     .draw(false)
                     .winner(player2.getNickname())
@@ -737,6 +757,15 @@ public class GsbService {
                     .loserChips(player1.getCurrentChips())
                     .build();
         } else {
+            results.add(Result.builder()
+                    .nickname(player1.getNickname())
+                    .winDrawLose(WinDrawLose.DRAW)
+                    .resultChips(player1.getCurrentChips())
+                    .build());
+            results.add(Result.builder()
+                    .nickname(player2.getNickname())
+                    .winDrawLose(WinDrawLose.DRAW)
+                    .resultChips(player2.getCurrentChips()).build());
             gameResultDto = GameResultDto.builder()
                     .draw(true)
                     .winner(player1.getNickname())
@@ -745,6 +774,7 @@ public class GsbService {
                     .loserChips(player2.getCurrentChips())
                     .build();
         }
+        gsb.setResults(results);
         gsbRepository.save(gsb);
         return gameResultDto;
     }
