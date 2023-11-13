@@ -1,9 +1,6 @@
 package com.maeng.game.domain.gsb.controller;
 
-import com.maeng.game.domain.gsb.dto.BettingDto;
-import com.maeng.game.domain.gsb.dto.GsbNicknameDto;
-import com.maeng.game.domain.gsb.dto.PlayerSeqDto;
-import com.maeng.game.domain.gsb.dto.StarDto;
+import com.maeng.game.domain.gsb.dto.*;
 import com.maeng.game.domain.gsb.entity.Gsb;
 import com.maeng.game.domain.gsb.entity.StartCard;
 import com.maeng.game.domain.gsb.service.GsbEnterService;
@@ -67,7 +64,16 @@ public class GsbController {
 
             template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode, MessageDTO.builder()
                     .type("게임정보")
-                    .data(gsb)
+                    .data(StartDto.builder()
+                            .currentPlayer(gsb.getCurrentPlayer())
+                            .players(gsb.getPlayers())
+                            .participiants(gsb.getParticipiants())
+                            .carryOverChips(gsb.getCarryOverChips())
+                            .currentRound(gsb.getCurrentRound())
+                            .gameCode(gsb.getGameCode())
+                            .roomCode(gsb.getRoomCode())
+                            .currentPlayer(gsb.getCurrentPlayer())
+                            .build())
                     .build());
         }
     }
