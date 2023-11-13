@@ -5,6 +5,7 @@ import {
   PlayerResultState,
   RoundState,
   RspCardListState,
+  StepState,
 } from '@atom/awrspAtom'
 import { userState } from '@atom/userAtom'
 import { images } from '@constants/images'
@@ -12,7 +13,7 @@ import * as S from '@styles/awrsp/MyResult.styled'
 import { HistoryType } from '@type/awrsp/awrsp.type'
 import { getRspImageUrl } from '@utils/awrsp/awrspUtil'
 import { useEffect, useState } from 'react'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 
 const MyResult = () => {
   const cardList = useRecoilValue(RspCardListState)
@@ -20,6 +21,7 @@ const MyResult = () => {
   const user = useRecoilValue(userState)
   const [history, setHistory] = useRecoilState(HistoryState)
   const round = useRecoilValue(RoundState)
+  const setStep = useSetRecoilState(StepState)
 
   useEffect(() => {
     console.log(playerRoundResult)
@@ -36,6 +38,17 @@ const MyResult = () => {
         return
       }
     })
+
+    return () => {
+      playerRoundResult?.map((result) => {
+        if (result.nickname === user?.nickname) {
+          if (result.detail.win === 7) {
+            setStep('WAITING')
+            return
+          }
+        }
+      })
+    }
   }, [])
 
   return playerRoundResult?.map(

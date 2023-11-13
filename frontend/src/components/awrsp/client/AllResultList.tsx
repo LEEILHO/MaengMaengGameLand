@@ -13,17 +13,6 @@ const AllResultList = () => {
   const user = useRecoilValue(userState)
   useEffect(() => {
     console.log(playerRoundResult)
-
-    return () => {
-      playerRoundResult?.map((result) => {
-        if (result.nickname === user?.nickname) {
-          if (result.detail.win === 7) {
-            setStep('WAITING')
-            return
-          }
-        }
-      })
-    }
   }, [])
 
   return (
