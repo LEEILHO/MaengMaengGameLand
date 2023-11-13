@@ -14,6 +14,8 @@ public class StarResponseDto {
     private String currentPlayer;
     private int weight;
     private String nextPlayer;
+    private int currentChips;
+    private int defaultChips;
     private int timer;
 
 }

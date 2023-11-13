@@ -160,6 +160,8 @@ public class GsbService {
                                     .timer(30)
                                     .weight(gsb.getPlayers().get(1).getHistories().get(curRound).getWeight())
                                     .nextPlayer(gsb.getPlayers().get(0).getNickname())
+                                    .currentChips(gsb.getPlayers().get(1).getCurrentChips())
+                                    .defaultChips(3)
                                     .build())
                             .build();
                     gsb.setCurrentPlayer(gsb.getPlayers().get(0).getNickname());
@@ -196,6 +198,8 @@ public class GsbService {
                                     .timer(30)
                                     .weight(gsb.getPlayers().get(0).getHistories().get(curRound).getWeight())
                                     .nextPlayer(gsb.getPlayers().get(1).getNickname())
+                                    .currentChips(gsb.getPlayers().get(0).getCurrentChips())
+                                    .defaultChips(3)
                                     .build())
                             .build();
                     gsb.setCurrentPlayer(gsb.getPlayers().get(1).getNickname());
@@ -249,6 +253,8 @@ public class GsbService {
                                     .timer(30)
                                     .weight(gsb.getPlayers().get(0).getHistories().get(curRound).getWeight())
                                     .nextPlayer(gsb.getPlayers().get(1).getNickname())
+                                    .currentChips(gsb.getPlayers().get(0).getCurrentChips())
+                                    .defaultChips(3)
                                     .build())
                             .build();
                     gsb.setCurrentPlayer(gsb.getPlayers().get(1).getNickname());
@@ -281,6 +287,8 @@ public class GsbService {
                                     .timer(30)
                                     .weight(gsb.getPlayers().get(1).getHistories().get(curRound).getWeight())
                                     .nextPlayer(gsb.getPlayers().get(0).getNickname())
+                                    .currentChips(gsb.getPlayers().get(1).getCurrentChips())
+                                    .defaultChips(3)
                                     .build())
                             .build();
                     gsb.setCurrentPlayer(gsb.getPlayers().get(0).getNickname());
