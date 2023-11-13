@@ -50,6 +50,8 @@ export type RoundType =
   | 'Betting'
   | 'BetWaiting'
   | 'Result'
+  | 'DrawResult'
+  | 'GiveUpResult'
 
 export type StarStatus = 'in' | 'out'
 
@@ -80,4 +82,63 @@ export type BettingResponseType = {
   totalChips: number
   carryOverChips: number
   timer: number
+}
+
+// 일반적인 결과
+export type NormalResultType = {
+  currentRound: number
+  nextRound: number
+  nextPlayer: string
+  timer: number
+  draw: boolean
+  winner: string
+  winnerGold: number
+  winnerSilver: number
+  winnerBronze: number
+  currentWinnerChips: number
+  loser: string
+  loserGold: number
+  loserSilver: number
+  loserBronze: number
+  currentLoserChips: number
+}
+
+// 비겼을 때 결과
+export type DrawResultType = {
+  currentRound: number
+  nextRound: number
+  nextPlayer: string
+  timer: number
+  draw: boolean
+  player1: string
+  currentPlayer1Chips: number
+  player2: string
+  currentPlayer2Chips: number
+}
+
+// 누군가 베팅 포기했을 때 결과
+export type GiveUpResultType = {
+  currentRound: number
+  nextRound: number
+  nextPlayer: string
+  timer: number
+  winner: string
+  currentWinnerChips: number
+  loser: string
+  currentLoserChips: number
+}
+
+// 게임 종료, 최종 결과 타입
+export type GameResultType = {
+  draw: boolean
+  winner: string
+  winnerChips: number
+  loser: boolean
+  loserChips: string
+}
+
+export type CombResultType = {
+  gold: number
+  silver: number
+  bronze: number
 }

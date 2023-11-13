@@ -16,14 +16,18 @@ import {
   MyState,
   OpponentBetChipsState,
   OpponentState,
+  ResultState,
   RoundState,
   TimerState,
   TurnCardState,
 } from '@atom/gsbAtom'
 import {
   BettingResponseType,
+  DrawResultType,
+  GiveUpResultType,
   GsbSettingType,
   InitGameType,
+  NormalResultType,
   Player,
   PlayerInfoType,
   Turn,
@@ -43,6 +47,7 @@ const useSocketGsb = () => {
   const setOpponent = useSetRecoilState(OpponentState)
   const setOpponentBetChips = useSetRecoilState(OpponentBetChipsState)
   const setAllBetChips = useSetRecoilState(AllBetChipsState)
+  const setResult = useSetRecoilState(ResultState)
   const setRound = useSetRecoilState(RoundState)
   const setTime = useSetRecoilState(TimerState)
 
@@ -193,23 +198,57 @@ const useSocketGsb = () => {
         }
 
         setAllBetChips(result.data.carryOverChips)
-        setRound('Result')
-        setDisplayMessage('금은동 조합을 공개합니다.')
       }
 
       // 라운드 결과(베팅 포기)
       else if (response.type === '베팅 포기 라운드 결과') {
         console.log('베팅 포기')
+        const result = response as socketResponseType<GiveUpResultType>
+        setRound('GiveUpResult')
+        setDisplayMessage(`${result.data.loser}님이 포기하셨습니다.`)
+        setCurrentPlayer(result.data.nextPlayer)
+        setTime(result.data.timer)
+        if (user?.nickname === result.data.winner) {
+          setMy((prev) => {
+            if (!prev) return null
+            return { ...prev, currentChips: result.data.currentWinnerChips }
+          })
+          setOpponent((prev) => {
+            if (!prev) return null
+            return { ...prev, currentChips: result.data.currentLoserChips }
+          })
+        } else {
+          setMy((prev) => {
+            if (!prev) return null
+            return { ...prev, currentChips: result.data.currentLoserChips }
+          })
+          setOpponent((prev) => {
+            if (!prev) return null
+            return { ...prev, currentChips: result.data.currentWinnerChips }
+          })
+        }
       }
 
       // 라운드 결과(승패가 있을 때)
       else if (response.type === '라운드 결과') {
         console.log('누군가는 이김')
+        const result = response as socketResponseType<NormalResultType>
+        setResult(result.data)
+        setRound('Result')
+        setDisplayMessage('금은동 조합을 공개합니다.')
+        setCurrentPlayer(result.data.nextPlayer)
+        setTime(result.data.timer)
       }
 
       // 라운드 결과(비김)
       else if (response.type === '라운드 결과 비김') {
         console.log('비겼어요!')
+        const result = response as socketResponseType<DrawResultType>
+        setRound('DrawResult')
+        setDisplayMessage('금은동 조합을 공개합니다.')
+
+        setCurrentPlayer(result.data.nextPlayer)
+        setTime(result.data.timer)
       }
     })
   }, [client.current, gameCode])

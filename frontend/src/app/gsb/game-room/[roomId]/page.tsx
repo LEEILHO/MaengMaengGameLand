@@ -79,7 +79,9 @@ const GameRoom = () => {
           {(round === 'Betting' || round === 'BetWaiting') && (
             <BettingStatus myBet={myBetChips} opponentBet={opponentBetChips} />
           )}
-          {round === 'Result' && <RoundResult />}
+          {(round === 'Result' ||
+            round === 'DrawResult' ||
+            round === 'GiveUpResult') && <RoundResult />}
         </S.Content>
         <PlayerCard player={opponent} />
       </S.CenterRow>
