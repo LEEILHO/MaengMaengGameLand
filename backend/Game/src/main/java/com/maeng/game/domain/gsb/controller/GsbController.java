@@ -102,16 +102,18 @@ public class GsbController {
             if(gsbService.endGame(gameCode)){
                 template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode,gsbService.getEndGame(gameCode));
             }
+        } else {
+            // 라운드가 정상적으로 종료된 경우
+            if(gsbService.endRound(gameCode)){
+                template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode,gsbService.getRoundResult(gameCode));
+                // 게임이 종료될 경우
+                if(gsbService.endGame(gameCode)){
+                    template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode,gsbService.getEndGame(gameCode));
+                }
+            }
+
         }
 
-        // 라운드가 정상적으로 종료된 경우
-        if(gsbService.endRound(gameCode)){
-            template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode,gsbService.getRoundResult(gameCode));
-            // 게임이 종료될 경우
-            if(gsbService.endGame(gameCode)){
-                template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode,gsbService.getEndGame(gameCode));
-            }
-        }
 
 
     }
