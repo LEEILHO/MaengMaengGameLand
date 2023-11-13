@@ -54,4 +54,12 @@ public class Score {
         this.score += score;
         return this;
     }
+
+    public void addWin() {
+    	this.win += 1;
+    }
+
+    public void addLose() {
+    	this.lose += 1;
+    }
 }

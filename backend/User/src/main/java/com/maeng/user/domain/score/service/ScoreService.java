@@ -57,6 +57,8 @@ public class ScoreService {
 
 		List<ScoreRecord> scoreRecords = generateScoreRecord(rankScoreDTO, scoreMap);
 
+		editWinLose(rankScoreDTO, scoreMap);
+
 		scoreRepository.saveAll(scoreMap.values());
 		scoreRecordRepository.saveAll(scoreRecords);
 	}
@@ -83,5 +85,18 @@ public class ScoreService {
 		}
 
 		return scoreRecords;
+	}
+
+	private void editWinLose(RankScoreDTO rankScoreDTO, Map<String, Score> scoreMap) {
+		List<String> rankList = new ArrayList<>(rankScoreDTO.getRankScoreMap().keySet());
+		int headCount = rankList.size();
+
+		if(headCount > 0) {
+			scoreMap.get(rankList.get(0)).addWin();
+		}
+
+		for(int i = 1; i < headCount; i++) {
+			scoreMap.get(rankList.get(i)).addLose();
+		}
 	}
 }
