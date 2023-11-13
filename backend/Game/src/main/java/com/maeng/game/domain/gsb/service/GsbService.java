@@ -428,6 +428,8 @@ public class GsbService {
                         .currentPlayer(gsb.getPlayers().get(myIdx).getNickname())
                         .currentChips(bettingDto.getBettingChips())
                         .totalChips(currentRoundMyChips + bettingDto.getBettingChips())
+                        .currentPlayerChips(gsb.getPlayers().get(myIdx).getCurrentChips())
+                        .carryOverChips(gsb.getCarryOverChips())
                         .build();
                 messageDto = MessageDTO.builder()
                         .type("다음 플레이어 베팅")
@@ -442,6 +444,8 @@ public class GsbService {
                         .currentPlayer(gsb.getPlayers().get(myIdx).getNickname())
                         .currentChips(bettingDto.getBettingChips())
                         .totalChips(currentRoundMyChips + bettingDto.getBettingChips())
+                        .carryOverChips(gsb.getCarryOverChips())
+                        .currentPlayerChips(gsb.getPlayers().get(myIdx).getCurrentChips())
                         .build();
 
                 messageDto = MessageDTO.builder()
@@ -604,6 +608,7 @@ public class GsbService {
                             .currentPlayer1Chips(player1.getCurrentChips())
                             .player2(player2.getNickname())
                             .currentPlayer2Chips(player2.getCurrentChips())
+                            .carryOverChips(gsb.getCarryOverChips())
                             .build())
                     .build();
 
