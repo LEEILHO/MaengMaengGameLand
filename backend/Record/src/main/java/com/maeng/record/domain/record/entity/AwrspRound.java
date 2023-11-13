@@ -28,8 +28,8 @@ public class AwrspRound {
 	private Game game;
 
 	@ManyToOne
-	@JoinColumn(name = "user_seq")
-	private GameUser gameUser;
+	@JoinColumn(name = "game_participant_seq")
+	private GameParticipant gameParticipant;
 
 	@Column
 	private Integer round;

@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.PrePersist;
 
 import com.maeng.record.domain.record.enums.GameCategoty;
 
@@ -30,4 +31,12 @@ public class Game {
 
 	@Column
 	private LocalDateTime startAt;
+
+	@Column
+	private LocalDateTime endAt;
+
+	@PrePersist
+	public void prePersist() {
+		this.endAt = LocalDateTime.now();
+	}
 }

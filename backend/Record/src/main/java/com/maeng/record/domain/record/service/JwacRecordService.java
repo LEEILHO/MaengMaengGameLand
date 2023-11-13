@@ -18,6 +18,7 @@ import com.maeng.record.domain.record.entity.JwacRound;
 import com.maeng.record.domain.record.entity.JwacRoundBid;
 import com.maeng.record.domain.record.enums.GameCategoty;
 import com.maeng.record.domain.record.enums.Jewelry;
+import com.maeng.record.domain.record.exception.GameAlreadyExistException;
 import com.maeng.record.domain.record.repository.GameParticipantRepository;
 import com.maeng.record.domain.record.repository.GameRepository;
 import com.maeng.record.domain.record.repository.GameUserRepository;
@@ -51,6 +52,9 @@ public class JwacRecordService {
 	}
 
 	private Game createGame(String gameCode, LocalDateTime startAt) {
+		if(gameRepository.existsById(gameCode)) {
+			throw new GameAlreadyExistException(gameCode);
+		}
 		return Game.builder()
 				.gameCode(gameCode)
 				.gameCategory(GameCategoty.JWERLY_AUCTION)

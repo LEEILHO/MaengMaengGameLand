@@ -9,6 +9,7 @@ import com.maeng.record.domain.record.data.Awrsp;
 import com.maeng.record.domain.record.data.Jwac;
 import com.maeng.record.domain.record.dto.NicknameEditDTO;
 import com.maeng.record.domain.record.dto.UserInfoDTO;
+import com.maeng.record.domain.record.exception.GameAlreadyExistException;
 import com.maeng.record.domain.record.service.AwrspRecordService;
 import com.maeng.record.domain.record.service.GameUserService;
 import com.maeng.record.domain.record.service.JwacRecordService;
@@ -38,22 +39,19 @@ public class MessageListener {
 		gameUserService.editGameUser(nicknameEditDTO);
 	}
 
-	@RabbitListener(queues = "record.queue")
-	public void receiveMessage(String message){
-		// System.out.println("record = " + message);
-	}
-
 	@RabbitListener(queues = "jwac.queue")
-	public void receiveMessage2(String message) throws JsonProcessingException {
-		Jwac jwac = null;
+	public void receiveMessage2(String message) {
 		try {
-			jwac = objectMapper.readValue(message, Jwac.class);
+			log.info("jwac = " + message);
+			Jwac jwac = objectMapper.readValue(message, Jwac.class);
 			jwacRecordService.saveJwacRecord(jwac);
-		} catch (Exception e) {
-			log.info(message);
-			log.info(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jwac));
-			e.printStackTrace();
+			log.info("jwac save success");
+		} catch (JsonProcessingException e) {
 			log.info("jwac json parsing error");
+			log.info(e.getMessage());
+			log.info(message);
+		} catch (GameAlreadyExistException e) {
+			log.info(e.getMessage());
 		}
 
 	}
@@ -70,10 +68,12 @@ public class MessageListener {
 			Awrsp awrap = objectMapper.readValue(message, Awrsp.class);
 			awrspRecordService.saveAwrspRecord(awrap);
 			log.info("awrsp save success");
-		} catch (Exception e) {
-			e.printStackTrace();
-			log.info(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(message));
+		} catch (JsonProcessingException e) {
 			log.info("awrsp json parsing error");
+			log.info(e.getMessage());
+			log.info(message);
+		} catch (GameAlreadyExistException e) {
+			log.info(e.getMessage());
 		}
 	}
 }
