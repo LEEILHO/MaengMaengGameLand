@@ -3,7 +3,6 @@ package com.maeng.game.domain.awrsp.controller;
 import com.maeng.game.domain.awrsp.dto.SubmitDTO;
 import com.maeng.game.domain.awrsp.dto.TimerDTO;
 import com.maeng.game.domain.awrsp.entity.Card;
-import com.maeng.game.domain.awrsp.exception.TimerTypeException;
 import com.maeng.game.domain.awrsp.service.AwrspService;
 import com.maeng.game.domain.awrsp.service.AwrspTimerService;
 import io.swagger.v3.oas.annotations.Operation;

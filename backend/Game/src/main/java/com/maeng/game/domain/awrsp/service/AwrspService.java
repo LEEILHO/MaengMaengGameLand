@@ -272,6 +272,22 @@ public class AwrspService {
         template.convertAndSend(GAME_EXCHANGE, "awrsp."+gameCode, messageDTO);
     }
 
+    @Operation(summary = "탈주 플레이어 처리")
+    public void disconnectedPlayer(String gameCode, String nickname){
+        log.info("[AWRSP] 탈주 플레이어 처리 "+gameCode+" "+nickname);
+
+        Game game = this.getCurrentGame(gameCode);
+        Player player = game.getPlayers().get(nickname);
+
+        player.setFinish(true);
+        player.setFinishedAt(LocalDateTime.now());
+        player.setRank(game.getHeadCount());
+        game.setFinishCount(game.getFinishCount()+1);
+        game.getPlayers().put(nickname, player);
+
+        awrspRepository.save(game);
+    }
+
     @Operation(summary = "게임 내역 record-service로 전송")
     public void sendGameResultToRecode(String gameCode){
         Game game = this.getCurrentGame(gameCode);

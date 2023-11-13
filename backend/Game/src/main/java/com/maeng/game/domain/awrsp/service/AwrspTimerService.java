@@ -34,7 +34,7 @@ public class AwrspTimerService {
 
     @Operation(summary = "타이머 시작")
     public void timerStart(String gameCode, String type){
-        log.info(type);
+        log.info("시작 타이머 전송 : "+type);
         template.convertAndSend(GAME_EXCHANGE, "awrsp."+gameCode, this.getTimerSec(type));
     }
 
@@ -42,7 +42,7 @@ public class AwrspTimerService {
     @Operation(summary = "타이머 종료")
     public synchronized boolean timerEnd(String gameCode, TimerDTO timerDTO){
 
-        log.info(timerDTO.toString());
+        log.info("종료 타이머 : "+timerDTO.toString());
         // 해당 닉네임 set에 넣기
         Timer timer = awrspTimerRepository.findById(gameCode).orElse(null);
         Set<String> set = new HashSet<>();
