@@ -15,9 +15,18 @@ import {
   MyState,
   OpponentState,
   RoundState,
+  TimerState,
   TurnCardState,
 } from '@atom/gsbAtom'
-import { InitGameType, Player, Turn, TurnListType } from '@type/gsb/gsb.type'
+import {
+  BettingResponseType,
+  GsbSettingType,
+  InitGameType,
+  Player,
+  PlayerInfoType,
+  Turn,
+  TurnListType,
+} from '@type/gsb/gsb.type'
 
 const useSocketGsb = () => {
   const client = useRef<CompatClient>()
@@ -31,6 +40,7 @@ const useSocketGsb = () => {
   const setOpponent = useSetRecoilState(OpponentState)
   const setAllBetChips = useSetRecoilState(AllBetChipsState)
   const setRound = useSetRecoilState(RoundState)
+  const setTime = useSetRecoilState(TimerState)
 
   // 금은동 게임 구독
   const connectGsb = useCallback(() => {
@@ -64,9 +74,128 @@ const useSocketGsb = () => {
           setRound('Combination')
           setDisplayMessage('금은동을 조합해서 올려주세요')
         } else {
-          setRound('Waiting')
+          setRound('CombWaiting')
           setDisplayMessage('상대방이 금은동을 조합합니다')
         }
+      }
+
+      // 선공 금은동 세팅
+      else if (response.type === '다음 플레이어 별 세팅') {
+        const result = response as socketResponseType<GsbSettingType>
+        if (result.data.currentPlayer === user?.nickname) {
+          setMy((prev) => {
+            if (!prev) return null
+            return {
+              ...prev,
+              currentWeight: result.data.weight,
+            }
+          })
+          // 선공 === 나 -> 후공이 셋팅하길 기다려야 함
+          setRound('CombWaiting')
+        } else {
+          setOpponent((prev) => {
+            if (!prev) return null
+            return {
+              ...prev,
+              currentWeight: result.data.weight,
+            }
+          })
+          // 선공 === 상대방, 후공 === 나
+          setRound('Combination')
+        }
+
+        setCurrentPlayer(result.data.nextPlayer)
+        setTime(result.data.timer)
+      }
+      // 두 플레이어의 금은동 세팅 종료 -> 베팅 시작
+      else if (response.type === '다음 플레이어 배팅 시작') {
+        const result = response as socketResponseType<GsbSettingType>
+        if (result.data.currentPlayer === user?.nickname) {
+          setMy((prev) => {
+            if (!prev) return null
+            return {
+              ...prev,
+              currentWeight: result.data.weight,
+            }
+          })
+        } else {
+          setOpponent((prev) => {
+            if (!prev) return null
+            return {
+              ...prev,
+              currentWeight: result.data.weight,
+            }
+          })
+        }
+
+        setCurrentPlayer(result.data.nextPlayer)
+        setTime(result.data.timer)
+        setRound('Betting')
+      }
+
+      // 다음 플레이어가 존재하면
+      else if (response.type === '다음 플레이어 베팅') {
+        const result = response as socketResponseType<BettingResponseType>
+        if (result.data.currentPlayer === user?.nickname) {
+          setMy((prev) => {
+            if (!prev) return null
+            return {
+              ...prev,
+              currentBetChips: prev.currentBetChips + result.data.currentChips,
+            }
+          })
+        } else {
+          setOpponent((prev) => {
+            if (!prev) return null
+            return {
+              ...prev,
+              currentBetChips: prev.currentBetChips + result.data.currentChips,
+            }
+          })
+        }
+        setAllBetChips(result.data.totalChips)
+        setCurrentPlayer(result.data.nextPlayer)
+        setTime(result.data.timer)
+      }
+
+      // 포기없이 베팅 종료
+      else if (response.type === '라운드 종료') {
+        const result = response as socketResponseType<BettingResponseType>
+        if (result.data.currentPlayer === user?.nickname) {
+          setMy((prev) => {
+            if (!prev) return null
+            return {
+              ...prev,
+              currentBetChips: prev.currentBetChips + result.data.currentChips,
+            }
+          })
+        } else {
+          setOpponent((prev) => {
+            if (!prev) return null
+            return {
+              ...prev,
+              currentBetChips: prev.currentBetChips + result.data.currentChips,
+            }
+          })
+        }
+
+        setAllBetChips(result.data.totalChips)
+        setRound('Result')
+      }
+
+      // 라운드 결과(베팅 포기)
+      else if (response.type === '베팅 포기 라운드 결과') {
+        console.log('베팅 포기')
+      }
+
+      // 라운드 결과(승패가 있을 때)
+      else if (response.type === '라운드 결과') {
+        console.log('누군가는 이김')
+      }
+
+      // 라운드 결과(비김)
+      else if (response.type === '라운드 결과 비김') {
+        console.log('비겼어요!')
       }
     })
   }, [client.current, gameCode])
@@ -145,6 +274,44 @@ const useSocketGsb = () => {
     [client.current],
   )
 
+  /**
+   *  금은동 세팅
+   */
+  const handleGSBComb = useCallback(
+    (gold: number, silver: number, bronze: number) => {
+      console.log('금은동 조합 전송')
+      console.log('금: ', gold, ' 은: ', silver, ' 동: ', bronze)
+
+      client.current?.publish({
+        destination: `/pub/game.gsb.set-star.${gameCode}`,
+        body: JSON.stringify({
+          gold: gold,
+          silver: silver,
+          bronze: bronze,
+        }),
+      })
+    },
+    [client.current],
+  )
+
+  /**
+   * 칩을 베팅
+   */
+  const handleBetting = useCallback(
+    (giveUp: boolean, bettingChips: number) => {
+      console.log('베팅: ', giveUp, bettingChips)
+
+      client.current?.publish({
+        destination: `/pub/game.gsb.betting.${gameCode}`,
+        body: JSON.stringify({
+          giveUp: giveUp,
+          bettingChips: bettingChips,
+        }),
+      })
+    },
+    [client.current],
+  )
+
   return {
     client,
     connectSocket,
@@ -153,6 +320,8 @@ const useSocketGsb = () => {
     disconnectGsb,
     handleEnterGsb,
     handleChoiceTurnCard,
+    handleGSBComb,
+    handleBetting,
   }
 }
 

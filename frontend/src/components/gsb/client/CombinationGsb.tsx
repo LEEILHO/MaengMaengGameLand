@@ -9,7 +9,11 @@ import DragAndDrop from './DragAndDrop'
 import CButton from '@components/common/clients/CButton'
 import { colors } from '@constants/colors'
 
-const CombinationGsb = () => {
+type Props = {
+  handleGSBComb: (gold: number, silver: number, bronze: number) => void
+}
+
+const CombinationGsb = ({ handleGSBComb }: Props) => {
   const [enabled, setEnabled] = useState(false)
   const [goldStars, setGoldStars] = useState<StarListType>({
     in: [],
@@ -80,6 +84,18 @@ const CombinationGsb = () => {
     setBronzeStars(_stars)
   }
 
+  const onClickSubmit = () => {
+    const gold = goldStars['in'].length
+    const silver = silverStars['in'].length
+    const bronze = bronzeStars['in'].length
+
+    const weight = gold * 3 + silver * 2 + bronze
+
+    if (weight < 4 || weight > 12) return
+
+    handleGSBComb(gold, silver, bronze)
+  }
+
   useEffect(() => {
     console.log(goldStars)
   }, [goldStars])
@@ -116,6 +132,7 @@ const CombinationGsb = () => {
           radius={100}
           width={118}
           fontSize={20}
+          onClick={onClickSubmit}
         />
       </S.SubmitButton>
     </S.CombinationGsbContainer>

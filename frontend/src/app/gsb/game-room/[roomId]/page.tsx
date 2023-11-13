@@ -17,11 +17,15 @@ import useSocketGsb from '@hooks/useSocketGsb'
 import { usePathname } from 'next/navigation'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import {
+  AllBetChipsState,
+  CurrentPlayerState,
   DisplayMessageState,
   MyState,
   OpponentState,
   RoundState,
+  TimerState,
 } from '@atom/gsbAtom'
+import { userState } from '@atom/userAtom'
 
 const GameRoom = () => {
   const {
@@ -30,14 +34,20 @@ const GameRoom = () => {
     connectGsb,
     disconnectGsb,
     handleChoiceTurnCard,
+    handleGSBComb,
+    handleBetting,
   } = useSocketGsb()
   // const gameCode = usePathname().split('/')[3]
 
   // 전광판 하나로 해서 상황에 따라 메세지만 바꾸기
   const displayMessage = useRecoilValue(DisplayMessageState)
   const round = useRecoilValue(RoundState)
+  const time = useRecoilValue(TimerState)
   const my = useRecoilValue(MyState)
   const opponent = useRecoilValue(OpponentState)
+  const currentPlayer = useRecoilValue(CurrentPlayerState)
+  const user = useRecoilValue(userState)
+  const AllBetChips = useRecoilValue(AllBetChipsState)
 
   useEffect(() => {
     connectSocket(connectGsb, disconnectGsb)
@@ -50,26 +60,37 @@ const GameRoom = () => {
     <S.GameRoomContainer>
       <S.TopRow>
         <S.DisplayBoard>{displayMessage}</S.DisplayBoard>
-        <BarTimer time={10} />
+        <BarTimer time={time} />
       </S.TopRow>
       <S.CenterRow>
         <PlayerCard player={my} />
         <S.Content>
-          {round === 'Combination' && <CombinationGsb />}
-          {/* <BettingStatus betChips={[3, 3]} /> */}
-          {/* <RoundResult /> */}
+          {round === 'Combination' && (
+            <CombinationGsb handleGSBComb={handleGSBComb} />
+          )}
+          {round === 'Betting' && (
+            <BettingStatus
+              myBet={my?.currentBetChips}
+              opponentBet={opponent?.currentBetChips}
+            />
+          )}
+          {round === 'Result' && <RoundResult />}
         </S.Content>
         <PlayerCard player={opponent} />
       </S.CenterRow>
-      {/* <Betting minBet={minBet} chipsPlayerHas={30} /> */}
+      {round === 'Betting' && currentPlayer === user?.nickname && (
+        <Betting handleBetting={handleBetting} />
+      )}
       {round === 'ChoiceTurn' && (
         <TurnCard handleChoiceTurnCard={handleChoiceTurnCard} />
       )}
 
-      {/* <S.BottomRow>
-        <S.ManyChips src={images.gsb.allChipsBet} />
-        <S.AllBetChips>10</S.AllBetChips>
-      </S.BottomRow> */}
+      {round === 'Result' && (
+        <S.BottomRow>
+          <S.ManyChips src={images.gsb.allChipsBet} />
+          <S.AllBetChips>{AllBetChips}</S.AllBetChips>
+        </S.BottomRow>
+      )}
     </S.GameRoomContainer>
   )
 }

@@ -17,6 +17,10 @@ const BarTimer = ({ height, width, fontSize, time }: Props) => {
   const timeRemaining = time - currentTime
 
   useEffect(() => {
+    setCurrentTime(0)
+  }, [time])
+
+  useEffect(() => {
     if (currentTime < time) {
       const timerId = setTimeout(() => setCurrentTime(currentTime + 1), 1000)
       return () => clearTimeout(timerId) // 타이머 정리

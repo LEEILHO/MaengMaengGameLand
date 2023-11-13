@@ -15,6 +15,7 @@ export type PlayerInfoType = {
   currentSilver: number
   currentBronze: number
   currentWeight: number
+  currentBetChips: number | 3
   histories: null
 }
 
@@ -46,8 +47,9 @@ export type InitGameType = {
 export type RoundType =
   | 'ChoiceTurn'
   | 'Combination'
-  | 'Waiting'
+  | 'CombWaiting'
   | 'Betting'
+  | 'BetWaiting'
   | 'Result'
 
 export type StarStatus = 'in' | 'out'
@@ -60,4 +62,19 @@ export type StarType = {
 
 export type StarListType = {
   [key in StarStatus]: StarType[]
+}
+
+export type GsbSettingType = {
+  currentPlayer: string
+  weight: number
+  nextPlayer: string
+  timer: number
+}
+
+export type BettingResponseType = {
+  nextPlayer: string | null
+  currentPlayer: string
+  currentChips: number
+  totalChips: number
+  timer: number
 }

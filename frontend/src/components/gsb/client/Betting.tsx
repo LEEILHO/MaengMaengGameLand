@@ -1,34 +1,39 @@
 'use client'
 
+import { MyState, OpponentState } from '@atom/gsbAtom'
 import CButton from '@components/common/clients/CButton'
 import { colors } from '@constants/colors'
 import { images } from '@constants/images'
 import * as S from '@styles/gsb/Betting.styled'
 import { useState } from 'react'
+import { useRecoilValue } from 'recoil'
 
 type Props = {
-  minBet: number
-  chipsPlayerHas: number
+  handleBetting: (giveUp: boolean, bettingChips: number) => void
 }
 
 // 입력란과 베팅, 포기 버튼이 있는 바텀 컴포넌트
-const Betting = ({ minBet, chipsPlayerHas }: Props) => {
-  const [chipCount, setChipCount] = useState(minBet)
+const Betting = ({ handleBetting }: Props) => {
+  const [chipCount, setChipCount] = useState<number>(0)
+  const my = useRecoilValue(MyState)
+  const opponent = useRecoilValue(OpponentState)
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setChipCount(Number(e.target.value))
   }
 
   const onClickBetButton = () => {
-    if (minBet > chipCount) {
-      console.log('최소 베팅 수를 맞춰야 함')
-    } else if (chipsPlayerHas < chipCount) {
-      console.log('베팅할 칩이 모자름')
+    if (!my || !opponent) return null
+    const minBet = opponent?.currentBetChips - my?.currentBetChips
+    if (chipCount > 0 && chipCount >= minBet) {
+      handleBetting(false, chipCount)
+    } else if (chipCount < minBet) {
+      console.log('최소 베팅 금액을 맞춰주세요')
     }
-    // 하프, 콜, 올인 등 체크해야 할 경우가 많음
   }
 
   const onClickGiveUpButton = () => {
     console.log('포기')
+    handleBetting(true, 0)
   }
 
   return (

@@ -16,6 +16,11 @@ export const RoundState = atom<RoundType | null>({
   default: null,
 })
 
+export const TimerState = atom<number>({
+  key: 'timerTime',
+  default: 30,
+})
+
 export const DisplayMessageState = atom<string | null>({
   key: 'displayMessage',
   default: null,
@@ -26,9 +31,9 @@ export const CurrentPlayerState = atom<String | null>({
   default: null,
 })
 
-export const AllBetChipsState = atom<number | null>({
+export const AllBetChipsState = atom<number>({
   key: 'allBetChips',
-  default: null,
+  default: 6,
 })
 
 export const MyState = atom<PlayerInfoType | null>({
