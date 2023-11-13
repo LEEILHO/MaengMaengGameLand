@@ -11,5 +11,7 @@ import com.maeng.record.domain.record.entity.GameUser;
 public interface GameUserRepository extends JpaRepository<GameUser, String> {
 	Optional<GameUser> findByNickname(String participant);
 
+	Optional<GameUser> findByEmail(String email);
+
 	boolean existsByEmail(String email);
 }
