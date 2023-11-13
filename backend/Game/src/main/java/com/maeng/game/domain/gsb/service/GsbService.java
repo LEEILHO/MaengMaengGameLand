@@ -655,10 +655,11 @@ public class GsbService {
         gsb.setCarryOverChips(0);
         messageDTO = MessageDTO.
                 builder()
-                .type("게임 포기 라운드 결과")
+                .type("베팅 포기 라운드 결과")
                 .data(GiveUpResponseDto.builder()
-                        .nextRound(gsb.getCurrentRound())
+                        .nextRound(gsb.getCurrentRound()+1)
                         .nextPlayer(nextPlayer)
+                        .currentRound(gsb.getCurrentRound())
                         .timer(30)
                         .winner(winnerPlayer.getNickname())
                         .currentWinnerChips(winnerPlayer.getCurrentChips())
