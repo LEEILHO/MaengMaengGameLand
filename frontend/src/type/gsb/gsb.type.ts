@@ -76,6 +76,8 @@ export type BettingResponseType = {
   nextPlayer: string | null
   currentPlayer: string
   currentChips: number
+  currentPlayerChips: number // 현재 플레이어의 보유 칩
   totalChips: number
+  carryOverChips: number
   timer: number
 }

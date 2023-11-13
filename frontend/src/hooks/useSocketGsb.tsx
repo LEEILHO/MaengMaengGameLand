@@ -154,11 +154,19 @@ const useSocketGsb = () => {
       else if (response.type === '다음 플레이어 베팅') {
         const result = response as socketResponseType<BettingResponseType>
         if (result.data.currentPlayer === user?.nickname) {
-          setMyBetChips((prev) => prev + result.data.currentChips)
+          setMyBetChips(result.data.totalChips)
+          setMy((prev) => {
+            if (!prev) return null
+            return { ...prev, currentChips: result.data.currentPlayerChips }
+          })
           setRound('BetWaiting')
           setDisplayMessage('상대방이 베팅 중입니다.')
         } else {
-          setOpponentBetChips((prev) => prev + result.data.currentChips)
+          setOpponentBetChips(result.data.totalChips)
+          setOpponent((prev) => {
+            if (!prev) return null
+            return { ...prev, currentChips: result.data.currentPlayerChips }
+          })
           setRound('Betting')
           setDisplayMessage('베팅할 칩의 수를 입력해주세요.')
         }
@@ -172,11 +180,19 @@ const useSocketGsb = () => {
         const result = response as socketResponseType<BettingResponseType>
         if (result.data.currentPlayer === user?.nickname) {
           setMyBetChips((prev) => prev + result.data.currentChips)
+          setMy((prev) => {
+            if (!prev) return null
+            return { ...prev, currentChips: result.data.currentPlayerChips }
+          })
         } else {
           setOpponentBetChips((prev) => prev + result.data.currentChips)
+          setOpponent((prev) => {
+            if (!prev) return null
+            return { ...prev, currentChips: result.data.currentPlayerChips }
+          })
         }
 
-        setAllBetChips(result.data.totalChips)
+        setAllBetChips(result.data.carryOverChips)
         setRound('Result')
         setDisplayMessage('금은동 조합을 공개합니다.')
       }
