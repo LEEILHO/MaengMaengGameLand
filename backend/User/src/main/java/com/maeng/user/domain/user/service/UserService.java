@@ -50,8 +50,8 @@ public class UserService {
                 .profile(user.getProfileImage())
                 .tier(user.getScore().getTier())
                 .score(user.getScore().getScore())
-                .win(0)
-                .lose(0)
+                .win(user.getScore().getWin())
+                .lose(user.getScore().getLose())
                 .build();
 
 
