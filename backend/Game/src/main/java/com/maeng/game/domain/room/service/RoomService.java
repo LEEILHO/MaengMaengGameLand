@@ -141,7 +141,7 @@ public class RoomService {
         this.sendRoomInfo(roomCode, roomInfo); // ROOM_INFO
         lobbyService.findAllRoom(roomInfo.getGameCategory(), roomInfo.getChannelTire()); // ROOM_LIST
 
-        //this.saveSessionRoom(roomCode, enterDTO.getNickname()); // 웹소켓 세션 정보 저장
+        this.saveSessionRoom(roomCode, enterDTO.getNickname()); // 웹소켓 세션 정보 저장
     }
 
     @Transactional
@@ -293,8 +293,6 @@ public class RoomService {
         Room room = this.getCurrentRoom(roomCode);
 
         log.info("탈주 플레이어 : [ROOM] " + roomCode+" [GAME] "+gameCode+" [NICKNAME] "+nickname);
-        // 대기방 퇴장 처리
-        this.exitRoom(roomCode, PlayerDTO.builder().nickname(nickname).build());
 
         // gameCode가 있으면 게임 별 퇴장 처리
         if(gameCode != null){
@@ -325,9 +323,10 @@ public class RoomService {
 
         boolean settingCheck = false;
 
-//        for(User user : room.getParticipant().values()){ // 모든 유저의 세션에 게임코드 저장
-//            this.saveSessionGame(gameCode, user.getNickname());
-//        }
+        for(User user : room.getParticipant().values()){ // 모든 유저의 세션에 게임코드 저장
+            this.saveSessionRoom(roomCode, user.getNickname());
+            this.saveSessionGame(gameCode, user.getNickname());
+        }
 
         // 각 gameService의 start 호출
         if(room.getGameCategory().equals(Game.ALL_WIN_ROCK_SCISSOR_PAPER)){
