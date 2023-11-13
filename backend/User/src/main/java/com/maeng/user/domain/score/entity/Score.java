@@ -62,4 +62,8 @@ public class Score {
     public void addLose() {
     	this.lose += 1;
     }
+
+    public void updateTier(Tier tier) {
+    	this.tier = tier;
+    }
 }

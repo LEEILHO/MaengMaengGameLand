@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import com.maeng.user.domain.score.dto.RankScoreDTO;
 import com.maeng.user.domain.score.entity.Score;
 import com.maeng.user.domain.score.entity.ScoreRecord;
 import com.maeng.user.domain.score.enums.GameCategory;
+import com.maeng.user.domain.score.enums.Tier;
 import com.maeng.user.domain.score.repository.ScoreRecordRepository;
 import com.maeng.user.domain.score.repository.ScoreRepository;
 import com.maeng.user.domain.user.respository.UserRepository;
@@ -22,6 +24,17 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class ScoreService {
+
+	@Value("${score.tier.silver}")
+	private int SILVER_SCORE;
+
+	@Value("${score.tier.gold}")
+	private int GOLD_SCORE;
+
+	@Value("${score.tier.challenger}")
+	private int CHALLENGER_SCORE;
+
+
 	private final UserRepository userRepository;
 	private final ScoreRepository scoreRepository;
 	private final ScoreRecordRepository scoreRecordRepository;
@@ -58,6 +71,8 @@ public class ScoreService {
 		List<ScoreRecord> scoreRecords = generateScoreRecord(rankScoreDTO, scoreMap);
 
 		editWinLose(rankScoreDTO, scoreMap);
+
+		updateTier(scoreMap);
 
 		scoreRepository.saveAll(scoreMap.values());
 		scoreRecordRepository.saveAll(scoreRecords);
@@ -97,6 +112,18 @@ public class ScoreService {
 
 		for(int i = 1; i < headCount; i++) {
 			scoreMap.get(rankList.get(i)).addLose();
+		}
+	}
+
+	private void updateTier(Map<String, Score> scores) {
+		for(Score score : scores.values()) {
+			if(score.getScore() >= CHALLENGER_SCORE) {
+				score.updateTier(Tier.CHALLENGER);
+			} else if(score.getScore() >= GOLD_SCORE) {
+				score.updateTier(Tier.GOLD);
+			} else if(score.getScore() >= SILVER_SCORE) {
+				score.updateTier(Tier.SILVER);
+			}
 		}
 	}
 }
