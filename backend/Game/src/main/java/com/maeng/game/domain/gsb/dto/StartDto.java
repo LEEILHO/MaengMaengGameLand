@@ -1,33 +1,28 @@
-package com.maeng.game.domain.gsb.entity;
+package com.maeng.game.domain.gsb.dto;
 
+import com.maeng.game.domain.gsb.entity.Player;
+import com.maeng.game.domain.gsb.entity.StartCard;
 import com.maeng.game.domain.room.entity.User;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.redis.core.RedisHash;
+import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
-@RedisHash(value = "Gsb")
-public class Gsb {
-    @Id
+public class StartDto {
+
     private String gameCode;
     private String roomCode;
-    private LocalDateTime createAt;
-//    private LocalDateTime roundStartAt;
     private int currentRound;
     private int carryOverChips;
     private String currentPlayer;
     private StartCard[] startCards;
     private Map<Integer, Player> players;
     private List<User> participiants;
-
-    public void nextRound() {
-        this.currentRound++;
-//        this.roundStartAt = LocalDateTime.now();
-    }
 }
