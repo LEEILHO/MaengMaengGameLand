@@ -5,10 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-
-import com.maeng.user.domain.score.entity.Score;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -33,10 +29,6 @@ public class User {
 
     @Column(nullable = false)
     private String profileImage;
-
-    @OneToOne
-    @JoinColumn(name = "score_seq")
-    private Score score;
 
     @Builder
     public User( String email, String nickname, String profileImage){

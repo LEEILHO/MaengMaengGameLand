@@ -123,6 +123,8 @@ public class ScoreService {
 				score.updateTier(Tier.GOLD);
 			} else if(score.getScore() >= SILVER_SCORE) {
 				score.updateTier(Tier.SILVER);
+			} else {
+				score.updateTier(Tier.BRONZE);
 			}
 		}
 	}

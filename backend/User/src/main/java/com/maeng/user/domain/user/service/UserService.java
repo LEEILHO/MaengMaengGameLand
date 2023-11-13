@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.maeng.user.domain.score.entity.Score;
 import com.maeng.user.domain.score.enums.Tier;
+import com.maeng.user.domain.score.repository.ScoreRepository;
 import com.maeng.user.domain.user.dto.UserDetailResponse;
 import com.maeng.user.domain.user.dto.UserNicknameEditDTO;
 import com.maeng.user.domain.user.dto.WatchCode;
@@ -32,7 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
     private final UserRepository userRepository;
-//    private final ScoreRepository scoreRepository;
+   private final ScoreRepository scoreRepository;
     private final Logger logger = LoggerFactory.getLogger(getClass());
 //    private final WatchRedisManager watchRedisManager;
     private final WatchRepository watchRepository;
@@ -44,15 +45,12 @@ public class UserService {
     public UserDetailResponse getUserDetail(String userEmail){
         User user = userRepository.findUserByEmail(userEmail)
                 .orElseThrow(() -> new UserException(UserExceptionCode.USER_NOT_FOUND));
-        Score score = user.getScore();
-        if(score == null){
-            score = Score.builder()
-                    .score(0)
-                    .tier(Tier.BRONZE)
-                    .win(0)
-                    .lose(0)
-                    .build();
-        }
+        Score score = scoreRepository.findByUser(user).orElse(Score.builder()
+            .score(0)
+            .tier(Tier.BRONZE)
+            .win(0)
+            .lose(0)
+            .build());
 
         /*더미 데이터로*/
         return UserDetailResponse.builder()
