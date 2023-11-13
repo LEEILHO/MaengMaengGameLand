@@ -60,7 +60,7 @@ public class GsbService {
         return getInfo(gameCode).getStartCards();
     }
     @Transactional
-    public void setSeq(String gameCode, PlayerSeqDto playerSeqDto){
+    public synchronized void setSeq(String gameCode, PlayerSeqDto playerSeqDto){
         log.info("setSeq(), gameCode = {}, playerSeq = {}, playerNick = {}",gameCode,playerSeqDto.getSeq(),playerSeqDto.getNickname());
         Gsb gsb = gsbRepository.findById(gameCode).orElseThrow();
 
@@ -120,13 +120,16 @@ public class GsbService {
             if(curPlayer.equals(gsb.getPlayers().get(1).getNickname())){
                 log.info("선 플레이어");
                 // 현재 플레이어가 선 플레이어일 때
+
+                // 베팅한 금은동이 플레이어가 가지고 있는 금은동보다 클 때
+                if(!checkStar(gsb.getPlayers().get(1),starDto)){
+                    log.info("현재 가지고 있는 금은동 보다 많이 제출");
+                }
                 History history = setStarFirst(gameCode, starDto);
                 Map<Integer, History>  historyMap = gsb.getPlayers().get(1).getHistories();
                 if( history != null){
                     if(historyMap == null ){
-
                         historyMap = new HashMap<>();
-
                     }
                     /*현재 플레이어의 무게를 다음 플레이어가 못맞출 때 게임 종료*/
                     // 다음 플레이어의 남음 금은동 수
@@ -141,8 +144,6 @@ public class GsbService {
                                 .type("게임 결과")
                                 .data(getGameResult(gameCode))
                                 .build();
-
-
                     }
                     history.setBettingChips(3);
                     gsb.setCarryOverChips(gsb.getCarryOverChips() + 3);
@@ -167,6 +168,9 @@ public class GsbService {
             } else{
                 // 현재 플레이어가 후 플레이어일 때
                 log.info("후 플레이어");
+                if(!checkStar(gsb.getPlayers().get(0),starDto)){
+                    log.info("현재 가지고 있는 금은동 보다 많이 제출");
+                }
                 History history = setStarSecond(curRound,0,gameCode, starDto);
                 Map<Integer, History>  historyMap = gsb.getPlayers().get(0).getHistories();
 
@@ -205,7 +209,9 @@ public class GsbService {
             //0 인덱스 플레이어가 선 플레이어
             if(curPlayer.equals(gsb.getPlayers().get(0).getNickname())){
                 log.info("선플레이어 ");
-
+                if(!checkStar(gsb.getPlayers().get(0),starDto)){
+                    log.info("현재 가지고 있는 금은동 보다 많이 제출");
+                }
                 // 현재 플레이어가 선 플레이어일 때
                 History history = setStarFirst(gameCode, starDto);
                 Map<Integer, History>  historyMap = gsb.getPlayers().get(0).getHistories();
@@ -249,6 +255,9 @@ public class GsbService {
                 }
             } else{
                 log.info("후플레이어");
+                if(!checkStar(gsb.getPlayers().get(1),starDto)){
+                    log.info("현재 가지고 있는 금은동 보다 많이 제출");
+                }
                 History history = setStarSecond(curRound,1, gameCode, starDto);
                 Map<Integer, History>  historyMap = gsb.getPlayers().get(1).getHistories();
                 if( history != null){
@@ -747,7 +756,14 @@ public class GsbService {
 
     }
 
-
+    public boolean checkStar(Player player,StarDto starDto){
+        if(player.getCurrentGold()< starDto.getGold() ||
+        player.getCurrentSilver() < starDto.getSilver() ||
+        player.getCurrentBronze() < starDto.getBronze()){
+            return false;
+        }
+        return true;
+    }
 
 
     public Gsb setGsb(String gameCode) {
@@ -763,8 +779,8 @@ public class GsbService {
 
     public Gsb getInfo(String gameCode){
         return gsbRepository.findById(gameCode).orElseThrow();
-
     }
+
     public String getDataToJson(String gameCode) {
         Gsb gsb = gsbRepository.findById(gameCode).orElseThrow();
         String json = "";
