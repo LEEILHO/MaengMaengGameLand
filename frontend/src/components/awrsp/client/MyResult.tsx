@@ -42,7 +42,7 @@ const MyResult = () => {
     return () => {
       playerRoundResult?.map((result) => {
         if (result.nickname === user?.nickname) {
-          if (result.detail.win === 7) {
+          if (result.finish) {
             setStep('WAITING')
             return
           }
