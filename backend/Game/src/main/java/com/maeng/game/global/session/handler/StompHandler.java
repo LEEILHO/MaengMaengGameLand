@@ -19,14 +19,15 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Configuration
 public class StompHandler implements ChannelInterceptor {
-//    private final SessionRepository sessionRepository;
-//    private final RoomService roomService;
-//
-//    @Override
-//    public Message<?> preSend(Message<?> message, MessageChannel channel) {
-//        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-//
-//        if(StompCommand.CONNECT == accessor.getCommand()){
+    private final SessionRepository sessionRepository;
+    private final RoomService roomService;
+
+    @Override
+    public Message<?> preSend(Message<?> message, MessageChannel channel) {
+        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
+
+        if(StompCommand.CONNECT == accessor.getCommand()){
+            log.info(accessor.toString());
 //            String nickname = accessor.getNativeHeader("nickname").toString();
 //            nickname = nickname.substring(1, nickname.length()-1);
 //
@@ -35,11 +36,12 @@ public class StompHandler implements ChannelInterceptor {
 //                            .sessionId(accessor.getSessionId())
 //                            .nickname(nickname)
 //                    .build());
-//        }
-//
-//        if(StompCommand.DISCONNECT == accessor.getCommand()){
-//           // log.info(accessor.getNativeHeader("nickname").toString());
-//            log.info("DISCONNECT");
+        }
+
+        if(StompCommand.DISCONNECT == accessor.getCommand()){
+            log.info(accessor.toString());
+           // log.info(accessor.getNativeHeader("nickname").toString());
+            log.info("DISCONNECT");
 //            Session session = sessionRepository.findBySessionId(accessor.getSessionId());
 //
 //            if(session.getRoomCode() != null){ // 대기방에 참여중이라면
@@ -54,8 +56,8 @@ public class StompHandler implements ChannelInterceptor {
 //            }
 //
 //            sessionRepository.delete(session);
-//        }
-//
-//        return ChannelInterceptor.super.preSend(message, channel);
-//    }
+        }
+
+        return ChannelInterceptor.super.preSend(message, channel);
+    }
 }
