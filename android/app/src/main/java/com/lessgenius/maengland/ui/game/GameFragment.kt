@@ -58,7 +58,7 @@ class GameFragment :
 
     @Volatile
     private var playerPosition = MutableLiveData<Rect>()
-    private var score = MutableLiveData<Int>(0)
+    private var score = MutableLiveData(0)
     private var yPosition = 0F
 
     // 화면의 크기
@@ -83,12 +83,11 @@ class GameFragment :
 
 
         // 스크롤 금지
-//        binding.gameScrollView.setOnTouchListener { _, _ -> true }
+        binding.gameScrollView.setOnTouchListener { _, _ -> true }
 
         binding.imageViewPlayer.bringToFront()
         binding.textviewScore.bringToFront()
-//        binding.root.bringChildToFront(binding.imageViewPlayer)
-//        binding.imageViewPlayer.elevation = 1f
+
     }
 
     private fun initData() {
@@ -106,10 +105,9 @@ class GameFragment :
         val win = mActivity.windowManager.currentWindowMetrics
         screenWidth = win.bounds.width()
         screenHeight = win.bounds.height()
-//        Log.d(TAG, "onViewCreated: $screenWidth $screenHeight")
 
         // 스크롤 뷰
-        binding.gameLayout.layoutParams.height = screenHeight * 20
+        binding.gameLayout.layoutParams.height = screenHeight * 120
         binding.gameScrollView.post {
             binding.gameScrollView.fullScroll(ScrollView.FOCUS_DOWN)
         }
@@ -129,7 +127,7 @@ class GameFragment :
         }
 
         score.observe(viewLifecycleOwner) { newScore ->
-            // 현재 표시된 점수를 가져옵니다. (초기값은 '0'으로 가정)
+            // 현재 표시된 점수를 가져오기 (초기값은 '0'으로 가정)
             val currentScore = binding.textviewScore.text.toString().toIntOrNull() ?: 0
 
             // ValueAnimator를 사용하여 현재 점수에서 새 점수까지 애니메이션을 적용합니다.
@@ -174,7 +172,7 @@ class GameFragment :
                     )
 
                     if (playerRect.right > platformRect.left && playerRect.left < platformRect.right && (playerRect.bottom <= platformRect.top) && (platformRect.top - playerRect.bottom <= 40)) {
-//
+
 //                        // 위로 올라갔을 때
                         if (yPosition > platformRect.top.toFloat()) {
                             Log.d(TAG, "initObserve: scroll")
@@ -234,17 +232,13 @@ class GameFragment :
             interpolator = DecelerateInterpolator(1.8f)
             addUpdateListener { animator ->
                 val animatedValue = animator.animatedValue as Float
-//                isGoingDown = false
                 player?.y = animatedValue - player?.height!!
             }
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
                     super.onAnimationEnd(animation)
                     updatePlayerPosition()
-//                    isGoingDown = true
-//                    fallDownAnimator.setFloatValues(yPosition - JUMP_HEIGHT, yPosition + 100F)
                     initFallDownAnimation()
-//                    fallDownAnimator.start()
                     isGoingDown = true
                 }
             })
@@ -256,7 +250,7 @@ class GameFragment :
         if (!::fallDownAnimator.isInitialized) { // 초기화
             fallDownAnimator =
                 ValueAnimator.ofFloat(yPosition - JUMP_HEIGHT, yPosition + screenHeight).apply {
-                    duration = 615 // 내려오는 데 걸리는 시간을 절반으로 설정
+                    duration = 615
                     interpolator = LinearInterpolator()
                     addUpdateListener { animator ->
                         val animatedValue = animator.animatedValue as Float
@@ -271,7 +265,7 @@ class GameFragment :
                                 Log.d(TAG, "fallDownAnimator: 추락! 플레이어의 높이를 0으로 설정")
                                 onPlayerFell() // 추락
                             } else {
-                                // 내려와서 충돌했다면 새로운 점프를 준비합니다.
+                                // 내려와서 충돌했다면 새로운 점프를 준비
                                 isCollided = false  // 충돌 상태 리셋
 
                                 jumpUpAnimator.setFloatValues(yPosition, yPosition - JUMP_HEIGHT)
@@ -296,7 +290,14 @@ class GameFragment :
         fallDownAnimator.cancel()
         xMoveAnimator.removeAllUpdateListeners()
         xMoveAnimator.cancel()
-//        player?.visibility = View.GONE // 플레이어를 화면에서 숨깁니다.
+        player?.rotation = 90f
+        player?.scaleX = 1f
+
+        // 플레이어가 있는 위치로 ScrollView를 스크롤
+        val playerYPosition = (player?.y ?: 0f) - binding.gameScrollView.height + player?.height!!
+        binding.gameScrollView.post {
+            binding.gameScrollView.smoothScrollTo(0, playerYPosition.toInt())
+        }
     }
 
     private fun initSensorManager() {
@@ -409,12 +410,13 @@ class GameFragment :
 
         // 플레이어의 위치를 시작 발판의 위치로 지정
         if (index == 0) {
+            platform.x = (screenWidth / 2 - platform.layoutParams.width / 2).toFloat()
             player?.apply {
-                x = (platform.x * 2 + platform.width) / 2
                 y = platform.y + platform.height
             }
             yPosition = player?.y!!
             Log.d(TAG, "init yPosition: ${player?.x} ${player?.y}")
+            Log.d(TAG, "init yPosition: ${platform.x} ${platform.y}")
         }
     }
 
@@ -426,7 +428,6 @@ class GameFragment :
     override fun onPause() {
         super.onPause()
         sensorManager.unregisterListener(listener)
-//        valueAnimator.cancel()
         xMoveAnimator.cancel()
     }
 
