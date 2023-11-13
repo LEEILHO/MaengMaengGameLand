@@ -8,7 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.ColumnDefault;
 
@@ -30,7 +30,7 @@ public class Score {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long scoreSeq;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "user_seq")
     private User user;
 
@@ -41,6 +41,14 @@ public class Score {
     @ColumnDefault("'BRONZE'")
     @Enumerated(EnumType.STRING)
     private Tier tier;
+
+    @Column(name = "win")
+    @ColumnDefault("0")
+    private int win;
+
+    @Column(name = "lose")
+    @ColumnDefault("0")
+    private int lose;
 
     public Score addScore(int score) {
         this.score += score;

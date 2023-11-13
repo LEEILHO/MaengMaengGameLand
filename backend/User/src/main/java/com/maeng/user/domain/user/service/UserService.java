@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.maeng.user.domain.score.enums.Tier;
 import com.maeng.user.domain.user.dto.UserDetailResponse;
 import com.maeng.user.domain.user.dto.UserNicknameEditDTO;
 import com.maeng.user.domain.user.dto.WatchCode;
@@ -49,8 +48,8 @@ public class UserService {
                 .userEmail(user.getEmail())
                 .nickname(user.getNickname())
                 .profile(user.getProfileImage())
-                .tier(Tier.BRONZE)
-                .score(0)
+                .tier(user.getScore().getTier())
+                .score(user.getScore().getScore())
                 .win(0)
                 .lose(0)
                 .build();
