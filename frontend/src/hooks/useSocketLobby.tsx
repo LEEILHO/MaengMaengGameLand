@@ -9,6 +9,7 @@ import { channelState, gameTypeState } from '@atom/gameAtom'
 import { roomsState } from '@atom/lobbyAtom'
 import { socketResponseType } from '@type/common/common.type'
 import { RoomType } from '@type/lobby/lobby.type'
+import { userState } from '@atom/userAtom'
 
 const useSocket = () => {
   const [sockjs, setSockjs] = useState<WebSocket>()
@@ -16,6 +17,7 @@ const useSocket = () => {
   const gameType = useRecoilValue(gameTypeState)
   const channel = useRecoilValue(channelState)
   const setRooms = useSetRecoilState(roomsState)
+  const user = useRecoilValue(userState)
 
   const connectLobby = useCallback(() => {
     console.log('로비 구독', client, gameType, channel)
@@ -50,7 +52,9 @@ const useSocket = () => {
 
       // 연결 되면
       client.current.connect(
-        {},
+        {
+          nickname: user?.nickname,
+        },
         () => {
           connectedFunction()
         },

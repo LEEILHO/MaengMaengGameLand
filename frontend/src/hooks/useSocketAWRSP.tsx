@@ -156,7 +156,9 @@ const useSocketAWRSP = () => {
     client.current = StompClient
 
     client.current.connect(
-      {},
+      {
+        nickname: user?.nickname,
+      },
       () => {
         connectAWRSPGame()
         handleRoundStart()
