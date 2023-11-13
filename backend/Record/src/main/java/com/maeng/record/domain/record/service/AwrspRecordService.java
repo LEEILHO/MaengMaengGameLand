@@ -50,7 +50,7 @@ public class AwrspRecordService {
 	private Game createGame(String gameCode, LocalDateTime startAt) {
 		return Game.builder()
 			.gameCode(gameCode)
-			.gameCategory(GameCategoty.JWERLY_AUCTION)
+			.gameCategory(GameCategoty.ALL_WIN_ROCK_SCISSOR_PAPER)
 			.startAt(startAt)
 			.build();
 	}
@@ -74,6 +74,7 @@ public class AwrspRecordService {
 
 			for(int round = 1; round <= player.getHistories().size(); round++) {
 				Awrsp.History history = player.getHistories().get(round);
+				if(history == null) continue;
 				awrspRounds.add(AwrspRound.builder()
 					.game(game)
 					.gameUser(gameUser)

@@ -64,12 +64,16 @@ public class MessageListener {
 	}
 
 	@RabbitListener(queues = "awrsp.queue")
-	public void receiveMessage4(String message){
+	public void receiveMessage4(String message) throws JsonProcessingException {
 		try {
+			log.info("awrsp = " + message);
 			Awrsp awrap = objectMapper.readValue(message, Awrsp.class);
 			awrspRecordService.saveAwrspRecord(awrap);
+			log.info("awrsp save success");
 		} catch (Exception e) {
-			log.info("jwac json parsing error");
+			e.printStackTrace();
+			log.info(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(message));
+			log.info("awrsp json parsing error");
 		}
 	}
 }
