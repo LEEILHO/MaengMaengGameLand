@@ -76,7 +76,12 @@ const GameRoom = () => {
           {round === 'Combination' && (
             <CombinationGsb handleGSBComb={handleGSBComb} />
           )}
-          {(round === 'Betting' || round === 'BetWaiting') && (
+          <CombinationGsb handleGSBComb={handleGSBComb} />
+          <BettingStatus myBet={myBetChips} opponentBet={opponentBetChips} />
+          {(round === 'Betting' ||
+            round === 'BetWaiting' ||
+            round === 'Combination' ||
+            round === 'CombWaiting') && (
             <BettingStatus myBet={myBetChips} opponentBet={opponentBetChips} />
           )}
           {(round === 'Result' ||

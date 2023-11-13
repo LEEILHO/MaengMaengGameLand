@@ -54,6 +54,9 @@ export const BettingStatusContainer = styled.div`
   align-items: center;
   justify-content: space-around;
 
+  position: absolute;
+  top: 0;
+
   @media screen and (max-width: 700px) {
     height: 160px;
   }

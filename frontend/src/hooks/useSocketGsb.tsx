@@ -227,6 +227,10 @@ const useSocketGsb = () => {
             return { ...prev, currentChips: result.data.currentWinnerChips }
           })
         }
+
+        // 현재까지 베팅한 칩 초기화
+        setMyBetChips(0)
+        setOpponentBetChips(0)
       }
 
       // 라운드 결과(승패가 있을 때)
@@ -238,6 +242,10 @@ const useSocketGsb = () => {
         setDisplayMessage('금은동 조합을 공개합니다.')
         setCurrentPlayer(result.data.nextPlayer)
         setTime(result.data.timer)
+
+        // 현재까지 베팅한 칩 초기화
+        setMyBetChips(0)
+        setOpponentBetChips(0)
       }
 
       // 라운드 결과(비김)

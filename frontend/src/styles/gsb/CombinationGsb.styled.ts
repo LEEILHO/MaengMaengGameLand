@@ -7,6 +7,9 @@ export const CombinationGsbContainer = styled.div`
   align-items: center;
   justify-content: space-around;
   gap: 8px;
+
+  position: relative;
+  z-index: 2;
 `
 export const DragAndDropArea = styled(DragDropContext)`
   display: flex;
