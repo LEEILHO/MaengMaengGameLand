@@ -18,7 +18,6 @@ public class Gsb {
     private String gameCode;
     private String roomCode;
     private LocalDateTime createAt;
-//    private LocalDateTime roundStartAt;
     private int currentRound;
     private int carryOverChips;
     private String currentPlayer;
@@ -26,6 +25,7 @@ public class Gsb {
     private Map<Integer, Player> players;
     private List<User> participiants;
 
+    private List<Result> results;
     public void nextRound() {
         this.currentRound++;
 //        this.roundStartAt = LocalDateTime.now();
