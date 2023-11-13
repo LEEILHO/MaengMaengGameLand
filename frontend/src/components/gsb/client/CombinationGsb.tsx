@@ -8,12 +8,19 @@ import { DropResult } from 'react-beautiful-dnd'
 import DragAndDrop from './DragAndDrop'
 import CButton from '@components/common/clients/CButton'
 import { colors } from '@constants/colors'
+import useModal from '@hooks/useModal'
+import { useRecoilValue } from 'recoil'
+import { MyState, OpponentState } from '@atom/gsbAtom'
+import AlertModal from './AlertModal'
 
 type Props = {
   handleGSBComb: (gold: number, silver: number, bronze: number) => void
 }
 
 const CombinationGsb = ({ handleGSBComb }: Props) => {
+  const { Modal, isOpen, closeModal, openModal } = useModal()
+  const my = useRecoilValue(MyState)
+  const opponent = useRecoilValue(OpponentState)
   const [enabled, setEnabled] = useState(false)
   const [goldStars, setGoldStars] = useState<StarListType>({
     in: [],
@@ -92,6 +99,15 @@ const CombinationGsb = ({ handleGSBComb }: Props) => {
     const weight = gold * 3 + silver * 2 + bronze
 
     if (weight < 4 || weight > 12) return
+    if (opponent && opponent?.currentWeight !== 0) {
+      if (
+        opponent?.currentWeight + 2 < weight ||
+        opponent?.currentWeight - 2 > weight
+      ) {
+        openModal()
+        return
+      }
+    }
 
     handleGSBComb(gold, silver, bronze)
   }
@@ -113,29 +129,38 @@ const CombinationGsb = ({ handleGSBComb }: Props) => {
   if (!enabled) return null
 
   return (
-    <S.CombinationGsbContainer>
-      <S.DragAndDropArea onDragEnd={onDragEndGold}>
-        <DragAndDrop stars={goldStars} starClass={'gold'} />
-      </S.DragAndDropArea>
-      <S.DragAndDropArea onDragEnd={onDragEndSilver}>
-        <DragAndDrop stars={silverStars} starClass={'silver'} />
-      </S.DragAndDropArea>
-      <S.DragAndDropArea onDragEnd={onDragEndBronze}>
-        <DragAndDrop stars={bronzeStars} starClass={'bronze'} />
-      </S.DragAndDropArea>
+    <>
+      <S.CombinationGsbContainer>
+        <S.DragAndDropArea onDragEnd={onDragEndGold}>
+          <DragAndDrop stars={goldStars} starClass={'gold'} />
+        </S.DragAndDropArea>
+        <S.DragAndDropArea onDragEnd={onDragEndSilver}>
+          <DragAndDrop stars={silverStars} starClass={'silver'} />
+        </S.DragAndDropArea>
+        <S.DragAndDropArea onDragEnd={onDragEndBronze}>
+          <DragAndDrop stars={bronzeStars} starClass={'bronze'} />
+        </S.DragAndDropArea>
 
-      <S.SubmitButton>
-        <CButton
-          color={colors.greyScale.white}
-          text="조합"
-          backgroundColor={colors.button.purple}
-          radius={100}
-          width={118}
-          fontSize={20}
-          onClick={onClickSubmit}
+        <S.SubmitButton>
+          <CButton
+            color={colors.greyScale.white}
+            text="조합"
+            backgroundColor={colors.button.purple}
+            radius={100}
+            width={118}
+            fontSize={20}
+            onClick={onClickSubmit}
+          />
+        </S.SubmitButton>
+      </S.CombinationGsbContainer>
+
+      <Modal isOpen={isOpen} closeModal={closeModal}>
+        <AlertModal
+          text={'제출할 수 없는 조합입니다.'}
+          closeModal={closeModal}
         />
-      </S.SubmitButton>
-    </S.CombinationGsbContainer>
+      </Modal>
+    </>
   )
 }
 

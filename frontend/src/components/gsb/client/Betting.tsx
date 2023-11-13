@@ -22,8 +22,13 @@ const Betting = ({ handleBetting }: Props) => {
   }
 
   const onClickBetButton = () => {
+    console.log('my: ', my, ' oppoonent: ', opponent)
+
     if (!my || !opponent) return null
     const minBet = opponent?.currentBetChips - my?.currentBetChips
+
+    console.log('minBet:', minBet, ' chipCount:', chipCount)
+
     if (chipCount > 0 && chipCount >= minBet) {
       handleBetting(false, chipCount)
     } else if (chipCount < minBet) {
