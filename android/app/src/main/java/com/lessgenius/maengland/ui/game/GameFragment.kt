@@ -19,6 +19,7 @@ import android.view.animation.LinearInterpolator
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.ScrollView
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.wear.widget.SwipeDismissFrameLayout
 import com.lessgenius.maengland.R
@@ -31,6 +32,8 @@ private const val TAG = "GameFragment_김진영"
 @AndroidEntryPoint
 class GameFragment :
     BaseFragment<FragmentGameBinding>(FragmentGameBinding::bind, R.layout.fragment_game) {
+
+    private val gameViewModel: GameViewModel by viewModels()
 
     companion object {
         const val JUMP_HEIGHT = 220F
@@ -290,6 +293,8 @@ class GameFragment :
         fallDownAnimator.cancel()
         xMoveAnimator.removeAllUpdateListeners()
         xMoveAnimator.cancel()
+
+        // 플레이어의 추락 상태
         player?.rotation = 90f
         player?.scaleX = 1f
 
@@ -298,6 +303,8 @@ class GameFragment :
         binding.gameScrollView.post {
             binding.gameScrollView.smoothScrollTo(0, playerYPosition.toInt())
         }
+
+        gameViewModel.recordScore(score.value ?: 0)
     }
 
     private fun initSensorManager() {

@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder
 import com.intuit.sdp.BuildConfig
 import com.lessgenius.maengland.data.datasource.local.PreferencesManager
 import com.lessgenius.maengland.data.datasource.remote.AccountService
+import com.lessgenius.maengland.data.datasource.remote.GameService
 import com.lessgenius.maengland.data.interceptor.RequestInterceptor
 import com.lessgenius.maengland.data.interceptor.ResponseInterceptor
 import dagger.Module
@@ -60,4 +61,9 @@ object NetworkModule {
     @Provides
     fun provideAccountService(retrofit: Retrofit): AccountService =
         retrofit.create(AccountService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideGameService(retrofit: Retrofit): GameService =
+        retrofit.create(GameService::class.java)
 }
