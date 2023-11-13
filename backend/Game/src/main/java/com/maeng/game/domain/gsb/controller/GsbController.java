@@ -109,9 +109,11 @@ public class GsbController {
 
 
     }
-    @MessageMapping("game.gsb.end-timer.{gameCode}")
-    public void endTimer(String gameCode){
+    @MessageMapping("game.gsb.end.{gameCode}")
+    public void endTimer(String gameCode, GsbNicknameDto nicknameDto){
         log.info("endTimer()");
+        template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode,gsbService.getEndTimer(gameCode, nicknameDto));
+
     }
     @GetMapping
     public ResponseEntity<?> test(){
