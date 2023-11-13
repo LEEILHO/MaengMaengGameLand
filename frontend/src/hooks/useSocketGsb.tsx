@@ -110,7 +110,7 @@ const useSocketGsb = () => {
         setTime(result.data.timer)
       }
       // 두 플레이어의 금은동 세팅 종료 -> 베팅 시작
-      else if (response.type === '다음 플레이어 배팅 시작') {
+      else if (response.type === '다음 플레이어 베팅 시작') {
         const result = response as socketResponseType<GsbSettingType>
         if (result.data.currentPlayer === user?.nickname) {
           setMy((prev) => {
