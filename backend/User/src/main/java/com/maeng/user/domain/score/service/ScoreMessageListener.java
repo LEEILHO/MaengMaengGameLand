@@ -16,13 +16,13 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ScoreMessageListener {
 
-	@Value("${score.jwac.weight}")
+	@Value("${score.weight.jwac}")
 	private int JWAC_WEIGHT;
 
-	@Value("${score.gsb.weight}")
+	@Value("${score.weight.gsb}")
 	private int GSB_WEIGHT;
 
-	@Value("${score.awrsp.weight}")
+	@Value("${score.weight.awrsp}")
 	private int AWRSP_WEIGHT;
 
 	private final ScoreService scoreService;
