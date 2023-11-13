@@ -245,7 +245,7 @@ const useSocketGsb = () => {
         console.log('비겼어요!')
         const result = response as socketResponseType<DrawResultType>
         setRound('DrawResult')
-        setDisplayMessage('금은동 조합을 공개합니다.')
+        setDisplayMessage('비겼습니다.')
 
         setCurrentPlayer(result.data.nextPlayer)
         setTime(result.data.timer)

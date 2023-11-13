@@ -113,8 +113,9 @@ const CombinationGsb = ({ handleGSBComb }: Props) => {
   }
 
   useEffect(() => {
-    console.log(goldStars)
-  }, [goldStars])
+    console.log('my: ', my)
+    console.log('opponent: ', opponent)
+  }, [])
 
   useEffect(() => {
     // dnd 애니메이션을 위한 준비
