@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.maeng.user.domain.score.entity.Score;
+import com.maeng.user.domain.score.enums.Tier;
 import com.maeng.user.domain.user.dto.UserDetailResponse;
 import com.maeng.user.domain.user.dto.UserNicknameEditDTO;
 import com.maeng.user.domain.user.dto.WatchCode;
@@ -42,16 +44,25 @@ public class UserService {
     public UserDetailResponse getUserDetail(String userEmail){
         User user = userRepository.findUserByEmail(userEmail)
                 .orElseThrow(() -> new UserException(UserExceptionCode.USER_NOT_FOUND));
+        Score score = user.getScore();
+        if(score == null){
+            score = Score.builder()
+                    .score(0)
+                    .tier(Tier.BRONZE)
+                    .win(0)
+                    .lose(0)
+                    .build();
+        }
 
         /*더미 데이터로*/
         return UserDetailResponse.builder()
                 .userEmail(user.getEmail())
                 .nickname(user.getNickname())
                 .profile(user.getProfileImage())
-                .tier(user.getScore().getTier())
-                .score(user.getScore().getScore())
-                .win(user.getScore().getWin())
-                .lose(user.getScore().getLose())
+                .tier(score.getTier())
+                .score(score.getScore())
+                .win(score.getWin())
+                .lose(score.getLose())
                 .build();
 
 
