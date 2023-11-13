@@ -92,6 +92,7 @@ const useSocketGsb = () => {
           })
           // 선공 === 나 -> 후공이 셋팅하길 기다려야 함
           setRound('CombWaiting')
+          setDisplayMessage('상대방이 금은동을 조합합니다')
         } else {
           setOpponent((prev) => {
             if (!prev) return null
@@ -102,6 +103,7 @@ const useSocketGsb = () => {
           })
           // 선공 === 상대방, 후공 === 나
           setRound('Combination')
+          setDisplayMessage('금은동을 조합해서 올려주세요')
         }
 
         setCurrentPlayer(result.data.nextPlayer)
@@ -118,6 +120,8 @@ const useSocketGsb = () => {
               currentWeight: result.data.weight,
             }
           })
+          setRound('BetWaiting')
+          setDisplayMessage('상대방이 베팅 중입니다.')
         } else {
           setOpponent((prev) => {
             if (!prev) return null
@@ -126,11 +130,12 @@ const useSocketGsb = () => {
               currentWeight: result.data.weight,
             }
           })
+          setRound('Betting')
+          setDisplayMessage('베팅할 칩의 수를 입력해주세요.')
         }
 
         setCurrentPlayer(result.data.nextPlayer)
         setTime(result.data.timer)
-        setRound('Betting')
       }
 
       // 다음 플레이어가 존재하면
@@ -144,6 +149,8 @@ const useSocketGsb = () => {
               currentBetChips: prev.currentBetChips + result.data.currentChips,
             }
           })
+          setRound('BetWaiting')
+          setDisplayMessage('상대방이 베팅 중입니다.')
         } else {
           setOpponent((prev) => {
             if (!prev) return null
@@ -152,6 +159,8 @@ const useSocketGsb = () => {
               currentBetChips: prev.currentBetChips + result.data.currentChips,
             }
           })
+          setRound('Betting')
+          setDisplayMessage('베팅할 칩의 수를 입력해주세요.')
         }
         setAllBetChips(result.data.totalChips)
         setCurrentPlayer(result.data.nextPlayer)
@@ -181,6 +190,7 @@ const useSocketGsb = () => {
 
         setAllBetChips(result.data.totalChips)
         setRound('Result')
+        setDisplayMessage('금은동 조합을 공개합니다.')
       }
 
       // 라운드 결과(베팅 포기)
