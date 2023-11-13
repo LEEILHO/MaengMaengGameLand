@@ -9,6 +9,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import com.maeng.record.domain.record.data.Awrsp;
+import com.maeng.record.domain.record.dto.RankDTO;
 import com.maeng.record.domain.record.entity.AwrspGameAnswer;
 import com.maeng.record.domain.record.entity.AwrspRound;
 import com.maeng.record.domain.record.entity.AwrspRoundData;
@@ -140,5 +141,17 @@ public class AwrspRecordService {
 			}
 		}
 		return awrspRoundData;
+	}
+
+	public RankDTO generateRankDTO(Awrsp awrap) {
+		String[] rankList = new String[awrap.getPlayers().size()];
+		for(Awrsp.Player player : awrap.getPlayers().values()) {
+			rankList[player.getRank() - 1] = player.getNickname();
+		}
+
+		return RankDTO.builder()
+			.gameCode(awrap.getId())
+			.rankList(List.of(rankList))
+			.build();
 	}
 }

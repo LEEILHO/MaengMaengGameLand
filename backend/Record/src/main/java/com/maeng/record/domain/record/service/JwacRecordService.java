@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.maeng.record.domain.record.data.Jwac;
+import com.maeng.record.domain.record.dto.RankDTO;
 import com.maeng.record.domain.record.entity.Game;
 import com.maeng.record.domain.record.entity.GameParticipant;
 import com.maeng.record.domain.record.entity.GameUser;
@@ -157,4 +158,10 @@ public class JwacRecordService {
 		return jwacRoundBids;
 	}
 
+	public RankDTO generateRankDTO(Jwac jwac) {
+		return RankDTO.builder()
+			.gameCode(jwac.getGameCode())
+			.rankList(jwac.getRank())
+			.build();
+	}
 }
