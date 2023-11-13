@@ -1,6 +1,7 @@
 package com.lessgenius.maengland.data.datasource.remote
 
 
+import com.lessgenius.maengland.data.model.BestScore
 import com.lessgenius.maengland.data.model.RefreshTokenRequest
 import com.lessgenius.maengland.data.model.RequestCode
 import com.lessgenius.maengland.data.model.Token
@@ -19,4 +20,7 @@ interface AccountService {
 
     @GET("user/info")
     suspend fun getUserInfo(): User
+
+    @GET("record/watch")
+    suspend fun getBestScore() : BestScore
 }

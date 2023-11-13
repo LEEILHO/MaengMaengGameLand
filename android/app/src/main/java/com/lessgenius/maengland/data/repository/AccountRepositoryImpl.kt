@@ -6,6 +6,7 @@ import com.lessgenius.maengland.data.datasource.local.PreferencesManager.Compani
 import com.lessgenius.maengland.data.datasource.local.PreferencesManager.Companion.REFRESH_TOKEN
 import com.lessgenius.maengland.data.datasource.remote.AccountService
 import com.lessgenius.maengland.data.datasource.remote.handleApi
+import com.lessgenius.maengland.data.model.BestScore
 import com.lessgenius.maengland.data.model.NetworkResult
 import com.lessgenius.maengland.data.model.RequestCode
 import com.lessgenius.maengland.data.model.Token
@@ -51,6 +52,12 @@ class AccountRepositoryImpl @Inject constructor(
     override suspend fun getUserInfo(): NetworkResult<User> {
         return handleApi {
             accountService.getUserInfo()
+        }
+    }
+
+    override suspend fun getBestScore(): NetworkResult<BestScore> {
+        return handleApi {
+            accountService.getBestScore()
         }
     }
 }

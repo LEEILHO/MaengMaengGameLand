@@ -23,6 +23,7 @@ import com.lessgenius.maengland.base.BaseFragment
 import com.lessgenius.maengland.data.model.NetworkResult
 import com.lessgenius.maengland.data.model.User
 import com.lessgenius.maengland.databinding.FragmentMypageBinding
+import com.lessgenius.maengland.ui.game.GameViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -53,6 +54,7 @@ class MypageFragment :
         initObserve()
 //        showLoadingDialog(mActivity)
         mypageViewModel.getUserInfo()
+        mypageViewModel.getBestScore()
     }
 
     private fun initListener() {
@@ -77,6 +79,20 @@ class MypageFragment :
                     is NetworkResult.Success -> {
                         Log.d(TAG, "initObserve: ${result.data}")
                         setUserProfile(result.data)
+                    }
+
+                    else -> {}
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            mypageViewModel.bestScoreInfo.collect { result ->
+                Log.d(TAG, "bestScore: $result")
+                when (result) {
+                    is NetworkResult.Success -> {
+                        Log.d(TAG, "bestScore: ${result.data}")
+                        binding.textviewScore.text = result.data.score.toString()
                     }
 
                     else -> {}
