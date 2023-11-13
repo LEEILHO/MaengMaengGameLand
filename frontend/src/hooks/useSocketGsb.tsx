@@ -338,6 +338,16 @@ const useSocketGsb = () => {
       console.log('금은동 조합 전송')
       console.log('금: ', gold, ' 은: ', silver, ' 동: ', bronze)
 
+      setMy((prev) => {
+        if (!prev) return null
+        return {
+          ...prev,
+          currentGold: prev.currentGold - gold,
+          currentSilver: prev.currentSilver - silver,
+          currentBronze: prev.currentBronze - bronze,
+        }
+      })
+
       client.current?.publish({
         destination: `/pub/game.gsb.set-star.${gameCode}`,
         body: JSON.stringify({

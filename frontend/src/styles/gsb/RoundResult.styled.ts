@@ -69,4 +69,5 @@ export const RoundResultModalContainer = styled.div`
 
 export const ModalContent = styled.p`
   font-weight: 700;
+  word-break: break-all;
 `

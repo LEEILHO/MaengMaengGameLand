@@ -24,7 +24,7 @@ const CombinationGsb = ({ handleGSBComb }: Props) => {
   const [enabled, setEnabled] = useState(false)
   const [goldStars, setGoldStars] = useState<StarListType>({
     in: [],
-    out: [...Array(3)].map((_, i) => ({
+    out: [...Array(my?.currentGold)].map((_, i) => ({
       id: `gold${i}`,
       src: images.gsb.goldStar,
       status: 'out',
@@ -33,7 +33,7 @@ const CombinationGsb = ({ handleGSBComb }: Props) => {
 
   const [silverStars, setSilverStars] = useState<StarListType>({
     in: [],
-    out: [...Array(10)].map((_, i) => ({
+    out: [...Array(my?.currentSilver)].map((_, i) => ({
       id: `silver${i}`,
       src: images.gsb.silverStar,
       status: 'out',
@@ -42,7 +42,7 @@ const CombinationGsb = ({ handleGSBComb }: Props) => {
 
   const [bronzeStars, setBronzeStars] = useState<StarListType>({
     in: [],
-    out: [...Array(20)].map((_, i) => ({
+    out: [...Array(my?.currentBronze)].map((_, i) => ({
       id: `bronze${i}`,
       src: images.gsb.bronzeStar,
       status: 'out',
