@@ -724,9 +724,28 @@ public class GsbService {
         gsbRepository.save(gsb);
         return gameResultDto;
     }
+    public MessageDTO getEndTimer(String gameCode, GsbNicknameDto nicknameDto){
+        Gsb gsb = getInfo(gameCode);
+        if(nicknameDto.getNickname().equals(gsb.getPlayers().get(0).getNickname())){
+            return MessageDTO.builder()
+                    .type("타이머 게임 종료")
+                    .data(TimerEndDto.builder()
+                            .winner(gsb.getPlayers().get(1).getNickname())
+                            .loser(gsb.getPlayers().get(0).getNickname())
+                            .build())
+                    .build();
+        } else {
+            return MessageDTO.builder()
+                    .type("타이머 게임 종료")
+                    .data(TimerEndDto.builder()
+                            .winner(gsb.getPlayers().get(0).getNickname())
+                            .loser(gsb.getPlayers().get(1).getNickname())
+                            .build())
+                    .build();
 
+        }
 
-
+    }
 
 
 
