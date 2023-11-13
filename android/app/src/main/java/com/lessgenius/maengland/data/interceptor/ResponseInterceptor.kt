@@ -56,62 +56,62 @@ class ResponseInterceptor @Inject constructor(
 //                }
             }
 
-            401 -> { // 여러 에러들 종합 (에러 메시지로 확인하자.)
-                val errorResponse = parseErrorResponse(response.body)
-                Log.d(TAG, "intercept: 에러 바디 파싱 ${errorResponse}")
-
-                Log.d(TAG, "intercept: 에러(401) : 만료된 토큰입니다.")
-                runBlocking {
-                    //토큰 갱신 api 호출
-                    Log.d(TAG, "intercept: ${preferences.getToken(REFRESH_TOKEN)}")
-                    preferences.getToken(REFRESH_TOKEN)?.let {
-                        Log.d(TAG, "intercept: ${preferences.getToken(REFRESH_TOKEN)}")
-
-                        val result = Retrofit.Builder()
-                            .baseUrl(BASE_URL)
-                            .addConverterFactory(
-                                GsonConverterFactory.create(
-                                    GsonBuilder()
-                                        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                                        .setLenient()
-                                        .create()
-                                )
-                            )
-                            .build()
-                            .create(AccountService::class.java).postRefreshToken(
-                                RefreshTokenRequest(preferences.getToken(REFRESH_TOKEN).first())
-                            )
-
-                        Log.d(
-                            TAG, "intercept 현재 찐 refresh: ${
-                                preferences.getToken(
-                                    REFRESH_TOKEN
-                                )
-                            }"
-                        )
-                        if (result.watchAccessToken.isNotEmpty()) {
-                            Log.d(TAG, "intercept: 다시 받아오는데 성공했어요!!!!!!")
-                            preferences.updateToken(ACCESS_TOKEN, result.watchAccessToken)
-                            preferences.updateToken(REFRESH_TOKEN, result.watchRefreshToken)
-                            Log.d(TAG, "intercept: 만료된 토큰 다시 받은거 $result")
-                            accessToken = result.watchAccessToken
-                            isRefreshable = true
-                        }
-                        if (result.equals(
-                                ErrorResponse(
-                                    httpStatus = 401,
-                                    errorCode = "A-005",
-                                    errorMessage = "해당 refresh token은 존재하지 않습니다."
-                                )
-                            )
-                        ) {
-                            Log.d(TAG, "intercept: 리프레시 토큰으로 다시 받아오는 코드 실패입니다.")
-//                                    Log.d(TAG, "intercept success : ${result.isSuccessful}")
-//                            throw (IOException("refresh_exception"))
-                        }
-                    }
-                }
-            }
+//            401 -> { // 여러 에러들 종합 (에러 메시지로 확인하자.)
+//                val errorResponse = parseErrorResponse(response.body)
+//                Log.d(TAG, "intercept: 에러 바디 파싱 ${errorResponse}")
+//
+//                Log.d(TAG, "intercept: 에러(401) : 만료된 토큰입니다.")
+//                runBlocking {
+//                    //토큰 갱신 api 호출
+//                    Log.d(TAG, "intercept: ${preferences.getToken(REFRESH_TOKEN)}")
+//                    preferences.getToken(REFRESH_TOKEN)?.let {
+//                        Log.d(TAG, "intercept: ${preferences.getToken(REFRESH_TOKEN)}")
+//
+//                        val result = Retrofit.Builder()
+//                            .baseUrl(BASE_URL)
+//                            .addConverterFactory(
+//                                GsonConverterFactory.create(
+//                                    GsonBuilder()
+//                                        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+//                                        .setLenient()
+//                                        .create()
+//                                )
+//                            )
+//                            .build()
+//                            .create(AccountService::class.java).postRefreshToken(
+//                                RefreshTokenRequest(preferences.getToken(REFRESH_TOKEN).first())
+//                            )
+//
+//                        Log.d(
+//                            TAG, "intercept 현재 찐 refresh: ${
+//                                preferences.getToken(
+//                                    REFRESH_TOKEN
+//                                )
+//                            }"
+//                        )
+//                        if (result.watchAccessToken.isNotEmpty()) {
+//                            Log.d(TAG, "intercept: 다시 받아오는데 성공했어요!!!!!!")
+//                            preferences.updateToken(ACCESS_TOKEN, result.watchAccessToken)
+//                            preferences.updateToken(REFRESH_TOKEN, result.watchRefreshToken)
+//                            Log.d(TAG, "intercept: 만료된 토큰 다시 받은거 $result")
+//                            accessToken = result.watchAccessToken
+//                            isRefreshable = true
+//                        }
+//                        if (result.equals(
+//                                ErrorResponse(
+//                                    httpStatus = 401,
+//                                    errorCode = "A-005",
+//                                    errorMessage = "해당 refresh token은 존재하지 않습니다."
+//                                )
+//                            )
+//                        ) {
+//                            Log.d(TAG, "intercept: 리프레시 토큰으로 다시 받아오는 코드 실패입니다.")
+////                                    Log.d(TAG, "intercept success : ${result.isSuccessful}")
+////                            throw (IOException("refresh_exception"))
+//                        }
+//                    }
+//                }
+//            }
 
             500 -> {
 

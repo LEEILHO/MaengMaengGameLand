@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_startUpFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_startUpFragment_to_mypageFragment"
+            app:destination="@id/mypageFragment" />
     </fragment>
     <fragment
         android:id="@+id/gameFragment"
@@ -26,5 +29,17 @@
         android:id="@+id/loginFragment"
         android:name="com.lessgenius.maengland.ui.login.LoginFragment"
         android:label="fragment_login"
-        tools:layout="@layout/fragment_login" />
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_mypageFragment"
+            app:destination="@id/mypageFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true"
+            />
+    </fragment>
+    <fragment
+        android:id="@+id/mypageFragment"
+        android:name="com.lessgenius.maengland.ui.mypage.MypageFragment"
+        android:label="fragment_mypage"
+        tools:layout="@layout/fragment_mypage" />
 </navigation>

@@ -1,5 +1,6 @@
 package com.lessgenius.maengland.ui.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lessgenius.maengland.data.model.NetworkResult
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val TAG = "LoginViewModel_김진영"
 @HiltViewModel
 class LoginViewModel @Inject constructor(private val accountRepository: AccountRepository) :
     ViewModel() {
@@ -23,6 +25,7 @@ class LoginViewModel @Inject constructor(private val accountRepository: AccountR
 
     fun login(code: String) = viewModelScope.launch {
         _loginResponse.emit(accountRepository.login(RequestCode(code)))
+        _loginResponse.emit(NetworkResult.Idle)
     }
 
     fun updateToken(token: Token) = viewModelScope.launch {

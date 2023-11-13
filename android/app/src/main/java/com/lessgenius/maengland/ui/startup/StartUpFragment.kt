@@ -4,18 +4,24 @@ import android.animation.ValueAnimator
 import android.os.Bundle
 import android.view.View
 import android.view.animation.DecelerateInterpolator
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.wear.widget.SwipeDismissFrameLayout
+import com.lessgenius.maengland.MainViewModel
 import com.lessgenius.maengland.R
 import com.lessgenius.maengland.base.BaseFragment
 import com.lessgenius.maengland.databinding.FragmentStartupBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 
 @AndroidEntryPoint
 class StartUpFragment : BaseFragment<FragmentStartupBinding>(
     FragmentStartupBinding::bind, R.layout.fragment_startup
 ) {
+
+    private val mainViewModel: MainViewModel by activityViewModels()
 
     private lateinit var navController: NavController
     private lateinit var swipeCallback: SwipeDismissFrameLayout.Callback
@@ -36,11 +42,13 @@ class StartUpFragment : BaseFragment<FragmentStartupBinding>(
 
         val win = mActivity.windowManager.currentWindowMetrics
         screenHeight = win.bounds.height()
+
+        mainViewModel.getLoginStatus()
         initAnimation()
         initListener()
         navController = Navigation.findNavController(binding.root)
 
-        initListener()
+//        initListener()
     }
 
     private fun initAnimation() {
@@ -68,8 +76,13 @@ class StartUpFragment : BaseFragment<FragmentStartupBinding>(
     private fun initListener() {
 
         binding.buttonSetting.setOnClickListener {
-            navController.navigate(R.id.action_startUpFragment_to_loginFragment)
+            if (mainViewModel.loginStatusResponse.value) {
+                navController.navigate(R.id.action_startUpFragment_to_mypageFragment)
+            } else {
+                navController.navigate(R.id.action_startUpFragment_to_loginFragment)
+            }
         }
+
         binding.buttonGame.setOnClickListener {
             navController.navigate(R.id.action_startUpFragment_to_gameFragment)
         }
