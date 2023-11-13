@@ -12,7 +12,6 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.ColumnDefault;
 
-import com.maeng.user.domain.score.enums.GameCategory;
 import com.maeng.user.domain.score.enums.Tier;
 import com.maeng.user.domain.user.entity.User;
 
@@ -36,16 +35,15 @@ public class Score {
     private User user;
 
     @Column(name = "score")
+    @ColumnDefault("0")
     private int score;
 
-    @ColumnDefault("BRONZE")
+    @ColumnDefault("'BRONZE'")
     @Enumerated(EnumType.STRING)
     private Tier tier;
 
-    @Enumerated(EnumType.STRING)
-    private GameCategory gameCategory;
-
-
-
-
+    public Score addScore(int score) {
+        this.score += score;
+        return this;
+    }
 }

@@ -4,12 +4,16 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
+
+import com.maeng.user.domain.score.enums.GameCategory;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +28,6 @@ import lombok.NoArgsConstructor;
 public class ScoreRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "score_record_seq")
     private long scoreRecordSeq;
 
     @ManyToOne
@@ -36,6 +39,9 @@ public class ScoreRecord {
 
     @Column(name = "create_at")
     private LocalDateTime createAt;
+
+    @Enumerated(EnumType.STRING)
+    private GameCategory gameCategory;
 
     @PrePersist
     public void prePersist() {
