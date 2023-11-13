@@ -6,7 +6,7 @@ import SockJS from 'sockjs-client'
 import { SOCKET_URL } from '@constants/baseUrl'
 import { usePathname } from 'next/navigation'
 import { socketResponseType } from '@type/common/common.type'
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { userState } from '@atom/userAtom'
 import {
   AllBetChipsState,
@@ -35,7 +35,7 @@ const useSocketGsb = () => {
   const user = useRecoilValue(userState)
   const setDisplayMessage = useSetRecoilState(DisplayMessageState)
   const setTurnList = useSetRecoilState(TurnCardState)
-  const [currentPlayer, setCurrentPlayer] = useRecoilState(CurrentPlayerState)
+  const setCurrentPlayer = useSetRecoilState(CurrentPlayerState)
   const setMy = useSetRecoilState(MyState)
   const setOpponent = useSetRecoilState(OpponentState)
   const setAllBetChips = useSetRecoilState(AllBetChipsState)
@@ -70,7 +70,7 @@ const useSocketGsb = () => {
           else setOpponent(players[key as Turn])
         })
 
-        if (user?.nickname === currentPlayer) {
+        if (user?.nickname === result.data.currentPlayer) {
           setRound('Combination')
           setDisplayMessage('금은동을 조합해서 올려주세요')
         } else {
