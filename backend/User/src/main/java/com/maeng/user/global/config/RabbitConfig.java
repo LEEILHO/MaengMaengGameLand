@@ -31,6 +31,7 @@ public class RabbitConfig {
 	private static final String AWRSP_QUEUE_NAME = "score.awrsp";
 	private static final String GSB_QUEUE_NAME = "score.gsb";
 	private static final String REGISTER_EXCHANGE_NAME = "user";
+	private static final String SCORE_EXCHANGE_NAME = "score";
 	private static final String REGISTER_ROUTING_KEY = "edit.#";
 	private static final String JWAC_ROUTING_KEY = "score.jwac";
 	private static final String AWRSP_ROUTING_KEY = "score.awrsp";
@@ -62,23 +63,28 @@ public class RabbitConfig {
 	}
 
 	@Bean
+	public TopicExchange score_exchange(){
+		return new TopicExchange(SCORE_EXCHANGE_NAME);
+	}
+
+	@Bean
 	public Binding edit_binding(){
 		return BindingBuilder.bind(edit_queue()).to(user_exchange()).with(REGISTER_ROUTING_KEY);
 	}
 
 	@Bean
 	public Binding jwac_binding(){
-		return BindingBuilder.bind(jwac_queue()).to(user_exchange()).with(JWAC_ROUTING_KEY);
+		return BindingBuilder.bind(jwac_queue()).to(score_exchange()).with(JWAC_ROUTING_KEY);
 	}
 
 	@Bean
 	public Binding awrsp_binding(){
-		return BindingBuilder.bind(awrsp_queue()).to(user_exchange()).with(AWRSP_ROUTING_KEY);
+		return BindingBuilder.bind(awrsp_queue()).to(score_exchange()).with(AWRSP_ROUTING_KEY);
 	}
 
 	@Bean
 	public Binding gsb_binding(){
-		return BindingBuilder.bind(gsb_queue()).to(user_exchange()).with(GSB_ROUTING_KEY);
+		return BindingBuilder.bind(gsb_queue()).to(score_exchange()).with(GSB_ROUTING_KEY);
 	}
 
 	@Bean
