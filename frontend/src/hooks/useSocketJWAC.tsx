@@ -6,6 +6,7 @@ import {
   jwacRoundResultState,
   jwacRoundState,
 } from '@atom/jwacAtom'
+import { userState } from '@atom/userAtom'
 import { SOCKET_URL } from '@constants/baseUrl'
 import { CompatClient, Stomp } from '@stomp/stompjs'
 import { socketResponseType } from '@type/common/common.type'
@@ -19,11 +20,12 @@ import {
   SpecialItemResultType,
 } from '@type/gameRoom/jwac.type'
 import { useRef, useEffect, useState } from 'react'
-import { useRecoilState, useSetRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import SockJS from 'sockjs-client'
 
 const useSocketJWAC = () => {
   const client = useRef<CompatClient>()
+  const user = useRecoilValue(userState)
   const [playerList, setPlayerList] = useState<PlayerType[]>([])
   const [roundData, setRoundData] = useState<RoundDataType | null>(null)
   const [roundResult, setRoundResult] = useState<RoundResultType | null>(null)
@@ -130,7 +132,9 @@ const useSocketJWAC = () => {
     client.current = StompClient
 
     client.current.connect(
-      {},
+      {
+        nickname: user?.nickname,
+      },
       () => {
         connectGame(code)
         gameStart(code, nickname)

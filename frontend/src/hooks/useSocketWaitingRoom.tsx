@@ -67,7 +67,9 @@ const useSocketWaitingRoom = () => {
 
       // 연결 되면
       client.current.connect(
-        {},
+        {
+          nickname: user?.nickname,
+        },
         () => {
           connectedFunction()
           handleEnter()
