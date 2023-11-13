@@ -2,14 +2,28 @@
 
 import * as S from '@styles/awrsp/AllResultList.styled'
 import AllResultItem from './AllResultItem'
-import { PlayerResultState } from '@atom/awrspAtom'
-import { useRecoilValue } from 'recoil'
+import { PlayerResultState, StepState } from '@atom/awrspAtom'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { useEffect } from 'react'
+import { userState } from '@atom/userAtom'
 
 const AllResultList = () => {
   const playerRoundResult = useRecoilValue(PlayerResultState)
+  const setStep = useSetRecoilState(StepState)
+  const user = useRecoilValue(userState)
   useEffect(() => {
     console.log(playerRoundResult)
+
+    return () => {
+      playerRoundResult?.map((result) => {
+        if (result.nickname === user?.nickname) {
+          if (result.detail.win === 7) {
+            setStep('WAITING')
+            return
+          }
+        }
+      })
+    }
   }, [])
 
   return (

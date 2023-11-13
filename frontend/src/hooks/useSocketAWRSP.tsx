@@ -118,7 +118,8 @@ const useSocketAWRSP = () => {
         setStep('ENTER_GAME')
         setTimerTime(20)
         handleRoundStart()
-      } else {
+      } else if (step === 'WAITING') return
+      else {
         client.current?.publish({
           destination: `/pub/game.awrsp.timer.${gameCode}`,
           body: JSON.stringify({

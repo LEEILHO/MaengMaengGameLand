@@ -62,7 +62,7 @@ const AwrspGameRoom = () => {
           <RspCombination handleCardSubmit={handleCardSubmit} />
         )}
         {step === 'PLAYER_WINS' && <MyResult />}
-        {step === 'ALL_WINS' && <AllResultList />}
+        {(step === 'ALL_WINS' || step === 'WAITING') && <AllResultList />}
       </S.Content>
       <S.TimerContainer>
         <Timer
