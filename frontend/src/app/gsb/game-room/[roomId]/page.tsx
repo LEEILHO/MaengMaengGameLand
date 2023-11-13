@@ -56,6 +56,10 @@ const GameRoom = () => {
     }
   }, [])
 
+  useEffect(() => {
+    console.log(round, '입니다.')
+  }, [round])
+
   return (
     <S.GameRoomContainer>
       <S.TopRow>
