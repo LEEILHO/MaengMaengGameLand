@@ -45,3 +45,15 @@ export const OpponentState = atom<PlayerInfoType | null>({
   key: 'opponent',
   default: null,
 })
+
+// 나의 현재까지의 베팅 총 개수
+export const MyBetChipsState = atom<number>({
+  key: 'myBetChips',
+  default: 0,
+})
+
+// 상대방의 현재까지의 베팅 총 개수
+export const OpponentBetChipsState = atom<number>({
+  key: 'opponentBetChips',
+  default: 0,
+})

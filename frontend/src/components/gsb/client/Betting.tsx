@@ -1,6 +1,11 @@
 'use client'
 
-import { MyState, OpponentState } from '@atom/gsbAtom'
+import {
+  MyBetChipsState,
+  MyState,
+  OpponentBetChipsState,
+  OpponentState,
+} from '@atom/gsbAtom'
 import CButton from '@components/common/clients/CButton'
 import { colors } from '@constants/colors'
 import { images } from '@constants/images'
@@ -15,17 +20,16 @@ type Props = {
 // 입력란과 베팅, 포기 버튼이 있는 바텀 컴포넌트
 const Betting = ({ handleBetting }: Props) => {
   const [chipCount, setChipCount] = useState<number>(0)
-  const my = useRecoilValue(MyState)
-  const opponent = useRecoilValue(OpponentState)
+  const myBetChips = useRecoilValue(MyBetChipsState)
+  const opponentBetChips = useRecoilValue(OpponentBetChipsState)
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setChipCount(Number(e.target.value))
   }
 
   const onClickBetButton = () => {
-    console.log('my: ', my, ' oppoonent: ', opponent)
+    console.log('my: ', myBetChips, ' oppoonent: ', opponentBetChips)
 
-    if (!my || !opponent) return null
-    const minBet = opponent?.currentBetChips - my?.currentBetChips
+    const minBet = opponentBetChips - myBetChips
 
     console.log('minBet:', minBet, ' chipCount:', chipCount)
 

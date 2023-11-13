@@ -12,7 +12,9 @@ import {
   AllBetChipsState,
   CurrentPlayerState,
   DisplayMessageState,
+  MyBetChipsState,
   MyState,
+  OpponentBetChipsState,
   OpponentState,
   RoundState,
   TimerState,
@@ -37,7 +39,9 @@ const useSocketGsb = () => {
   const setTurnList = useSetRecoilState(TurnCardState)
   const setCurrentPlayer = useSetRecoilState(CurrentPlayerState)
   const setMy = useSetRecoilState(MyState)
+  const setMyBetChips = useSetRecoilState(MyBetChipsState)
   const setOpponent = useSetRecoilState(OpponentState)
+  const setOpponentBetChips = useSetRecoilState(OpponentBetChipsState)
   const setAllBetChips = useSetRecoilState(AllBetChipsState)
   const setRound = useSetRecoilState(RoundState)
   const setTime = useSetRecoilState(TimerState)
@@ -88,8 +92,10 @@ const useSocketGsb = () => {
             return {
               ...prev,
               currentWeight: result.data.weight,
+              currentChips: result.data.currentChips,
             }
           })
+          setMyBetChips(result.data.defaultChips)
           // 선공 === 나 -> 후공이 셋팅하길 기다려야 함
           setRound('CombWaiting')
           setDisplayMessage('상대방이 금은동을 조합합니다')
@@ -99,8 +105,10 @@ const useSocketGsb = () => {
             return {
               ...prev,
               currentWeight: result.data.weight,
+              currentChips: result.data.currentChips,
             }
           })
+          setOpponentBetChips(result.data.defaultChips)
           // 선공 === 상대방, 후공 === 나
           setRound('Combination')
           setDisplayMessage('금은동을 조합해서 올려주세요')
@@ -118,8 +126,10 @@ const useSocketGsb = () => {
             return {
               ...prev,
               currentWeight: result.data.weight,
+              currentChips: result.data.currentChips,
             }
           })
+          setMyBetChips(result.data.defaultChips)
           setRound('BetWaiting')
           setDisplayMessage('상대방이 베팅 중입니다.')
         } else {
@@ -128,8 +138,10 @@ const useSocketGsb = () => {
             return {
               ...prev,
               currentWeight: result.data.weight,
+              currentChips: result.data.currentChips,
             }
           })
+          setOpponentBetChips(result.data.defaultChips)
           setRound('Betting')
           setDisplayMessage('베팅할 칩의 수를 입력해주세요.')
         }
@@ -142,23 +154,11 @@ const useSocketGsb = () => {
       else if (response.type === '다음 플레이어 베팅') {
         const result = response as socketResponseType<BettingResponseType>
         if (result.data.currentPlayer === user?.nickname) {
-          setMy((prev) => {
-            if (!prev) return null
-            return {
-              ...prev,
-              currentBetChips: prev.currentBetChips + result.data.currentChips,
-            }
-          })
+          setMyBetChips((prev) => prev + result.data.currentChips)
           setRound('BetWaiting')
           setDisplayMessage('상대방이 베팅 중입니다.')
         } else {
-          setOpponent((prev) => {
-            if (!prev) return null
-            return {
-              ...prev,
-              currentBetChips: prev.currentBetChips + result.data.currentChips,
-            }
-          })
+          setOpponentBetChips((prev) => prev + result.data.currentChips)
           setRound('Betting')
           setDisplayMessage('베팅할 칩의 수를 입력해주세요.')
         }
@@ -171,21 +171,9 @@ const useSocketGsb = () => {
       else if (response.type === '라운드 종료') {
         const result = response as socketResponseType<BettingResponseType>
         if (result.data.currentPlayer === user?.nickname) {
-          setMy((prev) => {
-            if (!prev) return null
-            return {
-              ...prev,
-              currentBetChips: prev.currentBetChips + result.data.currentChips,
-            }
-          })
+          setMyBetChips((prev) => prev + result.data.currentChips)
         } else {
-          setOpponent((prev) => {
-            if (!prev) return null
-            return {
-              ...prev,
-              currentBetChips: prev.currentBetChips + result.data.currentChips,
-            }
-          })
+          setOpponentBetChips((prev) => prev + result.data.currentChips)
         }
 
         setAllBetChips(result.data.totalChips)

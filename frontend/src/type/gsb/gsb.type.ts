@@ -15,7 +15,6 @@ export type PlayerInfoType = {
   currentSilver: number
   currentBronze: number
   currentWeight: number
-  currentBetChips: number | 3
   histories: null
 }
 
@@ -67,6 +66,8 @@ export type StarListType = {
 export type GsbSettingType = {
   currentPlayer: string
   weight: number
+  currentChips: number
+  defaultChips: number
   nextPlayer: string
   timer: number
 }

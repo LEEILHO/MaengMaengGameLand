@@ -20,7 +20,9 @@ import {
   AllBetChipsState,
   CurrentPlayerState,
   DisplayMessageState,
+  MyBetChipsState,
   MyState,
+  OpponentBetChipsState,
   OpponentState,
   RoundState,
   TimerState,
@@ -45,6 +47,8 @@ const GameRoom = () => {
   const time = useRecoilValue(TimerState)
   const my = useRecoilValue(MyState)
   const opponent = useRecoilValue(OpponentState)
+  const myBetChips = useRecoilValue(MyBetChipsState)
+  const opponentBetChips = useRecoilValue(OpponentBetChipsState)
   const currentPlayer = useRecoilValue(CurrentPlayerState)
   const user = useRecoilValue(userState)
   const AllBetChips = useRecoilValue(AllBetChipsState)
@@ -73,10 +77,7 @@ const GameRoom = () => {
             <CombinationGsb handleGSBComb={handleGSBComb} />
           )}
           {(round === 'Betting' || round === 'BetWaiting') && (
-            <BettingStatus
-              myBet={my?.currentBetChips}
-              opponentBet={opponent?.currentBetChips}
-            />
+            <BettingStatus myBet={myBetChips} opponentBet={opponentBetChips} />
           )}
           {round === 'Result' && <RoundResult />}
         </S.Content>
