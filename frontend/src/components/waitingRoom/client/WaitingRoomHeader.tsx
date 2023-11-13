@@ -6,9 +6,10 @@ import { images } from '@constants/images'
 
 type Props = {
   publicRoom: boolean
+  title: string
 }
 
-const WaitingRoomHeader = ({ publicRoom }: Props) => {
+const WaitingRoomHeader = ({ publicRoom, title }: Props) => {
   return (
     <S.HeaderContainer>
       <S.RoomInfo>
@@ -17,7 +18,7 @@ const WaitingRoomHeader = ({ publicRoom }: Props) => {
         ) : (
           <img src={images.waitingRoom.header.lock} alt="비공개방" />
         )}
-        <p>제목 제목 제목 제목</p>
+        <p>{title}</p>
       </S.RoomInfo>
       <S.SettingButton>
         <img src={images.common.header.setting} alt="setting" />

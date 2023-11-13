@@ -1,8 +1,11 @@
+import { CompatClient } from '@stomp/stompjs'
+import { ChannelTireType, GameCategoryType } from '@type/lobby/lobby.type'
 import { type } from 'os'
+import { MutableRefObject } from 'react'
 
 export function channelTypeChange(type: '자유' | '브론즈' | '실버' | '골드') {
   if (type === '자유') {
-    return 'UNRANK'
+    return 'UNRANKED'
   }
   if (type === '브론즈') {
     return 'BRONZE'
@@ -18,7 +21,7 @@ export function gameTypeChange(type: string) {
     return 'JEWELRY_AUCTION'
   }
   if (type === 'gsb') {
-    return 'ALL_WIN_ROCK_SCISSOR_PAPER'
+    return 'GOLD_SILVER_BRONZE'
   }
-  return 'GOLD_SILVER_BRONZE'
+  return 'ALL_WIN_ROCK_SCISSOR_PAPER'
 }

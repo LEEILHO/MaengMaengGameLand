@@ -3,6 +3,7 @@
 // import { AuthType } from '@typedef/common.types';
 // eslint-disable-next-line import/no-named-as-default
 // import { ResponseAccessTokenType } from '@/types/common/auth.type';
+import { SERVER_BASE_URL, SOCKET_URL } from '@constants/baseUrl'
 import AxiosS, {
   // eslint-disable-next-line import/named
   AxiosRequestConfig,
@@ -11,11 +12,11 @@ import AxiosS, {
 const axios = AxiosS.create()
 const gameAxios = AxiosS.create()
 export const authAxios = AxiosS.create()
-axios.defaults.baseURL = 'https://maengland.com/api/v1/'
+axios.defaults.baseURL = SERVER_BASE_URL
 axios.defaults.withCredentials = true
-authAxios.defaults.baseURL = 'https://maengland.com/api/v1/'
+authAxios.defaults.baseURL = SERVER_BASE_URL
 authAxios.defaults.withCredentials = true
-gameAxios.defaults.baseURL = 'http://j9d207.p.ssafy.io:8081/api/'
+gameAxios.defaults.baseURL = SOCKET_URL
 gameAxios.defaults.withCredentials = true
 
 export const http = {

@@ -1,16 +1,19 @@
 import { images } from '@constants/images'
 import * as S from '@styles/common/BackButton.styled'
-import { useRouter } from 'next/navigation'
 
 type Props = {
   size: number
+  handleBack: () => void
 }
 
-const BackButton = ({ size }: Props) => {
-  const router = useRouter()
-
+const BackButton = ({ size, handleBack }: Props) => {
   return (
-    <S.BackButton $size={size} onClick={() => router.back()}>
+    <S.BackButton
+      $size={size}
+      onClick={() => {
+        handleBack()
+      }}
+    >
       <S.BackButtonImage
         $size={size}
         src={images.common.header.back}

@@ -4,10 +4,6 @@ import reset from 'styled-reset'
 const GlobalStyle = createGlobalStyle`
   ${reset}
 
-  *{
-    box-sizing: border-box;
-  }
-
   * {
     box-sizing: border-box;
     /* 텍스트 터치 막기 */
@@ -30,8 +26,8 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    position: fixed;
     overflow: hidden;
+    overscroll-behavior: contain;
   }
 
   html,body {

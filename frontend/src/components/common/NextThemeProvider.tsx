@@ -1,12 +1,18 @@
 'use client'
 
+import useSwipeLock from '@hooks/useSwipeLock'
 import GlobalStyle from '@styles/globalstyle'
 import theme from '@styles/theme'
+import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { ThemeProvider } from 'styled-components'
 
 const NextThemeProvider = ({ children }: { children: React.ReactNode }) => {
+  const pathname = usePathname()
   const [isMobile, setIsMobile] = useState(false)
+  const isIndex = pathname.split('/')[1] === '' ? true : false
+
+  useSwipeLock()
 
   useEffect(() => {
     // ios기반 모델 가로모드 설정
@@ -33,7 +39,6 @@ const NextThemeProvider = ({ children }: { children: React.ReactNode }) => {
 
         // 가로 모드에 대한 처리
         setIsMobile(isIos())
-        console.log('맹', isIos())
         // mobile = true
       }
       if (window.orientation === 90 || window.orientation === -90) {
@@ -59,7 +64,7 @@ const NextThemeProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />
-      {isMobile && (
+      {!isIndex && isMobile && (
         <div
           style={{
             position: 'fixed',
