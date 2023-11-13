@@ -16,4 +16,6 @@ public class BettingResponseDto {
     private int currentChips;
     private int totalChips;
     private int timer;
+    private int currentPlayerChips;
+    private int carryOverChips;
 }

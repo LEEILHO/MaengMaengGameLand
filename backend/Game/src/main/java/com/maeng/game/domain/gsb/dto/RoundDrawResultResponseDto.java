@@ -17,6 +17,7 @@ public class RoundDrawResultResponseDto {
     private int timer;
     private boolean draw;
     private String player1;
+    private int carryOverChips;
     private int currentPlayer1Chips;
     private String player2;
     private int currentPlayer2Chips;
