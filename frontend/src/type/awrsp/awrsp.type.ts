@@ -24,6 +24,7 @@ export type StepType =
   | 'DRAW_CARD'
   | 'CARD_SUBMIT'
   | 'PLAYER_WINS'
+  | 'WAITING'
   | 'ALL_WINS'
   | 'GAME_OVER'
 
