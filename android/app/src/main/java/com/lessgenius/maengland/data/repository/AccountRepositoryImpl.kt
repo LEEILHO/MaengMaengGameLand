@@ -9,6 +9,7 @@ import com.lessgenius.maengland.data.datasource.remote.handleApi
 import com.lessgenius.maengland.data.model.NetworkResult
 import com.lessgenius.maengland.data.model.RequestCode
 import com.lessgenius.maengland.data.model.Token
+import com.lessgenius.maengland.data.model.User
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
@@ -37,7 +38,7 @@ class AccountRepositoryImpl @Inject constructor(
         val jwtAccessToken = dataStore.getToken(ACCESS_TOKEN).first()
         val jwtRefreshToken = dataStore.getToken(REFRESH_TOKEN).first()
 
-        Log.d(TAG, "getLoginStatus: ${jwtAccessToken.toString()} ${jwtRefreshToken.toString()}")
+        Log.d(TAG, "getLoginStatus: access : ${jwtAccessToken.toString()} refresh : ${jwtRefreshToken.toString()}")
 
         return Token(jwtAccessToken.toString(), jwtRefreshToken.toString())
     }
@@ -45,5 +46,11 @@ class AccountRepositoryImpl @Inject constructor(
     override suspend fun logout() {
         dataStore.remove(ACCESS_TOKEN)
         dataStore.remove(REFRESH_TOKEN)
+    }
+
+    override suspend fun getUserInfo(): NetworkResult<User> {
+        return handleApi {
+            accountService.getUserInfo()
+        }
     }
 }

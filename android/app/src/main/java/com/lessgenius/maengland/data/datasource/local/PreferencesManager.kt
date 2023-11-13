@@ -10,6 +10,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.lessgenius.maengland.data.repository.AccountRepositoryImpl
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 
@@ -36,8 +37,16 @@ class PreferencesManager(context: Context) {
                 }
             }
             .map { preferences ->
+                cachedToken = preferences[stringPreferencesKey(key)] ?: ""
                 preferences[stringPreferencesKey(key)] ?: ""
             }
+    }
+
+    // 캐시된 토큰 값을 저장하는 변수
+    private var cachedToken: String = ""
+
+    fun getTokenSync(key: String): String {
+        return cachedToken
     }
 
     suspend fun updateToken(key: String, value: String) {

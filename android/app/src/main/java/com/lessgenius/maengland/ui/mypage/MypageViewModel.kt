@@ -2,6 +2,9 @@ package com.lessgenius.maengland.ui.mypage
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lessgenius.maengland.data.model.NetworkResult
+import com.lessgenius.maengland.data.model.Token
+import com.lessgenius.maengland.data.model.User
 import com.lessgenius.maengland.data.repository.AccountRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +18,9 @@ class MypageViewModel @Inject constructor(private val accountRepository: Account
     private var _loginStatusResponse = MutableStateFlow(true)
     val loginStatusResponse = _loginStatusResponse.asStateFlow()
 
+    private var _userInfo = MutableStateFlow<NetworkResult<User>>(NetworkResult.Idle)
+    val userInfo = _userInfo.asStateFlow()
+
     fun logout() = viewModelScope.launch {
         accountRepository.logout()
         if (accountRepository.getLoginStatus().watchAccessToken.isEmpty()) {
@@ -23,5 +29,9 @@ class MypageViewModel @Inject constructor(private val accountRepository: Account
             _loginStatusResponse.emit(true)
         }
 
+    }
+
+    fun getUserInfo() = viewModelScope.launch {
+        _userInfo.emit(accountRepository.getUserInfo())
     }
 }
