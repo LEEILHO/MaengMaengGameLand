@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
 import lombok.AllArgsConstructor;
@@ -38,6 +39,11 @@ public class Mmj {
 
 	public void updateScore(int score) {
 		this.score = score;
+	}
+
+	@PrePersist
+	public void persist() {
+		this.updatedAt = LocalDateTime.now();
 	}
 
 	@PreUpdate

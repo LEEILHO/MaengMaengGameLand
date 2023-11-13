@@ -33,13 +33,15 @@ public class MmjService {
 
 	@Transactional(readOnly = true)
 	public WatchGameScoreDTO getMmjRecord(String email) {
+		Mmj mmj = mmjRepository.findByGameUserEmail(email)
+			.orElse(Mmj.builder()
+				.score(0)
+				.updatedAt(null)
+				.build());
+
 		return WatchGameScoreDTO.builder()
-			.score(mmjRepository.findByGameUserEmail(email)
-				.orElse(Mmj.builder()
-					.score(0)
-					.updatedAt(null)
-					.build())
-				.getScore())
+			.score(mmj.getScore())
+			.updatedAt(mmj.getUpdatedAt())
 			.build();
 	}
 }
