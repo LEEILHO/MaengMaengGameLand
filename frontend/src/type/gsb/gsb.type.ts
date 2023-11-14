@@ -52,6 +52,7 @@ export type RoundType =
   | 'Result'
   | 'DrawResult'
   | 'GiveUpResult'
+  | 'GameOver'
 
 export type StarStatus = 'in' | 'out'
 
@@ -129,12 +130,12 @@ export type GiveUpResultType = {
 }
 
 // 게임 종료, 최종 결과 타입
-export type GameResultType = {
+export type GameOverType = {
   draw: boolean
   winner: string
   winnerChips: number
-  loser: boolean
-  loserChips: string
+  loser: string
+  loserChips: number
 }
 
 export type CombResultType = {

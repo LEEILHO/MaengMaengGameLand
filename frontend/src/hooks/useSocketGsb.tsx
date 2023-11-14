@@ -12,6 +12,7 @@ import {
   AllBetChipsState,
   CurrentPlayerState,
   DisplayMessageState,
+  GameOverState,
   MyBetChipsState,
   MyState,
   OpponentBetChipsState,
@@ -24,6 +25,7 @@ import {
 import {
   BettingResponseType,
   DrawResultType,
+  GameOverType,
   GiveUpResultType,
   GsbSettingType,
   InitGameType,
@@ -50,6 +52,7 @@ const useSocketGsb = () => {
   const setResult = useSetRecoilState(ResultState)
   const setRound = useSetRecoilState(RoundState)
   const setTime = useSetRecoilState(TimerState)
+  const setGameOver = useSetRecoilState(GameOverState)
 
   // 금은동 게임 구독
   const connectGsb = useCallback(() => {
@@ -257,6 +260,13 @@ const useSocketGsb = () => {
 
         setCurrentPlayer(result.data.nextPlayer)
         setTime(result.data.timer)
+      }
+
+      // 게임 종료
+      else if (response.type === '게임 결과') {
+        console.log('게임 종료!')
+        const result = response as socketResponseType<GameOverType>
+        setGameOver(result.data)
       }
     })
   }, [client.current, gameCode])

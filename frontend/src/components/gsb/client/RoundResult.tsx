@@ -4,6 +4,7 @@ import {
   AllBetChipsState,
   CurrentPlayerState,
   DisplayMessageState,
+  GameOverState,
   MyState,
   OpponentState,
   ResultState,
@@ -28,6 +29,7 @@ const RoundResult = () => {
   const allBetChips = useRecoilValue(AllBetChipsState)
   const setMy = useSetRecoilState(MyState)
   const setOpponent = useSetRecoilState(OpponentState)
+  const gameOver = useRecoilValue(GameOverState)
 
   const [myComb, setMyComb] = useState<CombResultType>({
     gold: 0,
@@ -41,27 +43,33 @@ const RoundResult = () => {
   })
 
   const closeAndNext = () => {
-    if (currentPlayer === user?.nickname) {
-      setRound('Combination')
-      setDisplayMessage('금은동을 조합해서 올려주세요')
+    if (gameOver) {
+      // 게임 종료
+      setRound('GameOver')
+      setDisplayMessage('게임이 종료되었습니다')
     } else {
-      setRound('CombWaiting')
-      setDisplayMessage('상대방이 금은동을 조합합니다')
+      if (currentPlayer === user?.nickname) {
+        setRound('Combination')
+        setDisplayMessage('금은동을 조합해서 올려주세요')
+      } else {
+        setRound('CombWaiting')
+        setDisplayMessage('상대방이 금은동을 조합합니다')
+      }
+      setMy((prev) => {
+        if (!prev) return null
+        return {
+          ...prev,
+          currentWeight: 0,
+        }
+      })
+      setOpponent((prev) => {
+        if (!prev) return null
+        return {
+          ...prev,
+          currentWeight: 0,
+        }
+      })
     }
-    setMy((prev) => {
-      if (!prev) return null
-      return {
-        ...prev,
-        currentWeight: 0,
-      }
-    })
-    setOpponent((prev) => {
-      if (!prev) return null
-      return {
-        ...prev,
-        currentWeight: 0,
-      }
-    })
     closeModal()
   }
 

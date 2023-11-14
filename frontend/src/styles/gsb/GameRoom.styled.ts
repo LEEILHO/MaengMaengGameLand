@@ -91,3 +91,11 @@ export const AllBetChips = styled.p`
   z-index: 1;
   margin-bottom: 20px;
 `
+
+export const BackButton = styled.img`
+  position: absolute;
+  bottom: 12px;
+  right: 24px;
+  height: 40px;
+  width: 40px;
+`
