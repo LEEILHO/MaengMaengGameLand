@@ -92,7 +92,7 @@ class MypageFragment :
                 when (result) {
                     is NetworkResult.Success -> {
                         Log.d(TAG, "bestScore: ${result.data}")
-                        binding.textviewScore.text = result.data.score.toString()
+                        binding.textviewScore.text = "최고 " + result.data.score.toString() + "점"
                     }
 
                     else -> {}

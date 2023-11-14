@@ -11,7 +11,10 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.media.SoundPool
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.view.animation.DecelerateInterpolator
@@ -21,25 +24,25 @@ import android.widget.RelativeLayout
 import android.widget.ScrollView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
-import androidx.wear.widget.SwipeDismissFrameLayout
+import androidx.navigation.fragment.findNavController
 import com.lessgenius.maengland.R
 import com.lessgenius.maengland.base.BaseFragment
 import com.lessgenius.maengland.databinding.FragmentGameBinding
 import dagger.hilt.android.AndroidEntryPoint
 
+
 private const val TAG = "GameFragment_김진영"
 
 @AndroidEntryPoint
 class GameFragment :
-    BaseFragment<FragmentGameBinding>(FragmentGameBinding::bind, R.layout.fragment_game) {
+    BaseFragment<FragmentGameBinding>(FragmentGameBinding::bind, R.layout.fragment_game),
+    GameDialogInterface {
 
     private val gameViewModel: GameViewModel by viewModels()
 
     companion object {
         const val JUMP_HEIGHT = 220F
     }
-
-    private lateinit var swipeCallback: SwipeDismissFrameLayout.Callback
 
     // 센서
     private lateinit var sensorManager: SensorManager
@@ -71,6 +74,11 @@ class GameFragment :
     // 이미지뷰의 크기
     val pWidth = lazy { binding.imageViewPlayer.width }
 
+    // sound
+    private var soundPool: SoundPool? = null
+    private var sound: Int? = null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initSensorManager()
@@ -78,11 +86,11 @@ class GameFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initData()
         initObserve()
         initPlatform() // 발판 생성
         initJumpUpAnimation()
+        initSound()
 
 
         // 스크롤 금지
@@ -93,17 +101,13 @@ class GameFragment :
 
     }
 
+    private fun initSound() {
+        soundPool = SoundPool.Builder().build()
+        sound = soundPool?.load(mActivity, R.raw.sound_jump, 1)
+    }
+
     private fun initData() {
         player = binding.imageViewPlayer
-
-        // 스와이프로 뒤로가기 적용
-        binding.layoutSwipe.isSwipeable = true
-        swipeCallback = object : SwipeDismissFrameLayout.Callback() {
-            override fun onDismissed(layout: SwipeDismissFrameLayout) {
-                activity?.onBackPressedDispatcher?.onBackPressed()
-            }
-        }
-        binding.layoutSwipe.addCallback(swipeCallback)
 
         val win = mActivity.windowManager.currentWindowMetrics
         screenWidth = win.bounds.width()
@@ -115,10 +119,6 @@ class GameFragment :
             binding.gameScrollView.fullScroll(ScrollView.FOCUS_DOWN)
         }
 
-        Log.d(
-            TAG,
-            "onViewCreated: ${binding.gameLayout.layoutParams.height} ${binding.gameLayout.layoutParams.width}"
-        )
     }
 
     private fun initObserve() {
@@ -130,14 +130,12 @@ class GameFragment :
         }
 
         score.observe(viewLifecycleOwner) { newScore ->
-            // 현재 표시된 점수를 가져오기 (초기값은 '0'으로 가정)
+            // 현재 표시된 점수를 가져오기
             val currentScore = binding.textviewScore.text.toString().toIntOrNull() ?: 0
 
-            // ValueAnimator를 사용하여 현재 점수에서 새 점수까지 애니메이션을 적용합니다.
             val scoreAnimator = ValueAnimator.ofInt(currentScore, newScore).apply {
-                duration = 500 // 애니메이션 지속 시간을 설정합니다.
+                duration = 600
                 addUpdateListener { animator ->
-                    // 현재 애니메이션 값으로 텍스트 뷰를 업데이트합니다.
                     binding.textviewScore.text = animator.animatedValue.toString()
                 }
             }
@@ -176,7 +174,8 @@ class GameFragment :
 
                     if (playerRect.right > platformRect.left && playerRect.left < platformRect.right && (playerRect.bottom <= platformRect.top) && (platformRect.top - playerRect.bottom <= 40)) {
 
-//                        // 위로 올라갔을 때
+                        soundPool?.play(sound!!, 1F, 1F, 0, 0, 1F)
+                        // 위로 올라갔을 때
                         if (yPosition > platformRect.top.toFloat()) {
                             Log.d(TAG, "initObserve: scroll")
                             binding.gameScrollView.smoothScrollBy(
@@ -231,7 +230,7 @@ class GameFragment :
 
     private fun initJumpUpAnimation() {
         jumpUpAnimator = ValueAnimator.ofFloat(yPosition, yPosition - JUMP_HEIGHT).apply {
-            duration = 815
+            duration = 850
             interpolator = DecelerateInterpolator(1.8f)
             addUpdateListener { animator ->
                 val animatedValue = animator.animatedValue as Float
@@ -452,7 +451,8 @@ class GameFragment :
 
     override fun onDestroyView() {
         player = null
-        binding.layoutSwipe.removeCallback(swipeCallback)
+        soundPool?.release()
+        soundPool = null
         super.onDestroyView()
     }
 
