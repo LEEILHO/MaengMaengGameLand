@@ -67,15 +67,15 @@ public class StompHandler implements ChannelInterceptor {
             log.info("DISCONNECT");
             Session session = sessionRepository.findBySessionId(accessor.getSessionId());
             log.info("[연결끊김] "+session.getNickname());
-//            if(session.getRoomCode() != null){ // 대기방에 참여중이라면
-//                log.info("[대기방 퇴장] "+session.getNickname());
-//                roomService.exitRoom(session.getRoomCode(), PlayerDTO.builder().nickname(session.getNickname()).build());
-//            }
-//
-//            if(session.getGameCode() != null){ // 게임에 참여중이라면
-//                log.info("[연결끊김] "+session.getNickname()+" 게임 중 퇴장");
-//                roomService.disconnectPlayer(session.getGameCode(), session.getNickname());
-//            }
+            if(session.getRoomCode() != null){ // 대기방에 참여중이라면
+                log.info("[대기방 퇴장] "+session.getNickname());
+                roomService.exitRoom(session.getRoomCode(), PlayerDTO.builder().nickname(session.getNickname()).build());
+            }
+
+            if(session.getGameCode() != null){ // 게임에 참여중이라면
+                log.info("[연결끊김] "+session.getNickname()+" 게임 중 퇴장");
+                roomService.disconnectPlayer(session.getGameCode(), session.getNickname());
+            }
 
             sessionRepository.delete(session);
         }
