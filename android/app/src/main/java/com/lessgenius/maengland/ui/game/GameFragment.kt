@@ -286,13 +286,7 @@ class GameFragment :
 
     private fun onPlayerFell() {
         // 애니메이션 관련 리소스를 정리
-        sensorManager.unregisterListener(listener)
-        jumpUpAnimator.removeAllUpdateListeners()
-        jumpUpAnimator.cancel()
-        fallDownAnimator.removeAllUpdateListeners()
-        fallDownAnimator.cancel()
-        xMoveAnimator.removeAllUpdateListeners()
-        xMoveAnimator.cancel()
+        cancelAnimation()
 
         // 플레이어의 추락 상태
         player?.rotation = 90f
@@ -305,6 +299,14 @@ class GameFragment :
         }
 
         gameViewModel.recordScore(score.value ?: 0)
+
+        val handler = Handler(Looper.getMainLooper())
+        val dialog = GameDialog(this, score.value ?: 0)
+        handler.postDelayed({
+            dialog.isCancelable = false
+            dialog.show(this.parentFragmentManager, "GameDialog")
+        }, 400)
+
     }
 
     private fun initSensorManager() {
@@ -427,6 +429,16 @@ class GameFragment :
         }
     }
 
+    private fun cancelAnimation() {
+        sensorManager.unregisterListener(listener)
+        jumpUpAnimator.removeAllUpdateListeners()
+        jumpUpAnimator.cancel()
+        fallDownAnimator.removeAllUpdateListeners()
+        fallDownAnimator.cancel()
+        xMoveAnimator.removeAllUpdateListeners()
+        xMoveAnimator.cancel()
+    }
+
     override fun onResume() {
         super.onResume()
         sensorManager.registerListener(listener, sensor, SensorManager.SENSOR_DELAY_UI)
@@ -443,5 +455,10 @@ class GameFragment :
         binding.layoutSwipe.removeCallback(swipeCallback)
         super.onDestroyView()
     }
+
+    override fun onHomeButtonClick() {
+        findNavController().popBackStack()
+    }
+
 
 }
