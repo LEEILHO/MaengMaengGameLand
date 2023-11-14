@@ -5,12 +5,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.maeng.user.domain.user.dto.UserNicknameDTO;
 import com.maeng.user.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -39,10 +41,10 @@ public class UserController {
     }
 
     @PostMapping("/edit/nickname")
-    public ResponseEntity<Void> editNickname(@RequestHeader("userEmail") String userEmail, String nickname) {
-        logger.info("editNickname(), userEmail = {}, nickname = {}", userEmail, nickname);
+    public ResponseEntity<Void> editNickname(@RequestHeader("userEmail") String userEmail, @RequestBody UserNicknameDTO userNicknameDTO) {
+        logger.info("editNickname(), userEmail = {}, nickname = {}", userEmail, userNicknameDTO.getNickname());
 
-        userService.editNickname(userEmail, nickname);
+        userService.editNickname(userEmail, userNicknameDTO.getNickname());
 
         return ResponseEntity.ok().build();
     }
