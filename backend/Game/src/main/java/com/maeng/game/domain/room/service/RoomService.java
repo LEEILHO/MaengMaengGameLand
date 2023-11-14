@@ -90,6 +90,7 @@ public class RoomService {
                 .gameCategory(createRoomDTO.getGameCategory())
                 .channelTire(createRoomDTO.getChannelTire())
                 .seats(this.seatInit())
+                .gameCode("")
                 .build();
 
         roomRepository.save(room);
@@ -141,7 +142,6 @@ public class RoomService {
         this.sendRoomInfo(roomCode, roomInfo); // ROOM_INFO
         lobbyService.findAllRoom(roomInfo.getGameCategory(), roomInfo.getChannelTire()); // ROOM_LIST
 
-        this.saveSessionRoom(roomCode, enterDTO.getNickname()); // 웹소켓 세션 정보 저장
     }
 
     @Transactional
@@ -289,16 +289,18 @@ public class RoomService {
     }
 
     @Operation(summary = "게임 중 소켓 연결 끊긴 유저 처리")
-    public void disconnectPlayer(String roomCode, String gameCode, String nickname){
-        Room room = this.getCurrentRoom(roomCode);
+    public void disconnectPlayer(String gameCode, String nickname){
+        List<Room> room = roomRepository.findAllByGameCode(gameCode);
 
-        log.info("탈주 플레이어 : [ROOM] " + roomCode+" [GAME] "+gameCode+" [NICKNAME] "+nickname);
+        if(room == null){
+            log.info("방없음 ?!@?#!?@?!?!@?");
+        }
 
         // gameCode가 있으면 게임 별 퇴장 처리
-        if(gameCode != null){
-            if(room.getGameCategory().equals(Game.ALL_WIN_ROCK_SCISSOR_PAPER)){
-                awrspService.disconnectedPlayer(gameCode, nickname);
-            }
+        if(room.get(0).getGameCategory().equals(Game.ALL_WIN_ROCK_SCISSOR_PAPER)){
+            log.info("들어옴");
+            awrspService.disconnectedPlayer(gameCode, nickname);
+        }
 
 //            if(room.getGameCategory().equals(Game.GOLD_SILVER_BRONZE)){
 //
@@ -308,7 +310,6 @@ public class RoomService {
 //
 //            }
 
-        }
     }
 
     public void start(Room room, String roomCode){
@@ -322,11 +323,6 @@ public class RoomService {
                 .build();
 
         boolean settingCheck = false;
-
-        for(User user : room.getParticipant().values()){ // 모든 유저의 세션에 게임코드 저장
-            this.saveSessionRoom(roomCode, user.getNickname());
-            this.saveSessionGame(gameCode, user.getNickname());
-        }
 
         // 각 gameService의 start 호출
         if(room.getGameCategory().equals(Game.ALL_WIN_ROCK_SCISSOR_PAPER)){
@@ -350,6 +346,7 @@ public class RoomService {
 
         // 게임 시작하면 비공개 방으로 변경
         room.setPublicRoom(false);
+        room.setGameCode(gameCode);
         roomRepository.save(room);
     }
 
@@ -446,26 +443,26 @@ public class RoomService {
         template.convertAndSend(CHAT_EXCHANGE_NAME, "room."+roomCode, messageDTO);
     }
 
-    @Operation(summary = "웹소켓 세션 대기방 정보 저장")
-    public void saveSessionRoom(String roomCode, String nickname){
-        Session session = sessionRepository.findById(nickname).orElse(null);
-
-        sessionRepository.save(Session.builder().sessionId(session.getSessionId())
-                .nickname(session.getNickname())
-                .roomCode(roomCode).build());
-    }
-
-    @Operation(summary = "웹소켓 세션 게임 정보 저장")
-    public void saveSessionGame(String gameCode, String nickname){
-        // TODO : 모든 플레이어의 Session에 gameCode 저장
-        Session session = sessionRepository.findById(nickname).orElse(null);
-
-        sessionRepository.save(Session.builder().sessionId(session.getSessionId())
-                .nickname(session.getNickname())
-                .roomCode(session.getRoomCode())
-                .gameCode(gameCode)
-                .build());
-    }
+//    @Operation(summary = "웹소켓 세션 대기방 정보 저장")
+//    public void saveSessionRoom(String roomCode, String nickname){
+//        Session session = sessionRepository.findById(nickname).orElse(null);
+//
+//        sessionRepository.save(Session.builder().sessionId(session.getSessionId())
+//                .nickname(session.getNickname())
+//                .roomCode(roomCode).build());
+//    }
+//
+//    @Operation(summary = "웹소켓 세션 게임 정보 저장")
+//    public void saveSessionGame(String gameCode, String nickname){
+//        // TODO : 모든 플레이어의 Session에 gameCode 저장
+//        Session session = sessionRepository.findById(nickname).orElse(null);
+//
+//        sessionRepository.save(Session.builder().sessionId(session.getSessionId())
+//                .nickname(session.getNickname())
+//                .roomCode(session.getRoomCode())
+//                .gameCode(gameCode)
+//                .build());
+//    }
 
     public HashMap<Integer, Seat> seatInit(){
         HashMap<Integer, Seat> seats = new HashMap<>();

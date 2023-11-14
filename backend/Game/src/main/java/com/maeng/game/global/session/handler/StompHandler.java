@@ -27,33 +27,55 @@ public class StompHandler implements ChannelInterceptor {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
         if(StompCommand.CONNECT == accessor.getCommand()){
-            log.info(accessor.toString());
-            String nickname = accessor.getNativeHeader("nickname").toString();
-            nickname = nickname.substring(1, nickname.length()-1);
-
             log.info("CONNECT");
+            log.info(accessor.toString());
+            String nickname = accessor.getNativeHeader("nickname").toString().substring(1, accessor.getNativeHeader("nickname").toString().length()-1);
+            log.info("[소켓연결] "+nickname);
+
             sessionRepository.save(Session.builder()
                             .sessionId(accessor.getSessionId())
                             .nickname(nickname)
                     .build());
         }
 
+        if(StompCommand.SUBSCRIBE == accessor.getCommand()){
+            String destination = accessor.getNativeHeader("destination").toString().substring(1, accessor.getNativeHeader("destination").toString().length()-1);
+            String[] dest = destination.split("/");
+
+            if(dest[2].equals("room")){ // room 구독했을 때
+                String[] roomCode = dest[3].split("\\.");
+                Session session = sessionRepository.findBySessionId(accessor.getSessionId());
+                sessionRepository.save(Session.builder().sessionId(accessor.getSessionId())
+                        .nickname(session.getNickname())
+                        .roomCode(roomCode[1])
+                        .build());
+                log.info("[대기방 구독] "+roomCode[1]);
+            }
+
+            if(dest[2].equals("game")){ // game을 구독했을 때
+                String[] gameCode = dest[3].split("\\.");
+                Session session = sessionRepository.findBySessionId(accessor.getSessionId());
+                sessionRepository.save(Session.builder().sessionId(accessor.getSessionId())
+                        .nickname(session.getNickname())
+                        .gameCode(gameCode[1])
+                        .build());
+                log.info("[게임 구독] : "+gameCode[1]);
+            }
+        }
+
         if(StompCommand.DISCONNECT == accessor.getCommand()){
-            log.info(accessor.toString());
-           // log.info(accessor.getNativeHeader("nickname").toString());
             log.info("DISCONNECT");
             Session session = sessionRepository.findBySessionId(accessor.getSessionId());
-
-            if(session.getRoomCode() != null){ // 대기방에 참여중이라면
-                // TODO : 대기방 퇴장 처리
-                log.info("[연결끊김] "+session.getNickname()+" 대기방 퇴장");
-                roomService.exitRoom(session.getRoomCode(), PlayerDTO.builder().nickname(session.getNickname()).build());
-            }
-
-            if(session.getGameCode() != null){ // 게임 코드만 있을 것
-                log.info("[연결끊김] "+session.getNickname()+" 게임 중 퇴장");
-                roomService.disconnectPlayer(session.getRoomCode(), session.getGameCode(), session.getNickname());
-            }
+            log.info("[연결끊김] "+session.getNickname());
+//            if(session.getRoomCode() != null){ // 대기방에 참여중이라면
+//                log.info("[대기방 퇴장] "+session.getNickname());
+//                roomService.exitRoom(session.getRoomCode(), PlayerDTO.builder().nickname(session.getNickname()).build());
+//            }
+//
+//            if(session.getGameCode() != null){ // 게임에 참여중이라면
+//                log.info("[연결끊김] "+session.getNickname()+" 게임 중 퇴장");
+//                roomService.disconnectPlayer(session.getGameCode(), session.getNickname());
+//            }
 
             sessionRepository.delete(session);
         }
