@@ -12,6 +12,7 @@ import com.lessgenius.maengland.MainViewModel
 import com.lessgenius.maengland.R
 import com.lessgenius.maengland.base.BaseFragment
 import com.lessgenius.maengland.databinding.FragmentStartupBinding
+import com.lessgenius.maengland.util.SoundUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
@@ -76,6 +77,7 @@ class StartUpFragment : BaseFragment<FragmentStartupBinding>(
     private fun initListener() {
 
         binding.buttonSetting.setOnClickListener {
+            SoundUtil.playClickSound()
             if (mainViewModel.loginStatusResponse.value) {
                 navController.navigate(R.id.action_startUpFragment_to_mypageFragment)
             } else {
@@ -84,6 +86,7 @@ class StartUpFragment : BaseFragment<FragmentStartupBinding>(
         }
 
         binding.buttonGame.setOnClickListener {
+            SoundUtil.playClickSound()
             navController.navigate(R.id.action_startUpFragment_to_gameFragment)
         }
     }

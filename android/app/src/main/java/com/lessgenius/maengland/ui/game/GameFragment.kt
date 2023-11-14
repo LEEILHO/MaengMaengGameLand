@@ -28,6 +28,7 @@ import androidx.navigation.fragment.findNavController
 import com.lessgenius.maengland.R
 import com.lessgenius.maengland.base.BaseFragment
 import com.lessgenius.maengland.databinding.FragmentGameBinding
+import com.lessgenius.maengland.util.SoundUtil
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -74,11 +75,6 @@ class GameFragment :
     // 이미지뷰의 크기
     val pWidth = lazy { binding.imageViewPlayer.width }
 
-    // sound
-    private var soundPool: SoundPool? = null
-    private var sound: Int? = null
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initSensorManager()
@@ -90,8 +86,6 @@ class GameFragment :
         initObserve()
         initPlatform() // 발판 생성
         initJumpUpAnimation()
-        initSound()
-
 
         // 스크롤 금지
         binding.gameScrollView.setOnTouchListener { _, _ -> true }
@@ -99,11 +93,6 @@ class GameFragment :
         binding.imageViewPlayer.bringToFront()
         binding.textviewScore.bringToFront()
 
-    }
-
-    private fun initSound() {
-        soundPool = SoundPool.Builder().build()
-        sound = soundPool?.load(mActivity, R.raw.sound_jump, 1)
     }
 
     private fun initData() {
@@ -174,7 +163,8 @@ class GameFragment :
 
                     if (playerRect.right > platformRect.left && playerRect.left < platformRect.right && (playerRect.bottom <= platformRect.top) && (platformRect.top - playerRect.bottom <= 40)) {
 
-                        soundPool?.play(sound!!, 1F, 1F, 0, 0, 1F)
+//                        soundPool?.play(sound!!, 1F, 1F, 0, 0, 1F)
+                        SoundUtil.playJumpSound()
                         // 위로 올라갔을 때
                         if (yPosition > platformRect.top.toFloat()) {
                             Log.d(TAG, "initObserve: scroll")
@@ -451,12 +441,11 @@ class GameFragment :
 
     override fun onDestroyView() {
         player = null
-        soundPool?.release()
-        soundPool = null
         super.onDestroyView()
     }
 
     override fun onHomeButtonClick() {
+        SoundUtil.playClickSound()
         findNavController().popBackStack()
     }
 
