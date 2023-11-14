@@ -20,6 +20,7 @@ export const UserProfileImage = styled.img`
   width: 22px;
   height: 22px;
   margin-right: 12px;
+  border-radius: 50%;
 `
 
 export const UserName = styled.p`

@@ -1,3 +1,4 @@
+import { SoundType } from '@type/common/common.type'
 import { AtomEffect, atom } from 'recoil'
 
 const localStorageEffect: <T>(key: string) => AtomEffect<T> =
@@ -17,8 +18,8 @@ const localStorageEffect: <T>(key: string) => AtomEffect<T> =
     }
   }
 
-export const soundState = atom<boolean>({
+export const soundState = atom<SoundType | null>({
   key: 'soundState',
-  default: true,
-  effects: [localStorageEffect<boolean>('bgmSound')],
+  default: { bgmSound: true, effectSound: true },
+  effects: [localStorageEffect<SoundType | null>('gameSound')],
 })

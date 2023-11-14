@@ -2,6 +2,7 @@ import { channelState } from '@atom/gameAtom'
 import { userState } from '@atom/userAtom'
 import CButton from '@components/common/clients/CButton'
 import { images } from '@constants/images'
+import useSound from '@hooks/useSound'
 import * as S from '@styles/lobby/CreateRoomModal.styled'
 import { gameTypeChange } from '@utils/lobby/lobbyUtil'
 import { createRoom } from 'apis/lobby/lobbyApi'
@@ -16,6 +17,7 @@ type Props = {
 const CreateRoomModal = ({ closeModal }: Props) => {
   const router = useRouter()
   const pathname = usePathname()
+  const { playButtonSound } = useSound()
   const [roomType, setRoomType] = useState<'공개' | '비공개'>('공개')
   const [title, setTitle] = useState('')
   const user = useRecoilValue(userState)
@@ -33,6 +35,7 @@ const CreateRoomModal = ({ closeModal }: Props) => {
   )
 
   const handleCreateRoom = useCallback(() => {
+    playButtonSound()
     if (!user || !channel) return
     const isPublic = roomType === '공개'
     const gameType = gameTypeChange(pathname.split('/')[1])
@@ -43,6 +46,11 @@ const CreateRoomModal = ({ closeModal }: Props) => {
       router.replace(`waiting-room/${res.roomCode}`)
     })
   }, [title, roomType, channel, pathname])
+
+  const handleClose = () => {
+    closeModal()
+    playButtonSound()
+  }
 
   return (
     <S.CreateRoomModalContainer>
@@ -88,7 +96,7 @@ const CreateRoomModal = ({ closeModal }: Props) => {
           radius={32}
           fontSize={18}
           height={40}
-          onClick={closeModal}
+          onClick={handleClose}
         />
       </S.ButtonRow>
     </S.CreateRoomModalContainer>

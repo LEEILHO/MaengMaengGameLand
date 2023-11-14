@@ -14,3 +14,8 @@ export type socketResponseType<T> = {
   type: string
   data: T
 }
+
+export type SoundType = {
+  bgmSound: boolean
+  effectSound: boolean
+}
