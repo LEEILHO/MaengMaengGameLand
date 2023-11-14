@@ -107,7 +107,7 @@ public class AuthController {
         return ResponseEntity.ok().body(authService.getWatchToken(watchCodeDto.getWatchCode()));
     }
 
-    @GetMapping("/watch-token")
+    @PostMapping("/watch-token")
     public ResponseEntity<?> getWatchRegenerate(@RequestBody WatchToken watchToken){
         logger.info("getWatchToken(), watchAccessToken = {} , watchRefreshToken = {}", watchToken.getWatchAccessToken(),watchToken.getWatchRefreshToken());
         return ResponseEntity.ok().body(authService.regenerateWatchToken(watchToken));
