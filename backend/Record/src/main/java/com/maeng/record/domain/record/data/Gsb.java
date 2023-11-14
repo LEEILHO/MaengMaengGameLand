@@ -11,9 +11,7 @@ import com.maeng.record.domain.record.enums.WinDrawLose;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Data
 @Builder
@@ -53,6 +51,8 @@ public class Gsb {
 
 	@Data
 	@Builder
+	@NoArgsConstructor
+	@AllArgsConstructor
 	public static class StartCard {
 		@JsonProperty("seq")
 		private int seq;
@@ -66,9 +66,10 @@ public class Gsb {
 
 
 
-	@Getter
-	@Setter
+	@Data
 	@Builder
+	@NoArgsConstructor
+	@AllArgsConstructor
 	public static class Player {
 		@JsonProperty("nickname")
 		private String nickname;
@@ -100,9 +101,10 @@ public class Gsb {
 	}
 
 
-	@Getter
-	@Setter
+	@Data
 	@Builder
+	@NoArgsConstructor
+	@AllArgsConstructor
 	public static class History {
 		@JsonProperty("gold")
 		private int gold;
@@ -128,9 +130,10 @@ public class Gsb {
 	}
 
 
-	@Getter
-	@Setter
+	@Data
 	@Builder
+	@NoArgsConstructor
+	@AllArgsConstructor
 	public static class Result {
 		@JsonProperty("nickname")
 		private String nickname;
@@ -143,10 +146,10 @@ public class Gsb {
 	}
 
 
-	@Builder
 	@Data
-	@AllArgsConstructor
+	@Builder
 	@NoArgsConstructor
+	@AllArgsConstructor
 	public static class User {
 		@JsonProperty("nickname")
 		private String nickname;

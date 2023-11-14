@@ -63,6 +63,8 @@ public class MessageListener {
 			log.info(message);
 		} catch (GameAlreadyExistException e) {
 			log.info(e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 	}
@@ -82,6 +84,8 @@ public class MessageListener {
 			log.info(message);
 		} catch (GameAlreadyExistException e) {
 			log.info(e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -101,6 +105,8 @@ public class MessageListener {
 			log.info(message);
 		} catch (GameAlreadyExistException e) {
 			log.info(e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 }

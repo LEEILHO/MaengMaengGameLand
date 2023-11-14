@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.maeng.record.domain.record.data.Gsb;
+import com.maeng.record.domain.record.dto.RankDTO;
 import com.maeng.record.domain.record.entity.Game;
 import com.maeng.record.domain.record.entity.GameParticipant;
 import com.maeng.record.domain.record.entity.GameUser;
@@ -26,7 +27,9 @@ import com.maeng.record.domain.record.repository.GsbRoundHistoryRepository;
 import com.maeng.record.domain.record.repository.GsbRoundRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class GsbRecordService {
@@ -45,10 +48,14 @@ public class GsbRecordService {
 
 		List<GsbRoundHistory> gsbRoundHistories = createGsbRoundHistory(gsb.getPlayers(), participants, gsbRounds);
 
-		gameRepository.save(game);
-		gameParticipantRepository.saveAll(participants.values());
-		gsbRoundRepository.saveAll(gsbRounds.values());
-		gsbRoundHistoryRepository.saveAll(gsbRoundHistories);
+		// gameRepository.save(game);
+		// gameParticipantRepository.saveAll(participants.values());
+		// gsbRoundRepository.saveAll(gsbRounds.values());
+		// gsbRoundHistoryRepository.saveAll(gsbRoundHistories);
+		log.info(game.toString());
+		log.info(participants.values().toString());
+		log.info(gsbRounds.values().toString());
+		log.info(gsbRoundHistories.toString());
 	}
 
 	private Game createGame(String gameCode, LocalDateTime startAt) {
@@ -59,6 +66,7 @@ public class GsbRecordService {
 			.gameCode(gameCode)
 			.gameCategory(GameCategoty.JWERLY_AUCTION)
 			.startAt(startAt)
+			.endAt(LocalDateTime.now())
 			.build();
 	}
 
@@ -115,11 +123,14 @@ public class GsbRecordService {
 
 		Map<Integer, GsbRound> gsbRounds = new HashMap<>();
 		for(int round = 1; round <= maxRound; round++) {
-			GameParticipant roundWinner = firstPlayerHistory.get(round - 1).getWinDrawLose().equals(WinDrawLose.WIN) ?
+			log.info("round: {}", round);
+			log.info("firstPlayerHistory: {}", firstPlayerHistory.get(round));
+			log.info("winDrawLose: {}", firstPlayerHistory.get(round).getWinDrawLose());
+			GameParticipant roundWinner = firstPlayerHistory.get(round).getWinDrawLose().equals(WinDrawLose.WIN) ?
 				participants.get(firstPlayer) :
-				(secondPlayerHistory.get(round - 1).getWinDrawLose().equals(WinDrawLose.WIN) ?
+				(secondPlayerHistory.get(round).getWinDrawLose().equals(WinDrawLose.WIN) ?
 					participants.get(secondPlayer) : null);
-			int chip = firstPlayerHistory.get(round - 1).getBettingChips() + secondPlayerHistory.get(round - 1).getBettingChips();
+			int chip = firstPlayerHistory.get(round).getBettingChips() + secondPlayerHistory.get(round).getBettingChips();
 
 			gsbRounds.put(round, GsbRound.builder()
 				.game(game)
@@ -142,22 +153,27 @@ public class GsbRecordService {
 			gsbRoundHistories.add(GsbRoundHistory.builder()
 				.gameParticipant(participants.get(firstPlayer.getNickname()))
 				.gsbRound(gsbRound)
-				.gold(firstPlayer.getHistories().get(round - 1).getGold())
-				.silver(firstPlayer.getHistories().get(round - 1).getSilver())
-				.bronze(firstPlayer.getHistories().get(round - 1).getBronze())
-				.winDrawLose(firstPlayer.getHistories().get(round - 1).getWinDrawLose())
+				.gold(firstPlayer.getHistories().get(round).getGold())
+				.silver(firstPlayer.getHistories().get(round).getSilver())
+				.bronze(firstPlayer.getHistories().get(round).getBronze())
+				.winDrawLose(firstPlayer.getHistories().get(round).getWinDrawLose())
 				.build());
 
 			gsbRoundHistories.add(GsbRoundHistory.builder()
 				.gameParticipant(participants.get(secondPlayer.getNickname()))
 				.gsbRound(gsbRound)
-				.gold(secondPlayer.getHistories().get(round - 1).getGold())
-				.silver(secondPlayer.getHistories().get(round - 1).getSilver())
-				.bronze(secondPlayer.getHistories().get(round - 1).getBronze())
-				.winDrawLose(secondPlayer.getHistories().get(round - 1).getWinDrawLose())
+				.gold(secondPlayer.getHistories().get(round).getGold())
+				.silver(secondPlayer.getHistories().get(round).getSilver())
+				.bronze(secondPlayer.getHistories().get(round).getBronze())
+				.winDrawLose(secondPlayer.getHistories().get(round).getWinDrawLose())
 				.build());
 		}
 
 		return gsbRoundHistories;
+	}
+
+	public RankDTO generateRankDTO(Gsb gsb) {
+
+		return null;
 	}
 }
