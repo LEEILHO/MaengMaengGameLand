@@ -5,8 +5,8 @@ interface ResultProps {
 }
 
 export const Container = styled.div<ResultProps>`
-  width: 180px;
-  height: 210px;
+  width: 160px;
+  height: 190px;
 
   display: flex;
   flex-direction: column;
