@@ -204,9 +204,9 @@ const page = () => {
                 />
                 <S.PriceUnit>원</S.PriceUnit> */}
               </S.PriceRow>
-              <S.CurrentPriceRow>
+              {/* <S.CurrentPriceRow>
                 {formatKoreanCurrency(bidMoney)}
-              </S.CurrentPriceRow>
+              </S.CurrentPriceRow> */}
               <S.CumlativeAmountCotainer>
                 <S.CumlativeDiscriptionRow>
                   <img src={images.gameRoom.jwac.money} alt="누적 금액" />
