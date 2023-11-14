@@ -76,6 +76,8 @@ const RoundResult = () => {
   }
 
   useEffect(() => {
+    console.log(round, '라운드의 결과')
+
     let timeId: NodeJS.Timeout
     if (result) {
       const win: CombResultType = {
