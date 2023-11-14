@@ -43,6 +43,8 @@ const RoundResult = () => {
   })
 
   const closeAndNext = () => {
+    console.log('게임 종료가 되는지: ', gameOver)
+
     if (gameOver) {
       // 게임 종료
       setRound('GameOver')
@@ -74,6 +76,7 @@ const RoundResult = () => {
   }
 
   useEffect(() => {
+    let timeId: NodeJS.Timeout
     if (result) {
       const win: CombResultType = {
         gold: result?.winnerGold,
@@ -96,7 +99,7 @@ const RoundResult = () => {
       if (round === 'DrawResult' || round === 'GiveUpResult') {
         // 포기했을 때는 모달 바로 뜨게
         openModal()
-        setTimeout(() => {
+        timeId = setTimeout(() => {
           closeAndNext()
         }, 3000)
       } else {
@@ -136,11 +139,15 @@ const RoundResult = () => {
           }
 
           openModal()
-          setTimeout(() => {
+          timeId = setTimeout(() => {
             closeAndNext()
           }, 3000)
         }, 5000)
       }
+    }
+
+    return () => {
+      clearTimeout(timeId)
     }
   }, [])
 
