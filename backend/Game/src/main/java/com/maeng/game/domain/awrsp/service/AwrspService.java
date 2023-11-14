@@ -216,8 +216,8 @@ public class AwrspService {
     public boolean checkGameOver(String gameCode){
         Game game = this.getCurrentGame(gameCode);
         log.info("승리한 사람 : "+game.getFinishCount());
-        return game.getFinishCount() >= 4 || game.getCurrentRound() >= MAX_ROUND;
-                //|| (game.getHeadCount() - game.getFinishCount()) == 1;
+        return game.getFinishCount() >= 4 || game.getCurrentRound() >= MAX_ROUND
+                || (game.getHeadCount() - game.getFinishCount()) == 1;
     }
 
     @Transactional
