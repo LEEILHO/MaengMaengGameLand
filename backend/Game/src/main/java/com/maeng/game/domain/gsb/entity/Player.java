@@ -1,14 +1,17 @@
 package com.maeng.game.domain.gsb.entity;
 
+import java.util.Map;
+
 import com.maeng.game.domain.jwac.emums.Tier;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Map;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 @Builder
 public class Player {
     private String nickname;
