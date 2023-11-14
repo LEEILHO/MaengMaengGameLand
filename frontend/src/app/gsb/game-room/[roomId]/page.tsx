@@ -52,10 +52,7 @@ const GameRoom = () => {
   const opponent = useRecoilValue(OpponentState)
   const myBetChips = useRecoilValue(MyBetChipsState)
   const opponentBetChips = useRecoilValue(OpponentBetChipsState)
-  const currentPlayer = useRecoilValue(CurrentPlayerState)
-  const user = useRecoilValue(userState)
   const AllBetChips = useRecoilValue(AllBetChipsState)
-  const gameOver = useRecoilValue(GameOverState)
 
   useEffect(() => {
     connectSocket(connectGsb, disconnectGsb)

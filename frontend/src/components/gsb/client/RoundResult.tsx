@@ -159,6 +159,8 @@ const RoundResult = () => {
   }, [])
 
   useEffect(() => {
+    console.log('변경이 일어나니?')
+
     if (gameOver) {
       setIsGameOver(true)
     }
