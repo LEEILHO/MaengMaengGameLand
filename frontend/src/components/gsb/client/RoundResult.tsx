@@ -30,6 +30,7 @@ const RoundResult = () => {
   const setMy = useSetRecoilState(MyState)
   const setOpponent = useSetRecoilState(OpponentState)
   const gameOver = useRecoilValue(GameOverState)
+  const [isGameOver, setIsGameOver] = useState(false)
 
   const [myComb, setMyComb] = useState<CombResultType>({
     gold: 0,
@@ -44,7 +45,7 @@ const RoundResult = () => {
 
   const closeAndNext = () => {
     // 게임 종료가 되었다면
-    if (gameOver) {
+    if (isGameOver) {
       // 게임 종료
       setRound('GameOver')
       setDisplayMessage('게임이 종료되었습니다')
@@ -156,6 +157,12 @@ const RoundResult = () => {
       clearTimeout(timeId)
     }
   }, [])
+
+  useEffect(() => {
+    if (gameOver) {
+      setIsGameOver(true)
+    }
+  }, [gameOver])
 
   // framer motion variants
   const combAreaVariants = {

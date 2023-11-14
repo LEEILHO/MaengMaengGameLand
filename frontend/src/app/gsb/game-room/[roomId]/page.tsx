@@ -1,11 +1,10 @@
 'use client'
 
 import withAuth from '@components/hoc/client/PrivateRoute'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 
 import * as S from '@styles/gsb/GameRoom.styled'
 import TurnCard from '@components/gsb/client/TurnCard'
-import Timer from '@components/common/clients/Timer'
 import PlayerCard from '@components/gsb/client/PlayerCard'
 import { images } from '@constants/images'
 import CombinationGsb from '@components/gsb/client/CombinationGsb'
@@ -14,7 +13,7 @@ import BettingStatus from '@components/gsb/client/BettingStatus'
 import RoundResult from '@components/gsb/client/RoundResult'
 import BarTimer from '@components/common/clients/BarTimer'
 import useSocketGsb from '@hooks/useSocketGsb'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import {
   AllBetChipsState,
@@ -64,14 +63,6 @@ const GameRoom = () => {
       disconnectSocket()
     }
   }, [])
-
-  useEffect(() => {
-    let timeId: NodeJS.Timeout
-    if (gameOver) {
-      setRound('GameOver')
-      setDisplayMessage('게임이 종료되었습니다')
-    }
-  }, [gameOver])
 
   return (
     <S.GameRoomContainer>
