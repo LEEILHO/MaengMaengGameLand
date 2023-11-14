@@ -48,14 +48,10 @@ public class GsbRecordService {
 
 		List<GsbRoundHistory> gsbRoundHistories = createGsbRoundHistory(gsb.getPlayers(), participants, gsbRounds);
 
-		// gameRepository.save(game);
-		// gameParticipantRepository.saveAll(participants.values());
-		// gsbRoundRepository.saveAll(gsbRounds.values());
-		// gsbRoundHistoryRepository.saveAll(gsbRoundHistories);
-		log.info(game.toString());
-		log.info(participants.values().toString());
-		log.info(gsbRounds.values().toString());
-		log.info(gsbRoundHistories.toString());
+		gameRepository.save(game);
+		gameParticipantRepository.saveAll(participants.values());
+		gsbRoundRepository.saveAll(gsbRounds.values());
+		gsbRoundHistoryRepository.saveAll(gsbRoundHistories);
 	}
 
 	private Game createGame(String gameCode, LocalDateTime startAt) {
@@ -123,9 +119,9 @@ public class GsbRecordService {
 
 		Map<Integer, GsbRound> gsbRounds = new HashMap<>();
 		for(int round = 1; round <= maxRound; round++) {
-			log.info("round: {}", round);
-			log.info("firstPlayerHistory: {}", firstPlayerHistory.get(round));
-			log.info("winDrawLose: {}", firstPlayerHistory.get(round).getWinDrawLose());
+			if(firstPlayerHistory.get(round) == null || secondPlayerHistory.get(round) == null) {
+				continue;
+			}
 			GameParticipant roundWinner = firstPlayerHistory.get(round).getWinDrawLose().equals(WinDrawLose.WIN) ?
 				participants.get(firstPlayer) :
 				(secondPlayerHistory.get(round).getWinDrawLose().equals(WinDrawLose.WIN) ?
@@ -173,7 +169,23 @@ public class GsbRecordService {
 	}
 
 	public RankDTO generateRankDTO(Gsb gsb) {
+		List<Gsb.Result> results = gsb.getResults();
+		List<String> rankList = new ArrayList<>();
 
-		return null;
+		for(Gsb.Result result : results) {
+			if(result.getWinDrawLose().equals(WinDrawLose.WIN)) {
+				rankList.add(result.getNickname());
+			}
+		}
+		for(Gsb.Result result : results) {
+			if(result.getWinDrawLose().equals(WinDrawLose.LOSE)) {
+				rankList.add(result.getNickname());
+			}
+		}
+
+		return RankDTO.builder()
+			.gameCode(gsb.getGameCode())
+			.rankList(rankList)
+			.build();
 	}
 }

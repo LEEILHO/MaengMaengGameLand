@@ -78,6 +78,7 @@ public class MessageListener {
 
 			RankDTO rankDTO = gsbRecordService.generateRankDTO(gsb);
 			template.convertAndSend(SCORE_EXCHANGE, "score.gsb", rankDTO);
+			log.info("gsb save success");
 		} catch (JsonProcessingException e) {
 			log.info("gsb json parsing error");
 			log.info(e.getMessage());
