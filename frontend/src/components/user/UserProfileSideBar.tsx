@@ -4,7 +4,7 @@ import * as S from '@styles/user/UserProfileSideBar.styled'
 import { useRouter } from 'next/navigation'
 import { useRecoilState } from 'recoil'
 import { useState, useRef } from 'react'
-import { editUser } from 'apis/user/userApi'
+import { editProfileImage, editUser } from 'apis/user/userApi'
 
 const UserProfileSideBar = () => {
   const router = useRouter()
@@ -15,7 +15,6 @@ const UserProfileSideBar = () => {
   const [profileImage, setProfileImage] = useState<string | null>(null)
 
   const handleEdit = () => {
-    console.log('수정모드')
     setUserName(user!.nickname)
     setIsEdit(true)
   }
@@ -30,7 +29,7 @@ const UserProfileSideBar = () => {
     setUserName(e.target.value)
   }
 
-  const handleProfileImage = () => {
+  const handleProfileImage = async () => {
     if (selectFileRef.current?.files) {
       const file = selectFileRef.current?.files[0]
       const reader = new FileReader()
@@ -38,6 +37,9 @@ const UserProfileSideBar = () => {
       reader.onloadend = () => {
         setProfileImage(reader.result as string)
       }
+      const formData = new FormData()
+      formData.append('profileImage', file)
+      editProfileImage(formData)
     }
   }
 
