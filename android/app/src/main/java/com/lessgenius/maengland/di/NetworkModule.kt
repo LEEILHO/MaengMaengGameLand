@@ -13,10 +13,13 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
+import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -53,6 +56,7 @@ object NetworkModule {
             .baseUrl(BASE_URL)
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
+            .addConverterFactory(NullOnEmptyConverterFactory())
             .client(okHttpClient)
             .build()
     }
@@ -66,4 +70,24 @@ object NetworkModule {
     @Provides
     fun provideGameService(retrofit: Retrofit): GameService =
         retrofit.create(GameService::class.java)
+
 }
+
+private class NullOnEmptyConverterFactory : Converter.Factory() {
+    override fun responseBodyConverter(
+        type: Type,
+        annotations: Array<Annotation>,
+        retrofit: Retrofit
+    ): Converter<ResponseBody, *> {
+        val delegate: Converter<ResponseBody, *> =
+            retrofit.nextResponseBodyConverter<Any>(this, type, annotations)
+        return Converter { body: ResponseBody ->
+            if (body.contentLength() == 0L) return@Converter null
+            delegate.convert(body)
+        }
+    }
+}
+
+
+
+

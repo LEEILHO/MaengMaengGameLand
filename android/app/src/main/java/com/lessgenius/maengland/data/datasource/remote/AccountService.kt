@@ -22,5 +22,5 @@ interface AccountService {
     suspend fun getUserInfo(): User
 
     @GET("record/watch")
-    suspend fun getBestScore() : BestScore
+    suspend fun getBestScore(): BestScore
 }

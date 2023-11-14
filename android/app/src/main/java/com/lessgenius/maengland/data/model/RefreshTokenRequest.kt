@@ -1,11 +1,14 @@
 package com.lessgenius.maengland.data.model
 
-import android.os.Parcelable
+
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import android.os.Parcelable
 
 @Parcelize
 data class RefreshTokenRequest(
-    @SerializedName("refreshToken")
-    val refreshToken: String
+    @SerializedName("watchAccessToken")
+    val watchAccessToken: String,
+    @SerializedName("watchRefreshToken")
+    val watchRefreshToken: String
 ) : Parcelable

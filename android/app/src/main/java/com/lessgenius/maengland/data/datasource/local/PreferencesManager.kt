@@ -37,16 +37,25 @@ class PreferencesManager(context: Context) {
                 }
             }
             .map { preferences ->
-                cachedToken = preferences[stringPreferencesKey(key)] ?: ""
+                if (key == ACCESS_TOKEN) {
+                    cachedAccessToken = preferences[stringPreferencesKey(key)] ?: ""
+                } else if (key == REFRESH_TOKEN) {
+                    cachedRefreshToken = preferences[stringPreferencesKey(key)] ?: ""
+                }
                 preferences[stringPreferencesKey(key)] ?: ""
             }
     }
 
     // 캐시된 토큰 값을 저장하는 변수
-    private var cachedToken: String = ""
+    private var cachedAccessToken: String = ""
+    private var cachedRefreshToken: String = ""
 
     fun getTokenSync(key: String): String {
-        return cachedToken
+        if (key == ACCESS_TOKEN) {
+            return cachedAccessToken
+        } else {
+            return cachedRefreshToken
+        }
     }
 
     suspend fun updateToken(key: String, value: String) {
