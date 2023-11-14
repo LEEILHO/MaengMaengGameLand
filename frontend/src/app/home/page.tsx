@@ -14,10 +14,18 @@ import { useSetRecoilState } from 'recoil'
 import { gameTypeState } from '@atom/gameAtom'
 import useInitUser from '@hooks/useInitUser'
 import withAuth from '@components/hoc/client/PrivateRoute'
+import useModal from '@hooks/useModal'
+import SettingModal from '@components/home/SettingModal'
 
 const Home = () => {
   const router = useRouter()
   const initUser = useInitUser()
+  const {
+    Modal,
+    openModal: openSettingModal,
+    closeModal: closeSettingModal,
+    isOpen: isSettingOpen,
+  } = useModal()
 
   const handleGameClick = useCallback((url: string) => {
     router.replace(url, { scroll: false })
@@ -29,8 +37,14 @@ const Home = () => {
 
   return (
     <>
+      <Modal isOpen={isSettingOpen} closeModal={closeSettingModal}>
+        <SettingModal closeModal={closeSettingModal}></SettingModal>
+      </Modal>
       <S.HomeContainer>
-        <HomeHeader onClickFriend={() => {}} onClickSetting={() => {}} />
+        <HomeHeader
+          onClickFriend={() => {}}
+          onClickSetting={openSettingModal}
+        />
         <S.BackgroundLottie animationData={Backround} loop />
         <S.GameCardContainer>
           <GameCard
