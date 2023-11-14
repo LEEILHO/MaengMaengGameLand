@@ -12,8 +12,8 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -22,6 +22,7 @@ public class StompHandler implements ChannelInterceptor {
     private final SessionRepository sessionRepository;
     private final RoomService roomService;
 
+    @Transactional
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
@@ -59,25 +60,28 @@ public class StompHandler implements ChannelInterceptor {
                         .nickname(session.getNickname())
                         .gameCode(gameCode[1])
                         .build());
-                log.info("[게임 구독] : "+gameCode[1]);
+                log.info("[게임 구독] "+gameCode[1]);
             }
         }
 
         if(StompCommand.DISCONNECT == accessor.getCommand()){
             log.info("DISCONNECT");
             Session session = sessionRepository.findBySessionId(accessor.getSessionId());
-            log.info("[연결끊김] "+session.getNickname());
-            if(session.getRoomCode() != null){ // 대기방에 참여중이라면
-                log.info("[대기방 퇴장] "+session.getNickname());
-                roomService.exitRoom(session.getRoomCode(), PlayerDTO.builder().nickname(session.getNickname()).build());
-            }
 
-            if(session.getGameCode() != null){ // 게임에 참여중이라면
-                log.info("[연결끊김] "+session.getNickname()+" 게임 중 퇴장");
-                roomService.disconnectPlayer(session.getGameCode(), session.getNickname());
-            }
+            if(session != null){
+                log.info("[연결끊김] "+session.getNickname());
+                if(session.getRoomCode() != null){ // 대기방에 참여중이라면
+                    log.info("[대기방 퇴장] "+session.getNickname());
+                    roomService.exitRoom(session.getRoomCode(), PlayerDTO.builder().nickname(session.getNickname()).build());
+                }
 
-            sessionRepository.delete(session);
+                if(session.getGameCode() != null){ // 게임에 참여중이라면
+                    log.info("[연결끊김] "+session.getNickname()+" 게임 중 퇴장");
+                    roomService.disconnectPlayer(session.getGameCode(), session.getNickname());
+                }
+
+                sessionRepository.delete(session);
+            }
         }
 
         return ChannelInterceptor.super.preSend(message, channel);

@@ -43,5 +43,6 @@ public class Room implements Serializable {
     private HashMap<Integer, Seat> seats;
     @Indexed
     private String gameCode;
+    private boolean gameStart;
 
 }

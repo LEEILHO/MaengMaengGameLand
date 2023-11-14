@@ -91,6 +91,7 @@ public class RoomService {
                 .channelTire(createRoomDTO.getChannelTire())
                 .seats(this.seatInit())
                 .gameCode("")
+                .gameStart(false)
                 .build();
 
         roomRepository.save(room);
@@ -184,6 +185,10 @@ public class RoomService {
     @Operation(summary = "대기방 퇴장")
     public synchronized void exitRoom(String roomCode, PlayerDTO exitDTO){
         Room room = getCurrentRoom(roomCode);
+
+        if(room.isGameStart()){
+            return;
+        }
 
         HashMap<String, User> players = room.getParticipant();
         HashMap<Integer, Seat> seats = room.getSeats();
@@ -288,6 +293,7 @@ public class RoomService {
         lobbyService.findAllRoom(room.getGameCategory(), room.getChannelTire());
     }
 
+
     @Operation(summary = "게임 중 소켓 연결 끊긴 유저 처리")
     public void disconnectPlayer(String gameCode, String nickname){
         List<Room> room = roomRepository.findAllByGameCode(gameCode);
@@ -347,6 +353,7 @@ public class RoomService {
         // 게임 시작하면 비공개 방으로 변경
         room.setPublicRoom(false);
         room.setGameCode(gameCode);
+        room.setGameStart(true);
         roomRepository.save(room);
     }
 
