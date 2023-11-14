@@ -15,7 +15,7 @@ import { images } from '@constants/images'
 import useModal from '@hooks/useModal'
 import * as S from '@styles/gsb/RoundResult.styled'
 import { CombResultType } from '@type/gsb/gsb.type'
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 
 const RoundResult = () => {
@@ -42,7 +42,7 @@ const RoundResult = () => {
     bronze: 0,
   })
 
-  const closeAndNext = useCallback(() => {
+  const closeAndNext = () => {
     // 게임 종료가 되었다면
     if (gameOver) {
       // 게임 종료
@@ -74,7 +74,7 @@ const RoundResult = () => {
       })
     }
     closeModal()
-  }, [gameOver])
+  }
 
   useEffect(() => {
     console.log(round, '라운드의 결과')

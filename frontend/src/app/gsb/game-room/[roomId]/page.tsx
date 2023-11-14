@@ -15,11 +15,12 @@ import RoundResult from '@components/gsb/client/RoundResult'
 import BarTimer from '@components/common/clients/BarTimer'
 import useSocketGsb from '@hooks/useSocketGsb'
 import { usePathname, useRouter } from 'next/navigation'
-import { useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 import {
   AllBetChipsState,
   CurrentPlayerState,
   DisplayMessageState,
+  GameOverState,
   MyBetChipsState,
   MyState,
   OpponentBetChipsState,
@@ -44,8 +45,9 @@ const GameRoom = () => {
   // const gameCode = usePathname().split('/')[3]
 
   // 전광판 하나로 해서 상황에 따라 메세지만 바꾸기
-  const displayMessage = useRecoilValue(DisplayMessageState)
-  const round = useRecoilValue(RoundState)
+  const [displayMessage, setDisplayMessage] =
+    useRecoilState(DisplayMessageState)
+  const [round, setRound] = useRecoilState(RoundState)
   const time = useRecoilValue(TimerState)
   const my = useRecoilValue(MyState)
   const opponent = useRecoilValue(OpponentState)
@@ -54,6 +56,7 @@ const GameRoom = () => {
   const currentPlayer = useRecoilValue(CurrentPlayerState)
   const user = useRecoilValue(userState)
   const AllBetChips = useRecoilValue(AllBetChipsState)
+  const gameOver = useRecoilValue(GameOverState)
 
   useEffect(() => {
     connectSocket(connectGsb, disconnectGsb)
@@ -63,8 +66,17 @@ const GameRoom = () => {
   }, [])
 
   useEffect(() => {
-    console.log(round, '입니다.')
-  }, [round])
+    let timeId: NodeJS.Timeout
+    if (gameOver) {
+      timeId = setTimeout(() => {
+        setRound('GameOver')
+        setDisplayMessage('게임이 종료되었습니다')
+      }, 10000)
+    }
+    return () => {
+      clearTimeout(timeId)
+    }
+  }, [gameOver])
 
   return (
     <S.GameRoomContainer>
