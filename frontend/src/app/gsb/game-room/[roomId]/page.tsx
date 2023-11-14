@@ -68,13 +68,8 @@ const GameRoom = () => {
   useEffect(() => {
     let timeId: NodeJS.Timeout
     if (gameOver) {
-      timeId = setTimeout(() => {
-        setRound('GameOver')
-        setDisplayMessage('게임이 종료되었습니다')
-      }, 7000)
-    }
-    return () => {
-      clearTimeout(timeId)
+      setRound('GameOver')
+      setDisplayMessage('게임이 종료되었습니다')
     }
   }, [gameOver])
 
