@@ -19,6 +19,7 @@ import useModal from '@hooks/useModal'
 import JewelryInfomationModal from '@components/gameRoom/jwac/JewelryInfomationModal'
 import useDidMountEffect from '@hooks/useDidMoundEffect'
 import JWACResult from '@components/gameRoom/jwac/JWACResult'
+import { NumericFormat } from 'react-number-format'
 
 const page = () => {
   const {
@@ -58,6 +59,8 @@ const page = () => {
 
   const handleBidMody = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
+      console.log('숫자 바뀜', e.target.value)
+
       setBidMoney(Number(e.target.value))
     },
     [],
@@ -177,7 +180,21 @@ const page = () => {
             <S.NoteContainer>
               <S.Discription>희망 낙찰가를 제시해주세요</S.Discription>
               <S.PriceRow>
-                <S.PriceInput
+                <NumericFormat
+                  value={bidMoney}
+                  thousandSeparator=","
+                  allowNegative={false}
+                  decimalScale={0}
+                  suffix="원"
+                  isAllowed={(values) => {
+                    let { floatValue } = values
+                    if (!floatValue) floatValue = 0
+                    return floatValue < 1000000000000
+                  }}
+                  onChange={handleBidMody}
+                  className="price-input"
+                />
+                {/* <S.PriceInput
                   type="number"
                   value={bidMoney.toString()}
                   onChange={handleBidMody}
@@ -185,7 +202,7 @@ const page = () => {
                   maxLength={12}
                   min={0}
                 />
-                <S.PriceUnit>원</S.PriceUnit>
+                <S.PriceUnit>원</S.PriceUnit> */}
               </S.PriceRow>
               <S.CurrentPriceRow>
                 {formatKoreanCurrency(bidMoney)}

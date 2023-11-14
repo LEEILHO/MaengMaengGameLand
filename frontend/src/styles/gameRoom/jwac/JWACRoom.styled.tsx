@@ -117,6 +117,26 @@ export const PriceRow = styled.div`
   width: 100%;
   margin-top: 24px;
   padding: 0 12px;
+
+  .price-input {
+    border: none;
+    border-bottom: 1px solid;
+    border-radius: 0;
+    /* flex: 1; */
+    width: 100%;
+    font-size: 12px;
+    font-weight: 700;
+    text-align-last: right;
+    margin-right: 4px;
+    margin-left: 12px;
+    background-color: transparent;
+    /* width: 50px; */
+
+    @media screen and (max-width: 740px) {
+      margin-right: 2px;
+      margin-left: 4px;
+    }
+  }
 `
 
 export const ButtonRow = styled.div`
