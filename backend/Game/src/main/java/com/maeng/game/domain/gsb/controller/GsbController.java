@@ -67,7 +67,7 @@ public class GsbController {
                     .data(StartDto.builder()
                             .currentPlayer(gsb.getCurrentPlayer())
                             .players(gsb.getPlayers())
-                            .participiants(gsb.getParticipiants())
+                            .participiants(gsb.getParticipants())
                             .carryOverChips(gsb.getCarryOverChips())
                             .currentRound(gsb.getCurrentRound())
                             .gameCode(gsb.getGameCode())
