@@ -2,6 +2,7 @@ package com.maeng.game.domain.jwac.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ import com.maeng.game.domain.jwac.dto.JwacBidInfoDto;
 import com.maeng.game.domain.jwac.dto.JwacGameResultDTO;
 import com.maeng.game.domain.jwac.dto.JwacItemResultDTO;
 import com.maeng.game.domain.jwac.dto.JwacRank;
+import com.maeng.game.domain.jwac.dto.JwacRound;
 import com.maeng.game.domain.jwac.dto.JwacRoundResultDto;
 import com.maeng.game.domain.jwac.dto.PlayerInfo;
 import com.maeng.game.domain.jwac.emums.Jewelry;
@@ -288,52 +290,40 @@ public class JwacService {
 	}
 
 	private String findMostBidder(Map<String, History> result) {
-		String mostBidder = "";
-		long mostBidAmount = -1;
-		LocalDateTime mostBidderBidAt = LocalDateTime.now();
+		PriorityQueue<JwacRound> pq = new PriorityQueue<>();
 
-		for (String nickname : result.keySet()) {
+		for(String nickname : result.keySet()) {
 			if(result.get(nickname) == null) {
 				continue;
 			}
 			History currentItem = result.get(nickname);
-			long bidAmount = currentItem.getBidAmount();
-			LocalDateTime bidAt = currentItem.getBidAt();
-
-			if (bidAmount > mostBidAmount || (bidAmount == mostBidAmount && bidAt.isAfter(mostBidderBidAt))) {
-				mostBidder = nickname;
-				mostBidAmount = bidAmount;
-				mostBidderBidAt = bidAt;
-			}
+			pq.add(JwacRound.builder().nickname(nickname)
+				.bidAmount(currentItem.getBidAmount())
+				.bidAt(currentItem.getBidAt())
+				.build());
 		}
 
-		return mostBidder;
+		return Objects.requireNonNull(pq.poll()).getNickname();
 	}
 
 	private String findLeastBidder(Map<String, History> result, Jwac jwac) {
-		String leastBidder = "";
-		long leastBidAmount = Long.MAX_VALUE;
-		LocalDateTime leastBidderBidAt = LocalDateTime.of(1970, 1, 1, 0, 0, 0);
+		PriorityQueue<JwacRound> pq = new PriorityQueue<>(Collections.reverseOrder());
 
-		for (String nickname : result.keySet()) {
+		boolean noBidder = false;
+		for(String nickname : result.keySet()) {
 			History currentItem = result.get(nickname);
 			if(currentItem == null) {
 				jwac.getPlayers().get(nickname).addScore(PENALTY_SCORE);
-				leastBidder = "";
-				leastBidAmount = -1;
+				noBidder = true;
 				continue;
 			}
-			long bidAmount = currentItem.getBidAmount();
-			LocalDateTime bidAt = currentItem.getBidAt();
-
-			if (bidAmount < leastBidAmount || (bidAmount == leastBidAmount && bidAt.isBefore(leastBidderBidAt))) {
-				leastBidder = nickname;
-				leastBidAmount = bidAmount;
-				leastBidderBidAt = bidAt;
-			}
+			pq.add(JwacRound.builder().nickname(nickname)
+				.bidAmount(currentItem.getBidAmount())
+				.bidAt(currentItem.getBidAt())
+				.build());
 		}
 
-		return leastBidder;
+		return noBidder ? "" : Objects.requireNonNull(pq.poll()).getNickname();
 	}
 
 
