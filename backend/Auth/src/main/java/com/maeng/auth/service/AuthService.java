@@ -34,6 +34,8 @@ import com.maeng.auth.repository.WatchTokenRepository;
 import com.maeng.auth.util.JwtProvider;
 import com.maeng.auth.util.JwtRedisManager;
 
+import java.util.UUID;
+
 @Service
 public class AuthService {
     private final RabbitTemplate rabbitTemplate;
@@ -210,16 +212,30 @@ public class AuthService {
             JsonNode jsonNode = objectMapper.readTree(data);
 
             String email = jsonNode.get("kakao_account").get("email").asText();
-            String nickname = jsonNode.get("properties").get("nickname").asText();
             String profileImage = jsonNode.get("properties").get("profile_image").asText();
-            User user = new User(email, email,profileImage);
-
-            return user;
+            String nickname = getNickname();
+            return new User(email, nickname,profileImage);
         } catch (Exception e) {
             throw new AuthException(ExceptionCode.USER_CREATED_FAILED);
         }
     }
+    public String getNickname() {
+        String nickname = generateUniqueNickname();
+        // 중복 체크
+        while (userRepository.existsByNickname(nickname)) {
+            nickname = generateUniqueNickname();
+        }
+        return nickname;
+    }
+    private String generateUniqueNickname() {
+        UUID uuid = UUID.randomUUID();
 
+        // UUID를 문자열로 변환하여 하이픈 제거
+        String uuidString = uuid.toString().replaceAll("-", "");
+
+        // 문자열에서 앞 6자리 가져오기
+        return "player" + uuidString.substring(0, 6);
+    }
 
     /**
      * 주어진 응답으로부터 Access Token을 추출해 반환
