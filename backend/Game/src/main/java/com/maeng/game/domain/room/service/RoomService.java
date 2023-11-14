@@ -194,6 +194,10 @@ public class RoomService {
         HashMap<Integer, Seat> seats = room.getSeats();
         User user = players.get(exitDTO.getNickname());
 
+        if(!players.containsKey(exitDTO.getNickname())){ // 이미 나감처리 된 유저이면 리턴
+            return;
+        }
+
         players.remove(exitDTO.getNickname());
         room.setParticipant(players);
         room.setHeadCount(room.getHeadCount()-1);
@@ -205,7 +209,6 @@ public class RoomService {
             return;
         }
 
-        // TODO : 자리 번호 찾기
         int seatNumber = -1;
         for(Integer i : seats.keySet()){
             if(seats.get(i).getNickname().equals(exitDTO.getNickname())){
