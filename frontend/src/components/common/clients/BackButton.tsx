@@ -1,4 +1,5 @@
 import { images } from '@constants/images'
+import useSound from '@hooks/useSound'
 import * as S from '@styles/common/BackButton.styled'
 
 type Props = {
@@ -7,10 +8,13 @@ type Props = {
 }
 
 const BackButton = ({ size, handleBack }: Props) => {
+  const { playButtonSound } = useSound()
+
   return (
     <S.BackButton
       $size={size}
       onClick={() => {
+        playButtonSound()
         handleBack()
       }}
     >

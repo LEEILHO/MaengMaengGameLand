@@ -10,10 +10,12 @@ import useSocket from '@hooks/useSocketLobby'
 import { RoomType } from '@type/lobby/lobby.type'
 import { roomsState } from '@atom/lobbyAtom'
 import { loadRooms } from 'apis/lobby/lobbyApi'
+import useSound from '@hooks/useSound'
 
 const RoomList = () => {
   const router = useRouter()
   const pathname = usePathname()
+  const { playTabSound } = useSound()
   const [seletedRoomType, setSeletedRoomType] = useState<
     '자유' | '브론즈' | '실버' | '골드'
   >('자유')
@@ -23,10 +25,14 @@ const RoomList = () => {
 
   const handleTypeButton = useCallback(
     (type: '자유' | '브론즈' | '실버' | '골드') => {
+      if (seletedRoomType === type) {
+        return
+      }
+      playTabSound()
       setSeletedRoomType(type)
       setChannel(channelTypeChange(type))
     },
-    [],
+    [seletedRoomType],
   )
 
   // 방 목록 불러오기

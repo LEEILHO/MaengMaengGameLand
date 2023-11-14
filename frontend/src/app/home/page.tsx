@@ -16,6 +16,7 @@ import useInitUser from '@hooks/useInitUser'
 import withAuth from '@components/hoc/client/PrivateRoute'
 import useModal from '@hooks/useModal'
 import SettingModal from '@components/home/SettingModal'
+import useSound from '@hooks/useSound'
 
 const Home = () => {
   const router = useRouter()
@@ -26,10 +27,17 @@ const Home = () => {
     closeModal: closeSettingModal,
     isOpen: isSettingOpen,
   } = useModal()
+  const { playEnterSound, playButtonSound } = useSound()
 
   const handleGameClick = useCallback((url: string) => {
+    playEnterSound()
     router.replace(url, { scroll: false })
   }, [])
+
+  const hadleSetting = () => {
+    playButtonSound()
+    openSettingModal()
+  }
 
   useEffect(() => {
     initUser()
@@ -41,10 +49,7 @@ const Home = () => {
         <SettingModal closeModal={closeSettingModal}></SettingModal>
       </Modal>
       <S.HomeContainer>
-        <HomeHeader
-          onClickFriend={() => {}}
-          onClickSetting={openSettingModal}
-        />
+        <HomeHeader onClickFriend={() => {}} onClickSetting={hadleSetting} />
         <S.BackgroundLottie animationData={Backround} loop />
         <S.GameCardContainer>
           <GameCard

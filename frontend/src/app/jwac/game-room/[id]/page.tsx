@@ -255,7 +255,7 @@ const page = () => {
 
         {/* 결과화면 렌더링 */}
         {isGameEnd && (
-          <>
+          <S.RoomResultContainer>
             <JWACResult gameResult={gameResult} />
             <S.BackButton
               src={images.gameRoom.jwac.backWhite}
@@ -264,7 +264,7 @@ const page = () => {
                 router.replace('/jwac/lobby')
               }}
             />
-          </>
+          </S.RoomResultContainer>
         )}
       </S.RoomContainer>
     </>

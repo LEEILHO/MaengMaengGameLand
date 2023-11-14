@@ -15,7 +15,7 @@ const BGMProvider = ({ children }: { children: React.ReactNode }) => {
   })
 
   useEffect(() => {
-    if (isSound) {
+    if (isSound?.bgmSound ?? true) {
       sound.play()
     } else {
       sound.stop()

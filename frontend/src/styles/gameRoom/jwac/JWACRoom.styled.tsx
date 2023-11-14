@@ -17,6 +17,16 @@ export const RoomContainer = styled.div`
   padding-right: 10%;
 `
 
+export const RoomResultContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`
+
 export const ItemContainer = styled.div`
   display: flex;
   position: absolute;

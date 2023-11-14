@@ -16,8 +16,12 @@ const JWACResult = ({ gameResult }: Props) => {
         <S.MoneyTitle>사용 금액</S.MoneyTitle>
       </S.DiscriptionRow>
       <S.PlayerListContainer>
-        {gameResult.map((player) => (
-          <JWACResultUser player={player} />
+        {gameResult.map((player, index) => (
+          <JWACResultUser
+            player={player}
+            rank={index + 1}
+            key={player.nickname}
+          />
         ))}
       </S.PlayerListContainer>
     </S.JWACResultContainer>

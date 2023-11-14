@@ -4,5 +4,7 @@ export const sounds = {
   },
   jwac: {
     button: '/sounds/button-push-sound.mp3',
+    enter: '/sounds/wind-sound.mp3',
+    tab: '/sounds/tap-sound.mp3',
   },
 }
