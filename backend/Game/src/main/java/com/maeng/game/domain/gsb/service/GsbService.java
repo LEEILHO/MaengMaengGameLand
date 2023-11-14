@@ -1,20 +1,42 @@
 package com.maeng.game.domain.gsb.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.maeng.game.domain.gsb.dto.*;
-import com.maeng.game.domain.gsb.entity.*;
-import com.maeng.game.domain.gsb.repository.GsbRepository;
-import com.maeng.game.domain.room.dto.GameStartDTO;
-import com.maeng.game.domain.room.dto.MessageDTO;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.maeng.game.domain.gsb.dto.BettingDto;
+import com.maeng.game.domain.gsb.dto.BettingResponseDto;
+import com.maeng.game.domain.gsb.dto.GameResultDto;
+import com.maeng.game.domain.gsb.dto.GiveUpResponseDto;
+import com.maeng.game.domain.gsb.dto.GsbNicknameDto;
+import com.maeng.game.domain.gsb.dto.PlayerSeqDto;
+import com.maeng.game.domain.gsb.dto.RoundDrawResultResponseDto;
+import com.maeng.game.domain.gsb.dto.RoundResultResponseDto;
+import com.maeng.game.domain.gsb.dto.StarDto;
+import com.maeng.game.domain.gsb.dto.StarResponseDto;
+import com.maeng.game.domain.gsb.dto.TimerEndDto;
+import com.maeng.game.domain.gsb.entity.Gsb;
+import com.maeng.game.domain.gsb.entity.History;
+import com.maeng.game.domain.gsb.entity.Player;
+import com.maeng.game.domain.gsb.entity.Result;
+import com.maeng.game.domain.gsb.entity.StartCard;
+import com.maeng.game.domain.gsb.entity.WinDrawLose;
+import com.maeng.game.domain.gsb.repository.GsbRepository;
+import com.maeng.game.domain.room.dto.GameStartDTO;
+import com.maeng.game.domain.room.dto.MessageDTO;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -861,4 +883,10 @@ public boolean endRound(String gameCode) {
         return json;
     }
 
+	public String getGsb(String gameCode) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        objectMapper.registerModule(new JavaTimeModule());
+        return objectMapper.writeValueAsString(gsbRepository.findById(gameCode).orElseThrow());
+	}
 }

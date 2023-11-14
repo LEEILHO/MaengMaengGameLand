@@ -1,25 +1,36 @@
 package com.maeng.game.domain.gsb.controller;
 
-import com.maeng.game.domain.gsb.dto.*;
-import com.maeng.game.domain.gsb.entity.Gsb;
-import com.maeng.game.domain.gsb.entity.StartCard;
-import com.maeng.game.domain.gsb.service.GsbEnterService;
-import com.maeng.game.domain.gsb.service.GsbService;
-import com.maeng.game.domain.room.dto.MessageDTO;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.maeng.game.domain.gsb.dto.BettingDto;
+import com.maeng.game.domain.gsb.dto.GsbNicknameDto;
+import com.maeng.game.domain.gsb.dto.PlayerSeqDto;
+import com.maeng.game.domain.gsb.dto.StarDto;
+import com.maeng.game.domain.gsb.dto.StartDto;
+import com.maeng.game.domain.gsb.entity.Gsb;
+import com.maeng.game.domain.gsb.entity.StartCard;
+import com.maeng.game.domain.gsb.service.GsbEnterService;
+import com.maeng.game.domain.gsb.service.GsbService;
+import com.maeng.game.domain.room.dto.MessageDTO;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/gsb")
 public class GsbController {
 
     private final RabbitTemplate template;
@@ -28,6 +39,12 @@ public class GsbController {
     private final GsbEnterService enterService;
     private final static String Game_EXCHANGE_NAME = "game";
 
+    @PostMapping
+    public ResponseEntity<String> gsb(@RequestBody String gameCode) throws JsonProcessingException {
+        String message = gsbService.getGsb(gameCode);
+        template.convertAndSend("record", "gsb.queue", message);
+        return ResponseEntity.ok().body(gsbService.getGsb(gameCode));
+    }
 
     @MessageMapping("game.gsb.enter.{gameCode}")
     public void enter(@DestinationVariable String gameCode, GsbNicknameDto nicknameDto){
