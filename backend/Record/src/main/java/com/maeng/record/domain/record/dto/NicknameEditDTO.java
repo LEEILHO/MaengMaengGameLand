@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NicknameEditDTO {
-	String oldNickname;
-	String newNickname;
+	private String email;
+	private String nickname;
 }
