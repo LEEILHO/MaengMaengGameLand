@@ -121,8 +121,8 @@ public class UserService {
         user.setNickname(nickname);
 
         rabbitTemplate.convertAndSend("user", "edit."+nickname, UserNicknameEditDTO.builder()
-            .oldNickname(oldNickname)
-            .newNickname(nickname)
+            .email(userEmail)
+            .nickname(nickname)
             .build());
 
         userRepository.save(user);
