@@ -109,11 +109,10 @@ public class UserService {
             throw new UserException(UserExceptionCode.NICKNAME_LENGTH_EXCEED);
         }
 
-        userRepository.existsByNickname(nickname)
-            .ifPresent(exists -> {
+        if (userRepository.existsByNickname(nickname)) {
                 logger.info("NICKNAME_ALREADY_EXISTS");
                 throw new UserException(UserExceptionCode.NICKNAME_ALREADY_EXISTS);
-            });
+        }
 
         User user = userRepository.findUserByEmail(userEmail)
                 .orElseThrow(() -> new UserException(UserExceptionCode.USER_NOT_FOUND));
