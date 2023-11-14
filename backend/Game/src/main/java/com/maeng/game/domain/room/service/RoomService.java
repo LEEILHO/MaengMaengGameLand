@@ -304,18 +304,19 @@ public class RoomService {
 
         // gameCode가 있으면 게임 별 퇴장 처리
         if(room.get(0).getGameCategory().equals(Game.ALL_WIN_ROCK_SCISSOR_PAPER)){
-            log.info("들어옴");
+            log.info("전승 가위바위보");
             awrspService.disconnectedPlayer(gameCode, nickname);
         }
 
-//            if(room.getGameCategory().equals(Game.GOLD_SILVER_BRONZE)){
-//
-//            }
-//
-//            if(room.getGameCategory().equals(Game.JEWELRY_AUCTION)){
-//
-//            }
+        if(room.get(0).getGameCategory().equals(Game.GOLD_SILVER_BRONZE)){
+            log.info("금은동");
 
+        }
+
+        if(room.get(0).getGameCategory().equals(Game.JEWELRY_AUCTION)){
+            log.info("무제한 보석 경매");
+
+        }
     }
 
     public void start(Room room, String roomCode){

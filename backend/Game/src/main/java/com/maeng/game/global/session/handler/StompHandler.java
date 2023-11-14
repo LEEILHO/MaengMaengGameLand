@@ -29,7 +29,6 @@ public class StompHandler implements ChannelInterceptor {
 
         if(StompCommand.CONNECT == accessor.getCommand()){
             log.info("CONNECT");
-            log.info(accessor.toString());
             String nickname = accessor.getNativeHeader("nickname").toString().substring(1, accessor.getNativeHeader("nickname").toString().length()-1);
             log.info("[소켓연결] "+nickname);
 
