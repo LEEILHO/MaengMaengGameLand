@@ -138,7 +138,7 @@ public class JwacRecordService {
 
 					jwacRoundBids.add(JwacRoundBid.builder()
 						.jwacRound(jwacRound)
-						.gameUser(gameParticipant.getGameUser())
+						.gameParticipant(gameParticipant)
 						.bidAt(history.getBidAt())
 						.bidAmount(history.getBidAmount())
 						.build());

@@ -28,8 +28,8 @@ public class JwacRoundBid {
 	private JwacRound jwacRound;
 
 	@ManyToOne
-	@JoinColumn(name = "user_seq")
-	private GameUser gameUser;
+	@JoinColumn(name = "participant_seq")
+	private GameParticipant gameParticipant;
 
 	@Column
 	private LocalDateTime bidAt;
