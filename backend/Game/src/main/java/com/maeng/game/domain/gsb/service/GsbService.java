@@ -83,7 +83,7 @@ public class GsbService {
             }
             // 중복이 아니라면
             if(!duplicated){
-                int idx = -1;
+                int idx;
                 if(gsb.getParticipants().get(0).getNickname().equals(playerSeqDto.getNickname())){
                     idx = 0;
                 } else{
@@ -122,7 +122,7 @@ public class GsbService {
                 // 현재 플레이어가 선 플레이어일 때
 
                 // 베팅한 금은동이 플레이어가 가지고 있는 금은동보다 클 때
-                if(!checkStar(gsb.getPlayers().get(1),starDto)){
+                if(checkStar(gsb.getPlayers().get(1),starDto)){
                     log.info("현재 가지고 있는 금은동 보다 많이 제출");
                 }
                 History history = setStarFirst(gameCode, starDto);
@@ -170,7 +170,7 @@ public class GsbService {
             } else{
                 // 현재 플레이어가 후 플레이어일 때
                 log.info("후 플레이어");
-                if(!checkStar(gsb.getPlayers().get(0),starDto)){
+                if(checkStar(gsb.getPlayers().get(0),starDto)){
                     log.info("현재 가지고 있는 금은동 보다 많이 제출");
                 }
                 History history = setStarSecond(curRound,0,gameCode, starDto);
@@ -213,7 +213,7 @@ public class GsbService {
             //0 인덱스 플레이어가 선 플레이어
             if(curPlayer.equals(gsb.getPlayers().get(0).getNickname())){
                 log.info("선플레이어 ");
-                if(!checkStar(gsb.getPlayers().get(0),starDto)){
+                if(checkStar(gsb.getPlayers().get(0),starDto)){
                     log.info("현재 가지고 있는 금은동 보다 많이 제출");
                 }
                 // 현재 플레이어가 선 플레이어일 때
@@ -261,7 +261,7 @@ public class GsbService {
                 }
             } else{
                 log.info("후플레이어");
-                if(!checkStar(gsb.getPlayers().get(1),starDto)){
+                if(checkStar(gsb.getPlayers().get(1),starDto)){
                     log.info("현재 가지고 있는 금은동 보다 많이 제출");
                 }
                 History history = setStarSecond(curRound,1, gameCode, starDto);
@@ -310,19 +310,17 @@ public class GsbService {
             log.info("들어 올 수 없는 값");
             return null;
         }
-        History history = History.builder()
+        return History.builder()
                 .bronze(starDto.getBronze())
                 .silver(starDto.getSilver())
                 .gold(starDto.getGold())
                 .weight(weight)
                 .build();
-
-        return history;
     }
     // 후 플레이어 일 때
     public History setStarSecond(int round,int idx, String gameCode, StarDto starDto){
         log.info("후 플레이어 세팅");
-        int beforeIdx = -1;
+        int beforeIdx;
         if(idx==0){
             beforeIdx =1;
         } else{
@@ -338,14 +336,13 @@ public class GsbService {
             return null;
         }
 
-        History history = History.builder()
+        return History.builder()
                 .bronze(starDto.getBronze())
                 .silver(starDto.getSilver())
                 .gold(starDto.getGold())
                 .bettingChips(0)
                 .weight(weight)
                 .build();
-        return history;
 
 
 
@@ -368,8 +365,8 @@ public class GsbService {
         MessageDTO messageDto = null;
         String currentPlayer = gsb.getCurrentPlayer();
         int currentRound = gsb.getCurrentRound();
-        int myIdx =-1;
-        int nextIdx = -1;
+        int myIdx;
+        int nextIdx;
        if(gsb.getPlayers().get(0).getNickname().equals(currentPlayer)){
             myIdx =0;
             nextIdx =1;
@@ -417,7 +414,7 @@ public class GsbService {
             gsb.getPlayers().get(myIdx).setCurrentChips(gsb.getPlayers().get(myIdx).getCurrentChips() - bettingDto.getBettingChips());
             log.info("chips 로그  ={}",gsb.getPlayers().get(myIdx).getCurrentChips());
             gsb.getPlayers().get(myIdx).getHistories().get(currentRound).setBettingChips(currentRoundMyChips+bettingDto.getBettingChips());
-            BettingResponseDto betting = null;
+            BettingResponseDto betting;
             // 다음 플레이어 베팅 해야함.
             if(currentRoundMyChips + bettingDto.getBettingChips() > currentRoundYourChips){
                 log.info("다음 플레이어 배팅");
@@ -466,19 +463,32 @@ public class GsbService {
 
 
     }
-    public boolean endRound(String gameCode){
-        log.info("endRound(), gameCode = {}",gameCode);
-        Gsb gsb = getInfo(gameCode);
-        int currentRound = gsb.getCurrentRound();
-        if((gsb.getPlayers().get(0).getHistories().get(currentRound)==null &&
-                gsb.getPlayers().get(1).getHistories().get(currentRound) == null)
-                                        ||gsb.getPlayers().get(0).getHistories().get(currentRound).getBettingChips()==
-                gsb.getPlayers().get(1).getHistories().get(currentRound).getBettingChips()){
-            return true;
-        }
+//    public boolean endRound(String gameCode){
+//        log.info("endRound(), gameCode = {}",gameCode);
+//        Gsb gsb = getInfo(gameCode);
+//        int currentRound = gsb.getCurrentRound();
+//        if((gsb.getPlayers().get(0).getHistories().get(currentRound)==null &&
+//                gsb.getPlayers().get(1).getHistories().get(currentRound) == null)
+//                                        ||gsb.getPlayers().get(0).getHistories().get(currentRound).getBettingChips()==
+//                gsb.getPlayers().get(1).getHistories().get(currentRound).getBettingChips()){
+//            return true;
+//        }
+//
+//        return false;
+//    }
+public boolean endRound(String gameCode) {
+    log.info("endRound(), gameCode = {}", gameCode);
+    Gsb gsb = getInfo(gameCode);
+    int currentRound = gsb.getCurrentRound();
 
-        return false;
-    }
+    History player0History = gsb.getPlayers().get(0).getHistories().get(currentRound);
+    History player1History = gsb.getPlayers().get(1).getHistories().get(currentRound);
+
+    return (player0History == null && player1History == null) ||
+            (player0History != null && player1History != null &&
+                    player0History.getBettingChips() == player1History.getBettingChips());
+}
+
     public MessageDTO getRoundResult(String gameCode){
         log.info("getRoundResult() , gameCode = {}", gameCode);
         Gsb gsb = getInfo(gameCode);
@@ -623,7 +633,7 @@ public class GsbService {
 
     public MessageDTO getGiveUpRoundResult(String gameCode){
         log.info("getGiveUpRoundResult() gameCode = {}" , gameCode);
-        MessageDTO messageDTO = null;
+        MessageDTO messageDTO;
         Gsb gsb = getInfo(gameCode);
         int currentRound = gsb.getCurrentRound();
         String giveUpPlayer = gsb.getCurrentPlayer();
@@ -802,15 +812,25 @@ public class GsbService {
 
     }
 
-    public boolean checkStar(Player player,StarDto starDto){
-        if(player.getCurrentGold()< starDto.getGold() ||
-        player.getCurrentSilver() < starDto.getSilver() ||
-        player.getCurrentBronze() < starDto.getBronze()){
-            return false;
-        }
-        return true;
-    }
+//    public boolean checkStar(Player player,StarDto starDto){
+//        if(player.getCurrentGold() < starDto.getGold() ||
+//        player.getCurrentSilver() < starDto.getSilver() ||
+//        player.getCurrentBronze() < starDto.getBronze()){
+//            return false;
+//        }
+//        return true;
+//    }
+//    public boolean checkStar(Player player, StarDto starDto) {
+//        return player.getCurrentGold() >= starDto.getGold() &&
+//                player.getCurrentSilver() >= starDto.getSilver() &&
+//                player.getCurrentBronze() >= starDto.getBronze();
+//    }
 
+    public boolean checkStar(Player player, StarDto starDto) {
+        return !(player.getCurrentGold() < starDto.getGold() ||
+                player.getCurrentSilver() < starDto.getSilver() ||
+                player.getCurrentBronze() < starDto.getBronze());
+    }
 
     public Gsb setGsb(String gameCode) {
         Gsb gsb = gsbRepository.findById(gameCode).orElseThrow();
