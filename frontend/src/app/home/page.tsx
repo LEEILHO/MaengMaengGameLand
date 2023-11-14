@@ -2,7 +2,7 @@
 
 import * as S from '@styles/home/Home.styled'
 import { LottiePlayer } from 'lottie-react'
-import Backround from 'assets/lotties/background.json'
+import Background from 'assets/lotties/background.json'
 import HomeHeader from '@components/home/HomeHeader'
 import GameCard from '@components/home/GameCard'
 import { images } from '@constants/images'
@@ -45,7 +45,7 @@ const Home = () => {
           onClickFriend={() => {}}
           onClickSetting={openSettingModal}
         />
-        <S.BackgroundLottie animationData={Backround} loop />
+        <S.BackgroundLottie animationData={Background} loop />
         <S.GameCardContainer>
           <GameCard
             backGroundUrl={images.home.gsb}

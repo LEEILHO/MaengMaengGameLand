@@ -81,4 +81,10 @@ export const images = {
       jewelryInfomation: '/images/gameRoom/jewelry-infomation.png',
     },
   },
+  user: {
+    back: '/images/user/ic-arrow-left.png',
+    camera: '/images/user/ic-camera.png',
+    edit: '/images/user/ic-edit.png',
+    submit: '/images/user/ic-submit.png',
+  },
 }
