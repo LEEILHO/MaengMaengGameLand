@@ -24,6 +24,7 @@ export type StepType =
   | 'DRAW_CARD'
   | 'CARD_SUBMIT'
   | 'PLAYER_WINS'
+  | 'WAITING'
   | 'ALL_WINS'
   | 'GAME_OVER'
 
@@ -48,4 +49,10 @@ export type GameResultType = {
 export type DrawCardType = {
   drawCard: RspType | null
   isSetting: boolean
+}
+
+export type HistoryType = {
+  round: number
+  detail: RoundResultType
+  rspList: RspType[] | null
 }

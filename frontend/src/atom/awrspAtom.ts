@@ -2,6 +2,7 @@ import {
   DrawCardType,
   GameResultType,
   PlayerResultType,
+  HistoryType,
   RspType,
   StepType,
 } from '@type/awrsp/awrsp.type'
@@ -40,4 +41,9 @@ export const GameResultState = atom<GameResultType[] | null>({
 export const RoundState = atom<number>({
   key: 'round',
   default: 1,
+})
+
+export const HistoryState = atom<HistoryType[]>({
+  key: 'history',
+  default: [],
 })

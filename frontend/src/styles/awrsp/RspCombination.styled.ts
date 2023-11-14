@@ -1,6 +1,10 @@
 import { colors } from '@constants/colors'
 import { styled } from 'styled-components'
 
+interface DragProps {
+  isDragging: boolean
+}
+
 export const Container = styled.div`
   width: 100%;
   height: 100%;
@@ -36,16 +40,19 @@ export const OutDropArea = styled.div`
   display: flex;
 `
 
-export const DragCard = styled.div`
+export const DragCard = styled.div<DragProps>`
   img {
-    width: 64px;
-    height: 96px;
+    width: 56px;
+    height: 90px;
+
+    transform: ${(props) => (props.isDragging ? 'scale(1.2)' : '')};
+    transition: ${(props) => (props.isDragging ? '0.3s' : '')};
   }
 
   @media screen and (max-width: 700px) {
     img {
-      width: 48px;
-      height: 80px;
+      width: 44px;
+      height: 78px;
     }
   }
 `
