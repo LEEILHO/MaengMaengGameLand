@@ -105,18 +105,18 @@ public class UserService {
 
     public void editNickname(String userEmail, String nickname) {
         if(nickname.length() > 12) {
+            logger.info("NICKNAME_LENGTH_EXCEED");
             throw new UserException(UserExceptionCode.NICKNAME_LENGTH_EXCEED);
         }
 
         userRepository.existsByNickname(nickname)
             .ifPresent(exists -> {
+                logger.info("NICKNAME_ALREADY_EXISTS");
                 throw new UserException(UserExceptionCode.NICKNAME_ALREADY_EXISTS);
             });
 
         User user = userRepository.findUserByEmail(userEmail)
                 .orElseThrow(() -> new UserException(UserExceptionCode.USER_NOT_FOUND));
-
-        String oldNickname = user.getNickname();
 
         user.setNickname(nickname);
 
