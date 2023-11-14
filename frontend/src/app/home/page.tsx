@@ -50,7 +50,7 @@ const Home = () => {
       </Modal>
       <S.HomeContainer>
         <HomeHeader onClickFriend={() => {}} onClickSetting={hadleSetting} />
-        <S.BackgroundLottie animationData={Backround} loop />
+        <S.BackgroundLottie animationData={Background} loop />
         <S.GameCardContainer>
           <GameCard
             backGroundUrl={images.home.gsb}
