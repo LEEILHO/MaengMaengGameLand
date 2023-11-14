@@ -23,7 +23,7 @@ public class Gsb {
     private String currentPlayer;
     private StartCard[] startCards;
     private Map<Integer, Player> players;
-    private List<User> participiants;
+    private List<User> participants;
 
     private List<Result> results;
     public void nextRound() {

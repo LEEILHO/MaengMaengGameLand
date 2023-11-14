@@ -48,7 +48,7 @@ public class GsbService {
                 .startCards(cards)
                 .players(players)
                 .createAt(LocalDateTime.now())
-                .participiants(gameStartDTO.getParticipant())
+                .participants(gameStartDTO.getParticipant())
                 .build();
         gsbRepository.save(gsb);
 
@@ -84,7 +84,7 @@ public class GsbService {
             // 중복이 아니라면
             if(!duplicated){
                 int idx = -1;
-                if(gsb.getParticipiants().get(0).getNickname().equals(playerSeqDto.getNickname())){
+                if(gsb.getParticipants().get(0).getNickname().equals(playerSeqDto.getNickname())){
                     idx = 0;
                 } else{
                     idx = 1;
@@ -92,8 +92,8 @@ public class GsbService {
 
                 // 데이터 넣기
                 players.put(s, Player.builder().nickname(playerSeqDto.getNickname())
-                        .profileUrl(gsb.getParticipiants().get(idx).getProfileUrl())
-                                .tier(gsb.getParticipiants().get(idx).getTier()).currentWeight(0)
+                        .profileUrl(gsb.getParticipants().get(idx).getProfileUrl())
+                                .tier(gsb.getParticipants().get(idx).getTier()).currentWeight(0)
                         .currentGold(3).currentSilver(10).currentBronze(20).currentChips(40).build());
 
                 // 선택 처리
