@@ -2,7 +2,7 @@
 
 import * as S from '@styles/home/Home.styled'
 import { LottiePlayer } from 'lottie-react'
-import Backround from 'assets/lotties/background.json'
+import Background from 'assets/lotties/background.json'
 import HomeHeader from '@components/home/HomeHeader'
 import GameCard from '@components/home/GameCard'
 import { images } from '@constants/images'

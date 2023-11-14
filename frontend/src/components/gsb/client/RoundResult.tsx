@@ -30,6 +30,7 @@ const RoundResult = () => {
   const setMy = useSetRecoilState(MyState)
   const setOpponent = useSetRecoilState(OpponentState)
   const gameOver = useRecoilValue(GameOverState)
+  const [isGameOver, setIsGameOver] = useState(false)
 
   const [myComb, setMyComb] = useState<CombResultType>({
     gold: 0,
@@ -43,13 +44,14 @@ const RoundResult = () => {
   })
 
   const closeAndNext = () => {
-    console.log('게임 종료가 되는지: ', gameOver)
-
-    if (gameOver) {
+    // 게임 종료가 되었다면
+    if (isGameOver) {
       // 게임 종료
       setRound('GameOver')
       setDisplayMessage('게임이 종료되었습니다')
-    } else {
+    }
+    // 게임이 종료되지 않았다면 다음 라운드 진행
+    else {
       if (currentPlayer === user?.nickname) {
         setRound('Combination')
         setDisplayMessage('금은동을 조합해서 올려주세요')
@@ -79,6 +81,7 @@ const RoundResult = () => {
     console.log(round, '라운드의 결과')
 
     let timeId: NodeJS.Timeout
+    // 승패가 있을 경우, result에 셋팅된 승자 패자 정보 저장
     if (result) {
       const win: CombResultType = {
         gold: result?.winnerGold,
@@ -99,13 +102,15 @@ const RoundResult = () => {
       }
     }
 
+    // 포기 혹은 비김 결과의 경우, 바로 모달이 뜸
     if (round === 'DrawResult' || round === 'GiveUpResult') {
-      // 포기했을 때는 모달 바로 뜨게
       openModal()
       timeId = setTimeout(() => {
         closeAndNext()
       }, 3000)
-    } else {
+    }
+    // 승패가 있는 경우, 조합을 공개한 후 모달이 뜨게 함
+    else {
       setTimeout(() => {
         if (result) {
           if (result.winner === user?.nickname) {
@@ -152,6 +157,14 @@ const RoundResult = () => {
       clearTimeout(timeId)
     }
   }, [])
+
+  useEffect(() => {
+    console.log('변경이 일어나니?')
+
+    if (gameOver) {
+      setIsGameOver(true)
+    }
+  }, [gameOver])
 
   // framer motion variants
   const combAreaVariants = {

@@ -1,11 +1,10 @@
 'use client'
 
 import withAuth from '@components/hoc/client/PrivateRoute'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 
 import * as S from '@styles/gsb/GameRoom.styled'
 import TurnCard from '@components/gsb/client/TurnCard'
-import Timer from '@components/common/clients/Timer'
 import PlayerCard from '@components/gsb/client/PlayerCard'
 import { images } from '@constants/images'
 import CombinationGsb from '@components/gsb/client/CombinationGsb'
@@ -14,12 +13,13 @@ import BettingStatus from '@components/gsb/client/BettingStatus'
 import RoundResult from '@components/gsb/client/RoundResult'
 import BarTimer from '@components/common/clients/BarTimer'
 import useSocketGsb from '@hooks/useSocketGsb'
-import { usePathname, useRouter } from 'next/navigation'
-import { useRecoilValue } from 'recoil'
+import { useRouter } from 'next/navigation'
+import { useRecoilState, useRecoilValue } from 'recoil'
 import {
   AllBetChipsState,
   CurrentPlayerState,
   DisplayMessageState,
+  GameOverState,
   MyBetChipsState,
   MyState,
   OpponentBetChipsState,
@@ -44,15 +44,14 @@ const GameRoom = () => {
   // const gameCode = usePathname().split('/')[3]
 
   // 전광판 하나로 해서 상황에 따라 메세지만 바꾸기
-  const displayMessage = useRecoilValue(DisplayMessageState)
-  const round = useRecoilValue(RoundState)
+  const [displayMessage, setDisplayMessage] =
+    useRecoilState(DisplayMessageState)
+  const [round, setRound] = useRecoilState(RoundState)
   const time = useRecoilValue(TimerState)
   const my = useRecoilValue(MyState)
   const opponent = useRecoilValue(OpponentState)
   const myBetChips = useRecoilValue(MyBetChipsState)
   const opponentBetChips = useRecoilValue(OpponentBetChipsState)
-  const currentPlayer = useRecoilValue(CurrentPlayerState)
-  const user = useRecoilValue(userState)
   const AllBetChips = useRecoilValue(AllBetChipsState)
 
   useEffect(() => {
@@ -61,10 +60,6 @@ const GameRoom = () => {
       disconnectSocket()
     }
   }, [])
-
-  useEffect(() => {
-    console.log(round, '입니다.')
-  }, [round])
 
   return (
     <S.GameRoomContainer>
