@@ -54,7 +54,7 @@ export const Star = styled.img<StarProps>`
 `
 
 export const RoundResultModalContainer = styled.div`
-  width: 300px;
+  width: 350px;
   height: 150px;
   background-color: ${colors.greyScale.white};
 
@@ -63,6 +63,8 @@ export const RoundResultModalContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: 8px;
+
+  padding: 0px 16px;
 
   border-radius: 12px;
 `

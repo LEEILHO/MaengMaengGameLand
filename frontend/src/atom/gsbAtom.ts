@@ -1,8 +1,6 @@
 import {
-  CombResultType,
-  GiveUpResultType,
+  GameOverType,
   NormalResultType,
-  Player,
   PlayerInfoType,
   RoundType,
   TurnListType,
@@ -63,5 +61,10 @@ export const OpponentBetChipsState = atom<number>({
 
 export const ResultState = atom<NormalResultType | null>({
   key: 'normalResult',
+  default: null,
+})
+
+export const GameOverState = atom<GameOverType | null>({
+  key: 'gameOver',
   default: null,
 })

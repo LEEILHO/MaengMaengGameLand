@@ -98,12 +98,17 @@ const CombinationGsb = ({ handleGSBComb }: Props) => {
 
     const weight = gold * 3 + silver * 2 + bronze
 
-    if (weight < 4 || weight > 12) return
-    if (opponent && opponent?.currentWeight !== 0) {
+    if (opponent) {
       if (
-        opponent?.currentWeight + 2 < weight ||
-        opponent?.currentWeight - 2 > weight
+        opponent.currentWeight !== 0 &&
+        (opponent.currentWeight + 2 < weight ||
+          opponent.currentWeight - 2 > weight)
       ) {
+        openModal()
+        return
+      }
+
+      if (opponent.currentWeight === 0 && (weight < 4 || weight > 12)) {
         openModal()
         return
       }

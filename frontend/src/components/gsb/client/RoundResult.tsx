@@ -4,6 +4,7 @@ import {
   AllBetChipsState,
   CurrentPlayerState,
   DisplayMessageState,
+  GameOverState,
   MyState,
   OpponentState,
   ResultState,
@@ -28,6 +29,7 @@ const RoundResult = () => {
   const allBetChips = useRecoilValue(AllBetChipsState)
   const setMy = useSetRecoilState(MyState)
   const setOpponent = useSetRecoilState(OpponentState)
+  const gameOver = useRecoilValue(GameOverState)
 
   const [myComb, setMyComb] = useState<CombResultType>({
     gold: 0,
@@ -41,31 +43,42 @@ const RoundResult = () => {
   })
 
   const closeAndNext = () => {
-    if (currentPlayer === user?.nickname) {
-      setRound('Combination')
-      setDisplayMessage('금은동을 조합해서 올려주세요')
+    console.log('게임 종료가 되는지: ', gameOver)
+
+    if (gameOver) {
+      // 게임 종료
+      setRound('GameOver')
+      setDisplayMessage('게임이 종료되었습니다')
     } else {
-      setRound('CombWaiting')
-      setDisplayMessage('상대방이 금은동을 조합합니다')
+      if (currentPlayer === user?.nickname) {
+        setRound('Combination')
+        setDisplayMessage('금은동을 조합해서 올려주세요')
+      } else {
+        setRound('CombWaiting')
+        setDisplayMessage('상대방이 금은동을 조합합니다')
+      }
+      setMy((prev) => {
+        if (!prev) return null
+        return {
+          ...prev,
+          currentWeight: 0,
+        }
+      })
+      setOpponent((prev) => {
+        if (!prev) return null
+        return {
+          ...prev,
+          currentWeight: 0,
+        }
+      })
     }
-    setMy((prev) => {
-      if (!prev) return null
-      return {
-        ...prev,
-        currentWeight: 0,
-      }
-    })
-    setOpponent((prev) => {
-      if (!prev) return null
-      return {
-        ...prev,
-        currentWeight: 0,
-      }
-    })
     closeModal()
   }
 
   useEffect(() => {
+    console.log(round, '라운드의 결과')
+
+    let timeId: NodeJS.Timeout
     if (result) {
       const win: CombResultType = {
         gold: result?.winnerGold,
@@ -84,55 +97,59 @@ const RoundResult = () => {
         setMyComb(lose)
         setOpponentComb(win)
       }
+    }
 
-      if (round === 'DrawResult' || round === 'GiveUpResult') {
-        // 포기했을 때는 모달 바로 뜨게
+    if (round === 'DrawResult' || round === 'GiveUpResult') {
+      // 포기했을 때는 모달 바로 뜨게
+      openModal()
+      timeId = setTimeout(() => {
+        closeAndNext()
+      }, 3000)
+    } else {
+      setTimeout(() => {
+        if (result) {
+          if (result.winner === user?.nickname) {
+            setMy((prev) => {
+              if (!prev) return null
+              return {
+                ...prev,
+                currentChips: result.currentWinnerChips,
+              }
+            })
+            setOpponent((prev) => {
+              if (!prev) return null
+              return {
+                ...prev,
+                currentChips: result.currentLoserChips,
+              }
+            })
+          } else {
+            setMy((prev) => {
+              if (!prev) return null
+              return {
+                ...prev,
+                currentChips: result.currentLoserChips,
+              }
+            })
+            setOpponent((prev) => {
+              if (!prev) return null
+              return {
+                ...prev,
+                currentChips: result.currentWinnerChips,
+              }
+            })
+          }
+        }
+
         openModal()
-        setTimeout(() => {
+        timeId = setTimeout(() => {
           closeAndNext()
         }, 3000)
-      } else {
-        setTimeout(() => {
-          if (result) {
-            if (result.winner === user?.nickname) {
-              setMy((prev) => {
-                if (!prev) return null
-                return {
-                  ...prev,
-                  currentChips: result.currentWinnerChips,
-                }
-              })
-              setOpponent((prev) => {
-                if (!prev) return null
-                return {
-                  ...prev,
-                  currentChips: result.currentLoserChips,
-                }
-              })
-            } else {
-              setMy((prev) => {
-                if (!prev) return null
-                return {
-                  ...prev,
-                  currentChips: result.currentLoserChips,
-                }
-              })
-              setOpponent((prev) => {
-                if (!prev) return null
-                return {
-                  ...prev,
-                  currentChips: result.currentWinnerChips,
-                }
-              })
-            }
-          }
+      }, 5000)
+    }
 
-          openModal()
-          setTimeout(() => {
-            closeAndNext()
-          }, 3000)
-        }, 5000)
-      }
+    return () => {
+      clearTimeout(timeId)
     }
   }, [])
 
