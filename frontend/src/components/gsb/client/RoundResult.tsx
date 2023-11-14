@@ -43,38 +43,28 @@ const RoundResult = () => {
   })
 
   const closeAndNext = () => {
-    console.log('게임 종료가 되는지: ', gameOver)
-
-    // 게임 종료가 되었다면
-    if (gameOver) {
-      // 게임 종료
-      setRound('GameOver')
-      setDisplayMessage('게임이 종료되었습니다')
-    }
     // 게임이 종료되지 않았다면 다음 라운드 진행
-    else {
-      if (currentPlayer === user?.nickname) {
-        setRound('Combination')
-        setDisplayMessage('금은동을 조합해서 올려주세요')
-      } else {
-        setRound('CombWaiting')
-        setDisplayMessage('상대방이 금은동을 조합합니다')
-      }
-      setMy((prev) => {
-        if (!prev) return null
-        return {
-          ...prev,
-          currentWeight: 0,
-        }
-      })
-      setOpponent((prev) => {
-        if (!prev) return null
-        return {
-          ...prev,
-          currentWeight: 0,
-        }
-      })
+    if (currentPlayer === user?.nickname) {
+      setRound('Combination')
+      setDisplayMessage('금은동을 조합해서 올려주세요')
+    } else {
+      setRound('CombWaiting')
+      setDisplayMessage('상대방이 금은동을 조합합니다')
     }
+    setMy((prev) => {
+      if (!prev) return null
+      return {
+        ...prev,
+        currentWeight: 0,
+      }
+    })
+    setOpponent((prev) => {
+      if (!prev) return null
+      return {
+        ...prev,
+        currentWeight: 0,
+      }
+    })
     closeModal()
   }
 
@@ -156,6 +146,12 @@ const RoundResult = () => {
 
     return () => {
       clearTimeout(timeId)
+
+      console.log('게임 종료 여부 체크')
+      if (gameOver) {
+        setRound('GameOver')
+        setDisplayMessage('게임이 종료되었습니다')
+      }
     }
   }, [])
 
