@@ -14,6 +14,7 @@ import { channelState, gameTypeState } from '@atom/gameAtom'
 import { usePathname, useRouter } from 'next/navigation'
 import { gameTypeChange } from '@utils/lobby/lobbyUtil'
 import { roomsState } from '@atom/lobbyAtom'
+import useSound from '@hooks/useSound'
 
 type Props = {
   title: string
@@ -23,6 +24,7 @@ const Lobby = ({ title }: Props) => {
   const router = useRouter()
   const pathname = usePathname()
   const { Modal, isOpen, closeModal, openModal } = useModal()
+  const { playButtonSound } = useSound()
   const { connectSocket, disconnectSocket, connectLobby, disconnectLobby } =
     useSocket()
   const [gameType, setGameType] = useRecoilState(gameTypeState)
@@ -34,6 +36,11 @@ const Lobby = ({ title }: Props) => {
     setRooms([])
     router.replace('/home')
   }, [])
+
+  const handleCreateRoom = () => {
+    playButtonSound()
+    openModal()
+  }
 
   useEffect(() => {
     setGameType(gameTypeChange(gamePath))
@@ -66,7 +73,7 @@ const Lobby = ({ title }: Props) => {
             fontSize={18}
             color="white"
             radius={50}
-            onClick={openModal}
+            onClick={handleCreateRoom}
           />
         </S.ButtonRow>
       </S.LobbyContainer>
