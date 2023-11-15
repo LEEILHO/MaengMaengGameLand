@@ -26,6 +26,9 @@ public class GameUserService {
 	}
 
 	public void editGameUser(NicknameEditDTO nicknameEditDTO) {
+		if(nicknameEditDTO.getEmail() == null || nicknameEditDTO.getNickname() == null) {
+			return;
+		}
 		GameUser gameUser = gameUserRepository.findByEmail(nicknameEditDTO.getEmail()).orElseThrow();
 		gameUser.setNickname(nicknameEditDTO.getNickname());
 		gameUserRepository.save(gameUser);

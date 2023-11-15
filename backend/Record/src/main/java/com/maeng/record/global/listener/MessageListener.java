@@ -40,8 +40,12 @@ public class MessageListener {
 
 	@RabbitListener(queues = "edit.queue")
 	public void receiveMessage2(NicknameEditDTO nicknameEditDTO){
-		log.info("edit = " + nicknameEditDTO);
-		gameUserService.editGameUser(nicknameEditDTO);
+		try {
+			log.info("edit = " + nicknameEditDTO);
+			gameUserService.editGameUser(nicknameEditDTO);
+		} catch (Exception e) {
+			log.info(e.getMessage());
+		}
 	}
 
 	@RabbitListener(queues = "jwac.queue")
