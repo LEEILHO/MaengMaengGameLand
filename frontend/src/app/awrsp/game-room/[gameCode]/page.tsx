@@ -131,9 +131,7 @@ const AwrspGameRoom = () => {
               </S.TableHeader>
               {gameResult?.map((result) => (
                 <S.GameResultItem key={result.nickname}>
-                  <p className="rank">
-                    {gameResult.length !== result.rank ? result.rank : '-'}
-                  </p>
+                  <p className="rank">{result.rank}</p>
                   <p className="nickname">{result.nickname}</p>
                   <p className="point">{result.point}</p>
                 </S.GameResultItem>
