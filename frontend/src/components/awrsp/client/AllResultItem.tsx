@@ -21,7 +21,11 @@ const AllResultItem = ({ result }: Props) => {
         <S.WinCount>미제출</S.WinCount>
       )}
 
-      {result.finish && <S.Winner>{result.rank}등</S.Winner>}
+      {result.finish && (
+        <S.Winner>
+          <p>{result.rank}등</p>
+        </S.Winner>
+      )}
     </S.AllResultItemContainer>
   )
 }
