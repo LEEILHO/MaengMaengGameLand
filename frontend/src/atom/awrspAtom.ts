@@ -28,10 +28,10 @@ export const PlayerResultState = atom<PlayerResultType[] | null>({
   default: null,
 })
 
-export const StepState = atom<StepType | null>({
-  key: 'step',
-  default: null,
-})
+// export const StepState = atom<StepType | null>({
+//   key: 'step',
+//   default: null,
+// })
 
 export const GameResultState = atom<GameResultType[] | null>({
   key: 'awrspGameResult',

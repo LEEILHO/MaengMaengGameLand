@@ -2,15 +2,19 @@
 
 import * as S from '@styles/awrsp/AllResultList.styled'
 import AllResultItem from './AllResultItem'
-import { PlayerResultState, StepState } from '@atom/awrspAtom'
+import { PlayerResultState } from '@atom/awrspAtom'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { useEffect } from 'react'
 import { userState } from '@atom/userAtom'
+import { StepType } from '@type/awrsp/awrsp.type'
 
-const AllResultList = () => {
+type Props = {
+  setStep: (step: StepType) => void
+}
+
+const AllResultList = ({ setStep }: Props) => {
   const playerRoundResult = useRecoilValue(PlayerResultState)
   const user = useRecoilValue(userState)
-  const setStep = useSetRecoilState(StepState)
 
   useEffect(() => {
     if (playerRoundResult) {

@@ -18,7 +18,6 @@ import {
   PlayerResultState,
   RoundState,
   RspCardListState,
-  StepState,
   TimerState,
 } from '@atom/awrspAtom'
 import useSocketAWRSP from '@hooks/useSocketAWRSP'
@@ -31,9 +30,10 @@ const AwrspGameRoom = () => {
   const {
     connectSocket,
     disconnectSocket,
-    handleRoundStart,
     handleTimeOver,
     handleCardSubmit,
+    step,
+    setStep,
   } = useSocketAWRSP()
   const { Modal, closeModal, isOpen, openModal } = useModal()
   const {
@@ -43,7 +43,6 @@ const AwrspGameRoom = () => {
     openModal: openHistoryModal,
   } = useModal()
   const timerTime = useRecoilValue(TimerState)
-  const step = useRecoilValue(StepState)
   const round = useRecoilValue(RoundState)
   const gameResult = useRecoilValue(GameResultState)
 
@@ -52,7 +51,6 @@ const AwrspGameRoom = () => {
   const resetDrawCard = useResetRecoilState(DrawCardState)
   const resetTimerReset = useResetRecoilState(TimerState)
   const resetPlayerResult = useResetRecoilState(PlayerResultState)
-  const resetStep = useResetRecoilState(StepState)
   const resetGameResult = useResetRecoilState(GameResultState)
   const resetHistory = useResetRecoilState(HistoryState)
 
@@ -71,7 +69,6 @@ const AwrspGameRoom = () => {
     resetDrawCard()
     resetTimerReset()
     resetPlayerResult()
-    resetStep()
     resetGameResult()
     resetHistory()
 
@@ -103,7 +100,9 @@ const AwrspGameRoom = () => {
               <RspCombination handleCardSubmit={handleCardSubmit} />
             )}
             {step === 'PLAYER_WINS' && <MyResult />}
-            {(step === 'ALL_WINS' || step === 'WAITING') && <AllResultList />}
+            {(step === 'ALL_WINS' || step === 'WAITING') && (
+              <AllResultList setStep={setStep} />
+            )}
           </S.Content>
           {step !== 'WAITING' && (
             <S.TimerContainer>
@@ -150,7 +149,7 @@ const AwrspGameRoom = () => {
       )}
 
       <Modal isOpen={isOpen}>
-        <DrawCardModal closeModal={closeModal} />
+        <DrawCardModal closeModal={closeModal} step={step} />
       </Modal>
 
       <HModal isOpen={isHistoryOpen} closeModal={closeHistoryModal}>

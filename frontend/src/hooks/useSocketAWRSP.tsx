@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useRef } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { CompatClient, Stomp } from '@stomp/stompjs'
 import { SOCKET_URL } from '@constants/baseUrl'
 import SockJS from 'sockjs-client'
@@ -13,7 +13,6 @@ import {
   GameResultState,
   PlayerResultState,
   RoundState,
-  StepState,
   TimerState,
 } from '@atom/awrspAtom'
 import {
@@ -29,10 +28,11 @@ const useSocketAWRSP = () => {
   const user = useRecoilValue(userState)
   const setTimerTime = useSetRecoilState(TimerState)
   const setPlayerResult = useSetRecoilState(PlayerResultState)
-  const [step, setStep] = useRecoilState(StepState)
   const setGameReulst = useSetRecoilState(GameResultState)
   const setRound = useSetRecoilState(RoundState)
   const [drawCard, setDrawCard] = useRecoilState(DrawCardState)
+
+  const [step, setStep] = useState<StepType>('ENTER_GAME')
 
   /**
    * 전승 가위바위보 게임 구독
@@ -187,6 +187,8 @@ const useSocketAWRSP = () => {
     handleRoundStart,
     handleTimeOver,
     handleCardSubmit,
+    step,
+    setStep,
   }
 }
 
