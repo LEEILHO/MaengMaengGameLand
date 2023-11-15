@@ -220,10 +220,11 @@ public class AwrspService {
     @Operation(summary = "게임 종료 확인")
     public boolean checkGameOver(String gameCode){
         Game game = this.getCurrentGame(gameCode);
+        Rank rank = this.getCurrentRank(gameCode);
         log.info("승리한 사람 : "+game.getFinishCount());
 
         // TODO : 승리한 사람 + 연결 끊긴 사람 모두가 finishCount 돼서 게임 종료됨
-        return game.getFinishCount() >= 4 || game.getCurrentRound() >= MAX_ROUND
+        return rank.getRank().size() >= 4 || game.getCurrentRound() >= MAX_ROUND
                 || (game.getHeadCount() - game.getFinishCount()) == 1;
     }
 
