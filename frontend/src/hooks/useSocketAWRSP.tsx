@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useRef, useState, useEffect } from 'react'
 import { CompatClient, Stomp } from '@stomp/stompjs'
 import { SOCKET_URL } from '@constants/baseUrl'
 import SockJS from 'sockjs-client'
@@ -34,6 +34,11 @@ const useSocketAWRSP = () => {
 
   const [step, setStep] = useState<StepType>('ENTER_GAME')
 
+  const checkStep = () => {
+    if (step === 'WAITING') return true
+    else return false
+  }
+
   /**
    * 전승 가위바위보 게임 구독
    */
@@ -51,16 +56,11 @@ const useSocketAWRSP = () => {
         response.type === 'PLAYER_WINS' ||
         response.type === 'ALL_WINS'
       ) {
+        if (checkStep()) return
         const data = response.data as number
         console.log('받아온 시간 : ', data)
         setTimerTime(data)
-        setStep((prev) => {
-          if (!prev || prev !== 'WAITING') {
-            return response.type as StepType
-          }
-          console.log('정답을 맞춰버렸네;;;')
-          return prev
-        })
+        setStep(response.type as StepType)
 
         // 비김 카드 선택하면 비김 카드 셋팅할 준비
         if (response.type === 'DRAW_CARD') {
@@ -69,6 +69,8 @@ const useSocketAWRSP = () => {
       }
       // 몇 라운드인지 받아오기
       else if (response.type === 'ROUND') {
+        console.log('라운드를 받아올 때: ', step)
+
         if (step === 'WAITING') return
         const data = response.data as number
         console.log(data, '라운드')
@@ -76,6 +78,8 @@ const useSocketAWRSP = () => {
       }
       // 모든 유저의 라운드 결과를 받아오기
       else if (response.type === 'CARD_RESULT') {
+        console.log('라운드 결과를 받아올 때: ', step)
+
         if (step === 'WAITING') return
         const data = response.data as PlayerResultType[]
         console.log('이번 라운드 결과 : ', data)
@@ -89,7 +93,7 @@ const useSocketAWRSP = () => {
         setStep(response.type as StepType)
       }
     })
-  }, [client.current])
+  }, [client.current, step])
 
   /**
    * 전승 가위바위보 게임 구독 취소
@@ -104,8 +108,6 @@ const useSocketAWRSP = () => {
    * 게임 참가 (라운드마다 호출)
    */
   const handleRoundStart = useCallback(() => {
-    console.log('라운드 시작!')
-
     client.current?.publish({
       destination: `/pub/game.awrsp.timer.${gameCode}`,
       body: JSON.stringify({
