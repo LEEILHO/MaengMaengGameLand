@@ -51,6 +51,8 @@ const useSocketAWRSP = () => {
         response.type === 'PLAYER_WINS' ||
         response.type === 'ALL_WINS'
       ) {
+        console.log('타이머시간받아올때: ', step)
+
         if (step === 'WAITING') return
         const data = response.data as number
         console.log('받아온 시간 : ', data)
