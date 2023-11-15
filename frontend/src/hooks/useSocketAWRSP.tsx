@@ -29,7 +29,7 @@ const useSocketAWRSP = () => {
   const user = useRecoilValue(userState)
   const setTimerTime = useSetRecoilState(TimerState)
   const setPlayerResult = useSetRecoilState(PlayerResultState)
-  const [step, setStep] = useRecoilState(StepState)
+  const setStep = useSetRecoilState(StepState)
   const setGameReulst = useSetRecoilState(GameResultState)
   const setRound = useSetRecoilState(RoundState)
   const [drawCard, setDrawCard] = useRecoilState(DrawCardState)
@@ -43,6 +43,8 @@ const useSocketAWRSP = () => {
     client.current?.subscribe(`/exchange/game/awrsp.${gameCode}`, (res) => {
       const response: socketResponseType<unknown> = JSON.parse(res.body)
       console.log(response)
+      const step = useRecoilValue(StepState)
+      console.log('응답 받을 때의 step: ', step)
 
       // 카드 조합 제한 시간을 받아서 타이머 시간 설정
       if (
