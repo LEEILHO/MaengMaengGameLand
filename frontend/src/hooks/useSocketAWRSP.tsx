@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useRef, useState, useEffect } from 'react'
+import { useRef, useState } from 'react'
 import { CompatClient, Stomp } from '@stomp/stompjs'
 import { SOCKET_URL } from '@constants/baseUrl'
 import SockJS from 'sockjs-client'
@@ -37,7 +37,7 @@ const useSocketAWRSP = () => {
   /**
    * 전승 가위바위보 게임 구독
    */
-  const connectAWRSPGame = useCallback(() => {
+  const connectAWRSPGame = () => {
     console.log('전승 가위바위보 게임 구독', gameCode)
 
     client.current?.subscribe(`/exchange/game/awrsp.${gameCode}`, (res) => {
@@ -89,21 +89,21 @@ const useSocketAWRSP = () => {
         setStep(response.type as StepType)
       }
     })
-  }, [client.current, step, drawCard, gameCode])
+  }
 
   /**
    * 전승 가위바위보 게임 구독 취소
    */
-  const disconnectAWRSPGame = useCallback(() => {
+  const disconnectAWRSPGame = () => {
     console.log('전승 가위바위보 게임 구독 취소', gameCode)
 
     client.current?.unsubscribe(`/exchange/game/awrsp.${gameCode}`)
-  }, [client.current])
+  }
 
   /**
    * 게임 참가 (라운드마다 호출)
    */
-  const handleRoundStart = useCallback(() => {
+  const handleRoundStart = () => {
     client.current?.publish({
       destination: `/pub/game.awrsp.timer.${gameCode}`,
       body: JSON.stringify({
@@ -111,51 +111,44 @@ const useSocketAWRSP = () => {
         type: 'ENTER_GAME',
       }),
     })
-  }, [client.current])
+  }
 
   /**
    * 타이머가 종료되었을 때 호출
    */
-  const handleTimeOver = useCallback(
-    (step: StepType) => {
-      console.log('종료되는 단계 : ', step)
-      if (step === 'ALL_WINS') {
-        // 다음 라운드 시작을 알림
-        setStep('ENTER_GAME')
-        setTimerTime(20)
-        handleRoundStart()
-      } else if (step === 'WAITING') return
-      else {
-        client.current?.publish({
-          destination: `/pub/game.awrsp.timer.${gameCode}`,
-          body: JSON.stringify({
-            nickname: user?.nickname,
-            type: step,
-          }),
-        })
-      }
-    },
-    [client.current],
-  )
-
+  const handleTimeOver = (step: StepType) => {
+    console.log('종료되는 단계 : ', step)
+    if (step === 'ALL_WINS') {
+      // 다음 라운드 시작을 알림
+      setStep('ENTER_GAME')
+      setTimerTime(20)
+      handleRoundStart()
+    } else if (step === 'WAITING') return
+    else {
+      client.current?.publish({
+        destination: `/pub/game.awrsp.timer.${gameCode}`,
+        body: JSON.stringify({
+          nickname: user?.nickname,
+          type: step,
+        }),
+      })
+    }
+  }
   /**
    * 카드 제출
    */
-  const handleCardSubmit = useCallback(
-    (combCard: RspType[]) => {
-      console.log('카드 조합 : ', combCard)
-      client.current?.publish({
-        destination: `/pub/game.awrsp.submit.${gameCode}`,
-        body: JSON.stringify({
-          nickname: user?.nickname,
-          card: combCard,
-        }),
-      })
-    },
-    [client.current],
-  )
+  const handleCardSubmit = (combCard: RspType[]) => {
+    console.log('카드 조합 : ', combCard)
+    client.current?.publish({
+      destination: `/pub/game.awrsp.submit.${gameCode}`,
+      body: JSON.stringify({
+        nickname: user?.nickname,
+        card: combCard,
+      }),
+    })
+  }
 
-  const connectSocket = useCallback(() => {
+  const connectSocket = () => {
     const sock = new SockJS(SOCKET_URL)
     const StompClient = Stomp.over(() => sock)
 
@@ -173,11 +166,11 @@ const useSocketAWRSP = () => {
         disconnectAWRSPGame()
       },
     )
-  }, [client.current])
+  }
 
-  const disconnectSocket = useCallback(() => {
+  const disconnectSocket = () => {
     client.current?.disconnect()
-  }, [client.current])
+  }
 
   return {
     connectSocket,
