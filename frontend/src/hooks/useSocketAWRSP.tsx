@@ -69,6 +69,8 @@ const useSocketAWRSP = () => {
       }
       // 몇 라운드인지 받아오기
       else if (response.type === 'ROUND') {
+        console.log('라운드를 받아올 때: ', step)
+
         if (step === 'WAITING') return
         const data = response.data as number
         console.log(data, '라운드')
@@ -76,6 +78,8 @@ const useSocketAWRSP = () => {
       }
       // 모든 유저의 라운드 결과를 받아오기
       else if (response.type === 'CARD_RESULT') {
+        console.log('라운드 결과를 받아올 때: ', step)
+
         if (step === 'WAITING') return
         const data = response.data as PlayerResultType[]
         console.log('이번 라운드 결과 : ', data)
