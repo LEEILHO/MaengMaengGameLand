@@ -43,8 +43,6 @@ const useSocketAWRSP = () => {
     client.current?.subscribe(`/exchange/game/awrsp.${gameCode}`, (res) => {
       const response: socketResponseType<unknown> = JSON.parse(res.body)
       console.log(response)
-      const step = useRecoilValue(StepState)
-      console.log('응답 받을 때의 step: ', step)
 
       // 카드 조합 제한 시간을 받아서 타이머 시간 설정
       if (
@@ -71,14 +69,12 @@ const useSocketAWRSP = () => {
       }
       // 몇 라운드인지 받아오기
       else if (response.type === 'ROUND') {
-        if (step === 'WAITING') return
         const data = response.data as number
         console.log(data, '라운드')
         setRound(data)
       }
       // 모든 유저의 라운드 결과를 받아오기
       else if (response.type === 'CARD_RESULT') {
-        if (step === 'WAITING') return
         const data = response.data as PlayerResultType[]
         console.log('이번 라운드 결과 : ', data)
         setPlayerResult(data)
