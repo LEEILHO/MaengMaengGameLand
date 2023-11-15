@@ -9,8 +9,6 @@ const useA2HS = () => {
     useState<BeforeInstallPromptEvent | null>(null)
 
   useEffect(() => {
-    console.log('거짓말')
-
     const handler = (e: BeforeInstallPromptEvent) => {
       e.preventDefault()
       setDeferredPrompt(e)
