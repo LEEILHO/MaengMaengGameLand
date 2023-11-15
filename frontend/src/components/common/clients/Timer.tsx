@@ -5,7 +5,6 @@ import { useEffect, useState, useRef } from 'react'
 import * as S from '@styles/common/Timer.styled'
 import { secondsToMinutesAndSeconds } from '@utils/common/timer'
 import { images } from '@constants/images'
-import useSound from '@hooks/useSound'
 import { sounds } from '@constants/sounds'
 import { useRecoilValue } from 'recoil'
 import { soundState } from '@atom/soundAtom'
@@ -18,7 +17,6 @@ type Props = {
   timeOverHandle: () => void
 }
 
-// todo : 20으로 되어있는 곳 값 props로 받아오기
 const Timer = ({ size, fontSize, time, timeOverHandle, round }: Props) => {
   const [currentTime, setCurrentTime] = useState(0)
   const timeRemaining = time - currentTime

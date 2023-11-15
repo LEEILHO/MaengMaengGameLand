@@ -31,6 +31,43 @@ export const WatchGameDiscriptionSection = styled.section`
   height: 800px;
 `
 
+export const IosGuideDiscriptionSection = styled.section`
+  height: fit-content;
+  background-color: #f6f7f8;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 80px 12px;
+`
+
+export const GuideTitle = styled.h5`
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 40px;
+  text-align: center;
+`
+
+export const GuideRow = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  margin-top: 80px;
+`
+
+export const GuideImage = styled.img`
+  width: 245px;
+`
+
+export const GuideDiscription = styled.p`
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 40px;
+  white-space: pre-wrap;
+  line-height: 140%;
+`
+
 export const TeamName = styled.h5`
   font-size: 16px;
   font-weight: 700;

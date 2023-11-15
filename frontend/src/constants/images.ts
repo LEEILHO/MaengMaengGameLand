@@ -18,6 +18,11 @@ export const images = {
     background: '/images/index/background-index.png',
     icon: '/images/index/ic-main.png',
     donwloadComplete: '/images/index/ic-download-complete.png',
+    appleIcon: '/images/index/ic-apple.png',
+    iosGuide1: '/images/index/ios-guide1.png',
+    iosGuide2: '/images/index/ios-guide2.png',
+    iosGuide3: '/images/index/ios-guide3.png',
+    iosGuide4: '/images/index/ios-guide4.png',
   },
   waitingRoom: {
     header: {
