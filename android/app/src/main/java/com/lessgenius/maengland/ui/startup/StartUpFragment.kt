@@ -2,8 +2,11 @@ package com.lessgenius.maengland.ui.startup
 
 import android.animation.ValueAnimator
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.view.animation.DecelerateInterpolator
+import android.widget.ImageView
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -14,8 +17,6 @@ import com.lessgenius.maengland.base.BaseFragment
 import com.lessgenius.maengland.databinding.FragmentStartupBinding
 import com.lessgenius.maengland.util.SoundUtil
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
 
 @AndroidEntryPoint
 class StartUpFragment : BaseFragment<FragmentStartupBinding>(
@@ -29,10 +30,20 @@ class StartUpFragment : BaseFragment<FragmentStartupBinding>(
 
     private lateinit var valueAnimator: ValueAnimator
 
+    private var player: ImageView? = null
     private var screenHeight: Int = 0
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        initData()
+        initAnimation()
+        initListener()
+    }
+
+    val handler = Handler(Looper.getMainLooper())
+
+    private fun initData() {
         binding.layoutSwipe.isSwipeable = true
         swipeCallback = object : SwipeDismissFrameLayout.Callback() {
             override fun onDismissed(layout: SwipeDismissFrameLayout) {
@@ -41,32 +52,43 @@ class StartUpFragment : BaseFragment<FragmentStartupBinding>(
         }
         binding.layoutSwipe.addCallback(swipeCallback)
 
+        navController = Navigation.findNavController(binding.root)
+
         val win = mActivity.windowManager.currentWindowMetrics
         screenHeight = win.bounds.height()
 
         mainViewModel.getLoginStatus()
-        initAnimation()
-        initListener()
-        navController = Navigation.findNavController(binding.root)
 
-//        initListener()
+        player = binding.imageViewPlayer
     }
-
     private fun initAnimation() {
-        binding.imageViewPlayer.post {
+        var beforeAnimateValue = 0F
+
+        player?.post {
             valueAnimator = ValueAnimator().apply {
                 setFloatValues(
-                    binding.imageViewPlayer.y + binding.imageViewPlayer.y / 2,
-                    binding.imageViewPlayer.y - binding.imageViewPlayer.y / 2,
+                    player?.y?.plus(binding.imageViewPlayer.y / 2) ?: 0F,
+                    player?.y?.minus(binding.imageViewPlayer.y / 2) ?: 0F
                 )
                 duration = 460
                 interpolator = DecelerateInterpolator(1.2f)
                 repeatCount = ValueAnimator.INFINITE
                 repeatMode = ValueAnimator.REVERSE
                 interpolator = DecelerateInterpolator()
+
                 addUpdateListener { animator ->
                     val animatedValue = animator.animatedValue as Float
-                    binding.imageViewPlayer.y = animatedValue
+                    player?.y = animatedValue
+
+                    if (animatedValue >= beforeAnimateValue) { // 내려가는 중
+                        handler.postDelayed({
+                            player?.setImageResource(R.drawable.icon_bunny)
+                        }, 60)
+                    } else { // 점프하는 중
+                        player?.setImageResource(R.drawable.icon_bunny_jump)
+                    }
+                    beforeAnimateValue = animatedValue
+
                 }
                 start()
             }
@@ -104,8 +126,10 @@ class StartUpFragment : BaseFragment<FragmentStartupBinding>(
     }
 
     override fun onDestroyView() {
+        binding.layoutSwipe.removeCallback(swipeCallback)
         super.onDestroyView()
         valueAnimator.cancel()
-//        binding.layoutSwipe.removeCallback(swipeCallback)
+        player = null
+
     }
 }

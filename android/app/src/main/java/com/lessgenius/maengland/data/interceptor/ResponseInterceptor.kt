@@ -48,7 +48,7 @@ class ResponseInterceptor @Inject constructor(
 
             }
 
-            401 -> { // 여러 에러들 종합 (에러 메시지로 확인하자.)
+            401 -> {
 //                val errorResponse = parseErrorResponse(response.body)
 //                Log.d(TAG, "intercept: 에러 바디 파싱 ${errorResponse}")
 
@@ -84,10 +84,9 @@ class ResponseInterceptor @Inject constructor(
                             }"
                         )
                         if (result.watchAccessToken.isNotEmpty()) {
-                            Log.d(TAG, "intercept: 다시 받아오는데 성공했어요!!!!!!")
+                            Log.d(TAG, "intercept: 다시 받아오는데 성공했어요!!!!!!$result")
                             preferences.updateToken(ACCESS_TOKEN, result.watchAccessToken)
                             preferences.updateToken(REFRESH_TOKEN, result.watchRefreshToken)
-                            Log.d(TAG, "intercept: 만료된 토큰 다시 받은거 $result")
                             newAccessToken = result.watchAccessToken
                             isRefreshable = true
                         }

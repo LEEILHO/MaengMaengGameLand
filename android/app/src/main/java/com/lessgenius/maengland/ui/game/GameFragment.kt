@@ -11,7 +11,6 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.media.SoundPool
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -61,7 +60,7 @@ class GameFragment :
         }
     }
 
-    private var player: View? = null
+    private var player: ImageView? = null
 
     @Volatile
     private var playerPosition = MutableLiveData<Rect>()
@@ -163,7 +162,6 @@ class GameFragment :
 
                     if (playerRect.right > platformRect.left && playerRect.left < platformRect.right && (playerRect.bottom <= platformRect.top) && (platformRect.top - playerRect.bottom <= 40)) {
 
-//                        soundPool?.play(sound!!, 1F, 1F, 0, 0, 1F)
                         SoundUtil.playJumpSound()
                         // 위로 올라갔을 때
                         if (yPosition > platformRect.top.toFloat()) {
@@ -220,7 +218,7 @@ class GameFragment :
 
     private fun initJumpUpAnimation() {
         jumpUpAnimator = ValueAnimator.ofFloat(yPosition, yPosition - JUMP_HEIGHT).apply {
-            duration = 850
+            duration = 800
             interpolator = DecelerateInterpolator(1.8f)
             addUpdateListener { animator ->
                 val animatedValue = animator.animatedValue as Float
@@ -228,6 +226,8 @@ class GameFragment :
             }
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
+                    player?.setImageResource(R.drawable.icon_bunny)
+
                     super.onAnimationEnd(animation)
                     updatePlayerPosition()
                     initFallDownAnimation()
@@ -242,7 +242,7 @@ class GameFragment :
         if (!::fallDownAnimator.isInitialized) { // 초기화
             fallDownAnimator =
                 ValueAnimator.ofFloat(yPosition - JUMP_HEIGHT, yPosition + screenHeight).apply {
-                    duration = 615
+                    duration = 700
                     interpolator = LinearInterpolator()
                     addUpdateListener { animator ->
                         val animatedValue = animator.animatedValue as Float
@@ -252,6 +252,11 @@ class GameFragment :
                     addListener(object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(animation: Animator) {
                             super.onAnimationEnd(animation)
+                            val handler = Handler(Looper.getMainLooper())
+                            handler.postDelayed({
+                                player?.setImageResource(R.drawable.icon_bunny_jump)
+                            }, 100)
+
                             if (!isCollided) {
                                 // 충돌하지 않았으면 추락 처리
                                 Log.d(TAG, "fallDownAnimator: 추락! 플레이어의 높이를 0으로 설정")
@@ -294,7 +299,7 @@ class GameFragment :
         handler.postDelayed({
             dialog.isCancelable = false
             dialog.show(this.parentFragmentManager, "GameDialog")
-        }, 400)
+        }, 300)
 
     }
 
@@ -310,7 +315,7 @@ class GameFragment :
         override fun onSensorChanged(event: SensorEvent) {
 
             // 캐릭터 좌우 방향
-            player?.scaleX = if (event.values[0] > 0) -1f else 1f
+            player?.scaleX = if (event.values[0] > 0) 1f else -1f
 
             // 센서의 움직임에 따라 이동할 위치
             val movement = event.values[0] * 24
@@ -340,10 +345,10 @@ class GameFragment :
 
     }
 
-    private val MIN_PLATFORM_DISTANCE = JUMP_HEIGHT / 3  // 최소 간격
-    private val MAX_PLATFORM_DISTANCE = JUMP_HEIGHT      // 최대 간격
-
     private fun initPlatform() {
+
+        val MIN_PLATFORM_DISTANCE = JUMP_HEIGHT / 3  // 최소 간격
+        val MAX_PLATFORM_DISTANCE = JUMP_HEIGHT      // 최대 간격
         var lastY = binding.gameLayout.layoutParams.height  // 가장 아래 발판의 Y 위치
 
         var idx = 0
@@ -352,7 +357,6 @@ class GameFragment :
                 (MIN_PLATFORM_DISTANCE.toInt()..MAX_PLATFORM_DISTANCE.toInt()).random()  // 다음 발판까지의 거리
             lastY -= distance
 
-            val platformCount = (1..3).random()  // 발판의 개수
             for (i in 0 until 1) {
                 val platform = createPlatform()
                 positionPlatformRandomly(platform, lastY, idx++)
