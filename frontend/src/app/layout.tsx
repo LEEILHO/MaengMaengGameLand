@@ -17,12 +17,12 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   themeColor: '#ffffff',
   icons: {
-    apple: '/icons/apple-touch-icon.png',
+    apple: '/icons/android-chrome-192x192.png',
     other: [
       {
         url: '/icons/iphone-splash.png',
         media:
-          'screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)',
+          '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)',
         rel: 'apple-touch-startup-image',
       },
     ],
