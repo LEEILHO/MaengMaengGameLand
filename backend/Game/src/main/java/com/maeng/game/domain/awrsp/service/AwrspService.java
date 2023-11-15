@@ -93,7 +93,6 @@ public class AwrspService {
     public synchronized void enterGame(String gameCode){
         // 모든 참가자에게서 해당 요청을 받으면 게임 시작 -> 타이머 시작  / 문제 카드 전송
         log.info("모든 플레이어 참가 완료");
-        // TODO : 세션 정보 저장
 
         Game game = getCurrentGame(gameCode);
         game.setCurrentRound(game.getCurrentRound()+1); // 게임 시작이므로 1라운드로 변경

@@ -454,27 +454,6 @@ public class RoomService {
         template.convertAndSend(CHAT_EXCHANGE_NAME, "room."+roomCode, messageDTO);
     }
 
-//    @Operation(summary = "웹소켓 세션 대기방 정보 저장")
-//    public void saveSessionRoom(String roomCode, String nickname){
-//        Session session = sessionRepository.findById(nickname).orElse(null);
-//
-//        sessionRepository.save(Session.builder().sessionId(session.getSessionId())
-//                .nickname(session.getNickname())
-//                .roomCode(roomCode).build());
-//    }
-//
-//    @Operation(summary = "웹소켓 세션 게임 정보 저장")
-//    public void saveSessionGame(String gameCode, String nickname){
-//        // TODO : 모든 플레이어의 Session에 gameCode 저장
-//        Session session = sessionRepository.findById(nickname).orElse(null);
-//
-//        sessionRepository.save(Session.builder().sessionId(session.getSessionId())
-//                .nickname(session.getNickname())
-//                .roomCode(session.getRoomCode())
-//                .gameCode(gameCode)
-//                .build());
-//    }
-
     public HashMap<Integer, Seat> seatInit(){
         HashMap<Integer, Seat> seats = new HashMap<>();
 
@@ -491,9 +470,9 @@ public class RoomService {
     public Room getCurrentRoom(String roomCode){
         Room room = roomRepository.findById(roomCode).orElse(null);
 
-        if(room == null){
-            throw new NotFoundRoomException("존재하지 않는 방입니다.");
-        }
+//        if(room == null){
+//            throw new NotFoundRoomException("존재하지 않는 방입니다.");
+//        }
 
         return room;
     }
