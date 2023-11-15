@@ -37,61 +37,59 @@ const useSocketAWRSP = () => {
   /**
    * 전승 가위바위보 게임 구독
    */
-  const connectAWRSPGame = useCallback(
-    (step: StepType) => {
-      console.log('전승 가위바위보 게임 구독', gameCode)
+  const connectAWRSPGame = useCallback(() => {
+    console.log('전승 가위바위보 게임 구독', gameCode)
 
-      client.current?.subscribe(`/exchange/game/awrsp.${gameCode}`, (res) => {
-        const response: socketResponseType<unknown> = JSON.parse(res.body)
-        console.log(response)
+    client.current?.subscribe(`/exchange/game/awrsp.${gameCode}`, (res) => {
+      const response: socketResponseType<unknown> = JSON.parse(res.body)
+      console.log(response)
 
-        // 카드 조합 제한 시간을 받아서 타이머 시간 설정
-        if (
-          response.type === 'CARD_SUBMIT' ||
-          response.type === 'DRAW_CARD' ||
-          response.type === 'PLAYER_WINS' ||
-          response.type === 'ALL_WINS'
-        ) {
-          if (step === 'WAITING') return
-          const data = response.data as number
-          console.log('받아온 시간 : ', data)
-          setTimerTime(data)
-          setStep(response.type as StepType)
+      // 카드 조합 제한 시간을 받아서 타이머 시간 설정
+      if (
+        response.type === 'CARD_SUBMIT' ||
+        response.type === 'DRAW_CARD' ||
+        response.type === 'PLAYER_WINS' ||
+        response.type === 'ALL_WINS'
+      ) {
+        console.log(step, '이후 타이머 시간 설정')
+        if (step === 'WAITING') return
+        const data = response.data as number
+        console.log('받아온 시간 : ', data)
+        setTimerTime(data)
+        setStep(response.type as StepType)
 
-          // 비김 카드 선택하면 비김 카드 셋팅할 준비
-          if (response.type === 'DRAW_CARD') {
-            setDrawCard({ ...drawCard, isSetting: false })
-          }
+        // 비김 카드 선택하면 비김 카드 셋팅할 준비
+        if (response.type === 'DRAW_CARD') {
+          setDrawCard({ ...drawCard, isSetting: false })
         }
-        // 몇 라운드인지 받아오기
-        else if (response.type === 'ROUND') {
-          console.log('라운드를 받아올 때: ', step)
+      }
+      // 몇 라운드인지 받아오기
+      else if (response.type === 'ROUND') {
+        console.log('라운드를 받아올 때: ', step)
 
-          if (step === 'WAITING') return
-          const data = response.data as number
-          console.log(data, '라운드')
-          setRound(data)
-        }
-        // 모든 유저의 라운드 결과를 받아오기
-        else if (response.type === 'CARD_RESULT') {
-          console.log('라운드 결과를 받아올 때: ', step)
+        if (step === 'WAITING') return
+        const data = response.data as number
+        console.log(data, '라운드')
+        setRound(data)
+      }
+      // 모든 유저의 라운드 결과를 받아오기
+      else if (response.type === 'CARD_RESULT') {
+        console.log('라운드 결과를 받아올 때: ', step)
 
-          if (step === 'WAITING') return
-          const data = response.data as PlayerResultType[]
-          console.log('이번 라운드 결과 : ', data)
-          setPlayerResult(data)
-        }
-        // 게임 종료, 순위 받아오기
-        else if (response.type === 'GAME_OVER') {
-          const data = response.data as GameResultType[]
-          console.log('게임 결과 : ', data)
-          setGameReulst(data)
-          setStep(response.type as StepType)
-        }
-      })
-    },
-    [client.current, step],
-  )
+        if (step === 'WAITING') return
+        const data = response.data as PlayerResultType[]
+        console.log('이번 라운드 결과 : ', data)
+        setPlayerResult(data)
+      }
+      // 게임 종료, 순위 받아오기
+      else if (response.type === 'GAME_OVER') {
+        const data = response.data as GameResultType[]
+        console.log('게임 결과 : ', data)
+        setGameReulst(data)
+        setStep(response.type as StepType)
+      }
+    })
+  }, [client.current, step, drawCard, gameCode])
 
   /**
    * 전승 가위바위보 게임 구독 취소
@@ -168,7 +166,7 @@ const useSocketAWRSP = () => {
         nickname: user?.nickname,
       },
       () => {
-        connectAWRSPGame(step)
+        connectAWRSPGame()
         handleRoundStart()
       },
       () => {
