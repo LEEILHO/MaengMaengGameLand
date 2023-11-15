@@ -149,6 +149,13 @@ export const PriceRow = styled.div`
   }
 `
 
+export const SubmitPrice = styled.div`
+  font-size: 14px;
+  font-weight: 700;
+  width: 100%;
+  text-align: right;
+`
+
 export const ButtonRow = styled.div`
   display: flex;
   margin-left: auto;

@@ -21,6 +21,7 @@ export const UserProfile = styled.img`
   border-radius: 50%;
   width: 32px;
   height: 32px;
+  object-fit: cover;
 `
 
 export const Username = styled.p`
