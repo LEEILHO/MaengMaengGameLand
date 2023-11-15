@@ -1,19 +1,19 @@
 'use client'
 
-import { DrawCardState, StepState } from '@atom/awrspAtom'
+import { DrawCardState } from '@atom/awrspAtom'
 import { images } from '@constants/images'
 import useDidMountEffect from '@hooks/useDidMoundEffect'
 import * as S from '@styles/awrsp/DrawCardModal.styled'
-import { RspType } from '@type/awrsp/awrsp.type'
+import { RspType, StepType } from '@type/awrsp/awrsp.type'
 import { useCallback } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
 
 type Props = {
   closeModal: () => void
+  step: StepType
 }
 
-const DrawCardModal = ({ closeModal }: Props) => {
-  const step = useRecoilValue(StepState)
+const DrawCardModal = ({ closeModal, step }: Props) => {
   const [drawCard, setDrawCard] = useRecoilState(DrawCardState)
 
   const onClickDrawCard = useCallback((cardType: RspType) => {

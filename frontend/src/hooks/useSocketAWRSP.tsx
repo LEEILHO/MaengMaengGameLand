@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useRef } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { CompatClient, Stomp } from '@stomp/stompjs'
 import { SOCKET_URL } from '@constants/baseUrl'
 import SockJS from 'sockjs-client'
@@ -13,7 +13,6 @@ import {
   GameResultState,
   PlayerResultState,
   RoundState,
-  StepState,
   TimerState,
 } from '@atom/awrspAtom'
 import {
@@ -29,10 +28,11 @@ const useSocketAWRSP = () => {
   const user = useRecoilValue(userState)
   const setTimerTime = useSetRecoilState(TimerState)
   const setPlayerResult = useSetRecoilState(PlayerResultState)
-  const setStep = useSetRecoilState(StepState)
   const setGameReulst = useSetRecoilState(GameResultState)
   const setRound = useSetRecoilState(RoundState)
   const [drawCard, setDrawCard] = useRecoilState(DrawCardState)
+
+  const [step, setStep] = useState<StepType>('ENTER_GAME')
 
   /**
    * 전승 가위바위보 게임 구독
@@ -69,12 +69,14 @@ const useSocketAWRSP = () => {
       }
       // 몇 라운드인지 받아오기
       else if (response.type === 'ROUND') {
+        if (step === 'WAITING') return
         const data = response.data as number
         console.log(data, '라운드')
         setRound(data)
       }
       // 모든 유저의 라운드 결과를 받아오기
       else if (response.type === 'CARD_RESULT') {
+        if (step === 'WAITING') return
         const data = response.data as PlayerResultType[]
         console.log('이번 라운드 결과 : ', data)
         setPlayerResult(data)
@@ -185,6 +187,8 @@ const useSocketAWRSP = () => {
     handleRoundStart,
     handleTimeOver,
     handleCardSubmit,
+    step,
+    setStep,
   }
 }
 
