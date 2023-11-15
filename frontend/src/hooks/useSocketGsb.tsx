@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { CompatClient, Stomp } from '@stomp/stompjs'
 import SockJS from 'sockjs-client'
 import { SOCKET_URL } from '@constants/baseUrl'
@@ -69,7 +69,7 @@ const useSocketGsb = () => {
   const resetGameOver = useResetRecoilState(GameOverState)
 
   // 금은동 게임 구독
-  const connectGsb = useCallback(() => {
+  const connectGsb = () => {
     console.log('금은동 게임 구독 : ', client, gameCode, user)
     console.log(client.current)
 
@@ -283,9 +283,9 @@ const useSocketGsb = () => {
         setGameOver(result.data)
       }
     })
-  }, [client.current, gameCode])
+  }
 
-  const disconnectGsb = useCallback(() => {
+  const disconnectGsb = () => {
     console.log('금은동 게임 구독 취소')
 
     client.current?.unsubscribe(`/exchange/game/gsb.${gameCode}`)
@@ -302,47 +302,47 @@ const useSocketGsb = () => {
     resetResult()
     resetRound()
     resetTimer()
-  }, [client.current, gameCode])
+  }
 
   // 소켓 연결
-  const connectSocket = useCallback(
-    (connectedFunction: () => void, disconnectedFunction: () => void) => {
-      const sock = new SockJS(SOCKET_URL)
-      const StompClient = Stomp.over(() => sock)
-      console.log(sock)
-      sock.onmessage = (e) => {
-        console.log('맹맹', e.data)
-      }
-      client.current = StompClient
+  const connectSocket = (
+    connectedFunction: () => void,
+    disconnectedFunction: () => void,
+  ) => {
+    const sock = new SockJS(SOCKET_URL)
+    const StompClient = Stomp.over(() => sock)
+    console.log(sock)
+    sock.onmessage = (e) => {
+      console.log('맹맹', e.data)
+    }
+    client.current = StompClient
 
-      // StompClient.debug = () => {}
+    // StompClient.debug = () => {}
 
-      // 연결 되면
-      client.current.connect(
-        {
-          nickname: user?.nickname,
-        },
+    // 연결 되면
+    client.current.connect(
+      {
+        nickname: user?.nickname,
+      },
 
-        () => {
-          connectedFunction()
-          handleEnterGsb()
-        },
-        // 연결 종료 시
-        () => {
-          disconnectedFunction()
-          // 게임 나가기
-        },
-      )
-    },
-    [client.current],
-  )
+      () => {
+        connectedFunction()
+        handleEnterGsb()
+      },
+      // 연결 종료 시
+      () => {
+        disconnectedFunction()
+        // 게임 나가기
+      },
+    )
+  }
 
-  const disconnectSocket = useCallback(() => {
+  const disconnectSocket = () => {
     client.current?.disconnect()
-  }, [client.current])
+  }
 
   // 게임 참가
-  const handleEnterGsb = useCallback(() => {
+  const handleEnterGsb = () => {
     console.log('금은동 게임 참가 : ', user?.nickname)
 
     setDisplayMessage('카드를 뒤집어 선공을 정해주세요')
@@ -353,75 +353,66 @@ const useSocketGsb = () => {
         nickname: user?.nickname,
       }),
     })
-  }, [client.current])
+  }
 
   /**
    * 선후공 카드 선택
    * 선택한 카드의 인덱스를 전달
    * 카드 seq == 0이면 선공카드
    */
-  const handleChoiceTurnCard = useCallback(
-    (index: number) => {
-      console.log('선후공 카드 선택 : ', index)
+  const handleChoiceTurnCard = (index: number) => {
+    console.log('선후공 카드 선택 : ', index)
 
-      client.current?.publish({
-        destination: `/pub/game.gsb.set-player.${gameCode}`,
-        body: JSON.stringify({
-          nickname: user?.nickname,
-          seq: index,
-        }),
-      })
-    },
-    [client.current],
-  )
+    client.current?.publish({
+      destination: `/pub/game.gsb.set-player.${gameCode}`,
+      body: JSON.stringify({
+        nickname: user?.nickname,
+        seq: index,
+      }),
+    })
+  }
 
   /**
    *  금은동 세팅
    */
-  const handleGSBComb = useCallback(
-    (gold: number, silver: number, bronze: number) => {
-      console.log('금은동 조합 전송')
-      console.log('금: ', gold, ' 은: ', silver, ' 동: ', bronze)
+  const handleGSBComb = (gold: number, silver: number, bronze: number) => {
+    console.log('금은동 조합 전송')
+    console.log('금: ', gold, ' 은: ', silver, ' 동: ', bronze)
 
-      setMy((prev) => {
-        if (!prev) return null
-        return {
-          ...prev,
-          currentGold: prev.currentGold - gold,
-          currentSilver: prev.currentSilver - silver,
-          currentBronze: prev.currentBronze - bronze,
-        }
-      })
+    setMy((prev) => {
+      if (!prev) return null
+      return {
+        ...prev,
+        currentGold: prev.currentGold - gold,
+        currentSilver: prev.currentSilver - silver,
+        currentBronze: prev.currentBronze - bronze,
+      }
+    })
 
-      client.current?.publish({
-        destination: `/pub/game.gsb.set-star.${gameCode}`,
-        body: JSON.stringify({
-          gold: gold,
-          silver: silver,
-          bronze: bronze,
-        }),
-      })
-    },
-    [client.current],
-  )
+    client.current?.publish({
+      destination: `/pub/game.gsb.set-star.${gameCode}`,
+      body: JSON.stringify({
+        gold: gold,
+        silver: silver,
+        bronze: bronze,
+      }),
+    })
+  }
 
   /**
    * 칩을 베팅
    */
-  const handleBetting = useCallback(
-    (giveUp: boolean, bettingChips: number) => {
-      console.log('베팅: ', giveUp, bettingChips)
+  const handleBetting = (giveUp: boolean, bettingChips: number) => {
+    console.log('베팅: ', giveUp, bettingChips)
 
-      client.current?.publish({
-        destination: `/pub/game.gsb.betting.${gameCode}`,
-        body: JSON.stringify({
-          giveUp: giveUp,
-          bettingChips: bettingChips,
-        }),
-      })
-    },
-    [client.current],
-  )
+    client.current?.publish({
+      destination: `/pub/game.gsb.betting.${gameCode}`,
+      body: JSON.stringify({
+        giveUp: giveUp,
+        bettingChips: bettingChips,
+      }),
+    })
+  }
 
   return {
     client,
