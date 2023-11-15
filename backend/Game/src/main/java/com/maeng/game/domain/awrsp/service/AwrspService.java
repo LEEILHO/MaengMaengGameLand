@@ -145,9 +145,7 @@ public class AwrspService {
         HashMap<String, Player> players = game.getPlayers();
         int currentRound = game.getCurrentRound();
 
-        log.info("현재 라운드 : "+currentRound);
-
-        // TODO : 카드를 제출한 플레이어의 승 수 구하기, 승리했으면 Rank에 추가
+        // 카드를 제출한 플레이어의 승 수 구하기, 승리했으면 Rank에 추가
         for(String nickname : submit.getSubmit()){
             Player player = players.get(nickname);
 
@@ -216,6 +214,8 @@ public class AwrspService {
     public boolean checkGameOver(String gameCode){
         Game game = this.getCurrentGame(gameCode);
         log.info("승리한 사람 : "+game.getFinishCount());
+
+        // TODO : 승리한 사람 + 연결 끊긴 사람 모두가 finishCount 돼서 게임 종료됨
         return game.getFinishCount() >= 4 || game.getCurrentRound() >= MAX_ROUND
                 || (game.getHeadCount() - game.getFinishCount()) == 1;
     }
@@ -265,6 +265,7 @@ public class AwrspService {
     public void sendRound(String gameCode){
         Game game = this.getCurrentGame(gameCode);
 
+        log.info("[현재 라운드] : " + game.getCurrentRound());
         MessageDTO messageDTO = MessageDTO.builder()
                 .type("ROUND")
                 .data(game.getCurrentRound())
@@ -279,6 +280,10 @@ public class AwrspService {
 
         Game game = this.getCurrentGame(gameCode);
         Player player = game.getPlayers().get(nickname);
+
+        if(player.isFinish()){ // 이미 게임 끝난 사람은 처리 x
+            return;
+        }
 
         player.setFinish(true);
         player.setFinishedAt(LocalDateTime.now());
