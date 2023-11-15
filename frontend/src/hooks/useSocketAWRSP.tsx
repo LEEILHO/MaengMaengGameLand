@@ -34,6 +34,11 @@ const useSocketAWRSP = () => {
 
   const [step, setStep] = useState<StepType>('ENTER_GAME')
 
+  const checkStep = () => {
+    if (step === 'WAITING') return true
+    else return false
+  }
+
   /**
    * 전승 가위바위보 게임 구독
    */
@@ -51,9 +56,7 @@ const useSocketAWRSP = () => {
         response.type === 'PLAYER_WINS' ||
         response.type === 'ALL_WINS'
       ) {
-        console.log('타이머시간받아올때: ', step)
-
-        if (step === 'WAITING') return
+        if (checkStep()) return
         const data = response.data as number
         console.log('받아온 시간 : ', data)
         setTimerTime(data)
