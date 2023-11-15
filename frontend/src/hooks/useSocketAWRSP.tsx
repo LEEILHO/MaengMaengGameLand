@@ -37,7 +37,7 @@ const useSocketAWRSP = () => {
   /**
    * 전승 가위바위보 게임 구독
    */
-  const connectAWRSPGame = useCallback(() => {
+  const connectAWRSPGame = () => {
     console.log('전승 가위바위보 게임 구독', gameCode)
 
     client.current?.subscribe(`/exchange/game/awrsp.${gameCode}`, (res) => {
@@ -90,7 +90,7 @@ const useSocketAWRSP = () => {
         setStep(response.type as StepType)
       }
     })
-  }, [client.current])
+  }
 
   /**
    * 전승 가위바위보 게임 구독 취소
