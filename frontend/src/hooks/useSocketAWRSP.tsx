@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useRef, useState, useEffect } from 'react'
 import { CompatClient, Stomp } from '@stomp/stompjs'
 import { SOCKET_URL } from '@constants/baseUrl'
 import SockJS from 'sockjs-client'
@@ -105,8 +105,6 @@ const useSocketAWRSP = () => {
    * 게임 참가 (라운드마다 호출)
    */
   const handleRoundStart = useCallback(() => {
-    console.log('라운드 시작!')
-
     client.current?.publish({
       destination: `/pub/game.awrsp.timer.${gameCode}`,
       body: JSON.stringify({
@@ -123,8 +121,6 @@ const useSocketAWRSP = () => {
     (step: StepType) => {
       console.log('종료되는 단계 : ', step)
       if (step === 'ALL_WINS') {
-        console.log('다음라운드 시작한다며?')
-
         // 다음 라운드 시작을 알림
         setStep('ENTER_GAME')
         setTimerTime(20)
@@ -183,6 +179,10 @@ const useSocketAWRSP = () => {
   const disconnectSocket = useCallback(() => {
     client.current?.disconnect()
   }, [client.current])
+
+  useEffect(() => {
+    console.log('변경된 step:', step)
+  }, [step])
 
   return {
     connectSocket,
