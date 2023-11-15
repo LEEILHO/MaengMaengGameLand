@@ -249,6 +249,7 @@ public class AwrspService {
                             .rank(player.getRank())
                             .finish(player.isFinish())
                             .detail(roundDetail)
+                            .profileUrl(player.getProfileUrl())
                     .build());
         }
 

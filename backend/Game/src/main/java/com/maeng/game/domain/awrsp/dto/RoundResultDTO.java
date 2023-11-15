@@ -14,4 +14,5 @@ public class RoundResultDTO {
     private boolean finish;
     private int rank;
     private RoundDetailDTO detail;
+    private String profileUrl;
 }
