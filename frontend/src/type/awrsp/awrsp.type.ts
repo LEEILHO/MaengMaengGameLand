@@ -35,6 +35,7 @@ export type RoundResultType = {
 
 export type PlayerResultType = {
   nickname: string
+  profileUrl: string
   finish: boolean
   rank: number
   detail: RoundResultType

@@ -11,7 +11,7 @@ type Props = {
 const AllResultItem = ({ result }: Props) => {
   return (
     <S.AllResultItemContainer>
-      <S.ProfileImage src={images.common.header.dummyProfile} />
+      <S.ProfileImage src={result.profileUrl} />
       <S.Nickname>{result.nickname}</S.Nickname>
       {result.detail ? (
         <S.WinCount>

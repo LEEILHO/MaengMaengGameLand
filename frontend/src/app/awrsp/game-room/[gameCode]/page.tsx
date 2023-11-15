@@ -105,15 +105,17 @@ const AwrspGameRoom = () => {
             {step === 'PLAYER_WINS' && <MyResult />}
             {(step === 'ALL_WINS' || step === 'WAITING') && <AllResultList />}
           </S.Content>
-          <S.TimerContainer>
-            <Timer
-              fontSize="12"
-              size="72"
-              time={timerTime}
-              round={round}
-              timeOverHandle={timeOverHandle}
-            />
-          </S.TimerContainer>
+          {step !== 'WAITING' && (
+            <S.TimerContainer>
+              <Timer
+                fontSize="12"
+                size="72"
+                time={timerTime}
+                round={round}
+                timeOverHandle={timeOverHandle}
+              />
+            </S.TimerContainer>
+          )}
           <S.HistoryButton onClick={openHistoryModal}>
             <img src={images.awrsp.history} alt="기록" />
           </S.HistoryButton>
