@@ -46,7 +46,10 @@ const AwrspGameRoom = () => {
   const timeOverHandle = () => {
     if (step) {
       console.log(step, '종료')
-      handleTimeOver(step)
+      // 정답을 맞추지 않았다면 다음 단계로 넘어가기 위해 타이머 종료 신호 전송
+      if (step !== 'WAITING') {
+        handleTimeOver(step)
+      } else return
     }
   }
 
@@ -59,6 +62,8 @@ const AwrspGameRoom = () => {
   }, [])
 
   useEffect(() => {
+    console.log('스텝변경: ', step)
+
     if (step === 'DRAW_CARD') openModal()
   }, [step])
 
@@ -101,21 +106,26 @@ const AwrspGameRoom = () => {
               </S.TableHeader>
               {gameResult?.map((result) => (
                 <S.GameResultItem key={result.nickname}>
-                  <p className="rank">{result.rank}</p>
+                  <p className="rank">
+                    {gameResult.length !== result.rank ? result.rank : '-'}
+                  </p>
                   <p className="nickname">{result.nickname}</p>
                   <p className="point">{result.point}</p>
                 </S.GameResultItem>
               ))}
             </S.GameResultList>
           </S.Content>
-          <S.BackToLobbyButton
-            onClick={() => {
-              router.replace(`/awrsp/lobby`)
-            }}
-          >
-            <img src={images.common.header.back} />
-          </S.BackToLobbyButton>
         </>
+      )}
+
+      {(step === 'GAME_OVER' || step === 'WAITING') && (
+        <S.BackToLobbyButton
+          onClick={() => {
+            router.replace(`/awrsp/lobby`)
+          }}
+        >
+          <img src={images.common.header.back} />
+        </S.BackToLobbyButton>
       )}
 
       <Modal isOpen={isOpen}>
