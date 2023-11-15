@@ -39,3 +39,17 @@ export function formatKoreanCurrency(amount: number): string {
 
   return answer
 }
+
+/**
+ *
+ * @param input
+ * @returns 돈을 입력받아 숫자만 반환 (ex. 100,000,000원 => 100000000 반환)
+ */
+export function extractNumberFromString(input: string): number {
+  // ','와 '원'을 제거하고 공백도 제거합니다.
+  const cleanedString = input.replace(/,|원|\s/g, '')
+
+  const extractedNumber = parseInt(cleanedString, 10)
+
+  return extractedNumber
+}

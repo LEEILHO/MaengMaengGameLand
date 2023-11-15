@@ -9,7 +9,11 @@ import CButton from '@components/common/clients/CButton'
 import JWACUserList from '@components/gameRoom/jwac/JWACUserList'
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useRecoilValue } from 'recoil'
-import { formatKoreanCurrency, jewelryToLottie } from '@utils/gameRoom/jwacUtil'
+import {
+  extractNumberFromString,
+  formatKoreanCurrency,
+  jewelryToLottie,
+} from '@utils/gameRoom/jwacUtil'
 import { userState } from '@atom/userAtom'
 import { usePathname, useRouter } from 'next/navigation'
 import useSocketJWAC from '@hooks/useSocketJWAC'
@@ -61,7 +65,7 @@ const page = () => {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       console.log('숫자 바뀜', e.target.value)
 
-      setBidMoney(Number(e.target.value))
+      setBidMoney(extractNumberFromString(e.target.value))
     },
     [],
   )
@@ -87,6 +91,10 @@ const page = () => {
       disconnectSocket()
     }
   }, [pathname, user])
+
+  useEffect(() => {
+    console.log(bidMoney)
+  }, [bidMoney])
 
   // 다음 라운드 시작 시
   useEffect(() => {
@@ -189,7 +197,7 @@ const page = () => {
                   isAllowed={(values) => {
                     let { floatValue } = values
                     if (!floatValue) floatValue = 0
-                    return floatValue < 1000000000000
+                    return floatValue < 1000000000000000
                   }}
                   onChange={handleBidMody}
                   className="price-input"
@@ -204,9 +212,9 @@ const page = () => {
                 />
                 <S.PriceUnit>원</S.PriceUnit> */}
               </S.PriceRow>
-              {/* <S.CurrentPriceRow>
+              <S.CurrentPriceRow>
                 {formatKoreanCurrency(bidMoney)}
-              </S.CurrentPriceRow> */}
+              </S.CurrentPriceRow>
               <S.CumlativeAmountCotainer>
                 <S.CumlativeDiscriptionRow>
                   <img src={images.gameRoom.jwac.money} alt="누적 금액" />
