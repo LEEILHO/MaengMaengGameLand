@@ -35,6 +35,7 @@ export const UserProfileImage = styled.img`
   width: 66px;
   height: 66px;
   border-radius: 50%;
+  object-fit: cover;
 `
 
 export const UserNameRow = styled.div`
