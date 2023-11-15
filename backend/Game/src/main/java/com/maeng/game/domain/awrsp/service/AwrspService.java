@@ -201,6 +201,13 @@ public class AwrspService {
                     .build());
         }
 
+        result.sort(new Comparator<GameResultDTO>() {
+            @Override
+            public int compare(GameResultDTO o1, GameResultDTO o2) {
+                return o1.getRank() - o2.getRank();
+            }
+        });
+
         MessageDTO messageDTO = MessageDTO.builder()
                 .type("GAME_OVER")
                 .data(result)
