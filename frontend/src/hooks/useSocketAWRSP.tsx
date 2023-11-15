@@ -126,6 +126,8 @@ const useSocketAWRSP = () => {
     (step: StepType) => {
       console.log('종료되는 단계 : ', step)
       if (step === 'ALL_WINS') {
+        console.log('다음라운드 시작한다며?')
+
         // 다음 라운드 시작을 알림
         setStep('ENTER_GAME')
         setTimerTime(20)
