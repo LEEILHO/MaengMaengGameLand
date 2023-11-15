@@ -10,7 +10,11 @@ export const UesrPageContainer = styled.div`
   left: 0;
 `
 
-export const BackgroundLottie = styled(Lottie)`
+export const LottieContainer = styled.div`
+  width: 100%;
+  height: 100%;
   position: absolute;
   z-index: -1;
 `
+
+export const BackgroundLottie = styled(Lottie)``
