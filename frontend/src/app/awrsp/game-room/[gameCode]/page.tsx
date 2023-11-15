@@ -10,10 +10,14 @@ import DrawCardModal from '@components/awrsp/client/DrawCardModal'
 import { useEffect } from 'react'
 import MyResult from '@components/awrsp/client/MyResult'
 import AllResultList from '@components/awrsp/client/AllResultList'
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, useResetRecoilState } from 'recoil'
 import {
+  DrawCardState,
   GameResultState,
+  HistoryState,
+  PlayerResultState,
   RoundState,
+  RspCardListState,
   StepState,
   TimerState,
 } from '@atom/awrspAtom'
@@ -43,6 +47,15 @@ const AwrspGameRoom = () => {
   const round = useRecoilValue(RoundState)
   const gameResult = useRecoilValue(GameResultState)
 
+  // 끝나고 리셋을 위한 함수
+  const resetCardList = useResetRecoilState(RspCardListState)
+  const resetDrawCard = useResetRecoilState(DrawCardState)
+  const resetTimerReset = useResetRecoilState(TimerState)
+  const resetPlayerResult = useResetRecoilState(PlayerResultState)
+  const resetStep = useResetRecoilState(StepState)
+  const resetGameResult = useResetRecoilState(GameResultState)
+  const resetHistory = useResetRecoilState(HistoryState)
+
   const timeOverHandle = () => {
     if (step) {
       console.log(step, '종료')
@@ -51,6 +64,18 @@ const AwrspGameRoom = () => {
         handleTimeOver(step)
       } else return
     }
+  }
+
+  const onClickBackToLobby = () => {
+    resetCardList()
+    resetDrawCard()
+    resetTimerReset()
+    resetPlayerResult()
+    resetStep()
+    resetGameResult()
+    resetHistory()
+
+    router.replace(`/awrsp/lobby`)
   }
 
   useEffect(() => {
@@ -119,11 +144,7 @@ const AwrspGameRoom = () => {
       )}
 
       {(step === 'GAME_OVER' || step === 'WAITING') && (
-        <S.BackToLobbyButton
-          onClick={() => {
-            router.replace(`/awrsp/lobby`)
-          }}
-        >
+        <S.BackToLobbyButton onClick={onClickBackToLobby}>
           <img src={images.common.header.back} />
         </S.BackToLobbyButton>
       )}
