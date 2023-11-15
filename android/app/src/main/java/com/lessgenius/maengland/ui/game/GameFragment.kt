@@ -66,6 +66,7 @@ class GameFragment :
     private var yPosition = 0F
     private var playerMinHeight = 0F // 플레이어의 최고 높이
 
+    private var lastY = 0
     private var score = MutableLiveData(0)
 
 
@@ -104,7 +105,7 @@ class GameFragment :
         screenHeight = win.bounds.height()
 
         // 스크롤 뷰
-        binding.gameLayout.layoutParams.height = screenHeight * 120
+        binding.gameLayout.layoutParams.height = screenHeight * 500
         binding.gameScrollView.post {
             binding.gameScrollView.fullScroll(ScrollView.FOCUS_DOWN)
         }
@@ -173,7 +174,7 @@ class GameFragment :
     }
 
     private fun onCollidedPlatform(platformTop: Float) {
-        if (playerMinHeight > platformTop) {
+        if (playerMinHeight > platformTop) { // 최고 높이 갱신
 
             binding.gameScrollView.smoothScrollBy(
                 0, -(yPosition - platformTop).toInt()
@@ -182,6 +183,14 @@ class GameFragment :
             score.value =
                 score.value?.plus(((yPosition - platformTop) / 10).toInt())
             playerMinHeight = platformTop
+
+            // 새로운 발판 생성
+            while (platformTop - lastY < screenHeight) {
+                createNewPlatform()
+            }
+//            if (platformTop - screenHeight < lastY) {
+//                createNewPlatform()
+//            }
 
         }
 
@@ -344,18 +353,20 @@ class GameFragment :
 
     }
 
+//    private
+
     private fun initPlatform() {
+        lastY = binding.gameLayout.layoutParams.height  // 가장 아래 발판의 Y 위치
+        val initPlatformY = binding.gameLayout.layoutParams.height - screenHeight * 2
 
         val MIN_PLATFORM_DISTANCE = JUMP_HEIGHT / 3  // 최소 간격
         val MAX_PLATFORM_DISTANCE = JUMP_HEIGHT      // 최대 간격
-        var lastY = binding.gameLayout.layoutParams.height  // 가장 아래 발판의 Y 위치
 
         var idx = 0
-        while (lastY > 0) {
+        while (lastY > initPlatformY) {
             val distance = if (idx == 0) {
                 MIN_PLATFORM_DISTANCE.toInt()
             } else (MIN_PLATFORM_DISTANCE.toInt()..MAX_PLATFORM_DISTANCE.toInt()).random()
-
 
             lastY -= distance
 
@@ -363,6 +374,20 @@ class GameFragment :
             positionPlatformRandomly(platform, lastY, idx++)
 
         }
+    }
+
+    private fun createNewPlatform() {
+
+        val MIN_PLATFORM_DISTANCE = JUMP_HEIGHT / 3  // 최소 간격
+        val MAX_PLATFORM_DISTANCE = JUMP_HEIGHT      // 최대 간격
+
+        val distance = (MIN_PLATFORM_DISTANCE.toInt()..MAX_PLATFORM_DISTANCE.toInt()).random()
+
+        lastY -= distance
+
+        val platform = createPlatform()
+        positionPlatformRandomly(platform, lastY)
+        Log.d(TAG, "createNewPlatform: new! $lastY")
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -388,7 +413,7 @@ class GameFragment :
             layoutParams.height = originalHeight / 4
         }
 
-        platform.visibility = View.GONE
+        platform.visibility = View.VISIBLE
 
         // 발판에 태그 설정
         platform.tag = "platform"
@@ -396,20 +421,17 @@ class GameFragment :
         // 발판을 레이아웃에 추가
         binding.gameLayout.addView(platform)
 
+        player?.bringToFront()
+
         return platform
     }
 
-    private fun positionPlatformRandomly(platform: ImageView, targetY: Int, index: Int) {
+    private fun positionPlatformRandomly(platform: ImageView, targetY: Int, index: Int = -1) {
         val maxX = screenWidth - platform.layoutParams.width
         val randomX = (0..maxX).random()
 
         platform.x = randomX.toFloat()
         platform.y = targetY.toFloat()
-        platform.visibility = View.VISIBLE
-        Log.d(
-            TAG,
-            "positionPlatformRandomly: ${platform.x} ${platform.y} ${platform.layoutParams.height} ${platform.layoutParams.width}"
-        )
 
         // 플레이어의 위치를 시작 발판의 위치로 지정
         if (index == 0) {
