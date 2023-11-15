@@ -16,6 +16,7 @@ import com.maeng.user.domain.score.entity.Score;
 import com.maeng.user.domain.score.enums.Tier;
 import com.maeng.user.domain.score.repository.ScoreRepository;
 import com.maeng.user.domain.user.dto.UserDetailResponse;
+import com.maeng.user.domain.user.dto.UserInfo;
 import com.maeng.user.domain.user.dto.UserNicknameEditDTO;
 import com.maeng.user.domain.user.dto.WatchCode;
 import com.maeng.user.domain.user.entity.User;
@@ -146,5 +147,16 @@ public class UserService {
         } catch (IOException e) {
             throw new UserException(UserExceptionCode.FAIL_TO_EDIT_PROFILE);
         }
+    }
+
+    public UserInfo getUserInfo(String nickname) {
+        User user = userRepository.findByNickname(nickname)
+            .orElseThrow(() -> new UserException(UserExceptionCode.USER_NOT_FOUND));
+        Score score = scoreRepository.findByUser(user).orElse(Score.builder().tier(Tier.BRONZE).build());
+
+        return UserInfo.builder()
+            .profile(user.getProfileImage())
+            .tier(score.getTier())
+            .build();
     }
 }

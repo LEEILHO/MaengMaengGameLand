@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -56,6 +57,13 @@ public class UserController {
         userService.editProfile(userEmail, profileInage);
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/profile/{nickname}")
+    public ResponseEntity<?> getUserInfo(@PathVariable("nickname") String nickname) {
+        logger.info("getUserInfo(), nickname = {}", nickname);
+
+        return ResponseEntity.ok().body(userService.getUserInfo(nickname));
     }
 
 }
