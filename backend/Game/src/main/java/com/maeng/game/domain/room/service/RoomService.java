@@ -6,16 +6,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import com.maeng.game.domain.awrsp.entity.Player;
-import com.maeng.game.domain.gsb.service.GsbService;
-import com.maeng.game.global.session.entity.Session;
-import com.maeng.game.global.session.repository.SessionRepository;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.maeng.game.domain.awrsp.exception.GameSettingException;
 import com.maeng.game.domain.awrsp.service.AwrspService;
+import com.maeng.game.domain.gsb.service.GsbService;
 import com.maeng.game.domain.jwac.emums.Tier;
 import com.maeng.game.domain.jwac.service.JwacService;
 import com.maeng.game.domain.lobby.service.LobbyService;
@@ -46,6 +45,7 @@ import com.maeng.game.domain.room.exception.NotHostException;
 import com.maeng.game.domain.room.exception.NotReadyPlayerException;
 import com.maeng.game.domain.room.exception.PullRoomException;
 import com.maeng.game.domain.room.repository.RoomRepository;
+import com.maeng.game.global.session.repository.SessionRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -510,7 +510,8 @@ public class RoomService {
     public String getProfileUrl(String nickname) {
         try {
             String baseUrl = "https://maengland.com/api/v1/auth/profile";
-            String requestUrl = baseUrl + "/" + nickname;
+            String encodedNickname = URLEncoder.encode(nickname, StandardCharsets.UTF_8);
+            String requestUrl = baseUrl + "/" + encodedNickname;
 
             URL url = new URL(requestUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
