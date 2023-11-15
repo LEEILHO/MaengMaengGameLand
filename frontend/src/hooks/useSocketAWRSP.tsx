@@ -55,12 +55,10 @@ const useSocketAWRSP = () => {
         console.log('받아온 시간 : ', data)
         setTimerTime(data)
         setStep((prev) => {
-          if (!prev) return null
-          if (prev !== 'WAITING') {
-            console.log('정답을 맞춰버렸네;;;')
-
+          if (!prev || prev !== 'WAITING') {
             return response.type as StepType
           }
+          console.log('정답을 맞춰버렸네;;;')
           return prev
         })
 
