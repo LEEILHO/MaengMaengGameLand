@@ -18,7 +18,6 @@ type Props = {
 
 // todo : 20으로 되어있는 곳 값 props로 받아오기
 const Timer = ({ size, fontSize, time, timeOverHandle, round }: Props) => {
-  const { playTictocSound, stopTictocSound } = useSound()
   const [currentTime, setCurrentTime] = useState(0)
   const timeRemaining = time - currentTime
   const soundRef = useRef<HTMLAudioElement>(null)
