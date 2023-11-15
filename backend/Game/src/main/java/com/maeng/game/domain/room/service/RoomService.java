@@ -19,10 +19,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maeng.game.domain.awrsp.exception.GameSettingException;
 import com.maeng.game.domain.awrsp.service.AwrspService;
 import com.maeng.game.domain.gsb.service.GsbService;
-import com.maeng.game.domain.jwac.emums.Tier;
 import com.maeng.game.domain.jwac.service.JwacService;
 import com.maeng.game.domain.lobby.service.LobbyService;
 import com.maeng.game.domain.room.dto.CreateRoomDTO;
@@ -35,6 +35,7 @@ import com.maeng.game.domain.room.dto.RoomInfoDTO;
 import com.maeng.game.domain.room.dto.RoomStateDTO;
 import com.maeng.game.domain.room.dto.SeatDTO;
 import com.maeng.game.domain.room.dto.SeatInfoDTO;
+import com.maeng.game.domain.room.dto.UserInfo;
 import com.maeng.game.domain.room.entity.Game;
 import com.maeng.game.domain.room.entity.Room;
 import com.maeng.game.domain.room.entity.Seat;
@@ -110,7 +111,7 @@ public class RoomService {
             throw new PullRoomException("플레이어가 가득 찬 방입니다.");
         }
 
-        String profile = getProfileUrl(enterDTO.getNickname());
+        UserInfo userInfo = getUserInfo(enterDTO.getNickname());
 
         // 방이 가득차지 않았으면 headCount++ 후 User 추가해주기
         int headCount = roomInfo.getHeadCount();
@@ -118,8 +119,8 @@ public class RoomService {
                 .nickname(enterDTO.getNickname())
                 .ready(false)
                 .host(true)
-                .profileUrl(profile)
-                .tier(Tier.BRONZE)
+                .profileUrl(userInfo.getProfile())
+                .tier(userInfo.getTier())
                 .build();
 
         HashMap<Integer, Seat> seats = roomInfo.getSeats();
@@ -520,9 +521,9 @@ public class RoomService {
         return -1;
     }
 
-    public String getProfileUrl(String nickname) {
+    public UserInfo getUserInfo(String nickname) {
         try {
-            String baseUrl = "https://maengland.com/api/v1/auth/profile";
+            String baseUrl = "http://maengland.com:9120/api/v1/user/profile";
             String encodedNickname = URLEncoder.encode(nickname, StandardCharsets.UTF_8);
             String requestUrl = baseUrl + "/" + encodedNickname;
 
@@ -540,18 +541,21 @@ public class RoomService {
                     while ((line = reader.readLine()) != null) {
                         response.append(line);
                     }
-                    return response.toString();
+
+                    ObjectMapper objectMapper = new ObjectMapper();
+
+                    return objectMapper.readValue(response.toString(), UserInfo.class);
                 }
             } else {
                 // 이미지 다운로드 실패 시 에러 메시지 반환
                 log.info(nickname + " 프로필 사진 가져오기 실패" + responseCode);
 
-                return "";
+                return UserInfo.builder().build();
             }
         } catch (IOException e) {
             // 예외 처리
             log.info(nickname + " 프로필 사진 가져오기 실패");
-            return "";
+            return UserInfo.builder().build();
         }
     }
 }
