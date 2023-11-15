@@ -21,7 +21,6 @@ const MyResult = () => {
   const user = useRecoilValue(userState)
   const [history, setHistory] = useRecoilState(HistoryState)
   const round = useRecoilValue(RoundState)
-  const setStep = useSetRecoilState(StepState)
   const [myResult, setMyResult] = useState<PlayerResultType>()
 
   useEffect(() => {
@@ -40,13 +39,6 @@ const MyResult = () => {
         return
       }
     })
-
-    return () => {
-      if (myResult && myResult.finish) {
-        setStep('WAITING')
-        return
-      }
-    }
   }, [])
 
   if (!myResult) return null
