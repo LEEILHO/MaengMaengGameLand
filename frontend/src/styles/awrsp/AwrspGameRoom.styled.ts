@@ -106,11 +106,11 @@ export const GameResultList = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  padding: 40px;
+  padding: 25px;
 `
 
 export const TableHeader = styled.div`
-  width: 320px;
+  width: 400px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -124,16 +124,14 @@ export const TableHeader = styled.div`
 
   margin-bottom: 12px;
 
-  .rank {
-    width: 50px;
-  }
+  .rank,
   .point {
     width: 100px;
   }
 `
 
 export const GameResultItem = styled.div`
-  width: 320px;
+  width: 400px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -147,9 +145,7 @@ export const GameResultItem = styled.div`
 
   margin-bottom: 8px;
 
-  .rank {
-    width: 50px;
-  }
+  .rank,
   .point {
     width: 100px;
   }
