@@ -7,6 +7,8 @@ import { secondsToMinutesAndSeconds } from '@utils/common/timer'
 import { images } from '@constants/images'
 import useSound from '@hooks/useSound'
 import { sounds } from '@constants/sounds'
+import { useRecoilValue } from 'recoil'
+import { soundState } from '@atom/soundAtom'
 
 type Props = {
   size: string
@@ -21,6 +23,7 @@ const Timer = ({ size, fontSize, time, timeOverHandle, round }: Props) => {
   const [currentTime, setCurrentTime] = useState(0)
   const timeRemaining = time - currentTime
   const soundRef = useRef<HTMLAudioElement>(null)
+  const isSound = useRecoilValue(soundState)
 
   useEffect(() => {
     console.log('[라운드 변경]', round)
@@ -39,13 +42,15 @@ const Timer = ({ size, fontSize, time, timeOverHandle, round }: Props) => {
 
   useEffect(() => {
     if (timeRemaining === 5) {
-      // playTictocSound()
-      soundRef.current?.play()
+      if (isSound?.effectSound ?? true) {
+        soundRef.current?.play()
+      }
     }
 
     if (timeRemaining === 0) {
-      // stopTictocSound()
-      soundRef.current?.pause()
+      if (isSound?.effectSound ?? true) {
+        soundRef.current?.pause()
+      }
     }
   }, [timeRemaining])
 
