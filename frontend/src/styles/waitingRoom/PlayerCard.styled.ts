@@ -47,6 +47,7 @@ export const ProfileImage = styled.img`
   left: 22px;
   width: 50px;
   height: 50px;
+  object-fit: cover;
 
   @media screen and ((max-width: 700px) or (max-height: 376px)) {
     top: 17px;
