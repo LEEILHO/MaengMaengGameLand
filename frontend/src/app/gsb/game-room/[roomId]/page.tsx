@@ -1,7 +1,7 @@
 'use client'
 
 import withAuth from '@components/hoc/client/PrivateRoute'
-import React, { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import * as S from '@styles/gsb/GameRoom.styled'
 import TurnCard from '@components/gsb/client/TurnCard'
@@ -54,6 +54,8 @@ const GameRoom = () => {
   const opponentBetChips = useRecoilValue(OpponentBetChipsState)
   const AllBetChips = useRecoilValue(AllBetChipsState)
 
+  const [isGameEnd, setIsGameEnd] = useState(false)
+
   useEffect(() => {
     connectSocket(connectGsb, disconnectGsb)
     return () => {
@@ -61,13 +63,26 @@ const GameRoom = () => {
     }
   }, [])
 
+  useEffect(() => {
+    let timeId: NodeJS.Timeout
+    if (round === 'GameOver') {
+      timeId = setTimeout(() => {
+        setIsGameEnd(true)
+      }, 5000)
+    }
+
+    return () => {
+      clearTimeout(timeId)
+    }
+  }, [round])
+
   return (
     <S.GameRoomContainer>
       <S.TopRow>
         <S.DisplayBoard>{displayMessage}</S.DisplayBoard>
         <BarTimer time={time} />
       </S.TopRow>
-      {round === 'GameOver' ? (
+      {isGameEnd ? (
         <>
           <GameOver />
           <S.BackButton

@@ -6,13 +6,20 @@ import { SOCKET_URL } from '@constants/baseUrl'
 import SockJS from 'sockjs-client'
 import { usePathname } from 'next/navigation'
 import { socketResponseType } from '@type/common/common.type'
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
+import {
+  useRecoilState,
+  useRecoilValue,
+  useResetRecoilState,
+  useSetRecoilState,
+} from 'recoil'
 import { userState } from '@atom/userAtom'
 import {
   DrawCardState,
   GameResultState,
+  HistoryState,
   PlayerResultState,
   RoundState,
+  RspCardListState,
   TimerState,
 } from '@atom/awrspAtom'
 import {
@@ -33,6 +40,14 @@ const useSocketAWRSP = () => {
   const [drawCard, setDrawCard] = useRecoilState(DrawCardState)
 
   const [step, setStep] = useState<StepType>('ENTER_GAME')
+
+  // 끝나고 리셋을 위한 함수
+  const resetCardList = useResetRecoilState(RspCardListState)
+  const resetDrawCard = useResetRecoilState(DrawCardState)
+  const resetTimerReset = useResetRecoilState(TimerState)
+  const resetPlayerResult = useResetRecoilState(PlayerResultState)
+  const resetGameResult = useResetRecoilState(GameResultState)
+  const resetHistory = useResetRecoilState(HistoryState)
 
   /**
    * 전승 가위바위보 게임 구독
@@ -98,6 +113,13 @@ const useSocketAWRSP = () => {
     console.log('전승 가위바위보 게임 구독 취소', gameCode)
 
     client.current?.unsubscribe(`/exchange/game/awrsp.${gameCode}`)
+
+    resetCardList()
+    resetDrawCard()
+    resetTimerReset()
+    resetPlayerResult()
+    resetGameResult()
+    resetHistory()
   }
 
   /**
