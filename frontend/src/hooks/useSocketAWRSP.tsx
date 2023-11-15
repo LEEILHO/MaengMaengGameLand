@@ -54,13 +54,7 @@ const useSocketAWRSP = () => {
         const data = response.data as number
         console.log('받아온 시간 : ', data)
         setTimerTime(data)
-        setStep((prev) => {
-          if (!prev || prev !== 'WAITING') {
-            return response.type as StepType
-          }
-          console.log('정답을 맞춰버렸네;;;')
-          return prev
-        })
+        setStep(response.type as StepType)
 
         // 비김 카드 선택하면 비김 카드 셋팅할 준비
         if (response.type === 'DRAW_CARD') {

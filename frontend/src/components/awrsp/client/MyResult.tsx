@@ -40,13 +40,6 @@ const MyResult = () => {
         return
       }
     })
-
-    return () => {
-      if (myResult && myResult.finish) {
-        setStep('WAITING')
-        return
-      }
-    }
   }, [])
 
   if (!myResult) return null
