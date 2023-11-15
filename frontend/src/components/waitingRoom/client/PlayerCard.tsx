@@ -51,13 +51,10 @@ const PlayerCard = ({
           <S.UserInfo>
             <S.TierFrame>
               <img className="frame" src={getTierImage(user.tier)} alt="티어" />
-              <S.ProfileImage
-                src={images.common.header.dummyProfile}
-                alt="프로필사진"
-              />
+              <S.ProfileImage src={user.profileUrl} alt="프로필사진" />
             </S.TierFrame>
 
-            <S.UserNickname>{user?.nickname}</S.UserNickname>
+            <S.UserNickname>{user.nickname}</S.UserNickname>
           </S.UserInfo>
           {user.nickname !== myInfo?.nickname && (
             <S.UserDetailButton onClick={openModal}>
