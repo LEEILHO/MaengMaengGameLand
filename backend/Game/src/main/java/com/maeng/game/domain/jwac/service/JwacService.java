@@ -365,6 +365,15 @@ public class JwacService {
 			.build();
 	}
 
+	@Transactional
+	public void disconnectPlayer(String gameCode, String nickname) {
+		Jwac jwac = jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
+		if(jwac.getPlayers().containsKey(nickname)) {
+			jwac.setHeadCount(jwac.getHeadCount() - 1);
+		}
+		jwacRedisRepository.save(jwac);
+	}
+
 	public boolean hasNextRound(Jwac jwac) {
 		int currentRound = jwac.getCurrentRound();
 		int maxRound = jwac.getMaxRound();
