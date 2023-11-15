@@ -42,7 +42,7 @@ public class StompHandler implements ChannelInterceptor {
             String destination = accessor.getNativeHeader("destination").toString().substring(1, accessor.getNativeHeader("destination").toString().length()-1);
             String[] dest = destination.split("/");
 
-            if(dest[2].equals("room")){ // room 구독했을 때
+            if(dest[1].equals("room") && dest[2].equals("room")){ // room 구독했을 때
                 String[] roomCode = dest[3].split("\\.");
                 Session session = sessionRepository.findBySessionId(accessor.getSessionId());
                 sessionRepository.save(Session.builder().sessionId(accessor.getSessionId())
