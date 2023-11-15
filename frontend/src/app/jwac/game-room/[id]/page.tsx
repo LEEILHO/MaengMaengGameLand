@@ -197,7 +197,7 @@ const page = () => {
                   isAllowed={(values) => {
                     let { floatValue } = values
                     if (!floatValue) floatValue = 0
-                    return floatValue < 1000000000000
+                    return floatValue < 1000000000000000
                   }}
                   onChange={handleBidMody}
                   className="price-input"
