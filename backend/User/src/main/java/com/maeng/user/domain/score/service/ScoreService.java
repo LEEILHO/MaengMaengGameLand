@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.maeng.user.domain.score.dto.GiveScoreDTO;
 import com.maeng.user.domain.score.dto.RankDTO;
 import com.maeng.user.domain.score.dto.RankScoreDTO;
 import com.maeng.user.domain.score.entity.Score;
@@ -20,7 +21,9 @@ import com.maeng.user.domain.score.repository.ScoreRepository;
 import com.maeng.user.domain.user.respository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ScoreService {
@@ -82,9 +85,13 @@ public class ScoreService {
 	public Map<String, Score> getOrCreateScore(RankScoreDTO rankScoreDTO) {
 		Map<String, Score> scores = new HashMap<>();
 		for(String nickname : rankScoreDTO.getRankScoreMap().keySet()) {
-			scores.put(nickname, scoreRepository.findByUser_Nickname(nickname).orElse(Score.builder()
+			try {
+				scores.put(nickname, scoreRepository.findByUser_Nickname(nickname).orElse(Score.builder()
 					.user(userRepository.findByNickname(nickname).orElseThrow())
 					.build()).addScore(rankScoreDTO.getRankScoreMap().get(nickname)));
+			} catch (Exception e) {
+				log.info("nickname 정보 없음 {}", nickname);
+			}
 		}
 		return scores;
 	}
@@ -127,5 +134,26 @@ public class ScoreService {
 				score.updateTier(Tier.BRONZE);
 			}
 		}
+	}
+
+	public void giveUserScoreAdmin(GiveScoreDTO giveScoreDTO) {
+		String nickname = giveScoreDTO.getNickname();
+		Score score = scoreRepository.findByUser_Nickname(nickname).orElse(Score.builder()
+			.user(userRepository.findByNickname(nickname).orElseThrow())
+			.build()).addScore(giveScoreDTO.getScore());
+
+		Map<String, Score> scoreMap = new HashMap<>();
+		scoreMap.put(giveScoreDTO.getNickname(), score);
+
+		updateTier(scoreMap);
+
+		ScoreRecord scoreRecord = ScoreRecord.builder()
+			.score(score)
+			.earnedScore(giveScoreDTO.getScore())
+			.gameCategory(null)
+			.build();
+
+		scoreRepository.saveAll(scoreMap.values());
+		scoreRecordRepository.save(scoreRecord);
 	}
 }
