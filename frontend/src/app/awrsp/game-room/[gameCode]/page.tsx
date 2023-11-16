@@ -46,6 +46,14 @@ const AwrspGameRoom = () => {
   const round = useRecoilValue(RoundState)
   const gameResult = useRecoilValue(GameResultState)
 
+  // 끝나고 리셋을 위한 함수
+  const resetCardList = useResetRecoilState(RspCardListState)
+  const resetDrawCard = useResetRecoilState(DrawCardState)
+  const resetTimerReset = useResetRecoilState(TimerState)
+  const resetPlayerResult = useResetRecoilState(PlayerResultState)
+  const resetGameResult = useResetRecoilState(GameResultState)
+  const resetHistory = useResetRecoilState(HistoryState)
+
   const timeOverHandle = () => {
     if (step) {
       console.log(step, '종료')
@@ -57,6 +65,12 @@ const AwrspGameRoom = () => {
   }
 
   const onClickBackToLobby = () => {
+    resetCardList()
+    resetDrawCard()
+    resetTimerReset()
+    resetPlayerResult()
+    resetGameResult()
+    resetHistory()
     router.replace(`/awrsp/lobby`)
   }
 

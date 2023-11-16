@@ -6,7 +6,7 @@ import SockJS from 'sockjs-client'
 import { SOCKET_URL } from '@constants/baseUrl'
 import { usePathname } from 'next/navigation'
 import { socketResponseType } from '@type/common/common.type'
-import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { userState } from '@atom/userAtom'
 import {
   AllBetChipsState,
@@ -53,20 +53,6 @@ const useSocketGsb = () => {
   const setRound = useSetRecoilState(RoundState)
   const setTime = useSetRecoilState(TimerState)
   const setGameOver = useSetRecoilState(GameOverState)
-
-  // 리셋
-  const resetTurnCard = useResetRecoilState(TurnCardState)
-  const resetRound = useResetRecoilState(RoundState)
-  const resetTimer = useResetRecoilState(TimerState)
-  const resetDisplayMessage = useResetRecoilState(DisplayMessageState)
-  const resetCurrentPlayer = useResetRecoilState(CurrentPlayerState)
-  const resetAllBetChips = useResetRecoilState(AllBetChipsState)
-  const resetMy = useResetRecoilState(MyState)
-  const resetOpponent = useResetRecoilState(OpponentState)
-  const resetMyBet = useResetRecoilState(MyBetChipsState)
-  const resetOpponentBet = useResetRecoilState(OpponentBetChipsState)
-  const resetResult = useResetRecoilState(ResultState)
-  const resetGameOver = useResetRecoilState(GameOverState)
 
   // 금은동 게임 구독
   const connectGsb = () => {
@@ -289,19 +275,6 @@ const useSocketGsb = () => {
     console.log('금은동 게임 구독 취소')
 
     client.current?.unsubscribe(`/exchange/game/gsb.${gameCode}`)
-
-    resetTurnCard()
-    resetAllBetChips()
-    resetCurrentPlayer()
-    resetDisplayMessage()
-    resetGameOver()
-    resetMyBet()
-    resetMy()
-    resetOpponent()
-    resetOpponentBet()
-    resetResult()
-    resetRound()
-    resetTimer()
   }
 
   // 소켓 연결

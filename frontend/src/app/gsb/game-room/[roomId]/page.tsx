@@ -14,7 +14,7 @@ import RoundResult from '@components/gsb/client/RoundResult'
 import BarTimer from '@components/common/clients/BarTimer'
 import useSocketGsb from '@hooks/useSocketGsb'
 import { useRouter } from 'next/navigation'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil'
 import {
   AllBetChipsState,
   CurrentPlayerState,
@@ -24,8 +24,10 @@ import {
   MyState,
   OpponentBetChipsState,
   OpponentState,
+  ResultState,
   RoundState,
   TimerState,
+  TurnCardState,
 } from '@atom/gsbAtom'
 import { userState } from '@atom/userAtom'
 import GameOver from '@components/gsb/client/GameOver'
@@ -57,6 +59,20 @@ const GameRoom = () => {
 
   const [isGameEnd, setIsGameEnd] = useState(false)
 
+  // 리셋
+  const resetTurnCard = useResetRecoilState(TurnCardState)
+  const resetRound = useResetRecoilState(RoundState)
+  const resetTimer = useResetRecoilState(TimerState)
+  const resetDisplayMessage = useResetRecoilState(DisplayMessageState)
+  const resetCurrentPlayer = useResetRecoilState(CurrentPlayerState)
+  const resetAllBetChips = useResetRecoilState(AllBetChipsState)
+  const resetMy = useResetRecoilState(MyState)
+  const resetOpponent = useResetRecoilState(OpponentState)
+  const resetMyBet = useResetRecoilState(MyBetChipsState)
+  const resetOpponentBet = useResetRecoilState(OpponentBetChipsState)
+  const resetResult = useResetRecoilState(ResultState)
+  const resetGameOver = useResetRecoilState(GameOverState)
+
   useEffect(() => {
     connectSocket(connectGsb, disconnectGsb)
     return () => {
@@ -73,7 +89,7 @@ const GameRoom = () => {
         setRound('GameOver')
         setDisplayMessage('게임이 종료되었습니다')
         setIsGameEnd(true)
-      }, 5000)
+      }, 7000)
     }
 
     return () => {
@@ -93,6 +109,18 @@ const GameRoom = () => {
             src={images.gameRoom.jwac.backWhite}
             alt="로비로 나가기"
             onClick={() => {
+              resetTurnCard()
+              resetAllBetChips()
+              resetCurrentPlayer()
+              resetDisplayMessage()
+              resetGameOver()
+              resetMyBet()
+              resetMy()
+              resetOpponent()
+              resetOpponentBet()
+              resetResult()
+              resetRound()
+              resetTimer()
               router.replace('/gsb/lobby')
             }}
           />
