@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import com.maeng.record.domain.record.dto.GameParticipantDTO;
 import com.maeng.record.domain.record.dto.UserGameInfoDTO;
-import com.maeng.record.domain.record.dto.userGameDetailDTO;
 import com.maeng.record.domain.record.entity.GameParticipant;
 import com.maeng.record.domain.record.entity.GameUser;
 import com.maeng.record.domain.record.repository.GameParticipantRepository;
@@ -28,8 +27,8 @@ public class RecordService {
 	private final GameRepository gameRepository;
 	private final GameParticipantRepository gameParticipantRepository;
 
-	public List<UserGameInfoDTO> userGameHistory(String nickname) {
-		GameUser gameUser = gameUserRepository.findByNickname(nickname).orElseThrow();
+	public List<UserGameInfoDTO> userGameHistory(String email) {
+		GameUser gameUser = gameUserRepository.findByEmail(email).orElseThrow();
 
 		Pageable pageable = PageRequest.of(0, 10);
 		Page<GameParticipant> gameParticipants =

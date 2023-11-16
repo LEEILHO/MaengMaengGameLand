@@ -26,9 +26,9 @@ import lombok.RequiredArgsConstructor;
 public class RecordController {
 	private final RecordService recordService;
 	private final MmjService mmjService;
-	@PostMapping("/history")
-	public ResponseEntity<List<UserGameInfoDTO>> gameHistory(@RequestHeader("userEmail") String nickname) {
-		return ResponseEntity.status(HttpStatus.SC_OK).body(recordService.userGameHistory(nickname));
+	@GetMapping("/history")
+	public ResponseEntity<List<UserGameInfoDTO>> gameHistory(@RequestHeader("userEmail") String email) {
+		return ResponseEntity.status(HttpStatus.SC_OK).body(recordService.userGameHistory(email));
 	}
 
 	@PostMapping("/history/detail")
