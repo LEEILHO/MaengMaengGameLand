@@ -14,7 +14,6 @@ export const RoomContainer = styled.div`
   position: fixed;
   top: 0;
   bottom: 0;
-  padding-right: 10%;
 `
 
 export const RoomResultContainer = styled.div`

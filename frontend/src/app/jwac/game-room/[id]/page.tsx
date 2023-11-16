@@ -198,7 +198,7 @@ const page = () => {
                   <S.PriceRow>
                     <S.SubmitPrice>{`제출금액 : ${formatKoreanCurrency(
                       submitMoney,
-                    )}원`}</S.SubmitPrice>
+                    )}`}</S.SubmitPrice>
                   </S.PriceRow>
                 </>
               ) : (
