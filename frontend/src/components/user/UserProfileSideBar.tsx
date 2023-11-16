@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { useRecoilState } from 'recoil'
 import { useState, useRef } from 'react'
 import { editProfileImage, editUser } from 'apis/user/userApi'
+import useModal from '@hooks/useModal'
+import WatchCodeModal from './WatchCodeModal'
 
 const UserProfileSideBar = () => {
   const router = useRouter()
@@ -13,6 +15,7 @@ const UserProfileSideBar = () => {
   const [isEdit, setIsEdit] = useState(false)
   const [userName, setUserName] = useState('')
   const [profileImage, setProfileImage] = useState<string | null>(null)
+  const { Modal, openModal, closeModal, isOpen } = useModal()
 
   const handleEdit = () => {
     setUserName(user!.nickname)
@@ -84,11 +87,22 @@ const UserProfileSideBar = () => {
           </S.UserNameInputContainer>
         )}
       </S.UserNameRow>
+
+      <S.CodeRow>
+        <S.GenerateCodeButton onClick={openModal}>
+          워치 코드 발급
+        </S.GenerateCodeButton>
+      </S.CodeRow>
+
       <S.GoBackIcon
         src={images.user.back}
         alt="뒤로가기"
         onClick={() => router.replace('/home')}
       />
+
+      <Modal isOpen={isOpen} closeModal={closeModal}>
+        <WatchCodeModal closeModal={closeModal} />
+      </Modal>
     </S.UserProfileSideBarContainer>
   )
 }
