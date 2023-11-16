@@ -26,7 +26,6 @@ class StartUpFragment : BaseFragment<FragmentStartupBinding>(
     private val mainViewModel: MainViewModel by activityViewModels()
 
     private lateinit var navController: NavController
-    private lateinit var swipeCallback: SwipeDismissFrameLayout.Callback
 
     private lateinit var valueAnimator: ValueAnimator
 
@@ -44,13 +43,6 @@ class StartUpFragment : BaseFragment<FragmentStartupBinding>(
     val handler = Handler(Looper.getMainLooper())
 
     private fun initData() {
-        binding.layoutSwipe.isSwipeable = true
-        swipeCallback = object : SwipeDismissFrameLayout.Callback() {
-            override fun onDismissed(layout: SwipeDismissFrameLayout) {
-                activity?.onBackPressedDispatcher?.onBackPressed()
-            }
-        }
-        binding.layoutSwipe.addCallback(swipeCallback)
 
         navController = Navigation.findNavController(binding.root)
 
@@ -126,7 +118,6 @@ class StartUpFragment : BaseFragment<FragmentStartupBinding>(
     }
 
     override fun onDestroyView() {
-        binding.layoutSwipe.removeCallback(swipeCallback)
         super.onDestroyView()
         valueAnimator.cancel()
         player = null

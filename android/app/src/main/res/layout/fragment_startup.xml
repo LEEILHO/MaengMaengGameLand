@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.wear.widget.SwipeDismissFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/layout_swipe"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.startup.StartUpFragment">
@@ -21,29 +20,31 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/_60sdp"
-                android:src="@drawable/icon_title"
                 android:scaleType="centerCrop"
+                android:src="@drawable/icon_title"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
             <ImageView
                 android:id="@+id/button_setting"
                 android:layout_width="@dimen/_32sdp"
                 android:layout_height="@dimen/_32sdp"
-                android:src="@drawable/icon_setting"
                 android:scaleType="centerCrop"
+                android:src="@drawable/icon_setting"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
+
             <ImageView
                 android:id="@+id/button_game"
                 android:layout_width="@dimen/_32sdp"
                 android:layout_height="@dimen/_32sdp"
-                android:src="@drawable/icon_start"
                 android:scaleType="centerCrop"
+                android:src="@drawable/icon_start"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/imageView_moon"
@@ -66,4 +67,4 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.wear.widget.BoxInsetLayout>
 
-</androidx.wear.widget.SwipeDismissFrameLayout>
+</FrameLayout>
