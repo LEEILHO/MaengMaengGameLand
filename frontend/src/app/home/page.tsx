@@ -68,7 +68,7 @@ const Home = () => {
             onClick={() => handleGameClick('awrsp/lobby')}
           />
         </S.GameCardContainer>
-        <S.ButtonLow>
+        {/* <S.ButtonLow>
           <CButton
             backgroundColor="rgba(112, 0, 255, 1)"
             fontSize={14}
@@ -76,7 +76,7 @@ const Home = () => {
             text="초대 코드로 입장"
             color="white"
           />
-        </S.ButtonLow>
+        </S.ButtonLow> */}
       </S.HomeContainer>
     </>
   )
