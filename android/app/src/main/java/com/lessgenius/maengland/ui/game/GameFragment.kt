@@ -145,7 +145,7 @@ class GameFragment :
     private fun checkColliedStar(playerRect: Rect) {
         for (i in 0 until binding.gameLayout.childCount) {
             val child = binding.gameLayout.getChildAt(i) ?: continue
-            if (child.tag == "star") { // star
+            if (child.tag == "star") {
                 if (child.visibility == View.VISIBLE) {
                     val starTop = child.y
 
@@ -371,6 +371,7 @@ class GameFragment :
                 player?.x = -pWidth.value.toFloat()
                 targetX = movement
             }
+
             // 애니메이터 속성 업데이트 및 시작
             if (xMoveAnimator.isRunning) {
                 xMoveAnimator.cancel()
@@ -406,7 +407,6 @@ class GameFragment :
 
             val platform = createPlatform()
             positionPlatformRandomly(platform, lastPlatformY, idx++)
-
         }
     }
 
@@ -427,39 +427,51 @@ class GameFragment :
     private fun createPlatform(): ImageView {
 
         val platform = ImageView(context).apply {
+            setImageResource(R.drawable.icon_platform_normal)
 
             layoutParams = RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT
             )
 
-            if (lastPlatformY < binding.gameLayout.layoutParams.height - screenHeight * 3) {
-                if (Random.nextBoolean()) {
-                    setImageResource(R.drawable.icon_foothold)
-                    tag = "normal"
-                } else {
-                    setImageResource(R.drawable.icon_foothold)
-                    alpha = 0.4F
-                    tag = "transparent"
-                }
-
-            } else {
-                tag = "normal"
-                setImageResource(R.drawable.icon_foothold)
-            }
+            var drawable =
+                context?.resources?.getDrawable(
+                    R.drawable.icon_foothold,
+                    null
+                ) as BitmapDrawable
 
             // 이미지 드로어블의 원본 크기를 가져옴
-            val drawable =
-                context?.resources?.getDrawable(R.drawable.icon_foothold, null) as BitmapDrawable
-            val originalWidth = drawable.intrinsicWidth
-            val originalHeight = drawable.intrinsicHeight
+            var originalWidth = drawable.intrinsicWidth
+            var originalHeight = drawable.intrinsicHeight
+
+
+            if (lastPlatformY < binding.gameLayout.layoutParams.height - screenHeight * 3 && Random.nextBoolean()) {
+
+                setImageResource(R.drawable.icon_platform_small)
+                drawable =
+                    context?.resources?.getDrawable(
+                        R.drawable.icon_platform_small,
+                        null
+                    ) as BitmapDrawable
+
+                originalWidth = drawable.intrinsicWidth
+                originalHeight = drawable.intrinsicHeight
+
+            }
+
+            tag = "normal"
+
+            if (lastPlatformY < binding.gameLayout.layoutParams.height - screenHeight * 4 && Random.nextBoolean()) {
+                tag = "transparent"
+                alpha = 0.6F
+            }
 
             // 이미지의 크기 설정
-            layoutParams.width = originalWidth / 4
-            layoutParams.height = originalHeight / 4
-        }
+            layoutParams.width = (originalWidth / 3.6).toInt()
+            layoutParams.height = (originalHeight / 3.6).toInt()
 
-        platform.visibility = View.VISIBLE
+            visibility = View.VISIBLE
+        }
 
         // 발판을 레이아웃에 추가
         binding.gameLayout.addView(platform)
@@ -485,13 +497,13 @@ class GameFragment :
             val originalWidth = drawable.intrinsicWidth
             val originalHeight = drawable.intrinsicHeight
 
-            layoutParams.width = originalWidth / 24
-            layoutParams.height = originalHeight / 24
+            layoutParams.width = originalWidth / 26
+            layoutParams.height = originalHeight / 26
 
             tag = "star"
+            visibility = View.VISIBLE
         }
 
-        star.visibility = View.VISIBLE
         binding.gameLayout.addView(star)
         player?.bringToFront()
 
