@@ -110,7 +110,6 @@ class ResponseInterceptor @Inject constructor(
             }
         }
 
-        // 다시 내가 호출했었던 거 호출하는 로직 필요할듯?
         if (isRefreshable) {
             Log.d(TAG, "intercept: 리프레시가 알맞게 통신했고, 새 엑세스토큰으로 가능하다는 소리입니다~")
             val newRequest =

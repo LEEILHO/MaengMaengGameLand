@@ -2,8 +2,6 @@ package com.lessgenius.maengland.di
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.intuit.sdp.BuildConfig
-import com.lessgenius.maengland.data.datasource.local.PreferencesManager
 import com.lessgenius.maengland.data.datasource.remote.AccountService
 import com.lessgenius.maengland.data.datasource.remote.GameService
 import com.lessgenius.maengland.data.interceptor.RequestInterceptor
@@ -45,9 +43,7 @@ object NetworkModule {
     @Singleton
     @Provides
     fun provideRetrofit(
-        okHttpClient: OkHttpClient,
-        requestInterceptor: RequestInterceptor,
-        responseInterceptor: ResponseInterceptor
+        okHttpClient: OkHttpClient
     ): Retrofit {
         val gson: Gson = GsonBuilder()
             .setLenient()

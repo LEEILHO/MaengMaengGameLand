@@ -39,9 +39,9 @@ class AccountRepositoryImpl @Inject constructor(
         val jwtAccessToken = dataStore.getToken(ACCESS_TOKEN).first()
         val jwtRefreshToken = dataStore.getToken(REFRESH_TOKEN).first()
 
-        Log.d(TAG, "getLoginStatus: access : ${jwtAccessToken.toString()} refresh : ${jwtRefreshToken.toString()}")
+        Log.d(TAG, "getLoginStatus: access : $jwtAccessToken refresh : $jwtRefreshToken")
 
-        return Token(jwtAccessToken.toString(), jwtRefreshToken.toString())
+        return Token(jwtAccessToken, jwtRefreshToken)
     }
 
     override suspend fun logout() {

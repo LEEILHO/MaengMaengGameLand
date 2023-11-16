@@ -29,6 +29,8 @@ class StartUpFragment : BaseFragment<FragmentStartupBinding>(
 
     private lateinit var valueAnimator: ValueAnimator
 
+    private val handler = Handler(Looper.getMainLooper())
+
     private var player: ImageView? = null
     private var screenHeight: Int = 0
 
@@ -39,8 +41,6 @@ class StartUpFragment : BaseFragment<FragmentStartupBinding>(
         initAnimation()
         initListener()
     }
-
-    val handler = Handler(Looper.getMainLooper())
 
     private fun initData() {
 

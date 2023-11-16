@@ -10,17 +10,11 @@ import com.lessgenius.maengland.R
 class LoadingDialog constructor(context: Context) : Dialog(context) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.dialog_loading)
 
+        setContentView(R.layout.dialog_loading)
         setCanceledOnTouchOutside(false)
 
         window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-
-    }
-
-    init {
-
     }
 
     override fun show() {

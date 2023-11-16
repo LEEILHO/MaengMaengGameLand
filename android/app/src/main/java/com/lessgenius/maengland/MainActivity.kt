@@ -20,7 +20,6 @@ class MainActivity : AppCompatActivity() {
 
         // 앱이 사용 중일 때 화면 유지
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        Log.d(TAG, "onCreate: ")
 
         // 사운드 초기화
         SoundUtil.init(this)

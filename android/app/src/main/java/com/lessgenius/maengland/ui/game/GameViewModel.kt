@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 private const val TAG = "GameViewModel_김진영"
+
 @HiltViewModel
 class GameViewModel @Inject constructor(private val gameRepository: GameRepository) :
     ViewModel() {

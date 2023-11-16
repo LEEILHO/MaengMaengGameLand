@@ -1,7 +1,5 @@
 package com.lessgenius.maengland.ui.mypage
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
@@ -23,7 +21,6 @@ import com.lessgenius.maengland.base.BaseFragment
 import com.lessgenius.maengland.data.model.NetworkResult
 import com.lessgenius.maengland.data.model.User
 import com.lessgenius.maengland.databinding.FragmentMypageBinding
-import com.lessgenius.maengland.ui.game.GameViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -36,10 +33,6 @@ class MypageFragment :
     private val mypageViewModel: MypageViewModel by viewModels()
 
     private lateinit var swipeCallback: SwipeDismissFrameLayout.Callback
-
-    private val navController by lazy {
-        Navigation.findNavController(binding.root)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

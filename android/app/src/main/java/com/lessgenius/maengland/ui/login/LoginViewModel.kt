@@ -32,8 +32,4 @@ class LoginViewModel @Inject constructor(private val accountRepository: AccountR
         accountRepository.updateJwtTokens(token)
         _loginStatusResponse.emit(accountRepository.getLoginStatus())
     }
-
-    fun getLoginStatus() = viewModelScope.launch {
-        _loginStatusResponse.emit(accountRepository.getLoginStatus())
-    }
 }

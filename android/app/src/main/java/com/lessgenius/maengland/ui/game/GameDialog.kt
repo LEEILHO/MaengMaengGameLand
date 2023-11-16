@@ -22,7 +22,6 @@ class GameDialog(gameDialogInterface: GameDialogInterface, score: Int) : DialogF
         this.score = score
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

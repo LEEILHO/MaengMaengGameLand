@@ -51,10 +51,10 @@ class PreferencesManager(context: Context) {
     private var cachedRefreshToken: String = ""
 
     fun getTokenSync(key: String): String {
-        if (key == ACCESS_TOKEN) {
-            return cachedAccessToken
+        return if (key == ACCESS_TOKEN) {
+            cachedAccessToken
         } else {
-            return cachedRefreshToken
+            cachedRefreshToken
         }
     }
 
