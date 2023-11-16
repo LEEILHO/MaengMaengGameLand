@@ -67,7 +67,8 @@ class GameFragment :
     private var yPosition = 0F
     private var playerMinHeight = 0F // 플레이어의 최고 높이
 
-    private var lastY = 0
+    private var lastPlatformY = 0
+    private var lastStarY = 0
     private var score = MutableLiveData(0)
 
     val handler = Handler(Looper.getMainLooper())
@@ -120,6 +121,9 @@ class GameFragment :
             if (isGoingDown) { // 점프하고 내려오는 중
                 checkVisiblePlatforms(playerRect)
             }
+
+            // 별 충돌
+            checkColliedStar(playerRect)
         }
 
         score.observe(viewLifecycleOwner) { newScore ->
@@ -138,6 +142,31 @@ class GameFragment :
 
     }
 
+    private fun checkColliedStar(playerRect: Rect) {
+        for (i in 0 until binding.gameLayout.childCount) {
+            val child = binding.gameLayout.getChildAt(i) ?: continue
+            if (child.tag == "star") { // star
+                if (child.visibility == View.VISIBLE) {
+                    val starTop = child.y
+
+                    val starRect = Rect(
+                        child.x.toInt(),
+                        starTop.toInt(),
+                        (child.x + child.width).toInt(),
+                        (starTop + child.height).toInt()
+                    )
+
+                    if (Rect.intersects(starRect, playerRect)) {
+                        Log.d(TAG, "star!")
+                        score.value = score.value?.plus(50)
+                        child.visibility = View.GONE
+                        SoundUtil.playStarSound()
+                    }
+                }
+            }
+        }
+    }
+
 
     private fun checkVisiblePlatforms(playerRect: Rect) {
         val scrollY = binding.gameScrollView.scrollY  // 현재 스크롤 위치
@@ -147,20 +176,20 @@ class GameFragment :
         val thresholdY = scrollY + visibleHeight
 
         for (i in 0 until binding.gameLayout.childCount) {
-            val platform = binding.gameLayout.getChildAt(i) ?: continue
+            val child = binding.gameLayout.getChildAt(i) ?: continue
 
-            if (platform.tag == "normal" || platform.tag == "transparent") {
-                val platformTop = platform.y
+            if (child.tag == "normal" || child.tag == "transparent") {
+                val platformTop = child.y
 
                 if (platformTop > thresholdY) {
-                    platform.visibility = View.GONE
-                } else if (platform.visibility == View.VISIBLE) { // 화면에 보이는 발판 처리 로직
+                    child.visibility = View.GONE
+                } else if (child.visibility == View.VISIBLE) { // 화면에 보이는 발판 처리 로직
 
                     val platformRect = Rect(
-                        platform.x.toInt(),
+                        child.x.toInt(),
                         platformTop.toInt(),
-                        (platform.x + platform.width).toInt(),
-                        (platformTop + platform.height).toInt()
+                        (child.x + child.width).toInt(),
+                        (platformTop + child.height).toInt()
                     )
 
                     if (playerRect.right > platformRect.left && playerRect.left < platformRect.right && (playerRect.bottom <= platformRect.top) && (platformRect.top - playerRect.bottom <= 40)) {
@@ -168,10 +197,9 @@ class GameFragment :
                         SoundUtil.playJumpSound()
                         onCollidedPlatform(platformRect.top.toFloat())
 
-                        if (platform.tag == "transparent") {
-//                            platform.visibility = View.GONE
+                        if (child.tag == "transparent") {
                             handler.postDelayed({
-                                platform.visibility = View.GONE
+                                child.visibility = View.GONE
                             }, 50)
                         }
 
@@ -194,9 +222,12 @@ class GameFragment :
             playerMinHeight = platformTop
 
             // 새로운 발판 생성
-            while (platformTop - lastY < screenHeight) {
+            while (platformTop - lastPlatformY < screenHeight) {
                 createNewPlatform()
             }
+
+            // 별 생성
+            createNewStar()
 
         }
 
@@ -266,12 +297,12 @@ class GameFragment :
                     addListener(object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(animation: Animator) {
                             super.onAnimationEnd(animation)
+
                             handler.postDelayed({
                                 player?.setImageResource(R.drawable.icon_bunny_jump)
                             }, 100)
 
                             if (!isCollided) {
-                                // 충돌하지 않았으면 추락 처리
                                 Log.d(TAG, "fallDownAnimator: 추락! 플레이어의 높이를 0으로 설정")
                                 onPlayerFell() // 추락
                             } else {
@@ -357,25 +388,24 @@ class GameFragment :
 
     }
 
-//    private
-
     private fun initPlatform() {
-        lastY = binding.gameLayout.layoutParams.height  // 가장 아래 발판의 Y 위치
+        lastPlatformY = binding.gameLayout.layoutParams.height  // 가장 아래 발판의 Y 위치
+        lastStarY = binding.gameLayout.layoutParams.height - screenHeight // 별 시작 Y 위치
         val initPlatformY = binding.gameLayout.layoutParams.height - screenHeight * 2
 
         val MIN_PLATFORM_DISTANCE = JUMP_HEIGHT / 3  // 최소 간격
         val MAX_PLATFORM_DISTANCE = JUMP_HEIGHT      // 최대 간격
 
         var idx = 0
-        while (lastY > initPlatformY) {
+        while (lastPlatformY > initPlatformY) {
             val distance = if (idx == 0) {
                 MIN_PLATFORM_DISTANCE.toInt()
             } else (MIN_PLATFORM_DISTANCE.toInt()..MAX_PLATFORM_DISTANCE.toInt()).random()
 
-            lastY -= distance
+            lastPlatformY -= distance
 
             val platform = createPlatform()
-            positionPlatformRandomly(platform, lastY, idx++)
+            positionPlatformRandomly(platform, lastPlatformY, idx++)
 
         }
     }
@@ -387,11 +417,10 @@ class GameFragment :
 
         val distance = (MIN_PLATFORM_DISTANCE.toInt()..MAX_PLATFORM_DISTANCE.toInt()).random()
 
-        lastY -= distance
+        lastPlatformY -= distance
 
         val platform = createPlatform()
-        positionPlatformRandomly(platform, lastY)
-        Log.d(TAG, "createNewPlatform: new! $lastY")
+        positionPlatformRandomly(platform, lastPlatformY)
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -404,7 +433,7 @@ class GameFragment :
                 RelativeLayout.LayoutParams.WRAP_CONTENT
             )
 
-            if (lastY < binding.gameLayout.layoutParams.height - screenHeight * 3) {
+            if (lastPlatformY < binding.gameLayout.layoutParams.height - screenHeight * 3) {
                 if (Random.nextBoolean()) {
                     setImageResource(R.drawable.icon_foothold)
                     tag = "normal"
@@ -432,9 +461,6 @@ class GameFragment :
 
         platform.visibility = View.VISIBLE
 
-        // 발판에 태그 설정
-//        platform.tag = "platform"
-
         // 발판을 레이아웃에 추가
         binding.gameLayout.addView(platform)
 
@@ -443,24 +469,65 @@ class GameFragment :
         return platform
     }
 
-    private fun positionPlatformRandomly(platform: ImageView, targetY: Int, index: Int = -1) {
-        val maxX = screenWidth - platform.layoutParams.width
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private fun createStar(): ImageView {
+
+        val star = ImageView(context).apply {
+            setImageResource(R.drawable.icon_star)
+
+            layoutParams = RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT
+            )
+
+            val drawable =
+                context?.resources?.getDrawable(R.drawable.icon_star, null) as BitmapDrawable
+            val originalWidth = drawable.intrinsicWidth
+            val originalHeight = drawable.intrinsicHeight
+
+            layoutParams.width = originalWidth / 24
+            layoutParams.height = originalHeight / 24
+
+            tag = "star"
+        }
+
+        star.visibility = View.VISIBLE
+        binding.gameLayout.addView(star)
+        player?.bringToFront()
+
+        return star
+    }
+
+    private fun createNewStar() {
+        val MIN_STAR_DISTANCE = JUMP_HEIGHT * 2     // 최소 간격
+        val MAX_STAR_DISTANCE = JUMP_HEIGHT * 3  // 최대 간격
+
+        val distance = (MIN_STAR_DISTANCE.toInt()..MAX_STAR_DISTANCE.toInt()).random()
+
+        lastStarY -= distance
+
+        val star = createStar()
+        positionPlatformRandomly(star, lastStarY)
+    }
+
+    private fun positionPlatformRandomly(imageView: ImageView, targetY: Int, index: Int = -1) {
+        val maxX = screenWidth - imageView.layoutParams.width
         val randomX = (0..maxX).random()
 
-        platform.x = randomX.toFloat()
-        platform.y = targetY.toFloat()
+        imageView.x = randomX.toFloat()
+        imageView.y = targetY.toFloat()
 
         // 플레이어의 위치를 시작 발판의 위치로 지정
         if (index == 0) {
-            platform.x = (screenWidth / 2 - platform.layoutParams.width / 2).toFloat()
+            imageView.x = (screenWidth / 2 - imageView.layoutParams.width / 2).toFloat()
             player?.apply {
-                y = platform.y + platform.height
+                y = imageView.y + imageView.height
             }
             yPosition = player?.y!!
             playerMinHeight = yPosition
 
             Log.d(TAG, "init yPosition: ${player?.x} ${player?.y}")
-            Log.d(TAG, "init yPosition: ${platform.x} ${platform.y}")
+            Log.d(TAG, "init yPosition: ${imageView.x} ${imageView.y}")
         }
     }
 
