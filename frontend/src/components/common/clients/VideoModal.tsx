@@ -1,6 +1,9 @@
 import YouTube, { YouTubeProps } from 'react-youtube'
 import * as S from '@styles/common/VideoModal.styled'
 import { images } from '@constants/images'
+import { soundState } from '@atom/soundAtom'
+import { useRecoilState } from 'recoil'
+import { useEffect } from 'react'
 
 type Props = {
   closeModal: () => void
@@ -8,6 +11,9 @@ type Props = {
 }
 
 const VideoModal = ({ closeModal, title }: Props) => {
+  const [isSound, setIsSound] = useRecoilState(soundState)
+  const prevSound = isSound?.bgmSound
+
   const onPlayerReady: YouTubeProps['onReady'] = (event) => {
     // access to player in all event handlers via event.target
     event.target.pauseVideo()
@@ -35,6 +41,25 @@ const VideoModal = ({ closeModal, title }: Props) => {
       modestbranding: 1,
     },
   }
+
+  // 모달 키면 배경소리 껐다가 끄면 다시 키기
+  useEffect(() => {
+    setIsSound((prev) => {
+      return {
+        bgmSound: false,
+        effectSound: prev?.effectSound === null ? true : prev!.effectSound,
+      }
+    })
+
+    return () => {
+      setIsSound((prev) => {
+        return {
+          bgmSound: prevSound ? prevSound : true,
+          effectSound: prev?.effectSound === null ? true : prev!.effectSound,
+        }
+      })
+    }
+  }, [])
 
   return (
     <S.VideoModalContainer>
