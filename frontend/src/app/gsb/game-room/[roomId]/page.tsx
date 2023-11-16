@@ -89,7 +89,7 @@ const GameRoom = () => {
         setRound('GameOver')
         setDisplayMessage('게임이 종료되었습니다')
         setIsGameEnd(true)
-      }, 7000)
+      }, 5000)
     }
 
     return () => {
