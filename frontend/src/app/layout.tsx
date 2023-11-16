@@ -16,6 +16,7 @@ export const metadata: Metadata = {
   applicationName: '맹맹게임랜드',
   manifest: '/manifest.json',
   themeColor: '#ffffff',
+  verification: { google: 'l9gVFrGOi6xZXLXDfhrva_lqe8XRAiCHLk0jnqEE4bE' },
   icons: {
     apple: '/icons/apple-touch-icon.png',
     other: [

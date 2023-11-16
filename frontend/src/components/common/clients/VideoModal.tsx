@@ -21,13 +21,13 @@ const VideoModal = ({ closeModal, title }: Props) => {
 
   const getVideoId = () => {
     if (title === '금은동') {
-      return ''
+      return '7GhGIvcjFzM'
     }
     if (title === '무제한 보석 경매') {
-      return 'ArLppdaT_Pw'
+      return '4AqMwXQ05W4'
     }
     if (title === '전승 가위바위보') {
-      return ''
+      return '2L11dPMdEIg'
     }
   }
 
