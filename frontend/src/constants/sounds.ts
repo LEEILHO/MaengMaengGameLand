@@ -15,4 +15,8 @@ export const sounds = {
     filpCard: '/sounds/flip-card-sound.mp3',
     dropCard: '/sounds/drop-card-sound.mp3',
   },
+  gsb: {
+    star: '/sounds/star-sound.mp3',
+    betting: '/sounds/betting-sound.mp3',
+  },
 }

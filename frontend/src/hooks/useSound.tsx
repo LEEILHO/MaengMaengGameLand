@@ -31,6 +31,14 @@ const useSound = () => {
     src: [sounds.awrsp.dropCard],
   })
 
+  const starSound = new Howl({
+    src: [sounds.gsb.star],
+  })
+
+  const bettingSound = new Howl({
+    src: [sounds.gsb.betting],
+  })
+
   const playButtonSound = useCallback(() => {
     if (isSound?.effectSound ?? true) {
       buttonSound.play()
@@ -59,13 +67,25 @@ const useSound = () => {
     if (isSound?.effectSound ?? true) {
       flipCardSound.play()
     }
-  }, [tapSound])
+  }, [flipCardSound])
 
   const playDropCardSound = useCallback(() => {
     if (isSound?.effectSound ?? true) {
       dropCardSound.play()
     }
-  }, [tapSound])
+  }, [dropCardSound])
+
+  const playStarSound = useCallback(() => {
+    if (isSound?.effectSound ?? true) {
+      starSound.play()
+    }
+  }, [starSound])
+
+  const playBettingSound = useCallback(() => {
+    if (isSound?.effectSound ?? true) {
+      bettingSound.play()
+    }
+  }, [bettingSound])
 
   return {
     playButtonSound,
@@ -74,6 +94,8 @@ const useSound = () => {
     playWriteSound,
     playFlipCardSound,
     playDropCardSound,
+    playStarSound,
+    playBettingSound,
   }
 }
 

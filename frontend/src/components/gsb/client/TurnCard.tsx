@@ -6,6 +6,7 @@ import { images } from '@constants/images'
 import { TurnCardState } from '@atom/gsbAtom'
 import { useRecoilValue } from 'recoil'
 import { userState } from '@atom/userAtom'
+import useSound from '@hooks/useSound'
 
 type Props = {
   handleChoiceTurnCard: (index: number) => void
@@ -13,6 +14,7 @@ type Props = {
 
 // 선후공 카드가 나오는 페이지
 const TurnCard = ({ handleChoiceTurnCard }: Props) => {
+  const { playFlipCardSound } = useSound()
   const [cardChoice, setCardChoice] = useState(false)
   const turnList = useRecoilValue(TurnCardState)
   const user = useRecoilValue(userState)
@@ -21,6 +23,7 @@ const TurnCard = ({ handleChoiceTurnCard }: Props) => {
     console.log(turnList)
     if (!turnList || cardChoice || turnList[index].selected) return
     setCardChoice(true)
+    playFlipCardSound()
     handleChoiceTurnCard(index)
   }
 
