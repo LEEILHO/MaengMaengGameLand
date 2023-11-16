@@ -43,7 +43,7 @@ export type PlayerResultType = {
 
 export type GameResultType = {
   nickname: string
-  point: number
+  round: number
   rank: number
 }
 

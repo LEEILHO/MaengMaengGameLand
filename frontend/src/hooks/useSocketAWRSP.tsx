@@ -58,12 +58,15 @@ const useSocketAWRSP = () => {
         response.type === 'PLAYER_WINS' ||
         response.type === 'ALL_WINS'
       ) {
-        console.log(step, '이후 타이머 시간 설정')
-        if (step === 'WAITING') return
         const data = response.data as number
         console.log('받아온 시간 : ', data)
         setTimerTime(data)
-        setStep(response.type as StepType)
+        setStep((prev) => {
+          if (!prev || prev !== 'WAITING') {
+            return response.type as StepType
+          }
+          return prev
+        })
 
         // 비김 카드 선택하면 비김 카드 셋팅할 준비
         if (response.type === 'DRAW_CARD') {
@@ -74,7 +77,6 @@ const useSocketAWRSP = () => {
       else if (response.type === 'ROUND') {
         console.log('라운드를 받아올 때: ', step)
 
-        if (step === 'WAITING') return
         const data = response.data as number
         console.log(data, '라운드')
         setRound(data)
@@ -83,7 +85,6 @@ const useSocketAWRSP = () => {
       else if (response.type === 'CARD_RESULT') {
         console.log('라운드 결과를 받아올 때: ', step)
 
-        if (step === 'WAITING') return
         const data = response.data as PlayerResultType[]
         console.log('이번 라운드 결과 : ', data)
         setPlayerResult(data)

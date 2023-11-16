@@ -31,6 +31,8 @@ import {
 } from '@atom/gsbAtom'
 import { userState } from '@atom/userAtom'
 import GameOver from '@components/gsb/client/GameOver'
+import useDidMountEffect from '@hooks/useDidMoundEffect'
+import { getMs } from '@utils/gameRoom/gsbUtil'
 
 const GameRoom = () => {
   const router = useRouter()
@@ -80,22 +82,22 @@ const GameRoom = () => {
     }
   }, [])
 
-  useEffect(() => {
+  useDidMountEffect(() => {
     let timeId: NodeJS.Timeout
     console.log(gameOver)
-    if (gameOver) {
+    if (gameOver && round) {
       timeId = setTimeout(() => {
         // 게임 종료
         setRound('GameOver')
         setDisplayMessage('게임이 종료되었습니다')
         setIsGameEnd(true)
-      }, 7000)
+      }, getMs(round))
     }
 
     return () => {
       clearTimeout(timeId)
     }
-  }, [round, gameOver])
+  }, [gameOver])
 
   return (
     <S.GameRoomContainer>
