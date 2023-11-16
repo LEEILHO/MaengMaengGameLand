@@ -23,6 +23,10 @@ export const images = {
     iosGuide2: '/images/index/ios-guide2.png',
     iosGuide3: '/images/index/ios-guide3.png',
     iosGuide4: '/images/index/ios-guide4.png',
+    gameGuide1: '/images/index/game-guide1.png',
+    gameGuide2: '/images/index/game-guide2.png',
+    gameGuide3: '/images/index/game-guide3.png',
+    gameGuide4: '/images/index/game-guide4.png',
   },
   waitingRoom: {
     header: {
