@@ -7,7 +7,7 @@ export const UserDetailModalContainer = styled.div`
   border-radius: 20px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   position: relative;
 `
@@ -15,30 +15,26 @@ export const UserDetailModalContainer = styled.div`
 export const UserProfile = styled.img`
   width: 60px;
   height: 60px;
-  border-radius: 50px;
-  position: absolute;
-  top: 20px;
-  left: 30px;
+  border-radius: 50%;
+  object-fit: cover;
 `
 
-export const UserDetail = styled.table`
+export const UserDetail = styled.div`
+  width: 100%;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 16px;
   font-size: 18px;
   font-weight: 700;
-  width: 150px;
-  margin-top: 32px;
-
-  tr {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .info {
-    font-weight: 500;
-  }
 `
+
+export const Nickname = styled.p`
+  text-align: center;
+  display: flex;
+  align-items: center;
+`
+
 export const BottomButtons = styled.div`
   width: 100%;
   display: flex;

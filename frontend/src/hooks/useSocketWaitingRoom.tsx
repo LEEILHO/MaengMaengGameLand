@@ -25,6 +25,8 @@ const useSocketWaitingRoom = () => {
   const user = useRecoilValue(userState)
   const setChatList = useSetRecoilState(ChatListState)
 
+  const [kickedPlayer, setKickedPlayer] = useState<string>('')
+
   const connectWaitingRoom = useCallback(() => {
     console.log('대기방 구독', client, roomCode)
     console.log(client.current)

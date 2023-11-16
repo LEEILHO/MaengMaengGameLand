@@ -17,10 +17,14 @@ export const UserInfo = styled.div`
 `
 
 export const UserNickname = styled.p`
+  width: 80px;
   text-align: center;
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 4px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 `
 
 export const TierFrame = styled.div`
