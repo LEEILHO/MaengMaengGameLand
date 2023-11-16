@@ -29,7 +29,7 @@ const Betting = ({ handleBetting }: Props) => {
   const opponent = useRecoilValue(OpponentState)
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setChipCount(Number(e.target.value))
+    setChipCount(Number(e.target.value.replace(/(^0+)/, '')))
   }
 
   const onClickBetButton = () => {

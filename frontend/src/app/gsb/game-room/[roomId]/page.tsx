@@ -113,7 +113,8 @@ const GameRoom = () => {
               )}
               {(round === 'Result' ||
                 round === 'DrawResult' ||
-                round === 'GiveUpResult') && <RoundResult />}
+                round === 'GiveUpResult' ||
+                round === 'GameOver') && <RoundResult />}
             </S.Content>
             <PlayerCard player={opponent} />
           </S.CenterRow>
