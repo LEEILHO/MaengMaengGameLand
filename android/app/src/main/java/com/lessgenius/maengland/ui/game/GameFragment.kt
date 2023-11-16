@@ -29,6 +29,7 @@ import com.lessgenius.maengland.base.BaseFragment
 import com.lessgenius.maengland.databinding.FragmentGameBinding
 import com.lessgenius.maengland.util.SoundUtil
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.random.Random
 
 
 private const val TAG = "GameFragment_김진영"
@@ -68,6 +69,8 @@ class GameFragment :
 
     private var lastY = 0
     private var score = MutableLiveData(0)
+
+    val handler = Handler(Looper.getMainLooper())
 
 
     // 화면의 크기
@@ -146,7 +149,7 @@ class GameFragment :
         for (i in 0 until binding.gameLayout.childCount) {
             val platform = binding.gameLayout.getChildAt(i) ?: continue
 
-            if (platform.tag == "platform") {
+            if (platform.tag == "normal" || platform.tag == "transparent") {
                 val platformTop = platform.y
 
                 if (platformTop > thresholdY) {
@@ -161,16 +164,22 @@ class GameFragment :
                     )
 
                     if (playerRect.right > platformRect.left && playerRect.left < platformRect.right && (playerRect.bottom <= platformRect.top) && (platformRect.top - playerRect.bottom <= 40)) {
-
+                        Log.d(TAG, "checkVisiblePlatforms: $playerRect $platformRect")
                         SoundUtil.playJumpSound()
                         onCollidedPlatform(platformRect.top.toFloat())
-                        Log.d(TAG, "checkVisiblePlatforms: $playerRect $platformRect")
+
+                        if (platform.tag == "transparent") {
+//                            platform.visibility = View.GONE
+                            handler.postDelayed({
+                                platform.visibility = View.GONE
+                            }, 50)
+                        }
+
                         break
                     }
                 }
             }
         }
-
     }
 
     private fun onCollidedPlatform(platformTop: Float) {
@@ -188,9 +197,6 @@ class GameFragment :
             while (platformTop - lastY < screenHeight) {
                 createNewPlatform()
             }
-//            if (platformTop - screenHeight < lastY) {
-//                createNewPlatform()
-//            }
 
         }
 
@@ -260,7 +266,6 @@ class GameFragment :
                     addListener(object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(animation: Animator) {
                             super.onAnimationEnd(animation)
-                            val handler = Handler(Looper.getMainLooper())
                             handler.postDelayed({
                                 player?.setImageResource(R.drawable.icon_bunny_jump)
                             }, 100)
@@ -302,7 +307,6 @@ class GameFragment :
 
         gameViewModel.recordScore(score.value ?: 0)
 
-        val handler = Handler(Looper.getMainLooper())
         val dialog = GameDialog(this, score.value ?: 0)
         handler.postDelayed({
             dialog.isCancelable = false
@@ -395,12 +399,25 @@ class GameFragment :
 
         val platform = ImageView(context).apply {
 
-            setImageResource(R.drawable.icon_foothold)
-
             layoutParams = RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT
             )
+
+            if (lastY < binding.gameLayout.layoutParams.height - screenHeight * 3) {
+                if (Random.nextBoolean()) {
+                    setImageResource(R.drawable.icon_foothold)
+                    tag = "normal"
+                } else {
+                    setImageResource(R.drawable.icon_foothold)
+                    alpha = 0.4F
+                    tag = "transparent"
+                }
+
+            } else {
+                tag = "normal"
+                setImageResource(R.drawable.icon_foothold)
+            }
 
             // 이미지 드로어블의 원본 크기를 가져옴
             val drawable =
@@ -416,7 +433,7 @@ class GameFragment :
         platform.visibility = View.VISIBLE
 
         // 발판에 태그 설정
-        platform.tag = "platform"
+//        platform.tag = "platform"
 
         // 발판을 레이아웃에 추가
         binding.gameLayout.addView(platform)
