@@ -280,6 +280,7 @@ const useSocketGsb = () => {
       else if (response.type === '게임 결과') {
         console.log('게임 종료!')
         const result = response as socketResponseType<GameOverType>
+        setRound('GameOver')
         setGameOver(result.data)
       }
     })

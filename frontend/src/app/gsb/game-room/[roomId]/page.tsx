@@ -68,6 +68,7 @@ const GameRoom = () => {
     if (round === 'GameOver') {
       timeId = setTimeout(() => {
         setIsGameEnd(true)
+        setDisplayMessage('최종 결과')
       }, 5000)
     }
 

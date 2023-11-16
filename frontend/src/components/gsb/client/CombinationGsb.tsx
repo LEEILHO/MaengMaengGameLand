@@ -9,7 +9,7 @@ import DragAndDrop from './DragAndDrop'
 import CButton from '@components/common/clients/CButton'
 import { colors } from '@constants/colors'
 import useModal from '@hooks/useModal'
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { MyState, OpponentState } from '@atom/gsbAtom'
 import AlertModal from './AlertModal'
 
@@ -49,6 +49,8 @@ const CombinationGsb = ({ handleGSBComb }: Props) => {
     })),
   })
 
+  const setMy = useSetRecoilState(MyState)
+
   const onDragEndGold = ({ source, destination }: DropResult) => {
     if (!destination) return
 
@@ -56,7 +58,18 @@ const CombinationGsb = ({ handleGSBComb }: Props) => {
     const destinationKey = destination.droppableId as StarStatus
 
     if (sourceKey === destinationKey) return
-
+    if (sourceKey === 'in' && destinationKey === 'out') {
+      setMy((prev) => {
+        if (!prev) return null
+        return { ...prev, currentWeight: prev.currentWeight - 3 }
+      })
+    }
+    if (sourceKey === 'out' && destinationKey === 'in') {
+      setMy((prev) => {
+        if (!prev) return null
+        return { ...prev, currentWeight: prev.currentWeight + 3 }
+      })
+    }
     const _stars = JSON.parse(JSON.stringify(goldStars)) as typeof goldStars
     const [targetStar] = _stars[sourceKey].splice(source.index, 1)
     _stars[destinationKey].splice(destination.index, 0, targetStar)
@@ -70,6 +83,18 @@ const CombinationGsb = ({ handleGSBComb }: Props) => {
     const destinationKey = destination.droppableId as StarStatus
 
     if (sourceKey === destinationKey) return
+    if (sourceKey === 'in' && destinationKey === 'out') {
+      setMy((prev) => {
+        if (!prev) return null
+        return { ...prev, currentWeight: prev.currentWeight - 2 }
+      })
+    }
+    if (sourceKey === 'out' && destinationKey === 'in') {
+      setMy((prev) => {
+        if (!prev) return null
+        return { ...prev, currentWeight: prev.currentWeight + 2 }
+      })
+    }
 
     const _stars = JSON.parse(JSON.stringify(silverStars)) as typeof silverStars
     const [targetStar] = _stars[sourceKey].splice(source.index, 1)
@@ -84,6 +109,18 @@ const CombinationGsb = ({ handleGSBComb }: Props) => {
     const destinationKey = destination.droppableId as StarStatus
 
     if (sourceKey === destinationKey) return
+    if (sourceKey === 'in' && destinationKey === 'out') {
+      setMy((prev) => {
+        if (!prev) return null
+        return { ...prev, currentWeight: prev.currentWeight - 1 }
+      })
+    }
+    if (sourceKey === 'out' && destinationKey === 'in') {
+      setMy((prev) => {
+        if (!prev) return null
+        return { ...prev, currentWeight: prev.currentWeight + 1 }
+      })
+    }
 
     const _stars = JSON.parse(JSON.stringify(bronzeStars)) as typeof bronzeStars
     const [targetStar] = _stars[sourceKey].splice(source.index, 1)

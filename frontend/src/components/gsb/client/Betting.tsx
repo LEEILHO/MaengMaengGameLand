@@ -27,6 +27,7 @@ const Betting = ({ handleBetting }: Props) => {
   const myBetChips = useRecoilValue(MyBetChipsState)
   const opponentBetChips = useRecoilValue(OpponentBetChipsState)
   const opponent = useRecoilValue(OpponentState)
+
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setChipCount(Number(e.target.value))
   }
@@ -41,7 +42,10 @@ const Betting = ({ handleBetting }: Props) => {
     if (chipCount < minBet) {
       setText('최소 배팅 개수를 맞춰주세요.')
       openModal()
-    } else if (opponent && opponent?.currentChips < chipCount) {
+    } else if (
+      opponent &&
+      opponent?.currentChips + (opponentBetChips - myBetChips) < chipCount
+    ) {
       setText('상대방의 보유 칩보다 많이 베팅할 수 없습니다.')
       openModal()
     } else if (chipCount > 0 && chipCount >= minBet) {
@@ -67,7 +71,7 @@ const Betting = ({ handleBetting }: Props) => {
       />
       <S.BettingInputContainer>
         <img src={images.gsb.chip} alt="chip" />
-        <S.BettingInput type="text" value={chipCount} onChange={onChange} />
+        <S.BettingInput type="number" value={chipCount} onChange={onChange} />
       </S.BettingInputContainer>
       <CButton
         color="white"
