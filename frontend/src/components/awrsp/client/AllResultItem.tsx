@@ -11,7 +11,7 @@ type Props = {
 const AllResultItem = ({ result }: Props) => {
   return (
     <S.AllResultItemContainer>
-      <S.ProfileImage src={images.common.header.dummyProfile} />
+      <S.ProfileImage src={result.profileUrl} />
       <S.Nickname>{result.nickname}</S.Nickname>
       {result.detail ? (
         <S.WinCount>
@@ -21,7 +21,11 @@ const AllResultItem = ({ result }: Props) => {
         <S.WinCount>미제출</S.WinCount>
       )}
 
-      {result.finish && <S.Winner>{result.rank}등</S.Winner>}
+      {result.finish && (
+        <S.Winner>
+          <p>{result.rank}등</p>
+        </S.Winner>
+      )}
     </S.AllResultItemContainer>
   )
 }

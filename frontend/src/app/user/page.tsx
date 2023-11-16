@@ -18,7 +18,9 @@ const page = () => {
   return (
     <>
       <S.UesrPageContainer>
-        <S.BackgroundLottie animationData={Background} loop />
+        <S.LottieContainer>
+          <S.BackgroundLottie animationData={Background} loop />
+        </S.LottieContainer>
         <UserProfileSideBar />
         <RankList />
       </S.UesrPageContainer>

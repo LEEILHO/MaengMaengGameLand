@@ -1,11 +1,13 @@
 'use client'
 
 import { Circle } from 'rc-progress'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import * as S from '@styles/common/Timer.styled'
 import { secondsToMinutesAndSeconds } from '@utils/common/timer'
 import { images } from '@constants/images'
-import { css } from 'styled-components'
+import { sounds } from '@constants/sounds'
+import { useRecoilValue } from 'recoil'
+import { soundState } from '@atom/soundAtom'
 
 type Props = {
   size: string
@@ -15,10 +17,11 @@ type Props = {
   timeOverHandle: () => void
 }
 
-// todo : 20으로 되어있는 곳 값 props로 받아오기
 const Timer = ({ size, fontSize, time, timeOverHandle, round }: Props) => {
   const [currentTime, setCurrentTime] = useState(0)
   const timeRemaining = time - currentTime
+  const soundRef = useRef<HTMLAudioElement>(null)
+  const isSound = useRecoilValue(soundState)
 
   useEffect(() => {
     console.log('[라운드 변경]', round)
@@ -31,18 +34,33 @@ const Timer = ({ size, fontSize, time, timeOverHandle, round }: Props) => {
       return () => clearTimeout(timerId) // 타이머 정리
     }
     if (currentTime === time) {
-      console.log('타임 오버')
       timeOverHandle()
     }
   }, [currentTime, time, timeOverHandle])
 
   useEffect(() => {
-    console.log(time - currentTime)
-    // console.log('남은 시간', timeRemaining)
-  }, [currentTime])
+    if (timeRemaining === 5) {
+      if (isSound?.effectSound ?? true) {
+        soundRef.current?.play()
+      }
+    }
+
+    if (timeRemaining === 0) {
+      if (isSound?.effectSound ?? true) {
+        soundRef.current?.pause()
+      }
+    }
+  }, [timeRemaining])
 
   return (
     <S.TimerContainer $size={size}>
+      <audio
+        src={sounds.common.timer}
+        ref={soundRef}
+        controls
+        loop
+        style={{ display: 'none' }}
+      />
       <Circle
         percent={(currentTime / time) * 100}
         strokeWidth={6}

@@ -56,6 +56,7 @@ export const CenterRow = styled.div`
 export const Content = styled.div`
   flex: 1;
   padding: 0px 6px;
+  position: relative;
 `
 
 export const BottomRow = styled.div`
@@ -89,4 +90,12 @@ export const AllBetChips = styled.p`
   justify-content: center;
   z-index: 1;
   margin-bottom: 20px;
+`
+
+export const BackButton = styled.img`
+  position: absolute;
+  bottom: 12px;
+  right: 24px;
+  height: 40px;
+  width: 40px;
 `

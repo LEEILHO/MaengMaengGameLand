@@ -6,7 +6,7 @@ export const UserProfileSideBarContainer = styled.div`
   flex-direction: column;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  width: 134px;
+  width: 144px;
   align-items: center;
 `
 
@@ -35,6 +35,7 @@ export const UserProfileImage = styled.img`
   width: 66px;
   height: 66px;
   border-radius: 50%;
+  object-fit: cover;
 `
 
 export const UserNameRow = styled.div`

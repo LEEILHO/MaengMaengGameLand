@@ -1,10 +1,11 @@
 'use client'
 
-import React, { useState } from 'react'
+import { useState, useEffect } from 'react'
 import * as S from '@styles/gsb/TurnCard.styled'
 import { images } from '@constants/images'
 import { TurnCardState } from '@atom/gsbAtom'
 import { useRecoilValue } from 'recoil'
+import { userState } from '@atom/userAtom'
 
 type Props = {
   handleChoiceTurnCard: (index: number) => void
@@ -14,6 +15,7 @@ type Props = {
 const TurnCard = ({ handleChoiceTurnCard }: Props) => {
   const [cardChoice, setCardChoice] = useState(false)
   const turnList = useRecoilValue(TurnCardState)
+  const user = useRecoilValue(userState)
 
   const onChoiceCard = (index: number) => {
     console.log(turnList)
@@ -21,6 +23,18 @@ const TurnCard = ({ handleChoiceTurnCard }: Props) => {
     setCardChoice(true)
     handleChoiceTurnCard(index)
   }
+
+  useEffect(() => {
+    // 카드 동시성 처리, 내가 선택한 걸로 처리되지 않았다면 카드 다시 선택할 수 있게
+    let flag = false
+    turnList?.map((card) => {
+      if (card.selected) {
+        if (card.nickname === user?.nickname) flag = true
+      }
+    })
+
+    if (!flag) setCardChoice(false)
+  }, [turnList])
 
   if (!turnList) return
 

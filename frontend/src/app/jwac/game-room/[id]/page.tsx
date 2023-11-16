@@ -9,7 +9,11 @@ import CButton from '@components/common/clients/CButton'
 import JWACUserList from '@components/gameRoom/jwac/JWACUserList'
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useRecoilValue } from 'recoil'
-import { formatKoreanCurrency, jewelryToLottie } from '@utils/gameRoom/jwacUtil'
+import {
+  extractNumberFromString,
+  formatKoreanCurrency,
+  jewelryToLottie,
+} from '@utils/gameRoom/jwacUtil'
 import { userState } from '@atom/userAtom'
 import { usePathname, useRouter } from 'next/navigation'
 import useSocketJWAC from '@hooks/useSocketJWAC'
@@ -19,6 +23,8 @@ import useModal from '@hooks/useModal'
 import JewelryInfomationModal from '@components/gameRoom/jwac/JewelryInfomationModal'
 import useDidMountEffect from '@hooks/useDidMoundEffect'
 import JWACResult from '@components/gameRoom/jwac/JWACResult'
+import { NumericFormat } from 'react-number-format'
+import useSound from '@hooks/useSound'
 
 const page = () => {
   const {
@@ -32,14 +38,16 @@ const page = () => {
     isGameEnd,
     gameResult,
   } = useSocketJWAC()
-  const { Modal, isOpen, closeModal, openModal } = useModal()
   const pathname = usePathname().split('game-room/')[1]
   const router = useRouter()
+  const { Modal, isOpen, closeModal, openModal } = useModal()
+  const { playWriteSound, playButtonSound } = useSound()
   const [isLoading, setIsLoading] = useState(true) // 사람들이 모두 들어오기 전에 로딩 페이지를 보여줄지 말지
   const [isRoundStart, setIsRoundStart] = useState(false)
   const [isRoundEnd, setIsRoundEnd] = useState(false)
-  const [isSubmit, setIsSubmit] = useState(true)
+  const [isSubmit, setIsSubmit] = useState(false)
   const [bidMoney, setBidMoney] = useState(0)
+  const [submitMoney, setSubmitMoney] = useState(0)
   const user = useRecoilValue(userState)
   const myData = useMemo(
     () => players.filter((player) => player.nickname === user?.nickname)[0],
@@ -58,16 +66,20 @@ const page = () => {
 
   const handleBidMody = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setBidMoney(Number(e.target.value))
+      console.log('숫자 바뀜', e.target.value)
+
+      setBidMoney(extractNumberFromString(e.target.value))
     },
     [],
   )
 
   const handleSubmit = () => {
+    playWriteSound()
     if (user) {
       handleBid(pathname, user.nickname, bidMoney)
     }
-    setIsSubmit(false)
+    setIsSubmit(true)
+    setSubmitMoney(bidMoney)
     setBidMoney(0)
   }
 
@@ -85,10 +97,14 @@ const page = () => {
     }
   }, [pathname, user])
 
+  useEffect(() => {
+    console.log(bidMoney)
+  }, [bidMoney])
+
   // 다음 라운드 시작 시
   useEffect(() => {
     console.log('[라운드 데이터 변경]', roundData)
-    setIsSubmit(true)
+    setIsSubmit(false)
   }, [roundData])
 
   // 라운드가 시작되고 3초간 경매 보석 정보 보여주기
@@ -176,20 +192,38 @@ const page = () => {
             </S.DisplayBoardContainer>
             <S.NoteContainer>
               <S.Discription>희망 낙찰가를 제시해주세요</S.Discription>
-              <S.PriceRow>
-                <S.PriceInput
-                  type="number"
-                  value={bidMoney.toString()}
-                  onChange={handleBidMody}
-                  max={999999999999}
-                  maxLength={12}
-                  min={0}
-                />
-                <S.PriceUnit>원</S.PriceUnit>
-              </S.PriceRow>
-              <S.CurrentPriceRow>
-                {formatKoreanCurrency(bidMoney)}
-              </S.CurrentPriceRow>
+              {isSubmit ? (
+                <>
+                  <S.PriceRow>
+                    <S.SubmitPrice>{`제출금액 : ${formatKoreanCurrency(
+                      submitMoney,
+                    )}원`}</S.SubmitPrice>
+                  </S.PriceRow>
+                </>
+              ) : (
+                <>
+                  <S.PriceRow>
+                    <NumericFormat
+                      value={bidMoney}
+                      thousandSeparator=","
+                      allowNegative={false}
+                      decimalScale={0}
+                      suffix="원"
+                      isAllowed={(values) => {
+                        let { floatValue } = values
+                        if (!floatValue) floatValue = 0
+                        return floatValue < 1000000000000000
+                      }}
+                      onChange={handleBidMody}
+                      className="price-input"
+                    />
+                  </S.PriceRow>
+                  <S.CurrentPriceRow>
+                    {formatKoreanCurrency(bidMoney)}
+                  </S.CurrentPriceRow>
+                </>
+              )}
+
               <S.CumlativeAmountCotainer>
                 <S.CumlativeDiscriptionRow>
                   <img src={images.gameRoom.jwac.money} alt="누적 금액" />
@@ -202,16 +236,6 @@ const page = () => {
               <S.ButtonRow>
                 {isSubmit ? (
                   <CButton
-                    text="제출"
-                    color="white"
-                    radius={24}
-                    backgroundColor="#7000FF"
-                    fontSize={14}
-                    height={32}
-                    onClick={handleSubmit}
-                  />
-                ) : (
-                  <CButton
                     text="제출 완료"
                     color="white"
                     radius={24}
@@ -220,6 +244,16 @@ const page = () => {
                     height={32}
                     onClick={() => {}}
                     disabled
+                  />
+                ) : (
+                  <CButton
+                    text="제출"
+                    color="white"
+                    radius={24}
+                    backgroundColor="#7000FF"
+                    fontSize={14}
+                    height={32}
+                    onClick={handleSubmit}
                   />
                 )}
               </S.ButtonRow>
@@ -238,7 +272,7 @@ const page = () => {
 
         {/* 결과화면 렌더링 */}
         {isGameEnd && (
-          <>
+          <S.RoomResultContainer>
             <JWACResult gameResult={gameResult} />
             <S.BackButton
               src={images.gameRoom.jwac.backWhite}
@@ -247,7 +281,7 @@ const page = () => {
                 router.replace('/jwac/lobby')
               }}
             />
-          </>
+          </S.RoomResultContainer>
         )}
       </S.RoomContainer>
     </>

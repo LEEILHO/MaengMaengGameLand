@@ -1,5 +1,6 @@
 import {
-  Player,
+  GameOverType,
+  NormalResultType,
   PlayerInfoType,
   RoundType,
   TurnListType,
@@ -43,5 +44,27 @@ export const MyState = atom<PlayerInfoType | null>({
 
 export const OpponentState = atom<PlayerInfoType | null>({
   key: 'opponent',
+  default: null,
+})
+
+// 나의 현재까지의 베팅 총 개수
+export const MyBetChipsState = atom<number>({
+  key: 'myBetChips',
+  default: 0,
+})
+
+// 상대방의 현재까지의 베팅 총 개수
+export const OpponentBetChipsState = atom<number>({
+  key: 'opponentBetChips',
+  default: 0,
+})
+
+export const ResultState = atom<NormalResultType | null>({
+  key: 'normalResult',
+  default: null,
+})
+
+export const GameOverState = atom<GameOverType | null>({
+  key: 'gameOver',
   default: null,
 })

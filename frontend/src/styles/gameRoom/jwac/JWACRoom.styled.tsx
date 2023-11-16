@@ -17,6 +17,16 @@ export const RoomContainer = styled.div`
   padding-right: 10%;
 `
 
+export const RoomResultContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`
+
 export const ItemContainer = styled.div`
   display: flex;
   position: absolute;
@@ -117,6 +127,33 @@ export const PriceRow = styled.div`
   width: 100%;
   margin-top: 24px;
   padding: 0 12px;
+
+  .price-input {
+    border: none;
+    border-bottom: 1px solid;
+    border-radius: 0;
+    /* flex: 1; */
+    width: 100%;
+    font-size: 12px;
+    font-weight: 700;
+    text-align-last: right;
+    margin-right: 4px;
+    margin-left: 12px;
+    background-color: transparent;
+    /* width: 50px; */
+
+    @media screen and (max-width: 740px) {
+      margin-right: 2px;
+      margin-left: 4px;
+    }
+  }
+`
+
+export const SubmitPrice = styled.div`
+  font-size: 14px;
+  font-weight: 700;
+  width: 100%;
+  text-align: right;
 `
 
 export const ButtonRow = styled.div`

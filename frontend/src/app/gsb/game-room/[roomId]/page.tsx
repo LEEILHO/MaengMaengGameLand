@@ -1,11 +1,10 @@
 'use client'
 
 import withAuth from '@components/hoc/client/PrivateRoute'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import * as S from '@styles/gsb/GameRoom.styled'
 import TurnCard from '@components/gsb/client/TurnCard'
-import Timer from '@components/common/clients/Timer'
 import PlayerCard from '@components/gsb/client/PlayerCard'
 import { images } from '@constants/images'
 import CombinationGsb from '@components/gsb/client/CombinationGsb'
@@ -14,20 +13,25 @@ import BettingStatus from '@components/gsb/client/BettingStatus'
 import RoundResult from '@components/gsb/client/RoundResult'
 import BarTimer from '@components/common/clients/BarTimer'
 import useSocketGsb from '@hooks/useSocketGsb'
-import { usePathname } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import {
   AllBetChipsState,
   CurrentPlayerState,
   DisplayMessageState,
+  GameOverState,
+  MyBetChipsState,
   MyState,
+  OpponentBetChipsState,
   OpponentState,
   RoundState,
   TimerState,
 } from '@atom/gsbAtom'
 import { userState } from '@atom/userAtom'
+import GameOver from '@components/gsb/client/GameOver'
 
 const GameRoom = () => {
+  const router = useRouter()
   const {
     connectSocket,
     disconnectSocket,
@@ -40,14 +44,17 @@ const GameRoom = () => {
   // const gameCode = usePathname().split('/')[3]
 
   // 전광판 하나로 해서 상황에 따라 메세지만 바꾸기
-  const displayMessage = useRecoilValue(DisplayMessageState)
-  const round = useRecoilValue(RoundState)
+  const [displayMessage, setDisplayMessage] =
+    useRecoilState(DisplayMessageState)
+  const [round, setRound] = useRecoilState(RoundState)
   const time = useRecoilValue(TimerState)
   const my = useRecoilValue(MyState)
   const opponent = useRecoilValue(OpponentState)
-  const currentPlayer = useRecoilValue(CurrentPlayerState)
-  const user = useRecoilValue(userState)
+  const myBetChips = useRecoilValue(MyBetChipsState)
+  const opponentBetChips = useRecoilValue(OpponentBetChipsState)
   const AllBetChips = useRecoilValue(AllBetChipsState)
+
+  const [isGameEnd, setIsGameEnd] = useState(false)
 
   useEffect(() => {
     connectSocket(connectGsb, disconnectGsb)
@@ -57,7 +64,16 @@ const GameRoom = () => {
   }, [])
 
   useEffect(() => {
-    console.log(round, '입니다.')
+    let timeId: NodeJS.Timeout
+    if (round === 'GameOver') {
+      timeId = setTimeout(() => {
+        setIsGameEnd(true)
+      }, 5000)
+    }
+
+    return () => {
+      clearTimeout(timeId)
+    }
   }, [round])
 
   return (
@@ -66,32 +82,52 @@ const GameRoom = () => {
         <S.DisplayBoard>{displayMessage}</S.DisplayBoard>
         <BarTimer time={time} />
       </S.TopRow>
-      <S.CenterRow>
-        <PlayerCard player={my} />
-        <S.Content>
-          {round === 'Combination' && (
-            <CombinationGsb handleGSBComb={handleGSBComb} />
+      {isGameEnd ? (
+        <>
+          <GameOver />
+          <S.BackButton
+            src={images.gameRoom.jwac.backWhite}
+            alt="로비로 나가기"
+            onClick={() => {
+              router.replace('/gsb/lobby')
+            }}
+          />
+        </>
+      ) : (
+        <>
+          <S.CenterRow>
+            <PlayerCard player={my} />
+            <S.Content>
+              {round === 'Combination' && (
+                <CombinationGsb handleGSBComb={handleGSBComb} />
+              )}
+              {(round === 'Betting' ||
+                round === 'BetWaiting' ||
+                round === 'Combination' ||
+                round === 'CombWaiting') && (
+                <BettingStatus
+                  myBet={myBetChips}
+                  opponentBet={opponentBetChips}
+                />
+              )}
+              {(round === 'Result' ||
+                round === 'DrawResult' ||
+                round === 'GiveUpResult') && <RoundResult />}
+            </S.Content>
+            <PlayerCard player={opponent} />
+          </S.CenterRow>
+          {round === 'Betting' && <Betting handleBetting={handleBetting} />}
+          {round === 'ChoiceTurn' && (
+            <TurnCard handleChoiceTurnCard={handleChoiceTurnCard} />
           )}
-          {(round === 'Betting' || round === 'BetWaiting') && (
-            <BettingStatus
-              myBet={my?.currentBetChips}
-              opponentBet={opponent?.currentBetChips}
-            />
-          )}
-          {round === 'Result' && <RoundResult />}
-        </S.Content>
-        <PlayerCard player={opponent} />
-      </S.CenterRow>
-      {round === 'Betting' && <Betting handleBetting={handleBetting} />}
-      {round === 'ChoiceTurn' && (
-        <TurnCard handleChoiceTurnCard={handleChoiceTurnCard} />
-      )}
 
-      {round === 'Result' && (
-        <S.BottomRow>
-          <S.ManyChips src={images.gsb.allChipsBet} />
-          <S.AllBetChips>{AllBetChips}</S.AllBetChips>
-        </S.BottomRow>
+          {round === 'Result' && (
+            <S.BottomRow>
+              <S.ManyChips src={images.gsb.allChipsBet} />
+              <S.AllBetChips>{AllBetChips}</S.AllBetChips>
+            </S.BottomRow>
+          )}
+        </>
       )}
     </S.GameRoomContainer>
   )

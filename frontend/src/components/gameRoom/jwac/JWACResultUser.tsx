@@ -5,12 +5,13 @@ import { formatKoreanCurrency } from '@utils/gameRoom/jwacUtil'
 
 type Props = {
   player: PlayerResultType
+  rank: number
 }
 
-const JWACResultUser = ({ player }: Props) => {
+const JWACResultUser = ({ player, rank }: Props) => {
   return (
     <S.ResultUserContainer>
-      <S.Rank>1</S.Rank>
+      <S.Rank>{rank}</S.Rank>
       <S.UserData>
         <S.UserProfileImage src={player.profileUrl} alt="프로필이미지" />
         <S.UserName>{player.nickname}</S.UserName>

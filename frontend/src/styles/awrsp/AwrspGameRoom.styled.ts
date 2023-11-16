@@ -77,3 +77,80 @@ export const HistoryButton = styled.button`
     height: 28px;
   }
 `
+
+export const BackToLobbyButton = styled.button`
+  width: 44px;
+  height: 44px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background-color: rgba(255, 195, 68, 1);
+  box-shadow: 0px 4px 4px 0px rgba(255, 255, 255, 0.4) inset;
+
+  position: fixed;
+  bottom: 20px;
+  right: 40px;
+
+  img {
+    width: 28px;
+    height: 28px;
+    rotate: calc(180deg);
+  }
+`
+
+export const GameResultList = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 25px;
+`
+
+export const TableHeader = styled.div`
+  width: 400px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  color: #fff;
+  text-align: center;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+
+  margin-bottom: 12px;
+
+  .rank,
+  .point {
+    width: 100px;
+  }
+`
+
+export const GameResultItem = styled.div`
+  width: 400px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  color: #fff;
+  text-align: center;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+
+  margin-bottom: 8px;
+
+  .rank,
+  .point {
+    width: 100px;
+  }
+
+  .nickname {
+    color: #f5e340;
+  }
+`

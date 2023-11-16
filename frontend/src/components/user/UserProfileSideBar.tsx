@@ -52,6 +52,7 @@ const UserProfileSideBar = () => {
         />
         <input
           type="file"
+          accept="image/*"
           style={{ display: 'none' }}
           onChange={handleProfileImage}
           ref={selectFileRef}

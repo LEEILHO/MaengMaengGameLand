@@ -131,6 +131,7 @@ const RspCombination = ({ handleCardSubmit }: Props) => {
                       key={card.id}
                       draggableId={card.id}
                       index={index}
+                      isDragDisabled={isSubmit}
                     >
                       {(provided, snapshot) => (
                         <S.DragCard
@@ -159,6 +160,7 @@ const RspCombination = ({ handleCardSubmit }: Props) => {
                       key={card.id}
                       draggableId={card.id}
                       index={index}
+                      isDragDisabled={isSubmit}
                     >
                       {(provided, snapshot) => (
                         <S.DragCard

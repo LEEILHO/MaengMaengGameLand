@@ -1,19 +1,25 @@
 'use client'
 
-import { useCallback, useRef } from 'react'
+import { useRef, useState } from 'react'
 import { CompatClient, Stomp } from '@stomp/stompjs'
 import { SOCKET_URL } from '@constants/baseUrl'
 import SockJS from 'sockjs-client'
 import { usePathname } from 'next/navigation'
 import { socketResponseType } from '@type/common/common.type'
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
+import {
+  useRecoilState,
+  useRecoilValue,
+  useResetRecoilState,
+  useSetRecoilState,
+} from 'recoil'
 import { userState } from '@atom/userAtom'
 import {
   DrawCardState,
   GameResultState,
+  HistoryState,
   PlayerResultState,
   RoundState,
-  StepState,
+  RspCardListState,
   TimerState,
 } from '@atom/awrspAtom'
 import {
@@ -29,15 +35,24 @@ const useSocketAWRSP = () => {
   const user = useRecoilValue(userState)
   const setTimerTime = useSetRecoilState(TimerState)
   const setPlayerResult = useSetRecoilState(PlayerResultState)
-  const setStep = useSetRecoilState(StepState)
   const setGameReulst = useSetRecoilState(GameResultState)
   const setRound = useSetRecoilState(RoundState)
   const [drawCard, setDrawCard] = useRecoilState(DrawCardState)
 
+  const [step, setStep] = useState<StepType>('ENTER_GAME')
+
+  // 끝나고 리셋을 위한 함수
+  const resetCardList = useResetRecoilState(RspCardListState)
+  const resetDrawCard = useResetRecoilState(DrawCardState)
+  const resetTimerReset = useResetRecoilState(TimerState)
+  const resetPlayerResult = useResetRecoilState(PlayerResultState)
+  const resetGameResult = useResetRecoilState(GameResultState)
+  const resetHistory = useResetRecoilState(HistoryState)
+
   /**
    * 전승 가위바위보 게임 구독
    */
-  const connectAWRSPGame = useCallback(() => {
+  const connectAWRSPGame = () => {
     console.log('전승 가위바위보 게임 구독', gameCode)
 
     client.current?.subscribe(`/exchange/game/awrsp.${gameCode}`, (res) => {
@@ -51,6 +66,8 @@ const useSocketAWRSP = () => {
         response.type === 'PLAYER_WINS' ||
         response.type === 'ALL_WINS'
       ) {
+        console.log(step, '이후 타이머 시간 설정')
+        if (step === 'WAITING') return
         const data = response.data as number
         console.log('받아온 시간 : ', data)
         setTimerTime(data)
@@ -63,12 +80,18 @@ const useSocketAWRSP = () => {
       }
       // 몇 라운드인지 받아오기
       else if (response.type === 'ROUND') {
+        console.log('라운드를 받아올 때: ', step)
+
+        if (step === 'WAITING') return
         const data = response.data as number
         console.log(data, '라운드')
         setRound(data)
       }
       // 모든 유저의 라운드 결과를 받아오기
       else if (response.type === 'CARD_RESULT') {
+        console.log('라운드 결과를 받아올 때: ', step)
+
+        if (step === 'WAITING') return
         const data = response.data as PlayerResultType[]
         console.log('이번 라운드 결과 : ', data)
         setPlayerResult(data)
@@ -81,23 +104,28 @@ const useSocketAWRSP = () => {
         setStep(response.type as StepType)
       }
     })
-  }, [client.current])
+  }
 
   /**
    * 전승 가위바위보 게임 구독 취소
    */
-  const disconnectAWRSPGame = useCallback(() => {
+  const disconnectAWRSPGame = () => {
     console.log('전승 가위바위보 게임 구독 취소', gameCode)
 
     client.current?.unsubscribe(`/exchange/game/awrsp.${gameCode}`)
-  }, [client.current])
+
+    resetCardList()
+    resetDrawCard()
+    resetTimerReset()
+    resetPlayerResult()
+    resetGameResult()
+    resetHistory()
+  }
 
   /**
    * 게임 참가 (라운드마다 호출)
    */
-  const handleRoundStart = useCallback(() => {
-    console.log('라운드 시작!')
-
+  const handleRoundStart = () => {
     client.current?.publish({
       destination: `/pub/game.awrsp.timer.${gameCode}`,
       body: JSON.stringify({
@@ -105,51 +133,44 @@ const useSocketAWRSP = () => {
         type: 'ENTER_GAME',
       }),
     })
-  }, [client.current])
+  }
 
   /**
    * 타이머가 종료되었을 때 호출
    */
-  const handleTimeOver = useCallback(
-    (step: StepType) => {
-      console.log('종료되는 단계 : ', step)
-      if (step === 'ALL_WINS') {
-        // 다음 라운드 시작을 알림
-        setStep('ENTER_GAME')
-        setTimerTime(20)
-        handleRoundStart()
-      } else if (step === 'WAITING') return
-      else {
-        client.current?.publish({
-          destination: `/pub/game.awrsp.timer.${gameCode}`,
-          body: JSON.stringify({
-            nickname: user?.nickname,
-            type: step,
-          }),
-        })
-      }
-    },
-    [client.current],
-  )
-
+  const handleTimeOver = (step: StepType) => {
+    console.log('종료되는 단계 : ', step)
+    if (step === 'ALL_WINS') {
+      // 다음 라운드 시작을 알림
+      setStep('ENTER_GAME')
+      setTimerTime(20)
+      handleRoundStart()
+    } else if (step === 'WAITING') return
+    else {
+      client.current?.publish({
+        destination: `/pub/game.awrsp.timer.${gameCode}`,
+        body: JSON.stringify({
+          nickname: user?.nickname,
+          type: step,
+        }),
+      })
+    }
+  }
   /**
    * 카드 제출
    */
-  const handleCardSubmit = useCallback(
-    (combCard: RspType[]) => {
-      console.log('카드 조합 : ', combCard)
-      client.current?.publish({
-        destination: `/pub/game.awrsp.submit.${gameCode}`,
-        body: JSON.stringify({
-          nickname: user?.nickname,
-          card: combCard,
-        }),
-      })
-    },
-    [client.current],
-  )
+  const handleCardSubmit = (combCard: RspType[]) => {
+    console.log('카드 조합 : ', combCard)
+    client.current?.publish({
+      destination: `/pub/game.awrsp.submit.${gameCode}`,
+      body: JSON.stringify({
+        nickname: user?.nickname,
+        card: combCard,
+      }),
+    })
+  }
 
-  const connectSocket = useCallback(() => {
+  const connectSocket = () => {
     const sock = new SockJS(SOCKET_URL)
     const StompClient = Stomp.over(() => sock)
 
@@ -167,11 +188,11 @@ const useSocketAWRSP = () => {
         disconnectAWRSPGame()
       },
     )
-  }, [client.current])
+  }
 
-  const disconnectSocket = useCallback(() => {
+  const disconnectSocket = () => {
     client.current?.disconnect()
-  }, [client.current])
+  }
 
   return {
     connectSocket,
@@ -179,6 +200,8 @@ const useSocketAWRSP = () => {
     handleRoundStart,
     handleTimeOver,
     handleCardSubmit,
+    step,
+    setStep,
   }
 }
 

@@ -2,6 +2,7 @@ import CButton from '@components/common/clients/CButton'
 import { useCallback } from 'react'
 import * as S from '@styles/lobby/RoomItem.styled'
 import { usePathname, useRouter } from 'next/navigation'
+import useSound from '@hooks/useSound'
 
 type Props = {
   title: string
@@ -12,8 +13,10 @@ type Props = {
 
 const RoomItem = ({ title, curPeople, maxPeople, roomCode }: Props) => {
   const router = useRouter()
+  const { playButtonSound } = useSound()
 
   const hnadleEnter = useCallback(() => {
+    playButtonSound()
     router.replace(`waiting-room/${roomCode}`)
   }, [])
 
