@@ -58,7 +58,7 @@ public class JwacRecordService {
 		}
 		return Game.builder()
 				.gameCode(gameCode)
-				.gameCategory(GameCategoty.JWERLY_AUCTION)
+				.gameCategory(GameCategoty.JEWELRY_AUCTION)
 				.startAt(startAt)
 				.build();
 	}
