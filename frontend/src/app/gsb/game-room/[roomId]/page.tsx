@@ -68,7 +68,6 @@ const GameRoom = () => {
     if (round === 'GameOver') {
       timeId = setTimeout(() => {
         setIsGameEnd(true)
-        setDisplayMessage('최종 결과')
       }, 5000)
     }
 
@@ -81,7 +80,6 @@ const GameRoom = () => {
     <S.GameRoomContainer>
       <S.TopRow>
         <S.DisplayBoard>{displayMessage}</S.DisplayBoard>
-        <BarTimer time={time} />
       </S.TopRow>
       {isGameEnd ? (
         <>
@@ -113,8 +111,7 @@ const GameRoom = () => {
               )}
               {(round === 'Result' ||
                 round === 'DrawResult' ||
-                round === 'GiveUpResult' ||
-                round === 'GameOver') && <RoundResult />}
+                round === 'GiveUpResult') && <RoundResult />}
             </S.Content>
             <PlayerCard player={opponent} />
           </S.CenterRow>
