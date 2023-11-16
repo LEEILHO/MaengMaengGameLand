@@ -53,6 +53,7 @@ const GameRoom = () => {
   const myBetChips = useRecoilValue(MyBetChipsState)
   const opponentBetChips = useRecoilValue(OpponentBetChipsState)
   const AllBetChips = useRecoilValue(AllBetChipsState)
+  const gameOver = useRecoilValue(GameOverState)
 
   const [isGameEnd, setIsGameEnd] = useState(false)
 
@@ -65,8 +66,12 @@ const GameRoom = () => {
 
   useEffect(() => {
     let timeId: NodeJS.Timeout
-    if (round === 'GameOver') {
+    console.log(gameOver)
+    if (gameOver) {
       timeId = setTimeout(() => {
+        // 게임 종료
+        setRound('GameOver')
+        setDisplayMessage('게임이 종료되었습니다')
         setIsGameEnd(true)
       }, 5000)
     }
@@ -74,7 +79,7 @@ const GameRoom = () => {
     return () => {
       clearTimeout(timeId)
     }
-  }, [round])
+  }, [round, gameOver])
 
   return (
     <S.GameRoomContainer>
