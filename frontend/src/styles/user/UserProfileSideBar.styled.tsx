@@ -1,3 +1,4 @@
+import { colors } from '@constants/colors'
 import { images } from '@constants/images'
 import { styled } from 'styled-components'
 
@@ -90,4 +91,22 @@ export const GoBackIcon = styled.img`
   height: 22px;
   margin: auto auto 16px 16px;
   cursor: pointer;
+`
+
+export const CodeRow = styled.div`
+  display: flex;
+  margin-top: 22px;
+  align-items: center;
+  border-bottom: 1px solid white;
+  padding-bottom: 4px;
+`
+
+export const GenerateCodeButton = styled.p`
+  color: white;
+  font-weight: 500;
+  font-size: 14px;
+
+  &:active {
+    color: rgba(256, 256, 256, 0.5);
+  }
 `

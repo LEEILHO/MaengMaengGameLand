@@ -9,7 +9,7 @@ const RankList = () => {
 
   useEffect(() => {
     getRecordHistory().then((res) => {
-      setRecords(res)
+      setRecords(res.data)
     })
   }, [])
 
@@ -20,7 +20,7 @@ const RankList = () => {
         <S.GameCategoryTitle>게임 종류</S.GameCategoryTitle>
       </S.TitleRow>
       {records.map((record) => (
-        <RankItem record={record} />
+        <RankItem key={record.gameCode} record={record} />
       ))}
     </S.RankListContainer>
   )

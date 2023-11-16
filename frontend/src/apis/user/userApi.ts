@@ -1,4 +1,4 @@
-import { UserRecordType } from '@type/user/user.type'
+import { UserRecordResponseType, WatchCodeType } from '@type/user/user.type'
 import { authAxios, authHttp } from '@utils/http'
 
 export async function editUser(
@@ -17,6 +17,10 @@ export async function editProfileImage(
   })
 }
 
-export async function getRecordHistory(): Promise<UserRecordType[]> {
-  return authAxios.post(`record/history`)
+export async function getRecordHistory(): Promise<UserRecordResponseType> {
+  return authAxios.get(`record/history`)
+}
+
+export async function getWatchLoginCode(): Promise<WatchCodeType> {
+  return authAxios.get(`user/watch`)
 }
