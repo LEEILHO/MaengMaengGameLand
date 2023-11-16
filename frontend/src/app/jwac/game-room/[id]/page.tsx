@@ -25,6 +25,7 @@ import useDidMountEffect from '@hooks/useDidMoundEffect'
 import JWACResult from '@components/gameRoom/jwac/JWACResult'
 import { NumericFormat } from 'react-number-format'
 import useSound from '@hooks/useSound'
+import withAuth from '@components/hoc/client/PrivateRoute'
 
 const page = () => {
   const {
@@ -288,4 +289,4 @@ const page = () => {
   )
 }
 
-export default page
+export default withAuth(page)
