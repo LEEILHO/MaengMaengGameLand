@@ -1,3 +1,4 @@
+import { colors } from '@constants/colors'
 import { styled } from 'styled-components'
 
 export const DrawCardModalContainer = styled.div`
@@ -13,6 +14,14 @@ export const DrawCardModalContainer = styled.div`
   align-items: center;
 
   padding: 10px;
+`
+
+export const TopRow = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
 `
 
 export const Title = styled.h6`
@@ -49,6 +58,14 @@ export const DrawCard = styled.button`
   }
 `
 
+export const BottomRow = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+`
+
 export const Description = styled.p`
   color: #fff;
   text-align: center;
@@ -57,4 +74,17 @@ export const Description = styled.p`
   font-weight: 700;
   line-height: normal;
   letter-spacing: -0.24px;
+`
+
+export const SkipButton = styled.button`
+  position: absolute;
+  right: 0px;
+
+  width: 50px;
+  height: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: ${colors.primary[100]};
+  background: none;
 `
