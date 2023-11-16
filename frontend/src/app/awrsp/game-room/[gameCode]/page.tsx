@@ -127,13 +127,15 @@ const AwrspGameRoom = () => {
               <S.TableHeader>
                 <p className="rank">등수</p>
                 <p className="nickname">유저</p>
-                <p className="point">획득 포인트</p>
+                <p className="point">맞춘 라운드</p>
               </S.TableHeader>
               {gameResult?.map((result) => (
                 <S.GameResultItem key={result.nickname}>
                   <p className="rank">{result.rank}</p>
                   <p className="nickname">{result.nickname}</p>
-                  <p className="point">{result.point}</p>
+                  <p className="point">
+                    {result.round !== 0 ? result.round : '-'}
+                  </p>
                 </S.GameResultItem>
               ))}
             </S.GameResultList>
