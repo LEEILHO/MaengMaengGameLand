@@ -38,14 +38,14 @@ const Betting = ({ handleBetting }: Props) => {
 
     console.log('minBet:', minBet, ' chipCount:', chipCount)
 
-    if (chipCount > 0 && chipCount >= minBet) {
-      handleBetting(false, chipCount)
-    } else if (chipCount < minBet) {
+    if (chipCount < minBet) {
       setText('최소 배팅 개수를 맞춰주세요.')
       openModal()
     } else if (opponent && opponent?.currentChips < chipCount) {
       setText('상대방의 보유 칩보다 많이 베팅할 수 없습니다.')
       openModal()
+    } else if (chipCount > 0 && chipCount >= minBet) {
+      handleBetting(false, chipCount)
     }
   }
 
