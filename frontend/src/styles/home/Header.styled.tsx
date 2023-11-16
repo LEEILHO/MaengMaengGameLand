@@ -58,6 +58,7 @@ export const SettingButton = styled.button`
   justify-content: center;
   margin-right: 44px;
   margin-top: 15px;
+  margin-left: auto;
   background: none;
   cursor: pointer;
   transition: 0.25s;

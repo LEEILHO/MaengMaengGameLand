@@ -43,9 +43,9 @@ const HomeHeader = ({ onClickFriend, onClickSetting }: Props) => {
         <S.UserName>{user.nickname}</S.UserName>
       </S.ProfileCard>
 
-      <S.FriendsButton onClick={onClickFriend}>
+      {/* <S.FriendsButton onClick={onClickFriend}>
         <img src={images.common.header.friends} alt="친구추가" />
-      </S.FriendsButton>
+      </S.FriendsButton> */}
 
       <S.SettingButton onClick={onClickSetting}>
         <img src={images.common.header.setting} alt="설정" />
