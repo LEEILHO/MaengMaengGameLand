@@ -1,4 +1,5 @@
-import { authHttp } from '@utils/http'
+import { UserRecordType } from '@type/user/user.type'
+import { authAxios, authHttp } from '@utils/http'
 
 export async function editUser(
   nickname: string,
@@ -14,4 +15,8 @@ export async function editProfileImage(
   return authHttp.post(`user/edit/profile`, profileImage, {
     'Content-Type': 'multipart/form-data',
   })
+}
+
+export async function getRecordHistory(): Promise<UserRecordType[]> {
+  return authAxios.post(`record/history`)
 }
