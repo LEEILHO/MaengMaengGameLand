@@ -5,13 +5,13 @@ import java.util.List;
 import org.apache.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.maeng.record.domain.record.dto.GameCodeDTO;
 import com.maeng.record.domain.record.dto.GameParticipantDTO;
 import com.maeng.record.domain.record.dto.UserGameInfoDTO;
 import com.maeng.record.domain.record.dto.WatchGameScoreDTO;
@@ -31,9 +31,9 @@ public class RecordController {
 		return ResponseEntity.status(HttpStatus.SC_OK).body(recordService.userGameHistory(email));
 	}
 
-	@PostMapping("/history/detail")
-	public ResponseEntity<List<GameParticipantDTO>> gameHistoryDetail(@RequestBody GameCodeDTO gameCodeDTO) {
-		return ResponseEntity.status(HttpStatus.SC_OK).body(recordService.gameDetail(gameCodeDTO.getGameCode()));
+	@PostMapping("/history/detail/{gameCode}")
+	public ResponseEntity<List<GameParticipantDTO>> gameHistoryDetail(@PathVariable("gameCode") String gameCode) {
+		return ResponseEntity.status(HttpStatus.SC_OK).body(recordService.gameDetail(gameCode));
 	}
 
 	@PostMapping("/watch")
