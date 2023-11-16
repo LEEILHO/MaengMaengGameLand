@@ -81,7 +81,6 @@ const GameRoom = () => {
     <S.GameRoomContainer>
       <S.TopRow>
         <S.DisplayBoard>{displayMessage}</S.DisplayBoard>
-        <BarTimer time={time} />
       </S.TopRow>
       {isGameEnd ? (
         <>
@@ -113,8 +112,7 @@ const GameRoom = () => {
               )}
               {(round === 'Result' ||
                 round === 'DrawResult' ||
-                round === 'GiveUpResult' ||
-                round === 'GameOver') && <RoundResult />}
+                round === 'GiveUpResult') && <RoundResult />}
             </S.Content>
             <PlayerCard player={opponent} />
           </S.CenterRow>
