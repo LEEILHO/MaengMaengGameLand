@@ -8,11 +8,28 @@ import { styled } from 'styled-components'
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import JWACResult from '@components/gameRoom/jwac/JWACResult'
+import YouTube, { YouTubeProps } from 'react-youtube'
 
 const Test = () => {
   const router = useRouter()
   const { Modal, isOpen, openModal, closeModal } = useModal()
   const [color, setColor] = useState('red')
+
+  const onPlayerReady: YouTubeProps['onReady'] = (event) => {
+    // access to player in all event handlers via event.target
+    event.target.pauseVideo()
+  }
+
+  const opts: YouTubeProps['opts'] = {
+    height: '390',
+    width: '640',
+    playerVars: {
+      // https://developers.google.com/youtube/player_parameters
+      autoplay: 1,
+      rel: 0,
+      modestbranding: 1,
+    },
+  }
 
   useEffect(() => {
     console.log(color)
@@ -21,6 +38,7 @@ const Test = () => {
   return (
     <>
       <StyledTestContainer>
+        <YouTube videoId="ArLppdaT_Pw" opts={opts} onReady={onPlayerReady} />
         {/* <CButton
           radius={36}
           backgroundColor="rgba(112, 0, 255, 1)"
