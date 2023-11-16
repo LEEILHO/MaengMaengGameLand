@@ -7,7 +7,7 @@ import Timer from '@components/common/clients/Timer'
 import RspCombination from '@components/awrsp/client/RspCombination'
 import useModal from '@hooks/useModal'
 import DrawCardModal from '@components/awrsp/client/DrawCardModal'
-import { useEffect } from 'react'
+import { useEffect, useCallback } from 'react'
 import MyResult from '@components/awrsp/client/MyResult'
 import AllResultList from '@components/awrsp/client/AllResultList'
 import { useRecoilValue, useResetRecoilState } from 'recoil'
@@ -24,6 +24,7 @@ import useSocketAWRSP from '@hooks/useSocketAWRSP'
 import useDidMountEffect from '@hooks/useDidMoundEffect'
 import HistoryModal from '@components/awrsp/client/HistoryModal'
 import { useRouter } from 'next/navigation'
+import useSound from '@hooks/useSound'
 
 const AwrspGameRoom = () => {
   const router = useRouter()
@@ -54,6 +55,9 @@ const AwrspGameRoom = () => {
   const resetGameResult = useResetRecoilState(GameResultState)
   const resetHistory = useResetRecoilState(HistoryState)
 
+  // 효과음
+  const { playButtonSound } = useSound()
+
   const timeOverHandle = () => {
     if (step) {
       console.log(step, '종료')
@@ -65,6 +69,7 @@ const AwrspGameRoom = () => {
   }
 
   const onClickBackToLobby = () => {
+    playButtonSound()
     resetCardList()
     resetDrawCard()
     resetTimerReset()
@@ -73,6 +78,11 @@ const AwrspGameRoom = () => {
     resetHistory()
     router.replace(`/awrsp/lobby`)
   }
+
+  const onClickHistory = useCallback(() => {
+    playButtonSound()
+    openHistoryModal()
+  }, [])
 
   useEffect(() => {
     connectSocket()
@@ -95,7 +105,7 @@ const AwrspGameRoom = () => {
         <>
           <S.RoundDisplay>{round} Round</S.RoundDisplay>
           <S.Content>
-            {step === 'CARD_SUBMIT' && (
+            {(step === 'CARD_SUBMIT' || step === 'DRAW_CARD') && (
               <RspCombination handleCardSubmit={handleCardSubmit} />
             )}
             {step === 'PLAYER_WINS' && <MyResult />}
@@ -114,7 +124,7 @@ const AwrspGameRoom = () => {
               />
             </S.TimerContainer>
           )}
-          <S.HistoryButton onClick={openHistoryModal}>
+          <S.HistoryButton onClick={onClickHistory}>
             <img src={images.awrsp.history} alt="기록" />
           </S.HistoryButton>
         </>

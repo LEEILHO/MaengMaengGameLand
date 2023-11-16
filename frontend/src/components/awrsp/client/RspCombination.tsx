@@ -3,7 +3,7 @@
 import { DrawCardState, RspCardListState } from '@atom/awrspAtom'
 import CButton from '@components/common/clients/CButton'
 import { colors } from '@constants/colors'
-import useSocketAWRSP from '@hooks/useSocketAWRSP'
+import useSound from '@hooks/useSound'
 import * as S from '@styles/awrsp/RspCombination.styled'
 import {
   CardListType,
@@ -12,7 +12,7 @@ import {
   RspType,
 } from '@type/awrsp/awrsp.type'
 import { getRspImageUrl } from '@utils/awrsp/awrspUtil'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import {
   DragDropContext,
   Draggable,
@@ -26,6 +26,7 @@ type Props = {
 }
 
 const RspCombination = ({ handleCardSubmit }: Props) => {
+  const { playButtonSound, playDropCardSound, playFlipCardSound } = useSound()
   const setRspCardList = useSetRecoilState(RspCardListState)
   const [enabled, setEnabled] = useState(false)
   const [drawCard, setDrawCard] = useRecoilState(DrawCardState)
@@ -55,6 +56,7 @@ const RspCombination = ({ handleCardSubmit }: Props) => {
 
   // 드래그가 끝났을 때 실행되는 함수
   const onDragEnd = ({ source, destination }: DropResult) => {
+    playDropCardSound()
     if (!destination) return
 
     console.log('>>> source ', source)
@@ -76,7 +78,12 @@ const RspCombination = ({ handleCardSubmit }: Props) => {
     setCardList(_cardList)
   }
 
+  const onDragStart = useCallback(() => {
+    playFlipCardSound()
+  }, [])
+
   const onClickSubmitButton = () => {
+    playButtonSound()
     if (cardList['in'].length < 7) {
       console.log('모자라...')
       return
@@ -118,7 +125,7 @@ const RspCombination = ({ handleCardSubmit }: Props) => {
   return (
     <>
       <S.Container>
-        <DragDropContext onDragEnd={onDragEnd}>
+        <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
           <S.DragDropContextDiv>
             <Droppable key={'in'} droppableId="in" direction="horizontal">
               {(provided) => (

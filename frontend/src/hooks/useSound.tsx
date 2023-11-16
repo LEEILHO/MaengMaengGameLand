@@ -23,6 +23,14 @@ const useSound = () => {
     src: [sounds.jwac.write],
   })
 
+  const flipCardSound = new Howl({
+    src: [sounds.awrsp.filpCard],
+  })
+
+  const dropCardSound = new Howl({
+    src: [sounds.awrsp.dropCard],
+  })
+
   const playButtonSound = useCallback(() => {
     if (isSound?.effectSound ?? true) {
       buttonSound.play()
@@ -46,11 +54,26 @@ const useSound = () => {
       writeSound.play()
     }
   }, [tapSound])
+
+  const playFlipCardSound = useCallback(() => {
+    if (isSound?.effectSound ?? true) {
+      flipCardSound.play()
+    }
+  }, [tapSound])
+
+  const playDropCardSound = useCallback(() => {
+    if (isSound?.effectSound ?? true) {
+      dropCardSound.play()
+    }
+  }, [tapSound])
+
   return {
     playButtonSound,
     playEnterSound,
     playTabSound,
     playWriteSound,
+    playFlipCardSound,
+    playDropCardSound,
   }
 }
 
