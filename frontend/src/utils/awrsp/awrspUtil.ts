@@ -1,5 +1,5 @@
 import { images } from '@constants/images'
-import { RspType } from '@type/awrsp/awrsp.type'
+import { RspType, StepType } from '@type/awrsp/awrsp.type'
 
 export const getRspImageUrl = (type: RspType) => {
   if (type === 'ROCK') return images.awrsp.rockCard
