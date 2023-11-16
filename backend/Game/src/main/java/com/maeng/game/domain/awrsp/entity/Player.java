@@ -19,6 +19,7 @@ public class Player {
     private Tier tier;
     private boolean finish;
     private LocalDateTime finishedAt;
+    private int finishRound;
     private HashMap<Integer, History> histories; // <round, 해당 라운드 정보>
     private int rank;
 }

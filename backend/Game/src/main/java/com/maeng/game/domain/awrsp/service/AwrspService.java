@@ -65,6 +65,7 @@ public class AwrspService {
                             .profileUrl(player.getProfileUrl())
                             .finish(false)
                             .finishedAt(null)
+                            .finishRound(0)
                             .histories(history)
                             .rank(gameStartDTO.getHeadCount())
                     .build());
@@ -171,6 +172,7 @@ public class AwrspService {
 
                 player.setRank(rank.getRank().size());
                 player.setFinish(true);
+                player.setFinishRound(game.getCurrentRound());
                 player.setFinishedAt(history.getSubmitAt()); // 일단 제출한 시간으로 끝난 시간 저장
                 game.setFinishCount(game.getFinishCount()+1);
             }
@@ -195,7 +197,7 @@ public class AwrspService {
         for(Player player : game.getPlayers().values()){
             result.add(GameResultDTO.builder()
                             .nickname(player.getNickname())
-                            .point(0)
+                            .round(player.getFinishRound())
                             .rank(player.getRank())
                     .build());
         }
@@ -223,14 +225,12 @@ public class AwrspService {
         log.info("승리한 사람 : "+game.getFinishCount());
 
         // TODO : 승리한 사람 + 연결 끊긴 사람 모두가 finishCount 돼서 게임 종료됨
-        return rank.getRank().size() >= 4 || game.getCurrentRound() >= MAX_ROUND
-                || (game.getHeadCount() - game.getFinishCount()) == 1;
+        return game.getCurrentRound() >= MAX_ROUND || (game.getHeadCount() - game.getFinishCount()) == 1;
     }
 
     @Transactional
     @Operation(summary = "라운드 결과 생성 및 전송")
     public void sendCurrentRoundResult(String gameCode, HashMap<String, Player> players, Submit submit, int currentRound){
-        // TODO : 현재 라운드 결과 만들기
         List<RoundResultDTO> roundResult = new ArrayList<>();
         Set<String> set = new HashSet<>(submit.getSubmit());
 

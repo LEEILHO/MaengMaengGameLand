@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GameResultDTO {
     private String nickname;
-    private int point;
+    private int round;
     private int rank;
 }
