@@ -16,6 +16,10 @@ const RoomItem = ({ title, curPeople, maxPeople, roomCode }: Props) => {
   const { playButtonSound } = useSound()
 
   const hnadleEnter = useCallback(() => {
+    if (curPeople === maxPeople) {
+      alert('인원이 가득 차서 입장할 수 없습니다')
+      return
+    }
     playButtonSound()
     router.replace(`waiting-room/${roomCode}`)
   }, [])
