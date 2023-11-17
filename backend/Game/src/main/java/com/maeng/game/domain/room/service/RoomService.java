@@ -46,7 +46,6 @@ import com.maeng.game.domain.room.exception.NotHostException;
 import com.maeng.game.domain.room.exception.NotReadyPlayerException;
 import com.maeng.game.domain.room.exception.PullRoomException;
 import com.maeng.game.domain.room.repository.RoomRepository;
-import com.maeng.game.global.session.repository.SessionRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -93,6 +92,10 @@ public class RoomService {
                 .gameCode("")
                 .gameStart(false)
                 .build();
+
+        if(createRoomDTO.getGameCategory().equals(Game.GOLD_SILVER_BRONZE)){
+            room.setMaxHeadCount(2);
+        }
 
         roomRepository.save(room);
 
