@@ -69,9 +69,9 @@ const WaitingRoomPage = () => {
 
   const onClickGameStart = useCallback(() => {
     playButtonSound()
-    console.log(gameType, roomInfo?.headCount)
 
     if (!roomInfo) return
+    console.log(gameType, roomInfo.headCount)
     if (gameType === 'gsb' && roomInfo?.headCount !== 2) {
       setAlertText('금은동 게임은 2인 게임입니다.')
       openAlertModal()
