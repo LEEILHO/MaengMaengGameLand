@@ -62,6 +62,9 @@ public class Awrsp {
         @JsonProperty("finishedAt")
         private LocalDateTime finishedAt;
 
+        @JsonProperty("finishRound")
+        private int finishRound;
+
         @JsonProperty("histories")
         private HashMap<Integer, History> histories; // <round, 해당 라운드 정보>
 
