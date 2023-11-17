@@ -12,7 +12,12 @@ export type ChatMessageType = {
 
 export type RoomInfoType = {
   title: string
+  headCount: number
   publicRoom: boolean
   participant: SeatInfo[]
   gameCategory: GameCategoryType
+}
+
+export type KickPlayerType = {
+  nickname: string
 }

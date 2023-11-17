@@ -19,6 +19,7 @@ import { RoomInfoState } from '@atom/waitingRoomAtom'
 import useSocketWaitingRoom from '@hooks/useSocketWaitingRoom'
 import { userState } from '@atom/userAtom'
 import useSound from '@hooks/useSound'
+import AlertModal from '@components/gsb/client/AlertModal'
 
 const WaitingRoomPage = () => {
   const router = useRouter()
@@ -37,12 +38,21 @@ const WaitingRoomPage = () => {
     handleSendChat,
     handleUpdateRoom,
     handleKick,
+    kickedPlayer,
+    setKickedPlayer,
   } = useSocketWaitingRoom()
 
   const roomInfo = useRecoilValue(RoomInfoState)
 
   const { playButtonSound } = useSound()
   const { Modal, isOpen, openModal, closeModal } = useModal()
+  const {
+    Modal: AModal,
+    isOpen: isAlertOpen,
+    openModal: openAlertModal,
+    closeModal: closeAlertModal,
+  } = useModal()
+  const [alertText, setAlertText] = useState('')
   const [seats, setSeats] = useState<SeatInfo[]>([])
   const [isHost, setIsHost] = useState(false)
   const [isReady, setIsReady] = useState(false)
@@ -59,7 +69,17 @@ const WaitingRoomPage = () => {
 
   const onClickGameStart = useCallback(() => {
     playButtonSound()
-    handleGameStart()
+    if (!roomInfo) return
+    if (gameType === 'gsb' && roomInfo?.headCount !== 2) {
+      setAlertText('금은동 게임은 2인 게임입니다.')
+      openAlertModal()
+    } else if (gameType === 'jwac' && roomInfo?.headCount < 4) {
+      setAlertText('무제한 보석 경매는 4인 이상 게임입니다.')
+      openAlertModal()
+    } else if (gameType === 'awrsp' && roomInfo.headCount === 1) {
+      setAlertText('전승 가위바위보는 2인 이상 게임입니다.')
+      openAlertModal()
+    } else handleGameStart()
   }, [])
 
   const onClickReady = useCallback(() => {
@@ -101,6 +121,12 @@ const WaitingRoomPage = () => {
       })
     }
   }, [seats])
+
+  useEffect(() => {
+    if (kickedPlayer === user?.nickname) {
+      router.replace(`/${gameType}/lobby`)
+    }
+  }, [kickedPlayer])
 
   return (
     <>
@@ -185,6 +211,10 @@ const WaitingRoomPage = () => {
           closeModal={closeModal}
         />
       </Modal>
+
+      <AModal isOpen={isAlertOpen} closeModal={closeAlertModal}>
+        <AlertModal text={alertText} closeModal={closeAlertModal} />
+      </AModal>
     </>
   )
 }
