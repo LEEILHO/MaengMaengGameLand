@@ -62,7 +62,6 @@ public class RoomService {
     private final GsbService gsbService;
     private final LobbyService lobbyService;
     private final RabbitTemplate template;
-    private final SessionRepository sessionRepository;
 
     private final static String CHAT_EXCHANGE_NAME = "room";
     @Value("${game.max}")
@@ -283,6 +282,9 @@ public class RoomService {
         room.setHeadCount(room.getHeadCount()-1);
         roomRepository.save(room);
 
+        // 강퇴된 사람 닉네임 보내주기
+        template.convertAndSend(CHAT_EXCHANGE_NAME, "room."+roomCode, MessageDTO.builder()
+                .type("PLAYER_KICK").data(PlayerDTO.builder().nickname(kickDTO.getNickname())).build());
         this.sendRoomInfo(roomCode, room); // ROOM_INFO
         lobbyService.findAllRoom(room.getGameCategory(), room.getChannelTire());
     }
