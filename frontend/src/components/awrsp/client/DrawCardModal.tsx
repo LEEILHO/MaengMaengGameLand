@@ -29,6 +29,7 @@ const DrawCardModal = ({ closeModal, step }: Props) => {
 
   const onClickSkip = useCallback(() => {
     playButtonSound()
+    setDrawCard({ drawCard: null, isSetting: true })
     closeModal()
   }, [])
 

@@ -5,21 +5,27 @@ import useA2HS from '@hooks/useA2HS'
 import { useEffect, useState, useRef } from 'react'
 import { images } from '@constants/images'
 import { detectIosDevice } from '@utils/common/mobile'
-import useIntersectionObsever from '@hooks/useIntersectionObserver'
 import { useAnimate, useAnimation } from 'framer-motion'
 
 export default function Home() {
   const { deferredPrompt, installApp, clearPrompt } = useA2HS()
   const iosGuideRef = useRef<HTMLSelectElement | null>(null)
+  const gameGuideRef = useRef<HTMLSelectElement | null>(null)
+  const watchGameGuideRef = useRef<HTMLSelectElement | null>(null)
   const [isIos, setIsIos] = useState(false)
   const isDownload = deferredPrompt ? true : false
   const [seletedTab, setSeletedTab] = useState<'GAME' | 'WATCH'>('GAME')
   const [isNavFix, setIsNavFix] = useState(false)
-  const gameImageRef1 = useRef<HTMLImageElement>(null)
-  const isInViewportGameImage1 = useIntersectionObsever(gameImageRef1)
-  const gameImageRef2 = useRef<HTMLImageElement>(null)
-  const isInViewportGameImage2 = useIntersectionObsever(gameImageRef2)
-  const animaiton = useAnimation()
+  const animaiton1 = useAnimation()
+  const animaiton2 = useAnimation()
+  const animaiton3 = useAnimation()
+  const animaiton4 = useAnimation()
+  const animaiton5 = useAnimation()
+  const textAnimation1 = useAnimation()
+  const textAnimation2 = useAnimation()
+  const textAnimation3 = useAnimation()
+  const textAnimation4 = useAnimation()
+  const textAnimation5 = useAnimation()
 
   const handleDownload = () => {
     if (isDownload) {
@@ -31,16 +37,26 @@ export default function Home() {
     iosGuideRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
 
+  const handleGameGuideClick = () => {
+    setSeletedTab('GAME')
+    setTimeout(() => {
+      gameGuideRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }, 1)
+  }
+
+  const handleWatchGameGuideClick = () => {
+    setSeletedTab('WATCH')
+    setTimeout(() => {
+      watchGameGuideRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }, 1)
+  }
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       document.body.style.overflow = 'auto'
       setIsIos(detectIosDevice(window.navigator.userAgent))
     }
   }, [])
-
-  useEffect(() => {
-    console.log(isInViewportGameImage2)
-  }, [isInViewportGameImage2])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -93,7 +109,7 @@ export default function Home() {
           <S.GameDiscriptionTab
             $active={seletedTab === 'GAME'}
             onClick={() => {
-              setSeletedTab('GAME')
+              handleGameGuideClick()
             }}
           >
             모바일 게임
@@ -101,64 +117,144 @@ export default function Home() {
           <S.WatchDiscriptionTab
             $active={seletedTab === 'WATCH'}
             onClick={() => {
-              setSeletedTab('WATCH')
+              handleWatchGameGuideClick()
             }}
           >
             워치 게임
           </S.WatchDiscriptionTab>
         </S.GameTabNavigation>
-        <S.GameDiscriptionSection $isFix={isNavFix}>
-          <S.GameRow>
-            <S.GameImage
-              src={images.index.gameGuide1}
-              alt="게임가이드"
-              ref={gameImageRef1}
-              initial={{ opacity: 0, y: 100 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1 }}
-            />
-            <S.GameDiscription>
-              {`맹맹게임랜드에서
+        {seletedTab === 'GAME' && (
+          <S.GameDiscriptionSection $isFix={isNavFix} ref={gameGuideRef}>
+            <S.GameRow>
+              <S.GameImage
+                src={images.index.gameGuide1}
+                alt="게임가이드"
+                initial={{ opacity: 0, y: 100 }}
+                animate={animaiton1}
+                transition={{ duration: 1 }}
+                onViewportEnter={() => {
+                  animaiton1.start({ opacity: 1, y: 0 })
+                }}
+              />
+              <S.GameDiscription
+                initial={{ opacity: 0, y: 100 }}
+                animate={textAnimation1}
+                transition={{ duration: 1 }}
+                onViewportEnter={() => {
+                  textAnimation1.start({ opacity: 1, y: 0 })
+                }}
+              >
+                {`맹맹게임랜드에서
 다양한 게임을 즐겨보세요.`}
-            </S.GameDiscription>
-          </S.GameRow>
-          <S.GameName>금은동</S.GameName>
-          <S.GameRow>
-            <S.GameImage
-              src={images.index.gameGuide2}
-              alt="게임가이드"
-              ref={gameImageRef2}
-              initial={{ opacity: 0, y: 100 }}
-              animate={animaiton}
-              transition={{ duration: 1 }}
-              onViewportEnter={() => {
-                animaiton.start({ opacity: 1, y: 0 })
-              }}
-            />
+              </S.GameDiscription>
+            </S.GameRow>
+            <S.GameName>금은동</S.GameName>
+            <S.GameRow>
+              <S.GameImage
+                src={images.index.gameGuide2}
+                alt="게임가이드"
+                initial={{ opacity: 0, y: 100 }}
+                animate={animaiton2}
+                transition={{ duration: 1 }}
+                onViewportEnter={() => {
+                  animaiton2.start({ opacity: 1, y: 0 })
+                }}
+              />
 
-            <S.GameDiscription>
-              {`속고 속이는 심리 게임에서
+              <S.GameDiscription
+                initial={{ opacity: 0, y: 100 }}
+                animate={textAnimation2}
+                transition={{ duration: 1 }}
+                onViewportEnter={() => {
+                  textAnimation2.start({ opacity: 1, y: 0 })
+                }}
+              >
+                {`속고 속이는 심리 게임에서
 잔혹하게 베팅해라!`}
-            </S.GameDiscription>
-          </S.GameRow>
-          <S.GameName>무제한 보석 경매</S.GameName>
-          <S.GameRow>
-            <S.GameImage src={images.index.gameGuide3} alt="게임가이드" />
-            <S.GameDiscription>
-              {`무자비한 보석 경매의 싸움에서
+              </S.GameDiscription>
+            </S.GameRow>
+            <S.GameName>무제한 보석 경매</S.GameName>
+            <S.GameRow>
+              <S.GameImage
+                src={images.index.gameGuide3}
+                alt="게임가이드"
+                initial={{ opacity: 0, y: 100 }}
+                animate={animaiton3}
+                transition={{ duration: 1 }}
+                onViewportEnter={() => {
+                  animaiton3.start({ opacity: 1, y: 0 })
+                }}
+              />
+              <S.GameDiscription
+                initial={{ opacity: 0, y: 100 }}
+                animate={textAnimation3}
+                transition={{ duration: 1 }}
+                onViewportEnter={() => {
+                  textAnimation3.start({ opacity: 1, y: 0 })
+                }}
+              >
+                {`무자비한 보석 경매의 싸움에서
 치열하게 살아남아라!`}
-            </S.GameDiscription>
-          </S.GameRow>
-          <S.GameName>전승 가위바위보</S.GameName>
-          <S.GameRow>
-            <S.GameImage src={images.index.gameGuide4} alt="게임가이드" />
-            <S.GameDiscription>
-              {`미지의 카드 7개를 모두
+              </S.GameDiscription>
+            </S.GameRow>
+            <S.GameName>전승 가위바위보</S.GameName>
+            <S.GameRow>
+              <S.GameImage
+                src={images.index.gameGuide4}
+                alt="게임가이드"
+                initial={{ opacity: 0, y: 100 }}
+                animate={animaiton4}
+                transition={{ duration: 1 }}
+                onViewportEnter={() => {
+                  animaiton4.start({ opacity: 1, y: 0 })
+                }}
+              />
+              <S.GameDiscription
+                initial={{ opacity: 0, y: 100 }}
+                animate={textAnimation4}
+                transition={{ duration: 1 }}
+                onViewportEnter={() => {
+                  textAnimation4.start({ opacity: 1, y: 0 })
+                }}
+              >
+                {`미지의 카드 7개를 모두
 이기는 조합을 찾아내는 인물은
 과연 누구인가?`}
-            </S.GameDiscription>
-          </S.GameRow>
-        </S.GameDiscriptionSection>
+              </S.GameDiscription>
+            </S.GameRow>
+          </S.GameDiscriptionSection>
+        )}
+        {seletedTab === 'WATCH' && (
+          <S.WatchGameDiscriptionSection
+            $isFix={isNavFix}
+            ref={watchGameGuideRef}
+          >
+            <S.GameName>맹맹 점프</S.GameName>
+            <S.GameRow>
+              <S.GameImage
+                src={images.index.watchGameGuide}
+                alt="맹맹 점프"
+                initial={{ opacity: 0, y: 100 }}
+                animate={animaiton5}
+                transition={{ duration: 1 }}
+                onViewportEnter={() => {
+                  animaiton5.start({ opacity: 1, y: 0 })
+                }}
+              />
+              <S.GameDiscription
+                initial={{ opacity: 0, y: 100 }}
+                animate={textAnimation5}
+                transition={{ duration: 1 }}
+                onViewportEnter={() => {
+                  textAnimation5.start({ opacity: 1, y: 0 })
+                }}
+              >
+                {`점프! 점프!
+토끼와 함께 달나라로 떠나요!`}
+              </S.GameDiscription>
+            </S.GameRow>
+          </S.WatchGameDiscriptionSection>
+        )}
         {isIos && (
           <S.IosGuideDiscriptionSection ref={iosGuideRef}>
             <S.GuideTitle>아이폰 다운로드 가이드</S.GuideTitle>

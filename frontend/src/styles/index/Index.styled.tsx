@@ -49,8 +49,20 @@ export const GameDiscriptionSection = styled.section<NavigationProps>`
     `}
 `
 
-export const WatchGameDiscriptionSection = styled.section`
-  height: 800px;
+export const WatchGameDiscriptionSection = styled.section<NavigationProps>`
+  height: fit-content;
+  background-color: white;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 80px 12px;
+  margin-top: 60px;
+
+  ${(props) =>
+    props.$isFix &&
+    css`
+      margin-top: 126px;
+    `}
 `
 
 export const IosGuideDiscriptionSection = styled.section`
@@ -120,6 +132,7 @@ export const GameTabNavigation = styled.div<NavigationProps>`
     props.$isFix &&
     css`
       position: fixed;
+      z-index: 3;
     `}
 `
 
@@ -197,7 +210,7 @@ export const GameName = styled.p`
   margin-bottom: 44px;
 `
 
-export const GameDiscription = styled.p`
+export const GameDiscription = styled(motion.p)`
   font-size: 24px;
   font-weight: 500;
   margin-top: 32px;
