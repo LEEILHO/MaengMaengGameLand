@@ -9,7 +9,7 @@ import com.maeng.game.domain.room.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,25 +27,31 @@ public class LobbyService {
 
     @Transactional
     public void findAllRoom(Game game, ChannelTire channelTire){
-        List<Room> roomList = roomRepository.findAllByGameCategoryAndChannelTireAndPublicRoomIsTrue(game, channelTire);
-        List<RoomDTO> list = new ArrayList<>();
-
-        for(Room room : roomList){
-            list.add(RoomDTO.builder()
-                            .roomCode(room.getId())
-                            .title(room.getTitle())
-                            .headCount(room.getHeadCount())
-                            .maxHeadCount(room.getMaxHeadCount())
-                            .build());
-        }
 
         MessageDTO messageDTO = MessageDTO.builder()
                 .type("ROOM_LIST")
-                .data(list)
+                .data(this.findRoomList(game, channelTire))
                 .build();
 
         log.info(messageDTO.toString());
 
         template.convertAndSend(LOBBY_EXCHANGE_NAME, "lobby."+game+"."+channelTire, messageDTO);
     }
+
+    public List<RoomDTO> findRoomList(Game game, ChannelTire channelTire){
+        List<Room> roomList = roomRepository.findAllByGameCategoryAndChannelTireAndPublicRoomIsTrueOrderByCreatedAtDesc(game, channelTire);
+        List<RoomDTO> list = new ArrayList<>();
+
+        for(Room room : roomList){
+            list.add(RoomDTO.builder()
+                    .roomCode(room.getId())
+                    .title(room.getTitle())
+                    .headCount(room.getHeadCount())
+                    .maxHeadCount(room.getMaxHeadCount())
+                    .build());
+        }
+
+        return list;
+    }
+
 }

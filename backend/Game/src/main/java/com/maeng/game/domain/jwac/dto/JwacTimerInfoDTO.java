@@ -1,6 +1,6 @@
 package com.maeng.game.domain.jwac.dto;
 
-import com.maeng.game.domain.jwac.emums.Jwerly;
+import com.maeng.game.domain.jwac.emums.Jewelry;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,6 +13,6 @@ public class JwacTimerInfoDTO {
 	private String gameCode;
 	private int round;
 	private int time;
-	private Jwerly jwerly;
-	private int jwerlyScore;
+	private Jewelry jewelry;
+	private int jewelryScore;
 }

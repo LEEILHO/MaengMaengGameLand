@@ -1,8 +1,10 @@
 package com.maeng.game.global.config;
 
+import com.maeng.game.global.session.handler.StompHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -14,6 +16,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer { // STOMP 메세지 처리 방법 구성
 
+    private final StompHandler stompHandler;
     @Value("${spring.rabbitmq.host}")
     private String HOST;
     @Value("${spring.rabbitmq.username}")
@@ -40,8 +43,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer { // ST
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/maeng")
-                .setAllowedOriginPatterns("*");//.withSockJS();
+                .setAllowedOriginPatterns("*").withSockJS();
                 // 클라이언트에서 WebSocket에 접근할 수 있는 endPoint 지정 : ws://k9d208.p.ssafy.io:8080/maeng
                 // setAllowOriginPatterns : CORS 설정
+    }
+
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(stompHandler);
     }
 }

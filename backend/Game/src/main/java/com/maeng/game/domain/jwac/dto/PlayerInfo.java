@@ -11,4 +11,7 @@ public class PlayerInfo {
 	private String nickname;
 	private String profileUrl;
 	private Tier tier;
+	private int score;
+	private boolean item;
+	private Long bidSum;
 }

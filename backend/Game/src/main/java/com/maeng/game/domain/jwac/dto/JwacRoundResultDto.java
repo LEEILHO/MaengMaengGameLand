@@ -1,6 +1,8 @@
 package com.maeng.game.domain.jwac.dto;
 
-import java.util.Map;
+import java.util.List;
+
+import com.maeng.game.domain.jwac.emums.Jewelry;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,15 +19,8 @@ public class JwacRoundResultDto {
 	private String leastBidder;
 	private Long roundBidSum;
 	private int round;
-	private int jwerlyScore;
-	private int panaltyScore;
-	private Map<String, JwacRoundPlayerInfoDTO> players;
-
-	@Data
-	@NoArgsConstructor
-	@AllArgsConstructor
-	private static class Player {
-		private int score;
-		private boolean item;
-	}
+	private Jewelry jewelry;
+	private int jewelryScore;
+	private int penaltyScore;
+	private List<PlayerInfo> players;
 }

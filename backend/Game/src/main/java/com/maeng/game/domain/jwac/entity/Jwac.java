@@ -1,12 +1,13 @@
 package com.maeng.game.domain.jwac.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
-import com.maeng.game.domain.jwac.emums.Jwerly;
+import com.maeng.game.domain.jwac.emums.Jewelry;
 
 import lombok.Builder;
 import lombok.Data;
@@ -24,8 +25,9 @@ public class Jwac {
 	private int currentRound;
 	private int maxRound;
 	private Map<Integer, Long> bidAmounts;
-	private Map<Integer, Jwerly> jwerly;
+	private Map<Integer, Jewelry> jewelry;
 	private Map<String, Player> players;
+	private List<String> rank;
 
 	public void nextRound() {
 		this.currentRound++;
