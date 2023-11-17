@@ -33,6 +33,7 @@ import { userState } from '@atom/userAtom'
 import GameOver from '@components/gsb/client/GameOver'
 import useDidMountEffect from '@hooks/useDidMoundEffect'
 import { getMs } from '@utils/gameRoom/gsbUtil'
+import useSound from '@hooks/useSound'
 
 const GameRoom = () => {
   const router = useRouter()
@@ -45,6 +46,7 @@ const GameRoom = () => {
     handleGSBComb,
     handleBetting,
   } = useSocketGsb()
+  const { playButtonSound } = useSound()
   // const gameCode = usePathname().split('/')[3]
 
   // 전광판 하나로 해서 상황에 따라 메세지만 바꾸기
@@ -111,6 +113,7 @@ const GameRoom = () => {
             src={images.gameRoom.jwac.backWhite}
             alt="로비로 나가기"
             onClick={() => {
+              playButtonSound()
               resetTurnCard()
               resetAllBetChips()
               resetCurrentPlayer()

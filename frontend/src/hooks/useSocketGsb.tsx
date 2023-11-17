@@ -137,7 +137,9 @@ const useSocketGsb = () => {
               currentChips: result.data.currentChips,
             }
           })
-          setMyBetChips(result.data.defaultChips)
+          setMyBetChips((prev) => {
+            return result.data.defaultChips + prev
+          })
           setRound('BetWaiting')
           setDisplayMessage('상대방이 베팅 중입니다.')
         } else {

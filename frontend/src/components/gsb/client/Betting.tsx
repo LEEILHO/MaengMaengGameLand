@@ -14,6 +14,7 @@ import * as S from '@styles/gsb/Betting.styled'
 import { useState } from 'react'
 import { useRecoilValue } from 'recoil'
 import AlertModal from './AlertModal'
+import useSound from '@hooks/useSound'
 
 type Props = {
   handleBetting: (giveUp: boolean, bettingChips: number) => void
@@ -21,6 +22,7 @@ type Props = {
 
 // 입력란과 베팅, 포기 버튼이 있는 바텀 컴포넌트
 const Betting = ({ handleBetting }: Props) => {
+  const { playButtonSound, playBettingSound } = useSound()
   const { Modal, isOpen, closeModal, openModal } = useModal()
   const [text, setText] = useState<string>('')
   const [chipCount, setChipCount] = useState<number>(0)
@@ -35,6 +37,7 @@ const Betting = ({ handleBetting }: Props) => {
   }
 
   const onClickBetButton = () => {
+    playButtonSound()
     console.log('my: ', myBetChips, ' oppoonent: ', opponentBetChips)
 
     const minBet = opponentBetChips - myBetChips
@@ -51,12 +54,14 @@ const Betting = ({ handleBetting }: Props) => {
       setText('상대방의 보유 칩보다 많이 베팅할 수 없습니다.')
       openModal()
     } else if (chipCount > 0 && chipCount >= minBet) {
+      playBettingSound()
       handleBetting(false, chipCount)
     }
   }
 
   const onClickGiveUpButton = () => {
     console.log('포기')
+    playButtonSound()
     handleBetting(true, 0)
   }
 

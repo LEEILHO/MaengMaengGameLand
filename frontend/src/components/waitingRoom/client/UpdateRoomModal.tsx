@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState, useCallback } from 'react'
 
 import * as S from '@styles/waitingRoom/UpdateRoomModal.styled'
 import CButton from '@components/common/clients/CButton'
@@ -6,6 +6,7 @@ import { colors } from '@constants/colors'
 import { useRecoilValue } from 'recoil'
 import { RoomInfoState } from '@atom/waitingRoomAtom'
 import useSocketWaitingRoom from '@hooks/useSocketWaitingRoom'
+import useSound from '@hooks/useSound'
 
 type Props = {
   closeModal: () => void
@@ -13,6 +14,7 @@ type Props = {
 }
 
 const UpdateRoomModal = ({ closeModal, handleUpdateRoom }: Props) => {
+  const { playButtonSound } = useSound()
   const roomInfo = useRecoilValue(RoomInfoState)
   const [isPublic, setIsPublic] = useState<boolean>(true)
   const [title, setTitle] = useState<string>('')
@@ -27,10 +29,16 @@ const UpdateRoomModal = ({ closeModal, handleUpdateRoom }: Props) => {
 
   const onClickUpdateButton = () => {
     if (title) {
+      playButtonSound()
       handleUpdateRoom(title, isPublic)
       closeModal()
     }
   }
+
+  const onClickClose = useCallback(() => {
+    playButtonSound()
+    closeModal()
+  }, [])
 
   useEffect(() => {
     if (roomInfo) {
@@ -78,7 +86,7 @@ const UpdateRoomModal = ({ closeModal, handleUpdateRoom }: Props) => {
           color="white"
           backgroundColor={colors.button.red}
           radius={50}
-          onClick={closeModal}
+          onClick={onClickClose}
         />
       </S.ButtonRow>
     </S.UpdateRoomModalContainer>

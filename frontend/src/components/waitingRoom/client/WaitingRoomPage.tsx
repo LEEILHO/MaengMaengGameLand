@@ -14,10 +14,12 @@ import useModal from '@hooks/useModal'
 import UpdateRoomModal from './UpdateRoomModal'
 import BackButton from '@components/common/clients/BackButton'
 import { usePathname, useRouter } from 'next/navigation'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilValue } from 'recoil'
 import { RoomInfoState } from '@atom/waitingRoomAtom'
 import useSocketWaitingRoom from '@hooks/useSocketWaitingRoom'
 import { userState } from '@atom/userAtom'
+import useSound from '@hooks/useSound'
+import AlertModal from '@components/gsb/client/AlertModal'
 
 const WaitingRoomPage = () => {
   const router = useRouter()
@@ -36,18 +38,53 @@ const WaitingRoomPage = () => {
     handleSendChat,
     handleUpdateRoom,
     handleKick,
+    kickedPlayer,
+    setKickedPlayer,
   } = useSocketWaitingRoom()
 
   const roomInfo = useRecoilValue(RoomInfoState)
 
+  const { playButtonSound } = useSound()
   const { Modal, isOpen, openModal, closeModal } = useModal()
+  const {
+    Modal: AModal,
+    isOpen: isAlertOpen,
+    openModal: openAlertModal,
+    closeModal: closeAlertModal,
+  } = useModal()
+  const [alertText, setAlertText] = useState('')
   const [seats, setSeats] = useState<SeatInfo[]>([])
   const [isHost, setIsHost] = useState(false)
-  const [mySeatNumber, setMySeatNumber] = useState<number>(0)
+  const [isReady, setIsReady] = useState(false)
 
   const handleBack = useCallback(() => {
     handleExit()
     router.replace(`/${gameType}/lobby`)
+  }, [])
+
+  const onClickGameSetting = useCallback(() => {
+    playButtonSound()
+    openModal()
+  }, [])
+
+  const onClickGameStart = useCallback(() => {
+    playButtonSound()
+    if (!roomInfo) return
+    if (gameType === 'gsb' && roomInfo?.headCount !== 2) {
+      setAlertText('금은동 게임은 2인 게임입니다.')
+      openAlertModal()
+    } else if (gameType === 'jwac' && roomInfo?.headCount < 4) {
+      setAlertText('무제한 보석 경매는 4인 이상 게임입니다.')
+      openAlertModal()
+    } else if (gameType === 'awrsp' && roomInfo.headCount === 1) {
+      setAlertText('전승 가위바위보는 2인 이상 게임입니다.')
+      openAlertModal()
+    } else handleGameStart()
+  }, [])
+
+  const onClickReady = useCallback(() => {
+    playButtonSound()
+    handleReady()
   }, [])
 
   useEffect(() => {
@@ -68,9 +105,12 @@ const WaitingRoomPage = () => {
   useEffect(() => {
     if (seats) {
       // 내가 방장인지 아닌지 체크
-      seats.map((seat, index) => {
+      seats.map((seat) => {
         if (seat.user) {
-          if (seat.user.nickname === user?.nickname) setMySeatNumber(index)
+          if (seat.user.nickname === user?.nickname) {
+            if (seat.user.ready) setIsReady(true)
+            else setIsReady(false)
+          }
           if (seat.user.host) {
             if (seat.user.nickname === user?.nickname) {
               setIsHost(true)
@@ -81,6 +121,12 @@ const WaitingRoomPage = () => {
       })
     }
   }, [seats])
+
+  useEffect(() => {
+    if (kickedPlayer === user?.nickname) {
+      router.replace(`/${gameType}/lobby`)
+    }
+  }, [kickedPlayer])
 
   return (
     <>
@@ -99,7 +145,7 @@ const WaitingRoomPage = () => {
                 isOpened={seat.open}
                 isHost={isHost}
                 index={index}
-                onClickEmptySeat={handleEmptySeat}
+                handleEmptySeat={handleEmptySeat}
                 handleKick={handleKick}
                 key={index}
               />
@@ -112,33 +158,47 @@ const WaitingRoomPage = () => {
             {isHost ? (
               <>
                 <CButton
+                  width={118}
                   height={48}
                   radius={109}
                   fontSize={20}
                   color={colors.greyScale.white}
                   text="게임 설정"
                   backgroundColor={colors.greyScale.grey400}
-                  onClick={openModal}
+                  onClick={onClickGameSetting}
                 />
                 <CButton
+                  width={118}
                   height={48}
                   radius={109}
                   fontSize={20}
                   color={colors.greyScale.white}
                   text="게임 시작"
                   backgroundColor={colors.button.purple}
-                  onClick={handleGameStart}
+                  onClick={onClickGameStart}
                 />
               </>
-            ) : (
+            ) : isReady ? (
               <CButton
+                width={118}
                 height={48}
                 radius={109}
                 fontSize={20}
                 color={colors.greyScale.white}
-                text="게임 준비"
+                text="준비 완료"
+                backgroundColor={colors.greyScale.grey400}
+                onClick={onClickReady}
+              />
+            ) : (
+              <CButton
+                width={118}
+                height={48}
+                radius={109}
+                fontSize={20}
+                color={colors.greyScale.white}
+                text="준비"
                 backgroundColor={colors.button.purple}
-                onClick={handleReady}
+                onClick={onClickReady}
               />
             )}
           </S.ButtonRelatedGame>
@@ -151,6 +211,10 @@ const WaitingRoomPage = () => {
           closeModal={closeModal}
         />
       </Modal>
+
+      <AModal isOpen={isAlertOpen} closeModal={closeAlertModal}>
+        <AlertModal text={alertText} closeModal={closeAlertModal} />
+      </AModal>
     </>
   )
 }

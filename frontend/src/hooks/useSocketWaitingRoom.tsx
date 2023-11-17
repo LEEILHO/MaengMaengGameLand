@@ -6,6 +6,7 @@ import { RoomInfoState } from '@atom/waitingRoomAtom'
 import { socketResponseType } from '@type/common/common.type'
 import {
   ChatMessageType,
+  KickPlayerType,
   RoomInfoType,
 } from '@type/waitingRoom/waitingRoom.type'
 import { CompatClient, Stomp } from '@stomp/stompjs'
@@ -25,6 +26,8 @@ const useSocketWaitingRoom = () => {
   const user = useRecoilValue(userState)
   const setChatList = useSetRecoilState(ChatListState)
 
+  const [kickedPlayer, setKickedPlayer] = useState<string>('')
+
   const connectWaitingRoom = useCallback(() => {
     console.log('대기방 구독', client, roomCode)
     console.log(client.current)
@@ -39,10 +42,14 @@ const useSocketWaitingRoom = () => {
         const result = response as socketResponseType<ChatMessageType>
         console.log('채팅 : ', result.data)
         setChatList((prevList) => [...prevList, result.data])
-      } else if (response.type == 'GAME_START') {
+      } else if (response.type === 'GAME_START') {
         const result = response as socketResponseType<string>
         console.log('게임방 코드 : ', result.data)
         router.replace(`/${gameType}/game-room/${result.data}`)
+      } else if (response.type === 'PLAYER_KICK') {
+        const result = response as socketResponseType<KickPlayerType>
+        console.log('강퇴된 사람: ', result.data.nickname)
+        setKickedPlayer(result.data.nickname)
       }
     })
   }, [client.current, roomCode])
@@ -207,6 +214,8 @@ const useSocketWaitingRoom = () => {
     handleUpdateRoom,
     handleGameStart,
     handleKick,
+    kickedPlayer,
+    setKickedPlayer,
   }
 }
 

@@ -15,10 +15,6 @@ export type CardType = {
   rsp: RspType
 }
 
-export type CardListType = {
-  [key in CardStatus]: CardType[]
-}
-
 export type StepType =
   | 'ENTER_GAME'
   | 'DRAW_CARD'

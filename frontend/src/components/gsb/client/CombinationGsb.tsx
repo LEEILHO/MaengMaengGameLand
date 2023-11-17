@@ -12,12 +12,14 @@ import useModal from '@hooks/useModal'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { MyState, OpponentState } from '@atom/gsbAtom'
 import AlertModal from './AlertModal'
+import useSound from '@hooks/useSound'
 
 type Props = {
   handleGSBComb: (gold: number, silver: number, bronze: number) => void
 }
 
 const CombinationGsb = ({ handleGSBComb }: Props) => {
+  const { playStarSound } = useSound()
   const { Modal, isOpen, closeModal, openModal } = useModal()
   const my = useRecoilValue(MyState)
   const opponent = useRecoilValue(OpponentState)
@@ -150,7 +152,7 @@ const CombinationGsb = ({ handleGSBComb }: Props) => {
         return
       }
     }
-
+    playStarSound()
     handleGSBComb(gold, silver, bronze)
   }
 

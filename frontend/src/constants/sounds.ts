@@ -11,4 +11,12 @@ export const sounds = {
   common: {
     timer: '/sounds/ticking-sound.mp3',
   },
+  awrsp: {
+    filpCard: '/sounds/flip-card-sound.mp3',
+    dropCard: '/sounds/drop-card-sound.mp3',
+  },
+  gsb: {
+    star: '/sounds/star-sound.mp3',
+    betting: '/sounds/betting-sound.mp3',
+  },
 }

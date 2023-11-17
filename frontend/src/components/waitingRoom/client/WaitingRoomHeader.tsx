@@ -1,8 +1,11 @@
 'use client'
 
-import React from 'react'
+import { useCallback } from 'react'
 import * as S from '@styles/waitingRoom/Header.styled'
 import { images } from '@constants/images'
+import useModal from '@hooks/useModal'
+import useSound from '@hooks/useSound'
+import SettingModal from '@components/home/SettingModal'
 
 type Props = {
   publicRoom: boolean
@@ -10,6 +13,18 @@ type Props = {
 }
 
 const WaitingRoomHeader = ({ publicRoom, title }: Props) => {
+  const {
+    Modal: SModal,
+    isOpen: isSettingOpen,
+    openModal: openSettingModal,
+    closeModal: closeSettingModal,
+  } = useModal()
+  const { playButtonSound } = useSound()
+
+  const onClickSetting = useCallback(() => {
+    playButtonSound()
+    openSettingModal()
+  }, [])
   return (
     <S.HeaderContainer>
       <S.RoomInfo>
@@ -20,9 +35,13 @@ const WaitingRoomHeader = ({ publicRoom, title }: Props) => {
         )}
         <p>{title}</p>
       </S.RoomInfo>
-      <S.SettingButton>
+      <S.SettingButton onClick={onClickSetting}>
         <img src={images.common.header.setting} alt="setting" />
       </S.SettingButton>
+
+      <SModal isOpen={isSettingOpen} closeModal={closeSettingModal}>
+        <SettingModal closeModal={closeSettingModal} />
+      </SModal>
     </S.HeaderContainer>
   )
 }

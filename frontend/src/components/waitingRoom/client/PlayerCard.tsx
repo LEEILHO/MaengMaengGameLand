@@ -8,12 +8,13 @@ import { Participant } from '@type/waitingRoom/seat.type'
 import { useCallback } from 'react'
 import { useRecoilValue } from 'recoil'
 import { userState } from '@atom/userAtom'
+import useSound from '@hooks/useSound'
 
 type Props = {
   user?: Participant
   isOpened: boolean
   isHost: boolean
-  onClickEmptySeat: (index: number) => void
+  handleEmptySeat: (index: number) => void
   handleKick: (kickPlayer: string) => void
   index: number
 }
@@ -22,12 +23,13 @@ const PlayerCard = ({
   user,
   isOpened,
   isHost,
-  onClickEmptySeat,
+  handleEmptySeat,
   handleKick,
   index,
 }: Props) => {
   const { Modal, isOpen, openModal, closeModal } = useModal()
   const myInfo = useRecoilValue(userState)
+  const { playButtonSound } = useSound()
 
   const getTierImage = useCallback((tier: string) => {
     if (tier === 'BRONZE') return images.common.header.bronzeFrame
@@ -35,6 +37,16 @@ const PlayerCard = ({
     else if (tier === 'GOLD') return images.common.header.goldFrame
     else if (tier === 'CHALLENGER') return images.common.header.challengerFrame
   }, [])
+
+  const onClickDetailButton = useCallback(() => {
+    playButtonSound()
+    openModal()
+  }, [])
+
+  const onClickEmptySeat = (index: number) => {
+    playButtonSound()
+    handleEmptySeat(index)
+  }
 
   // 유저 칸이 닫혀 있는지 아닌지 확인
   return isOpened ? (
@@ -57,7 +69,7 @@ const PlayerCard = ({
             <S.UserNickname>{user.nickname}</S.UserNickname>
           </S.UserInfo>
           {user.nickname !== myInfo?.nickname && (
-            <S.UserDetailButton onClick={openModal}>
+            <S.UserDetailButton onClick={onClickDetailButton}>
               <img src={images.waitingRoom.info} alt="userInformation" />
             </S.UserDetailButton>
           )}
@@ -66,6 +78,7 @@ const PlayerCard = ({
         {/* 유저의 디테일한 정보를 보여주는 모달 */}
         <Modal isOpen={isOpen} closeModal={closeModal}>
           <UserDetailModal
+            profileUrl={user.profileUrl}
             nickname={user?.nickname}
             isHost={isHost}
             handleKick={handleKick}
