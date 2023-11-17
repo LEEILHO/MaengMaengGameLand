@@ -5,27 +5,38 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GameUser {
+public class AwrspRound {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long userSeq;
+	private Long awrspRoundSeq;
 
-	@Column(unique = true)
-	private String email;
+	@ManyToOne
+	@JoinColumn(name = "game_code")
+	private Game game;
+
+	@ManyToOne
+	@JoinColumn(name = "game_participant_seq")
+	private GameParticipant gameParticipant;
 
 	@Column
-	private String nickname;
+	private Integer round;
+
+	@Column
+	private Integer win;
+
+	@Column
+	private Integer draw;
 }

@@ -1,25 +1,25 @@
 package com.maeng.record.domain.record.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.maeng.record.domain.record.data.Jwac;
+import com.maeng.record.domain.record.dto.RankDTO;
 import com.maeng.record.domain.record.entity.Game;
 import com.maeng.record.domain.record.entity.GameParticipant;
 import com.maeng.record.domain.record.entity.GameUser;
 import com.maeng.record.domain.record.entity.JwacRound;
 import com.maeng.record.domain.record.entity.JwacRoundBid;
 import com.maeng.record.domain.record.enums.GameCategoty;
-import com.maeng.record.domain.record.enums.Jwerly;
+import com.maeng.record.domain.record.enums.Jewelry;
+import com.maeng.record.domain.record.exception.GameAlreadyExistException;
 import com.maeng.record.domain.record.repository.GameParticipantRepository;
 import com.maeng.record.domain.record.repository.GameRepository;
 import com.maeng.record.domain.record.repository.GameUserRepository;
@@ -38,11 +38,11 @@ public class JwacRecordService {
 	private final GameParticipantRepository gameParticipantRepository;
 
 	public void saveJwacRecord(Jwac jwac) {
-		Game game = createGame(jwac.getGameCode());
+		Game game = createGame(jwac.getGameCode(), jwac.getCreateAt());
 
 		Map<String, GameParticipant> participants = createGameParticipant(game, new ArrayList<>(jwac.getPlayers().keySet()), jwac);
 
-		Map<Integer, JwacRound> jwacRounds = createJwacRound(game, jwac.getMaxRound(), jwac.getJwerly());
+		Map<Integer, JwacRound> jwacRounds = createJwacRound(game, jwac.getMaxRound(), jwac.getJewelry());
 
 		List<JwacRoundBid> jwacRoundBids = createJwacBid(jwac.getPlayers(), participants, jwacRounds);
 
@@ -52,48 +52,28 @@ public class JwacRecordService {
 		jwacBidRepository.saveAll(jwacRoundBids);
 	}
 
-	private Game createGame(String gameCode) {
+	private Game createGame(String gameCode, LocalDateTime startAt) {
+		if(gameRepository.existsById(gameCode)) {
+			throw new GameAlreadyExistException(gameCode);
+		}
 		return Game.builder()
 				.gameCode(gameCode)
-				.gameCategory(GameCategoty.JWERLY_AUCTION)
+				.gameCategory(GameCategoty.JEWELRY_AUCTION)
+				.startAt(startAt)
 				.build();
 	}
 
 	private Map<String, GameParticipant> createGameParticipant(Game game, List<String> participants, Jwac jwac) {
-		String mostBidder = null;
-		long mostBidAmount = 0L;
-		for(String participant : participants) {
-			long totalBidAmount = jwac.getPlayers().get(participant).getTotalBidAmount();
-
-			if(totalBidAmount > mostBidAmount) {
-				mostBidder = participant;
-				mostBidAmount = totalBidAmount;
-			}
-		}
-
-		Set<Integer> scores = new HashSet<>();
-		for(String participant : participants) {
-			if(!participant.equals(mostBidder)) {
-				scores.add(jwac.getPlayers().get(participant).getScore());
-			}
-		}
-
-		PriorityQueue<Integer> scoreQueue = new PriorityQueue<>(scores);
-		Map<Integer, Integer> scoreRank = new HashMap<>();
-		for(int i = 1; i <= scores.size(); i++) {
-			scoreRank.put(scoreQueue.poll(), i);
-		}
-
 		List<GameParticipant> gameParticipants = new ArrayList<>();
 		for(String participant : participants) {
 			GameUser gameUser = getOrCreateUser(participant);
 			int score = jwac.getPlayers().get(participant).getScore();
-
+			int rank = jwac.getRank().indexOf(participant) + 1;
 			GameParticipant gameParticipant = GameParticipant.builder()
 				.game(game)
 				.gameUser(gameUser)
 				.score(score)
-				.userRank(scoreRank.get(score))
+				.userRank(rank)
 				.build();
 
 			gameParticipants.add(gameParticipant);
@@ -121,13 +101,13 @@ public class JwacRecordService {
 		return gameUser;
 	}
 
-	private Map<Integer, JwacRound> createJwacRound(Game game, Integer maxRound, Map<Integer, Jwerly> jwerly) {
+	private Map<Integer, JwacRound> createJwacRound(Game game, Integer maxRound, Map<Integer, Jewelry> jewelry) {
 		Map<Integer, JwacRound> jwacRounds = new HashMap<>();
 		for(int round = 1; round <= maxRound; round++) {
 			JwacRound jwacRound = JwacRound.builder()
 				.game(game)
 				.round(round)
-				.jwerly(jwerly.get(round))
+				.jewelry(jewelry.get(round))
 				.build();
 
 			jwacRounds.put(round, jwacRound);
@@ -178,4 +158,10 @@ public class JwacRecordService {
 		return jwacRoundBids;
 	}
 
+	public RankDTO generateRankDTO(Jwac jwac) {
+		return RankDTO.builder()
+			.gameCode(jwac.getGameCode())
+			.rankList(jwac.getRank())
+			.build();
+	}
 }

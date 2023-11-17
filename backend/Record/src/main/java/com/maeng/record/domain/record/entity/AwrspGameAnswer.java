@@ -2,30 +2,38 @@ package com.maeng.record.domain.record.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+
+import com.maeng.record.domain.record.enums.Card;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GameUser {
+public class AwrspGameAnswer {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long userSeq;
+	private Long awrspGameAnswerSeq;
 
-	@Column(unique = true)
-	private String email;
+	@OneToOne
+	@JoinColumn(name = "game_code")
+	private Game game;
 
 	@Column
-	private String nickname;
+	private Integer sequence;
+
+	@Enumerated(value = EnumType.STRING)
+	private Card card;
 }

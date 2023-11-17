@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import com.maeng.record.domain.record.enums.Jwerly;
+import com.maeng.record.domain.record.enums.Jewelry;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,7 +40,7 @@ public class JwacRound {
 
 	@Column
 	@Enumerated(value = EnumType.STRING)
-	private Jwerly jwerly;
+	private Jewelry jewelry;
 
 	public void update(JwacRound jwacRound) {
 		if(jwacRound.game != null)
@@ -49,7 +49,7 @@ public class JwacRound {
 			this.gameParticipant = jwacRound.gameParticipant;
 		if(jwacRound.round != null)
 			this.round = jwacRound.round;
-		if(jwacRound.jwerly != null)
-			this.jwerly = jwacRound.jwerly;
+		if(jwacRound.jewelry != null)
+			this.jewelry = jwacRound.jewelry;
 	}
 }

@@ -1,10 +1,11 @@
 package com.maeng.record.domain.record.data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.maeng.record.domain.record.enums.Jwerly;
+import com.maeng.record.domain.record.enums.Jewelry;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,7 +22,7 @@ public class Jwac {
 	private String roomCode;
 
 	@JsonProperty("createAt")
-	private String createAt;
+	private LocalDateTime createAt;
 
 	@JsonProperty("roundStartAt")
 	private String roundStartAt;
@@ -36,14 +37,16 @@ public class Jwac {
 	private int maxRound;
 
 	@JsonProperty("bidAmounts")
-	private Map<String, Integer> bidAmounts;
+	private Map<String, Long> bidAmounts;
 
-	@JsonProperty("jwerly")
-	private Map<Integer, Jwerly> jwerly;
+	@JsonProperty("jewelry")
+	private Map<Integer, Jewelry> jewelry;
 
 	@JsonProperty("players")
 	private Map<String, Player> players;
 
+	@JsonProperty("rank")
+	private List<String> rank;
 
 	@Data
 	@NoArgsConstructor
@@ -66,6 +69,7 @@ public class Jwac {
 
 		@JsonProperty("history")
 		private Map<Integer, History> history;
+
 	}
 
 	@Data
