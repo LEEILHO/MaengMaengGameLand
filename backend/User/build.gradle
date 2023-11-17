@@ -45,6 +45,15 @@ dependencies {
 	//embedded-redis 사용을 위함
 	implementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.1'
 
+	// S3
+	implementation "com.amazonaws:aws-java-sdk-s3:1.12.232"
+
+	// rabbitmq
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+	implementation 'org.springframework.boot:spring-boot-starter-reactor-netty:2.6.4'
+
+
 }
 
 

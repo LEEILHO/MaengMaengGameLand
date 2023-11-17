@@ -7,22 +7,8 @@
         <processorPath useClasspath="false">
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.26/8f8cf0372abf564913e9796623aac4c8ea44025a/lombok-1.18.26.jar" />
         </processorPath>
-        <module name="Game.main" />
+        <module name="Awrsp.main" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="Awrsp" target="11" />
-      <module name="Awrsp.main" target="11" />
-      <module name="Awrsp.test" target="11" />
-      <module name="Gsb" target="11" />
-      <module name="Gsb.main" target="11" />
-      <module name="Gsb.test" target="11" />
-      <module name="Jwac" target="11" />
-      <module name="Jwac.main" target="11" />
-      <module name="Jwac.test" target="11" />
-      <module name="Lobby" target="11" />
-      <module name="Lobby.main" target="11" />
-      <module name="Lobby.test" target="11" />
-    </bytecodeTargetLevel>
   </component>
 </project>
