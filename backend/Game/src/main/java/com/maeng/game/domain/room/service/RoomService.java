@@ -46,7 +46,6 @@ import com.maeng.game.domain.room.exception.NotHostException;
 import com.maeng.game.domain.room.exception.NotReadyPlayerException;
 import com.maeng.game.domain.room.exception.PullRoomException;
 import com.maeng.game.domain.room.repository.RoomRepository;
-import com.maeng.game.global.session.repository.SessionRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -62,7 +61,6 @@ public class RoomService {
     private final GsbService gsbService;
     private final LobbyService lobbyService;
     private final RabbitTemplate template;
-    private final SessionRepository sessionRepository;
 
     private final static String CHAT_EXCHANGE_NAME = "room";
     @Value("${game.max}")
@@ -94,6 +92,10 @@ public class RoomService {
                 .gameCode("")
                 .gameStart(false)
                 .build();
+
+        if(createRoomDTO.getGameCategory().equals(Game.GOLD_SILVER_BRONZE)){
+            room.setMaxHeadCount(2);
+        }
 
         roomRepository.save(room);
 
@@ -283,6 +285,9 @@ public class RoomService {
         room.setHeadCount(room.getHeadCount()-1);
         roomRepository.save(room);
 
+        // 강퇴된 사람 닉네임 보내주기
+        template.convertAndSend(CHAT_EXCHANGE_NAME, "room."+roomCode, MessageDTO.builder()
+                .type("PLAYER_KICK").data(PlayerDTO.builder().nickname(kickDTO.getNickname())).build());
         this.sendRoomInfo(roomCode, room); // ROOM_INFO
         lobbyService.findAllRoom(room.getGameCategory(), room.getChannelTire());
     }

@@ -71,6 +71,8 @@ public class AwrspService {
                     .build());
         }
 
+        // 시연 문제 : 빠 찌 묵 빠 찌 묵 빠
+//        Card[] problem = {Card.PAPER, Card.SCISSOR, Card.ROCK, Card.PAPER, Card.SCISSOR, Card.ROCK, Card.PAPER};
         Card[] problem = this.generateCard();
         // 게임 정보 세팅 후 저장
         awrspRepository.save(Game.builder()
@@ -225,7 +227,7 @@ public class AwrspService {
         log.info("승리한 사람 : "+game.getFinishCount());
 
         // TODO : 승리한 사람 + 연결 끊긴 사람 모두가 finishCount 돼서 게임 종료됨
-        return game.getCurrentRound() >= MAX_ROUND || (game.getHeadCount() - game.getFinishCount()) == 1;
+        return game.getCurrentRound() >= MAX_ROUND || (game.getHeadCount() - game.getFinishCount()) <= 1;
     }
 
     @Transactional
