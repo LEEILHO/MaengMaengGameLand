@@ -1,5 +1,5 @@
 server:
-  hostname: k9d208.p.ssafy.io
+  hostname: maengland.com
   port: 9600
 
 eureka:
@@ -8,57 +8,21 @@ eureka:
       defaultZone: http://${server.hostname}:8761/eureka/
 
 spring:
+  config:
+    import: configserver:http://${server.hostname}:8880
   application:
-    name: apigateway-service
+    name: maeng-gateway-service
   cloud:
-    gateway:
-      routes: # 사용자 인증과정             - StripPrefix=1             - Method=POST
-        - id: maeng-auth-service
-          uri: lb://maeng-auth-service
-          predicates:
-            - Path=/api/v1/auth/**
-          filters:
-            - StripPrefix=0
-        - id: maeng-user-service
-          uri: lb://maeng-user-service
-          predicates:
-            - Path=/api/v1/ueer/**
-          filters:
-            - StripPrefix=0
-        - id: maeng-lobby-service
-          uri: lb://maeng-lobby-service
-          predicates:
-            - Path=/api/v1/lobby/**
-          filters:
-            - StripPrefix=0
-        - id: maeng-record-service
-          uri: lb://maeng-record-service
-          predicates:
-            - Path=/api/v1/record/**
-          filters:
-            - StripPrefix=0
-        - id: maeng-awrsp-service
-          uri: lb://maeng-awrsp-service
-          predicates:
-            - Path=/api/v1/awrsp/**
-          filters:
-            - StripPrefix=0
-        - id: maeng-gsb-service
-          uri: lb://maeng-gsb-service
-          predicates:
-            - Path=/api/v1/gsb/**
-          filters:
-            - StripPrefix=0
-        - id: maeng-jwac-service
-          uri: lb://maeng-jwac-service
-          predicates:
-            - Path=/api/v1/jwac/**
-          filters:
-            - StripPrefix=0
-            #- RewritePath=/dotori-user-service/(?<segment>.*), /$\{segment}
     config:
       name: maeng
       profile: gateway
+  security:
+    enabled: false
+
+
 
   main:
     allow-bean-definition-overriding: true
+logging:
+  level:
+    root: info

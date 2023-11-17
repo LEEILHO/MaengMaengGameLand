@@ -1,0 +1,21 @@
+server:
+  hostname: k9d208.p.ssafy.io
+  port: 9220
+
+spring:
+  config:
+    import: optional:configserver:http://${server.hostname}:8880
+  application:
+    name: maeng-game-service
+  cloud:
+    config:
+      name: maeng
+      profile: game
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${server.hostname}:8761/eureka/
+  instance:
+    hostname: ${server.hostname}
