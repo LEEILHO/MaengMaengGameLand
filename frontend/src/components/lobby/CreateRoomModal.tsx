@@ -5,7 +5,7 @@ import { images } from '@constants/images'
 import * as S from '@styles/lobby/CreateRoomModal.styled'
 import { gameTypeChange } from '@utils/lobby/lobbyUtil'
 import { createRoom } from 'apis/lobby/lobbyApi'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
@@ -14,6 +14,7 @@ type Props = {
 }
 
 const CreateRoomModal = ({ closeModal }: Props) => {
+  const router = useRouter()
   const pathname = usePathname()
   const [roomType, setRoomType] = useState<'공개' | '비공개'>('공개')
   const [title, setTitle] = useState('')
@@ -32,13 +33,16 @@ const CreateRoomModal = ({ closeModal }: Props) => {
   )
 
   const handleCreateRoom = useCallback(() => {
-    console.log('버튼 클릭')
-    console.log(user, channel)
     if (!user || !channel) return
     const isPublic = roomType === '공개'
     const gameType = gameTypeChange(pathname.split('/')[1])
-    createRoom(title, isPublic, user.nickname, gameType, channel)
-  }, [])
+    createRoom(title, isPublic, gameType, channel).then((res) => {
+      closeModal()
+      // todo: 방 입장
+      console.log(res)
+      router.replace(`waiting-room/${res.roomCode}`)
+    })
+  }, [title, roomType, channel, pathname])
 
   return (
     <S.CreateRoomModalContainer>

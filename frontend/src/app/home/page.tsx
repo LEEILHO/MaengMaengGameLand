@@ -20,7 +20,7 @@ const Home = () => {
   const initUser = useInitUser()
 
   const handleGameClick = useCallback((url: string) => {
-    router.push(url, { scroll: false })
+    router.replace(url, { scroll: false })
   }, [])
 
   useEffect(() => {

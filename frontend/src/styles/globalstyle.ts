@@ -6,6 +6,7 @@ const GlobalStyle = createGlobalStyle`
 
   *{
     box-sizing: border-box;
+    /* overscroll-behavior-x: none; */
   }
 
   * {
@@ -30,8 +31,8 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    position: fixed;
     overflow: hidden;
+    overscroll-behavior: contain;
   }
 
   html,body {

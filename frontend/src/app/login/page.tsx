@@ -20,7 +20,7 @@ export default function login() {
     <S.Login
       onClick={() => {
         if (isLogin) {
-          router.push('/home')
+          router.replace('/home')
         }
       }}
     >
