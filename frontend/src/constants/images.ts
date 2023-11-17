@@ -27,6 +27,7 @@ export const images = {
     gameGuide2: '/images/index/game-guide2.png',
     gameGuide3: '/images/index/game-guide3.png',
     gameGuide4: '/images/index/game-guide4.png',
+    watchGameGuide: '/images/index/watch-game-guide.png',
   },
   waitingRoom: {
     header: {
