@@ -1,22 +1,32 @@
 package com.maeng.auth.controller;
 
-import com.maeng.auth.dto.AuthAccessTokenResponse;
-import com.maeng.auth.dto.CodeDto;
-import com.maeng.auth.dto.OAuthToken;
-import com.maeng.auth.service.AuthService;
-import com.maeng.auth.util.CookieManager;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import lombok.RequiredArgsConstructor;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import com.maeng.auth.dto.AuthAccessTokenResponse;
+import com.maeng.auth.dto.CodeDto;
+import com.maeng.auth.dto.OAuthToken;
+import com.maeng.auth.dto.WatchCodeDto;
+import com.maeng.auth.dto.WatchToken;
+import com.maeng.auth.service.AuthService;
+import com.maeng.auth.util.CookieManager;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
@@ -87,12 +97,28 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * 사용자의 CODE를 입력하여 정보를 확인하여
+     * 인증이 되면 WatchToken 반환
+     * */
     @PostMapping("/watch")
-    public ResponseEntity<?> getWatchToken(){
-        logger.info("getWatchToken()");
-        return ResponseEntity.ok().build();
-
+    public ResponseEntity<?> getWatchToken(@RequestBody WatchCodeDto watchCodeDto){
+        logger.info("getWatchToken(), watchCode={}",watchCodeDto.getWatchCode());
+        return ResponseEntity.ok().body(authService.getWatchToken(watchCodeDto.getWatchCode()));
     }
+
+    @PostMapping("/watch-token")
+    public ResponseEntity<?> getWatchRegenerate(@RequestBody WatchToken watchToken){
+        logger.info("getWatchToken(), watchAccessToken = {} , watchRefreshToken = {}", watchToken.getWatchAccessToken(),watchToken.getWatchRefreshToken());
+        return ResponseEntity.ok().body(authService.regenerateWatchToken(watchToken));
+    }
+
+    @GetMapping("/profile/{nickname}")
+    public ResponseEntity<String> getProfile(@PathVariable String nickname){
+        logger.info("getProfile(), nickname = {}", nickname);
+        return ResponseEntity.ok().body(authService.getProfile(nickname));
+    }
+
 
 
 }

@@ -1,33 +1,44 @@
 package com.maeng.auth.service;
 
+import javax.servlet.http.HttpServletRequest;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.maeng.auth.dto.CodeDto;
-import com.maeng.auth.dto.OAuthToken;
-import com.maeng.auth.dto.TokenInfoResponse;
-import com.maeng.auth.entity.User;
-import com.maeng.auth.exception.AuthException;
-import com.maeng.auth.exception.ExceptionCode;
-import com.maeng.auth.repository.UserRepository;
-import com.maeng.auth.util.JwtProvider;
-import com.maeng.auth.util.JwtRedisManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.HttpServletRequest;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.maeng.auth.dto.CodeDto;
+import com.maeng.auth.dto.OAuthToken;
+import com.maeng.auth.dto.RecordInfoDto;
+import com.maeng.auth.dto.TokenInfoResponse;
+import com.maeng.auth.dto.WatchToken;
+import com.maeng.auth.entity.Fcm;
+import com.maeng.auth.entity.User;
+import com.maeng.auth.entity.WatchJwtRedis;
+import com.maeng.auth.entity.WatchRedis;
+import com.maeng.auth.exception.AuthException;
+import com.maeng.auth.exception.ExceptionCode;
+import com.maeng.auth.repository.FcmRepository;
+import com.maeng.auth.repository.UserRepository;
+import com.maeng.auth.repository.WatchRepository;
+import com.maeng.auth.repository.WatchTokenRepository;
+import com.maeng.auth.util.JwtProvider;
+import com.maeng.auth.util.JwtRedisManager;
 
+import java.util.UUID;
 
 @Service
 public class AuthService {
-
+    private final RabbitTemplate rabbitTemplate;
     private final RestTemplate restTemplate;
     private final String clientId;
 
@@ -43,12 +54,19 @@ public class AuthService {
 
     private final JwtProvider jwtProvider;
 
-    public AuthService(RestTemplate restTemplate,
+    private  final WatchRepository watchRepository;
+
+    private final WatchTokenRepository watchTokenRepository;
+
+    private final FcmRepository fcmRepository;
+    public AuthService(RabbitTemplate rabbitTemplate, RestTemplate restTemplate,
                        @Value("${spring.security.oauth2.client.registration.kakao.client-id}") String clientId,
                        @Value("${spring.security.oauth2.client.registration.kakao.client-secret}") String clientSecret ,
                        @Value("${spring.security.oauth2.client.provider.kakao.token-uri}") String accessTokenUrl,
                        @Value("${spring.security.oauth2.client.provider.kakao.user-info-uri}") String userInfoUrl,
-                       JwtRedisManager jwtRedisManager, JwtProvider jwtProvider, UserRepository userRepository){
+                       JwtRedisManager jwtRedisManager, JwtProvider jwtProvider, UserRepository userRepository, WatchRepository watchRepository
+                        ,WatchTokenRepository watchTokenRepository, FcmRepository fcmRepository){
+        this.rabbitTemplate = rabbitTemplate;
         this.restTemplate = restTemplate;
         this.clientId = clientId;
         this.clientSecret = clientSecret;
@@ -57,6 +75,9 @@ public class AuthService {
         this.jwtRedisManager = jwtRedisManager;
         this.jwtProvider = jwtProvider;
         this.userRepository = userRepository;
+        this.watchRepository = watchRepository;
+        this.watchTokenRepository =watchTokenRepository;
+        this.fcmRepository = fcmRepository;
 
     }
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -89,6 +110,10 @@ public class AuthService {
         // 사용자가 처음 서비스를 이용하는 경우
         if (userRepository.findUserByEmail(userEmail).isEmpty()) {
             userRepository.save(user);
+            rabbitTemplate.convertAndSend("user", "register."+userEmail, RecordInfoDto.builder()
+                .email(userEmail)
+                .nickname(user.getNickname())
+                .build());
         }
 
 
@@ -96,6 +121,13 @@ public class AuthService {
         OAuthToken oAuthToken = new OAuthToken(jwtProvider.generateAccessToken(userEmail),
                 jwtProvider.generateRefreshToken(userEmail));
         jwtRedisManager.storeJwt(userEmail, oAuthToken.getRefreshToken());
+
+        //Fcm token 저장
+        user = userRepository.findUserByEmail(userEmail).orElseThrow(()
+                -> new AuthException(ExceptionCode.USER_NOT_FOUND));
+        Fcm fcm = fcmRepository.findByUser(user).orElse(Fcm.builder().user(user).build());
+        fcm.setFcmToken(codeDto.getFcmToken());
+        fcmRepository.save(fcm);
 
         return oAuthToken;
     }
@@ -124,8 +156,40 @@ public class AuthService {
 
         return new OAuthToken(jwtProvider.generateAccessToken(id), jwtProvider.generateRefreshToken(id));
     }
+    public WatchToken getWatchToken(String code){
 
+        WatchRedis watchRedis = watchRepository.findByCode(code).orElseThrow(()
+                -> new AuthException(ExceptionCode.WATCH_CODE_FAILED));
+        WatchToken watchToken = new WatchToken(
+                jwtProvider.generateAccessToken(watchRedis.getEmail()), jwtProvider.generateRefreshToken(watchRedis.getEmail()));
+        logger.info("getWatchToken(), email = {}, WatchAccessToken = {}, watchRefreshToken = {}",
+                watchRedis.getEmail(),watchToken.getWatchAccessToken(), watchToken.getWatchRefreshToken());
 
+        watchTokenRepository.save(WatchJwtRedis.builder()
+                        .email(watchRedis.getEmail())
+                        .watchAccessToken(watchToken.getWatchAccessToken())
+                        .watchRefreshToken(watchToken.getWatchRefreshToken())
+                .build());
+
+        return watchToken;
+    }
+
+    public WatchToken regenerateWatchToken(WatchToken watchToken){
+        String refreshToken = watchToken.getWatchRefreshToken();
+        logger.info("regenerateWatchToken(), refreshToken = {}",refreshToken);
+        if (refreshToken == null || !jwtProvider.validateToken(refreshToken)) {
+            logger.info("검증 실패");
+            return null;
+        }
+        String email = jwtProvider.getUserId(refreshToken);
+        WatchToken newToken = new WatchToken(jwtProvider.generateAccessToken(email), jwtProvider.generateRefreshToken(email));
+        watchTokenRepository.save(WatchJwtRedis.builder()
+                        .email(email)
+                        .watchAccessToken(newToken.getWatchAccessToken())
+                        .watchRefreshToken(newToken.getWatchRefreshToken())
+                .build());
+        return newToken;
+    }
 
 
     /**
@@ -148,16 +212,30 @@ public class AuthService {
             JsonNode jsonNode = objectMapper.readTree(data);
 
             String email = jsonNode.get("kakao_account").get("email").asText();
-            String nickname = jsonNode.get("properties").get("nickname").asText();
             String profileImage = jsonNode.get("properties").get("profile_image").asText();
-            User user = new User(email, email,profileImage);
-
-            return user;
+            String nickname = getNickname();
+            return new User(email, nickname,profileImage);
         } catch (Exception e) {
             throw new AuthException(ExceptionCode.USER_CREATED_FAILED);
         }
     }
+    public String getNickname() {
+        String nickname = generateUniqueNickname();
+        // 중복 체크
+        while (userRepository.existsByNickname(nickname)) {
+            nickname = generateUniqueNickname();
+        }
+        return nickname;
+    }
+    private String generateUniqueNickname() {
+        UUID uuid = UUID.randomUUID();
 
+        // UUID를 문자열로 변환하여 하이픈 제거
+        String uuidString = uuid.toString().replaceAll("-", "");
+
+        // 문자열에서 앞 6자리 가져오기
+        return "player" + uuidString.substring(0, 6);
+    }
 
     /**
      * 주어진 응답으로부터 Access Token을 추출해 반환
@@ -174,6 +252,9 @@ public class AuthService {
             throw new AuthException(ExceptionCode.KAKAO_TOKEN_RESPONSE_FAILED);
         }
     }
+    /** 코드를 입력 받아 정보 확인 후 AccessToken 확인 */
+
+
 
     private ResponseEntity<String> requestAccessToken(CodeDto codeDto) {
         try {
@@ -192,7 +273,10 @@ public class AuthService {
         }
     }
 
-
-
-
+    @Transactional(readOnly = true)
+	public String getProfile(String nickname) {
+        User user = userRepository.findUserByNickname(nickname).orElseThrow(()
+                -> new AuthException(ExceptionCode.USER_NOT_FOUND));
+        return user.getProfile_image();
+	}
 }
