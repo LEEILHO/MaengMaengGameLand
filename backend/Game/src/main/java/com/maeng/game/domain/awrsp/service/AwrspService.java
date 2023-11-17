@@ -72,8 +72,8 @@ public class AwrspService {
         }
 
         // 시연 문제 : 빠 찌 묵 빠 찌 묵 빠
-        Card[] problem = {Card.PAPER, Card.SCISSOR, Card.ROCK, Card.PAPER, Card.SCISSOR, Card.ROCK, Card.PAPER};
-        //Card[] problem = this.generateCard();
+//        Card[] problem = {Card.PAPER, Card.SCISSOR, Card.ROCK, Card.PAPER, Card.SCISSOR, Card.ROCK, Card.PAPER};
+        Card[] problem = this.generateCard();
         // 게임 정보 세팅 후 저장
         awrspRepository.save(Game.builder()
                             .id(gameStartDTO.getGameCode())
