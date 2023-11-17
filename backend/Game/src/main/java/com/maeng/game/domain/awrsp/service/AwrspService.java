@@ -227,7 +227,7 @@ public class AwrspService {
         log.info("승리한 사람 : "+game.getFinishCount());
 
         // TODO : 승리한 사람 + 연결 끊긴 사람 모두가 finishCount 돼서 게임 종료됨
-        return game.getCurrentRound() >= MAX_ROUND || (game.getHeadCount() - game.getFinishCount()) == 1;
+        return game.getCurrentRound() >= MAX_ROUND || (game.getHeadCount() - game.getFinishCount()) <= 1;
     }
 
     @Transactional
