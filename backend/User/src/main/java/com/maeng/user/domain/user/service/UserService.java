@@ -85,10 +85,11 @@ public class UserService {
         String code = "";
         for(int i=0; i<letter; i++){
             int num = random.nextInt(9);
-            code +=Integer.toString(num);
-        }
+           code +=Integer.toString(num);
+       }
         logger.info("getUserWatchCode(), userEmail = {}, code = {}",userEmail,code);
         //TODO: 예외 처리 하자
+
 
         watchRepository.save(WatchRedis.builder().code(code).email(userEmail).build());
 //        watchRedisManager.storeCode(userEmail,code);
