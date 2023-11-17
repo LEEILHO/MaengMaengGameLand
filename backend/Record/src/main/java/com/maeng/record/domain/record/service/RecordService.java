@@ -41,7 +41,12 @@ public class RecordService {
 
 	public List<GameParticipantDTO> gameDetail(String gameCode) {
 		List<GameParticipant> gameParticipants = gameParticipantRepository.findByGameGameCode(gameCode);
-		return gameParticipantToGameParticipantDTO(gameParticipants);
+
+		List<GameParticipantDTO> gameParticipantDTOs = gameParticipantToGameParticipantDTO(gameParticipants);
+
+		gameParticipantDTOs.sort((o1, o2) -> o1.getUserRank() - o2.getUserRank());
+
+		return gameParticipantDTOs;
 	}
 
 	public List<UserGameInfoDTO> gameParticipantToUserGameInfoDTO(List<GameParticipant> gameParticipants) {
