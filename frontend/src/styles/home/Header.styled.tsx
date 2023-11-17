@@ -43,6 +43,7 @@ export const ProfileImage = styled.img`
   width: 35px;
   height: 35px;
   border-radius: 50%;
+  object-fit: cover;
 `
 
 export const UserName = styled.p`
@@ -57,6 +58,7 @@ export const SettingButton = styled.button`
   justify-content: center;
   margin-right: 44px;
   margin-top: 15px;
+  margin-left: auto;
   background: none;
   cursor: pointer;
   transition: 0.25s;

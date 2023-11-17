@@ -2,7 +2,7 @@
 
 import * as S from '@styles/home/Home.styled'
 import { LottiePlayer } from 'lottie-react'
-import Backround from 'assets/lotties/background.json'
+import Background from 'assets/lotties/background.json'
 import HomeHeader from '@components/home/HomeHeader'
 import GameCard from '@components/home/GameCard'
 import { images } from '@constants/images'
@@ -14,14 +14,30 @@ import { useSetRecoilState } from 'recoil'
 import { gameTypeState } from '@atom/gameAtom'
 import useInitUser from '@hooks/useInitUser'
 import withAuth from '@components/hoc/client/PrivateRoute'
+import useModal from '@hooks/useModal'
+import SettingModal from '@components/home/SettingModal'
+import useSound from '@hooks/useSound'
 
 const Home = () => {
   const router = useRouter()
   const initUser = useInitUser()
+  const {
+    Modal,
+    openModal: openSettingModal,
+    closeModal: closeSettingModal,
+    isOpen: isSettingOpen,
+  } = useModal()
+  const { playEnterSound, playButtonSound } = useSound()
 
   const handleGameClick = useCallback((url: string) => {
+    playEnterSound()
     router.replace(url, { scroll: false })
   }, [])
+
+  const hadleSetting = () => {
+    playButtonSound()
+    openSettingModal()
+  }
 
   useEffect(() => {
     initUser()
@@ -29,9 +45,12 @@ const Home = () => {
 
   return (
     <>
+      <Modal isOpen={isSettingOpen} closeModal={closeSettingModal}>
+        <SettingModal closeModal={closeSettingModal}></SettingModal>
+      </Modal>
       <S.HomeContainer>
-        <HomeHeader onClickFriend={() => {}} onClickSetting={() => {}} />
-        <S.BackgroundLottie animationData={Backround} loop />
+        <HomeHeader onClickFriend={() => {}} onClickSetting={hadleSetting} />
+        <S.BackgroundLottie animationData={Background} loop />
         <S.GameCardContainer>
           <GameCard
             backGroundUrl={images.home.gsb}
@@ -49,7 +68,7 @@ const Home = () => {
             onClick={() => handleGameClick('awrsp/lobby')}
           />
         </S.GameCardContainer>
-        <S.ButtonLow>
+        {/* <S.ButtonLow>
           <CButton
             backgroundColor="rgba(112, 0, 255, 1)"
             fontSize={14}
@@ -57,7 +76,7 @@ const Home = () => {
             text="초대 코드로 입장"
             color="white"
           />
-        </S.ButtonLow>
+        </S.ButtonLow> */}
       </S.HomeContainer>
     </>
   )

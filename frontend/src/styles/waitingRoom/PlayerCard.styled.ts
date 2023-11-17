@@ -17,10 +17,14 @@ export const UserInfo = styled.div`
 `
 
 export const UserNickname = styled.p`
+  width: 80px;
   text-align: center;
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 4px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 `
 
 export const TierFrame = styled.div`
@@ -47,6 +51,7 @@ export const ProfileImage = styled.img`
   left: 22px;
   width: 50px;
   height: 50px;
+  object-fit: cover;
 
   @media screen and ((max-width: 700px) or (max-height: 376px)) {
     top: 17px;

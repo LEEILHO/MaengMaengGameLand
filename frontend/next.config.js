@@ -8,7 +8,7 @@ const nextConfig = {
 
 const withPWA = require('next-pwa')({
   disable: process.env.NODE_ENV === 'development',
-  customWorkerDir: './worker',
+  customWorkerDir: 'worker',
   dest: 'public',
   register: true,
   skipWaiting: true,
@@ -16,4 +16,7 @@ const withPWA = require('next-pwa')({
   buildExcludes: [/app-build-manifest.json$/],
 })
 
-module.exports = withPWA(nextConfig)
+module.exports = withPWA({
+  output: 'standalone',
+  ...nextConfig,
+})

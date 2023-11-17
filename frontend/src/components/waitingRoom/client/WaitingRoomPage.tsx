@@ -1,10 +1,9 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import * as S from '@styles/waitingRoom/WaitingRoom.styled'
 import spaceAnimation from 'assets/lotties/background.json'
-import { authHttp } from '@utils/http'
 import WaitingRoomHeader from './WaitingRoomHeader'
 import PlayerCard from './PlayerCard'
 import CButton from '@components/common/clients/CButton'
@@ -14,142 +13,166 @@ import { SeatInfo } from '@type/waitingRoom/seat.type'
 import useModal from '@hooks/useModal'
 import UpdateRoomModal from './UpdateRoomModal'
 import BackButton from '@components/common/clients/BackButton'
-
-const user = {
-  userSeq: 1,
-  nickname: '맹박사',
-  host: true,
-  ready: false,
-  isClose: false,
-}
+import { usePathname, useRouter } from 'next/navigation'
+import { useRecoilValue } from 'recoil'
+import { RoomInfoState } from '@atom/waitingRoomAtom'
+import useSocketWaitingRoom from '@hooks/useSocketWaitingRoom'
+import { userState } from '@atom/userAtom'
+import useSound from '@hooks/useSound'
 
 const WaitingRoomPage = () => {
-  const { Modal, isOpen, openModal, closeModal } = useModal()
-  const [isHost, setIsHost] = useState(false)
-  const [dummyParticipant, setDummyParticipant] = useState<SeatInfo[]>([
-    {
-      userSeq: 1,
-      nickname: '맹박사',
-      host: true,
-      ready: false,
-      isClose: false,
-    },
-    {
-      userSeq: 2,
-      nickname: '멍박사',
-      host: false,
-      ready: true,
-      isClose: false,
-    },
-    {
-      userSeq: 3,
-      nickname: '댕박사',
-      host: false,
-      ready: false,
-      isClose: false,
-    },
-    {
-      userSeq: 4,
-      nickname: '뱅박사',
-      host: false,
-      ready: false,
-      isClose: false,
-    },
-    {
-      userSeq: 0,
-      nickname: '',
-      host: false,
-      ready: false,
-      isClose: false,
-    },
-    {
-      userSeq: 0,
-      nickname: '',
-      host: false,
-      ready: false,
-      isClose: false,
-    },
-    {
-      userSeq: 0,
-      nickname: '',
-      host: false,
-      ready: false,
-      isClose: true,
-    },
-    {
-      userSeq: 0,
-      nickname: '',
-      host: false,
-      ready: false,
-      isClose: true,
-    },
-  ])
+  const router = useRouter()
+  const roomId = usePathname().split('/')[3]
+  const gameType = usePathname().split('/')[1]
+  const user = useRecoilValue(userState)
+  const {
+    connectSocket,
+    disconnectSocket,
+    connectWaitingRoom,
+    disconnectWaitingRoom,
+    handleEmptySeat,
+    handleExit,
+    handleReady,
+    handleGameStart,
+    handleSendChat,
+    handleUpdateRoom,
+    handleKick,
+  } = useSocketWaitingRoom()
 
-  const onClickEmptySeat = (index: number) => {
-    let newDummyParticipant = [...dummyParticipant]
-    newDummyParticipant.map((participant, newIndex) => {
-      if (newIndex === index) participant.isClose = !participant.isClose
-    })
-    setDummyParticipant(newDummyParticipant)
-  }
+  const roomInfo = useRecoilValue(RoomInfoState)
+
+  const { playButtonSound } = useSound()
+  const { Modal, isOpen, openModal, closeModal } = useModal()
+  const [seats, setSeats] = useState<SeatInfo[]>([])
+  const [isHost, setIsHost] = useState(false)
+  const [isReady, setIsReady] = useState(false)
+
+  const handleBack = useCallback(() => {
+    handleExit()
+    router.replace(`/${gameType}/lobby`)
+  }, [])
+
+  const onClickGameSetting = useCallback(() => {
+    playButtonSound()
+    openModal()
+  }, [])
+
+  const onClickGameStart = useCallback(() => {
+    playButtonSound()
+    handleGameStart()
+  }, [])
+
+  const onClickReady = useCallback(() => {
+    playButtonSound()
+    handleReady()
+  }, [])
 
   useEffect(() => {
-    dummyParticipant.map((participant) => {
-      if (participant.host) {
-        if (participant.userSeq === user.userSeq) {
-          setIsHost(true)
+    if (roomId) {
+      connectSocket(connectWaitingRoom, disconnectWaitingRoom)
+    }
+
+    return () => {
+      disconnectSocket()
+    }
+  }, [roomId])
+
+  useEffect(() => {
+    if (!roomInfo) return
+    setSeats(roomInfo?.participant)
+  }, [roomInfo])
+
+  useEffect(() => {
+    if (seats) {
+      // 내가 방장인지 아닌지 체크
+      seats.map((seat) => {
+        if (seat.user) {
+          if (seat.user.nickname === user?.nickname) {
+            if (seat.user.ready) setIsReady(true)
+            else setIsReady(false)
+          }
+          if (seat.user.host) {
+            if (seat.user.nickname === user?.nickname) {
+              setIsHost(true)
+              return
+            }
+          }
         }
-      }
-    })
-  }, [])
+      })
+    }
+  }, [seats])
 
   return (
     <>
       <S.WaitingRoomContainer>
-        <WaitingRoomHeader publicRoom={false} />
+        <WaitingRoomHeader
+          publicRoom={roomInfo ? roomInfo?.publicRoom : true}
+          title={roomInfo ? roomInfo.title : ''}
+        />
         <S.Background animationData={spaceAnimation} loop />
         <S.Contents>
-          <Chatting />
+          <Chatting handleSendChat={handleSendChat} />
           <S.PlayerList>
-            {dummyParticipant.map((participant, index) => (
+            {seats.map((seat, index) => (
               <PlayerCard
-                user={participant}
+                user={seat.user}
+                isOpened={seat.open}
+                isHost={isHost}
                 index={index}
-                onClickEmptySeat={onClickEmptySeat}
+                handleEmptySeat={handleEmptySeat}
+                handleKick={handleKick}
                 key={index}
               />
             ))}
           </S.PlayerList>
         </S.Contents>
         <S.BottomButtons>
-          <BackButton size={44} />
+          <BackButton size={44} handleBack={handleBack} />
           <S.ButtonRelatedGame>
-            <CButton
-              height={48}
-              radius={109}
-              fontSize={20}
-              color={colors.greyScale.white}
-              text="게임 설정"
-              backgroundColor={colors.greyScale.grey400}
-              onClick={openModal}
-            />
             {isHost ? (
+              <>
+                <CButton
+                  width={118}
+                  height={48}
+                  radius={109}
+                  fontSize={20}
+                  color={colors.greyScale.white}
+                  text="게임 설정"
+                  backgroundColor={colors.greyScale.grey400}
+                  onClick={onClickGameSetting}
+                />
+                <CButton
+                  width={118}
+                  height={48}
+                  radius={109}
+                  fontSize={20}
+                  color={colors.greyScale.white}
+                  text="게임 시작"
+                  backgroundColor={colors.button.purple}
+                  onClick={onClickGameStart}
+                />
+              </>
+            ) : isReady ? (
               <CButton
+                width={118}
                 height={48}
                 radius={109}
                 fontSize={20}
                 color={colors.greyScale.white}
-                text="게임 시작"
-                backgroundColor={colors.button.purple}
+                text="준비 완료"
+                backgroundColor={colors.greyScale.grey400}
+                onClick={onClickReady}
               />
             ) : (
               <CButton
+                width={118}
                 height={48}
                 radius={109}
                 fontSize={20}
                 color={colors.greyScale.white}
-                text="게임 준비"
+                text="준비"
                 backgroundColor={colors.button.purple}
+                onClick={onClickReady}
               />
             )}
           </S.ButtonRelatedGame>
@@ -157,7 +180,10 @@ const WaitingRoomPage = () => {
       </S.WaitingRoomContainer>
 
       <Modal isOpen={isOpen}>
-        <UpdateRoomModal closeModal={closeModal} />
+        <UpdateRoomModal
+          handleUpdateRoom={handleUpdateRoom}
+          closeModal={closeModal}
+        />
       </Modal>
     </>
   )

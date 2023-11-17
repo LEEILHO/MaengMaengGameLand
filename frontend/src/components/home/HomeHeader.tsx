@@ -5,6 +5,7 @@ import { images } from '@constants/images'
 import * as S from '@styles/home/Header.styled'
 import { useRecoilValue } from 'recoil'
 import { TireType } from '@type/common/common.type'
+import { useRouter } from 'next/navigation'
 
 type Props = {
   onClickFriend: () => void
@@ -12,6 +13,7 @@ type Props = {
 }
 
 const HomeHeader = ({ onClickFriend, onClickSetting }: Props) => {
+  const router = useRouter()
   const user = useRecoilValue(userState)
 
   const getTierFrame = useCallback((tier: TireType) => {
@@ -33,7 +35,7 @@ const HomeHeader = ({ onClickFriend, onClickSetting }: Props) => {
 
   return (
     <S.HeaderContainer>
-      <S.ProfileCard>
+      <S.ProfileCard onClick={() => router.replace('/user')}>
         <S.TierFrame>
           <img className="frame" src={getTierFrame(user.tier)} alt="" />
           <S.ProfileImage src={user?.profile} alt="프로필사진" />
@@ -41,9 +43,9 @@ const HomeHeader = ({ onClickFriend, onClickSetting }: Props) => {
         <S.UserName>{user.nickname}</S.UserName>
       </S.ProfileCard>
 
-      <S.FriendsButton onClick={onClickFriend}>
+      {/* <S.FriendsButton onClick={onClickFriend}>
         <img src={images.common.header.friends} alt="친구추가" />
-      </S.FriendsButton>
+      </S.FriendsButton> */}
 
       <S.SettingButton onClick={onClickSetting}>
         <img src={images.common.header.setting} alt="설정" />
