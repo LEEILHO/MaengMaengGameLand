@@ -13,7 +13,7 @@ import org.springframework.data.redis.core.index.Indexed;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@RedisHash(value = "CODE", timeToLive = 120)
+@RedisHash(value = "CODE", timeToLive = 180)
 public class WatchRedis {
     @Id
     private String email;
