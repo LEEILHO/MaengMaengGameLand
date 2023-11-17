@@ -28,12 +28,24 @@ export const InDropArea = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 12px;
 
   background-color: rgba(217, 217, 217, 0.5);
   border-radius: 8px;
 
   transform: none !important;
+`
+
+export const CardSlot = styled.div`
+  width: 56px;
+  height: 90px;
+  background-color: #d9d9d9;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.4) inset;
+
+  @media screen and (max-width: 700px) {
+    width: 44px;
+    height: 78px;
+  }
 `
 
 export const OutDropArea = styled.div`

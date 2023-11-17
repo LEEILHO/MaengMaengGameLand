@@ -96,6 +96,7 @@ const AwrspGameRoom = () => {
     console.log('스텝변경: ', step)
 
     if (step === 'DRAW_CARD') openModal()
+    openModal()
   }, [step])
 
   return (
@@ -108,6 +109,7 @@ const AwrspGameRoom = () => {
             {(step === 'CARD_SUBMIT' || step === 'DRAW_CARD') && (
               <RspCombination handleCardSubmit={handleCardSubmit} />
             )}
+            <RspCombination handleCardSubmit={handleCardSubmit} />
             {step === 'PLAYER_WINS' && <MyResult />}
             {(step === 'ALL_WINS' || step === 'WAITING') && (
               <AllResultList setStep={setStep} />
