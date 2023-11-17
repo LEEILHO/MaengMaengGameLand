@@ -69,19 +69,20 @@ const WaitingRoomPage = () => {
 
   const onClickGameStart = useCallback(() => {
     playButtonSound()
+    handleGameStart()
 
-    if (!roomInfo) return
-    console.log(gameType, roomInfo.headCount)
-    if (gameType === 'gsb' && roomInfo?.headCount !== 2) {
-      setAlertText('금은동 게임은 2인 게임입니다.')
-      openAlertModal()
-    } else if (gameType === 'jwac' && roomInfo?.headCount < 4) {
-      setAlertText('무제한 보석 경매는 4인 이상 게임입니다.')
-      openAlertModal()
-    } else if (gameType === 'awrsp' && roomInfo.headCount === 1) {
-      setAlertText('전승 가위바위보는 2인 이상 게임입니다.')
-      openAlertModal()
-    } else handleGameStart()
+    // if (!roomInfo) return
+    // console.log(gameType, roomInfo.headCount)
+    // if (gameType === 'gsb' && roomInfo?.headCount !== 2) {
+    //   setAlertText('금은동 게임은 2인 게임입니다.')
+    //   openAlertModal()
+    // } else if (gameType === 'jwac' && roomInfo?.headCount < 4) {
+    //   setAlertText('무제한 보석 경매는 4인 이상 게임입니다.')
+    //   openAlertModal()
+    // } else if (gameType === 'awrsp' && roomInfo.headCount === 1) {
+    //   setAlertText('전승 가위바위보는 2인 이상 게임입니다.')
+    //   openAlertModal()
+    // } else handleGameStart()
   }, [])
 
   const onClickReady = useCallback(() => {
