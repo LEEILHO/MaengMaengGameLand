@@ -5,12 +5,7 @@ import CButton from '@components/common/clients/CButton'
 import { colors } from '@constants/colors'
 import useSound from '@hooks/useSound'
 import * as S from '@styles/awrsp/RspCombination.styled'
-import {
-  CardListType,
-  CardStatus,
-  CardType,
-  RspType,
-} from '@type/awrsp/awrsp.type'
+import { CardStatus, CardType, RspType } from '@type/awrsp/awrsp.type'
 import { getRspImageUrl } from '@utils/awrsp/awrspUtil'
 import { useEffect, useState, useCallback } from 'react'
 import {
@@ -48,34 +43,75 @@ const RspCombination = ({ handleCardSubmit }: Props) => {
     rsp: 'PAPER',
   }))
 
-  const [cardList, setCardList] = useState<CardListType>({
-    out: [...rock, ...scissors, ...paper],
+  const [outCardList, setOutCardList] = useState<CardType[]>([
+    ...rock,
+    ...scissors,
+    ...paper,
+  ])
 
-    in: [],
-  })
+  const [inCardList, setInCardList] = useState<CardType[]>(
+    [...Array(7)].map((_, index) => ({
+      id: `Empty${index}`,
+      status: 'in',
+      rsp: 'EMPTY',
+    })),
+  )
 
   // 드래그가 끝났을 때 실행되는 함수
   const onDragEnd = ({ source, destination }: DropResult) => {
     playDropCardSound()
-    if (!destination) return
-
     console.log('>>> source ', source)
     console.log('>>> destination ', destination)
+    if (!destination) return
 
     const sourceKey = source.droppableId as CardStatus
     const destinationKey = destination.droppableId as CardStatus
 
-    if (
-      sourceKey === 'out' &&
-      sourceKey !== destinationKey &&
-      cardList['in'].length === 7
-    )
-      return
-    const _cardList = JSON.parse(JSON.stringify(cardList)) as typeof cardList
-    const [targetCard] = _cardList[sourceKey].splice(source.index, 1)
-    _cardList[destinationKey].splice(destination.index, 0, targetCard)
+    if (sourceKey === 'out' && destinationKey.substring(0, 2) === 'in') {
+      const destIndex = Number(destinationKey.substring(2, 3))
+      const _outCardList = [...outCardList]
+      const _inCardList = [...inCardList]
+      const [targetCard] = _outCardList.splice(source.index, 1)
 
-    setCardList(_cardList)
+      console.log(_inCardList[destIndex], targetCard)
+
+      if (inCardList[destIndex].rsp !== 'EMPTY') {
+        const removeCard = _inCardList[destIndex]
+        _inCardList[destIndex] = targetCard
+        _outCardList.splice(source.index, 0, removeCard)
+      } else {
+        _inCardList[destIndex] = targetCard
+      }
+
+      setOutCardList(_outCardList)
+      setInCardList(_inCardList)
+    } else if (
+      sourceKey.substring(0, 2) === 'in' &&
+      destinationKey.substring(0, 2) === 'in'
+    ) {
+      const srcIndex = Number(sourceKey.substring(2, 3))
+      const destIndex = Number(destinationKey.substring(2, 3))
+      const _inCardList = [...inCardList]
+      const temp = _inCardList[srcIndex]
+
+      _inCardList[srcIndex] = _inCardList[destIndex]
+      _inCardList[destIndex] = temp
+
+      setInCardList(_inCardList)
+    } else if (sourceKey.substring(0, 2) === 'in' && destinationKey === 'out') {
+      const _inCardList = [...inCardList]
+      const targetCard = _inCardList[source.index]
+      const _outCardList = [...outCardList]
+      _outCardList.splice(destination.index, 0, targetCard)
+      _inCardList[source.index] = {
+        id: `Empty${source.index}`,
+        status: 'in',
+        rsp: 'EMPTY',
+      }
+
+      setOutCardList(_outCardList)
+      setInCardList(_inCardList)
+    }
   }
 
   const onDragStart = useCallback(() => {
@@ -84,11 +120,11 @@ const RspCombination = ({ handleCardSubmit }: Props) => {
 
   const onClickSubmitButton = () => {
     playButtonSound()
-    if (cardList['in'].length < 7) {
+    if (inCardList.filter((card) => card.rsp !== 'EMPTY').length < 7) {
       console.log('모자라...')
       return
     }
-    const RspCombination = cardList['in'].map((card: CardType) => {
+    const RspCombination = inCardList.map((card: CardType) => {
       return card.rsp
     })
 
@@ -104,9 +140,9 @@ const RspCombination = ({ handleCardSubmit }: Props) => {
         status: 'out',
         rsp: drawCard.drawCard,
       }
-      const _cardList = cardList
+      const _cardList = outCardList
 
-      setCardList({ ..._cardList, out: [..._cardList['out'], draw] })
+      setOutCardList([..._cardList, draw])
       setDrawCard({ ...drawCard, isSetting: true })
     }
   }, [drawCard.drawCard])
@@ -127,42 +163,52 @@ const RspCombination = ({ handleCardSubmit }: Props) => {
       <S.Container>
         <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
           <S.DragDropContextDiv>
-            <Droppable key={'in'} droppableId="in" direction="horizontal">
-              {(provided) => (
-                <S.InDropArea
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                >
-                  {cardList['in' as CardStatus].map((card, index) => (
-                    <Draggable
-                      key={card.id}
-                      draggableId={card.id}
-                      index={index}
-                      isDragDisabled={isSubmit}
+            <S.InDropArea>
+              {inCardList.map((card, index) => (
+                <Droppable key={`in${index}`} droppableId={`in${index}`}>
+                  {(provided) => (
+                    <S.CardSlot
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
                     >
-                      {(provided, snapshot) => (
-                        <S.DragCard
-                          ref={provided.innerRef}
-                          {...provided.dragHandleProps}
-                          {...provided.draggableProps}
-                          isDragging={snapshot.isDragging}
-                        >
-                          <img src={getRspImageUrl(card.rsp)} alt={card.rsp} />
-                        </S.DragCard>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </S.InDropArea>
-              )}
-            </Droppable>
+                      <Draggable
+                        key={card.id}
+                        draggableId={`in${index}`}
+                        index={index}
+                        isDragDisabled={isSubmit}
+                      >
+                        {(provided, snapshot) => (
+                          <S.DragCard
+                            ref={provided.innerRef}
+                            {...provided.dragHandleProps}
+                            {...provided.draggableProps}
+                            isDragging={snapshot.isDragging}
+                          >
+                            {card.rsp !== 'EMPTY' ? (
+                              <img
+                                src={getRspImageUrl(card.rsp)}
+                                alt={card.rsp}
+                              />
+                            ) : (
+                              ' '
+                            )}
+                          </S.DragCard>
+                        )}
+                      </Draggable>
+                      {provided.placeholder}
+                    </S.CardSlot>
+                  )}
+                </Droppable>
+              ))}
+            </S.InDropArea>
+
             <Droppable key={'out'} droppableId="out" direction="horizontal">
               {(provided) => (
                 <S.OutDropArea
                   ref={provided.innerRef}
                   {...provided.droppableProps}
                 >
-                  {cardList['out' as CardStatus].map((card, index) => (
+                  {outCardList.map((card, index) => (
                     <Draggable
                       key={card.id}
                       draggableId={card.id}
