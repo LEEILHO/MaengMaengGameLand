@@ -132,6 +132,7 @@ export const GameTabNavigation = styled.div<NavigationProps>`
     props.$isFix &&
     css`
       position: fixed;
+      z-index: 3;
     `}
 `
 

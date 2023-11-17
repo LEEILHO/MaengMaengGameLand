@@ -10,6 +10,8 @@ import { useAnimate, useAnimation } from 'framer-motion'
 export default function Home() {
   const { deferredPrompt, installApp, clearPrompt } = useA2HS()
   const iosGuideRef = useRef<HTMLSelectElement | null>(null)
+  const gameGuideRef = useRef<HTMLSelectElement | null>(null)
+  const watchGameGuideRef = useRef<HTMLSelectElement | null>(null)
   const [isIos, setIsIos] = useState(false)
   const isDownload = deferredPrompt ? true : false
   const [seletedTab, setSeletedTab] = useState<'GAME' | 'WATCH'>('GAME')
@@ -33,6 +35,20 @@ export default function Home() {
 
   const handleIosDownload = () => {
     iosGuideRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  const handleGameGuideClick = () => {
+    setSeletedTab('GAME')
+    setTimeout(() => {
+      gameGuideRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }, 1)
+  }
+
+  const handleWatchGameGuideClick = () => {
+    setSeletedTab('WATCH')
+    setTimeout(() => {
+      watchGameGuideRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }, 1)
   }
 
   useEffect(() => {
@@ -93,7 +109,7 @@ export default function Home() {
           <S.GameDiscriptionTab
             $active={seletedTab === 'GAME'}
             onClick={() => {
-              setSeletedTab('GAME')
+              handleGameGuideClick()
             }}
           >
             모바일 게임
@@ -101,14 +117,14 @@ export default function Home() {
           <S.WatchDiscriptionTab
             $active={seletedTab === 'WATCH'}
             onClick={() => {
-              setSeletedTab('WATCH')
+              handleWatchGameGuideClick()
             }}
           >
             워치 게임
           </S.WatchDiscriptionTab>
         </S.GameTabNavigation>
         {seletedTab === 'GAME' && (
-          <S.GameDiscriptionSection $isFix={isNavFix}>
+          <S.GameDiscriptionSection $isFix={isNavFix} ref={gameGuideRef}>
             <S.GameRow>
               <S.GameImage
                 src={images.index.gameGuide1}
@@ -209,7 +225,10 @@ export default function Home() {
           </S.GameDiscriptionSection>
         )}
         {seletedTab === 'WATCH' && (
-          <S.WatchGameDiscriptionSection $isFix={isNavFix}>
+          <S.WatchGameDiscriptionSection
+            $isFix={isNavFix}
+            ref={watchGameGuideRef}
+          >
             <S.GameName>맹맹 점프</S.GameName>
             <S.GameRow>
               <S.GameImage
