@@ -2,6 +2,7 @@ package com.maeng.game.domain.jwac.service;
 
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +16,9 @@ import com.maeng.game.domain.jwac.entity.Timer;
 import com.maeng.game.domain.jwac.repository.TimerRedisRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TimerService {
@@ -26,19 +29,21 @@ public class TimerService {
 
 	@Transactional
 	public synchronized boolean timerEnd(String gameCode, Map<String, Player> players, JwacNicknameDto jwacNicknameDto) {
+		log.info("jwac timerEnd: {}", gameCode);
 		Timer timer = timerRedisRepository.findById(gameCode)
 			.orElse(Timer.builder().gameCode(gameCode).nicknames(new HashSet<>()).build());
 
 		Set<String> nicknames = timer.getNicknames();
+		log.info("nicknames: {}", nicknames);
 		if(nicknames == null) {
 			timer.setNicknames(new HashSet<>());
 		}
-
+		log.info("nicknames: {}", nicknames);
 		if(players.containsKey(jwacNicknameDto.getNickname())) {
-			nicknames.add(jwacNicknameDto.getNickname());
+			Objects.requireNonNull(nicknames).add(jwacNicknameDto.getNickname());
 		}
 
-		boolean timerEnd = (nicknames.size() == getHeadCount(players));
+		boolean timerEnd = (Objects.requireNonNull(nicknames).size() == getHeadCount(players));
 		if(timerEnd) {
 			nicknames.clear();
 		}
@@ -48,7 +53,8 @@ public class TimerService {
 		return timerEnd;
 	}
 
-	public boolean checkTimer(String gameCode, Map<String, Player> players) {
+	public int checkTimer(String gameCode, Map<String, Player> players) {
+		log.info("jwac checkTimer: {}", gameCode);
 		Timer timer = timerRedisRepository.findById(gameCode)
 			.orElse(Timer.builder().gameCode(gameCode).nicknames(new HashSet<>()).build());
 
@@ -57,14 +63,15 @@ public class TimerService {
 			timer.setNicknames(new HashSet<>());
 		}
 
-		boolean timerEnd = (nicknames.size() == getHeadCount(players));
+		long headCount = getHeadCount(players);
+		boolean timerEnd = (Objects.requireNonNull(nicknames).size() == headCount);
 		if(timerEnd) {
 			nicknames.clear();
 		}
 
 		timerRedisRepository.save(timer);
 
-		return timerEnd;
+		return timerEnd ? 1 : (headCount == 0 ? 0 : -1);
 	}
 
 	@Transactional

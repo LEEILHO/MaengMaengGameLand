@@ -74,8 +74,11 @@ public class JwacController {
 
 	public void disconnectPlayer(String gameCode, String nickname) {
 		Map<String, Player> players = jwacService.disconnectPlayer(gameCode, nickname);
-		if(timerService.checkTimer(gameCode, players)) {
+		int type = timerService.checkTimer(gameCode, players);
+		if(type == 1) {
 			handleRoundResult(gameCode);
+		} else if(type == -1) {
+			handleGameEnd(gameCode);
 		}
 	}
 
@@ -122,6 +125,10 @@ public class JwacController {
 		} else {
 			endGame(gameCode);
 		}
+	}
+
+	private void handleGameEnd(String gameCode) {
+		jwacService.endGame(gameCode);
 	}
 
 	private void startNextRound(String gameCode, JwacRoundResultDto jwacRoundResult, Jewelry nextJewelry) {
