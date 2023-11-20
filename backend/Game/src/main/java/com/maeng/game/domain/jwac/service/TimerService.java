@@ -34,13 +34,9 @@ public class TimerService {
 			.orElse(Timer.builder().gameCode(gameCode).nicknames(new HashSet<>()).build());
 
 		Set<String> nicknames = timer.getNicknames();
-		log.info("nicknames: {}", nicknames);
-		log.info(nicknames == null? "nicknames is null" : "nicknames is not null");
 		if(nicknames == null) {
-			log.info("nicknames is null");
 			nicknames = new HashSet<>();
 		}
-		log.info("nicknames: {}", nicknames);
 		if(players.containsKey(jwacNicknameDto.getNickname())) {
 			Objects.requireNonNull(nicknames).add(jwacNicknameDto.getNickname());
 		}
@@ -75,6 +71,7 @@ public class TimerService {
 		timer.setNicknames(nicknames);
 		timerRedisRepository.save(timer);
 
+		log.info("jwac checkTimer: {}, headCount: {}", timerEnd, headCount);
 		return timerEnd ? 1 : (headCount == 0 ? 0 : -1);
 	}
 
