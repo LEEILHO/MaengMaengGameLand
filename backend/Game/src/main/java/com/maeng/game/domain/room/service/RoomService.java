@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import com.maeng.game.domain.room.exception.*;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -40,11 +41,6 @@ import com.maeng.game.domain.room.entity.Game;
 import com.maeng.game.domain.room.entity.Room;
 import com.maeng.game.domain.room.entity.Seat;
 import com.maeng.game.domain.room.entity.User;
-import com.maeng.game.domain.room.exception.MinHeadCountException;
-import com.maeng.game.domain.room.exception.NotFoundRoomException;
-import com.maeng.game.domain.room.exception.NotHostException;
-import com.maeng.game.domain.room.exception.NotReadyPlayerException;
-import com.maeng.game.domain.room.exception.PullRoomException;
 import com.maeng.game.domain.room.repository.RoomRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -109,11 +105,16 @@ public class RoomService {
     public synchronized void enterRoom(String roomCode, EnterDTO enterDTO){
         Room roomInfo = this.getCurrentRoom(roomCode);
 
+
         if(roomInfo.getHeadCount() == GAME_MAX_PLAYER){
             throw new PullRoomException("플레이어가 가득 찬 방입니다.");
         }
 
         UserInfo userInfo = getUserInfo(enterDTO.getNickname());
+
+        if(!roomInfo.getChannelTire().equals(userInfo.getTier())){
+            throw new NotEqualsTier("해당 채널과 티어가 달라 입장할 수 없습니다.");
+        }
 
         // 방이 가득차지 않았으면 headCount++ 후 User 추가해주기
         int headCount = roomInfo.getHeadCount();
