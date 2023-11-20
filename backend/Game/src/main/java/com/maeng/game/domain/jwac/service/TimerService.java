@@ -35,8 +35,10 @@ public class TimerService {
 
 		Set<String> nicknames = timer.getNicknames();
 		log.info("nicknames: {}", nicknames);
+		log.info(nicknames == null? "nicknames is null" : "nicknames is not null");
 		if(nicknames == null) {
-			timer.setNicknames(new HashSet<>());
+			log.info("nicknames is null");
+			nicknames = new HashSet<>();
 		}
 		log.info("nicknames: {}", nicknames);
 		if(players.containsKey(jwacNicknameDto.getNickname())) {
@@ -48,6 +50,7 @@ public class TimerService {
 			nicknames.clear();
 		}
 
+		timer.setNicknames(nicknames);
 		timerRedisRepository.save(timer);
 
 		return timerEnd;
@@ -60,7 +63,7 @@ public class TimerService {
 
 		Set<String> nicknames = timer.getNicknames();
 		if(nicknames == null) {
-			timer.setNicknames(new HashSet<>());
+			nicknames = new HashSet<>();
 		}
 
 		long headCount = getHeadCount(players);
@@ -69,6 +72,7 @@ public class TimerService {
 			nicknames.clear();
 		}
 
+		timer.setNicknames(nicknames);
 		timerRedisRepository.save(timer);
 
 		return timerEnd ? 1 : (headCount == 0 ? 0 : -1);
