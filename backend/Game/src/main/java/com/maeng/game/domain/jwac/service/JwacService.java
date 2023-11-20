@@ -303,7 +303,11 @@ public class JwacService {
 				.build());
 		}
 
-		return Objects.requireNonNull(pq.poll()).getNickname();
+		if(pq.isEmpty()) {
+			return "";
+		} else {
+			return Objects.requireNonNull(pq.poll()).getNickname();
+		}
 	}
 
 	private String findLeastBidder(Map<String, History> result, Jwac jwac) {
