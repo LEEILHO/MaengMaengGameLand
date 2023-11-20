@@ -70,6 +70,9 @@ public class Jwac {
 		@JsonProperty("history")
 		private Map<Integer, History> history;
 
+		@JsonProperty("inGame")
+		private boolean inGame;
+
 	}
 
 	@Data
