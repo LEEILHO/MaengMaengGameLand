@@ -63,9 +63,12 @@ export const CumulativePrice = styled.p`
 export const DisplayBoardContainer = styled.div`
   flex: 1;
   margin-top: 56px;
-  margin-bottom: 44px;
+  margin-right: 16px;
   width: 60%;
-  position: relative;
+  position: absolute;
+  top: 10%;
+  right: 25%;
+  height: 65%;
 `
 
 export const DisplayRoundFrame = styled.img`
