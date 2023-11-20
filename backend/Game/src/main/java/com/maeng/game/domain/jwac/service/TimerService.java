@@ -72,7 +72,7 @@ public class TimerService {
 		timerRedisRepository.save(timer);
 
 		log.info("jwac checkTimer: {}, headCount: {}", timerEnd, headCount);
-		return timerEnd ? 1 : (headCount == 0 ? 0 : -1);
+		return timerEnd ? 1 : (headCount == 0 ? -1 : 0);
 	}
 
 	@Transactional
