@@ -113,7 +113,7 @@ public class RoomService {
 
         UserInfo userInfo = getUserInfo(enterDTO.getNickname());
 
-        if(!roomInfo.getChannelTire().equals(userInfo.getTier()) && roomInfo.getChannelTire().equals(ChannelTire.UNRANKED)){
+        if(!roomInfo.getChannelTire().equals(userInfo.getTier()) && !roomInfo.getChannelTire().equals(ChannelTire.UNRANKED)){
             throw new NotEqualsTier("해당 채널과 티어가 달라 입장할 수 없습니다.");
         }
 
