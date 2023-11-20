@@ -1,6 +1,10 @@
 package com.maeng.game.global.session.handler;
 
+import com.maeng.game.domain.awrsp.controller.AwrspController;
+import com.maeng.game.domain.jwac.controller.JwacController;
 import com.maeng.game.domain.room.dto.PlayerDTO;
+import com.maeng.game.domain.room.entity.Game;
+import com.maeng.game.domain.room.entity.Room;
 import com.maeng.game.domain.room.service.RoomService;
 import com.maeng.game.global.session.entity.Session;
 import com.maeng.game.global.session.repository.SessionRepository;
@@ -21,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class StompHandler implements ChannelInterceptor {
     private final SessionRepository sessionRepository;
     private final RoomService roomService;
+    private final AwrspController awrspController;
+    private final JwacController jwacController;
 
     @Transactional
     @Override
@@ -77,7 +83,22 @@ public class StompHandler implements ChannelInterceptor {
 
                 if(session.getGameCode() != null){ // 게임에 참여중이라면
                     log.info("[게임 중 퇴장] "+session.getNickname());
-                    roomService.disconnectPlayer(session.getGameCode(), session.getNickname());
+                    Room room = roomService.disconnectPlayer(session.getGameCode(), session.getNickname());
+                    // gameCode가 있으면 게임 별 퇴장 처리
+                    if(room.getGameCategory().equals(Game.ALL_WIN_ROCK_SCISSOR_PAPER)){
+                        log.info("전승 가위바위보");
+                        awrspController.disconnectedPlayer(session.getGameCode(), session.getNickname());
+                    }
+
+                    if(room.getGameCategory().equals(Game.GOLD_SILVER_BRONZE)){
+                        log.info("금은동");
+
+                    }
+
+                    if(room.getGameCategory().equals(Game.JEWELRY_AUCTION)){
+                        log.info("무제한 보석 경매");
+                        jwacController.disconnectPlayer(session.getGameCode(), session.getNickname());
+                    }
                 }
 
                 sessionRepository.delete(session);

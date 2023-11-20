@@ -307,28 +307,14 @@ public class RoomService {
 
 
     @Operation(summary = "게임 중 소켓 연결 끊긴 유저 처리")
-    public void disconnectPlayer(String gameCode, String nickname){
+    public Room disconnectPlayer(String gameCode, String nickname){
         List<Room> room = roomRepository.findAllByGameCode(gameCode);
 
         if(room == null){
             log.info("방없음 ?!@?#!?@?!?!@?");
         }
 
-        // gameCode가 있으면 게임 별 퇴장 처리
-        if(room.get(0).getGameCategory().equals(Game.ALL_WIN_ROCK_SCISSOR_PAPER)){
-            log.info("전승 가위바위보");
-            awrspService.disconnectedPlayer(gameCode, nickname);
-        }
-
-        if(room.get(0).getGameCategory().equals(Game.GOLD_SILVER_BRONZE)){
-            log.info("금은동");
-
-        }
-
-        if(room.get(0).getGameCategory().equals(Game.JEWELRY_AUCTION)){
-            log.info("무제한 보석 경매");
-
-        }
+        return room.get(0);
     }
 
     public void start(Room room, String roomCode){

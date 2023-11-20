@@ -73,4 +73,9 @@ public class AwrspController {
 
         return type;
     }
+
+    @Operation(summary = "게임 중 연결 끊김")
+    public void disconnectedPlayer(String gameCode, String nickname){
+        awrspService.disconnectedPlayer(gameCode, nickname);
+    }
 }
