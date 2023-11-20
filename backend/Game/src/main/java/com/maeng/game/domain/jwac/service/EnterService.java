@@ -1,12 +1,15 @@
 package com.maeng.game.domain.jwac.service;
 
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.maeng.game.domain.jwac.dto.JwacNicknameDto;
 import com.maeng.game.domain.jwac.entity.Enter;
+import com.maeng.game.domain.jwac.entity.Player;
 import com.maeng.game.domain.jwac.repository.EnterRedisRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -19,32 +22,39 @@ public class EnterService {
 	private final EnterRedisRepository enterRedisRepository;
 
 	@Transactional
-	public synchronized boolean enter(String gameCode, int headCount, JwacNicknameDto jwacNicknameDto) {
-		log.info("headCount: " + headCount);
+	public synchronized boolean enter(String gameCode, Map<String, Player> players, JwacNicknameDto jwacNicknameDto) {
 		Enter enter = enterRedisRepository.findById(gameCode)
 			.orElse(Enter.builder().gameCode(gameCode).nicknames(new HashSet<>()).build());
 
-		if(enter.getNicknames() == null) {
+		Set<String> nicknames = enter.getNicknames();
+		if(nicknames == null) {
 			log.info("enter.getNicknames() is null");
 			enter.setNicknames(new HashSet<>());
 		}
-		enter.getNicknames().add(jwacNicknameDto.getNickname());
-		log.info(enter.toString());
-		boolean allEnter = (enter.getNicknames().size() >= headCount);
+
+		if(players.containsKey(jwacNicknameDto.getNickname())) {
+			nicknames.add(jwacNicknameDto.getNickname());
+			log.info(enter.toString());
+		}
+
+		boolean allEnter = (nicknames.size() >= getHeadCount(players));
 
 		if(allEnter) {
 			enter.getNicknames().clear();
 			enterRedisRepository.delete(enter);
-			log.info("delete(enter)");
+			log.info("delete(enter): {}", gameCode);
 		} else {
 			enterRedisRepository.save(enter);
-			log.info("save(enter)");
+			log.info("save(enter): {}", gameCode);
 		}
 
 		return allEnter;
 	}
 
-	public void enterCreate(String gameCode) {
-		enterRedisRepository.save(Enter.builder().gameCode(gameCode).nicknames(new HashSet<>()).build());
+	private long getHeadCount(Map<String, Player> players) {
+		return players.values().stream()
+			.filter(Player::isInGame)
+			.count();
 	}
+
 }

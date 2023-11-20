@@ -77,13 +77,13 @@ public class JwacService {
 
 	@Transactional(readOnly = true)
 	public List<PlayerInfo> getGamePlayer(String gameCode) {
-		Jwac jwac = jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
+		Jwac jwac = getJwacOrThrow(gameCode);
 		return getGamePlayerInfo(jwac.getPlayers());
 	}
 
 	@Transactional
 	public void bidJewelry(String gameCode, JwacBidInfoDto jwacBidInfoDto) {
-		Jwac jwac = jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
+		Jwac jwac = getJwacOrThrow(gameCode);
 
 		History history = History.builder()
 			.bidAmount(jwacBidInfoDto.getBidAmount())
@@ -99,13 +99,13 @@ public class JwacService {
 
 	@Transactional
 	public JwacRoundResultDto endRound(String gameCode) {
-		Jwac jwac = jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
+		Jwac jwac = getJwacOrThrow(gameCode);
 		return roundResult(jwac);
 	}
 
 	@Transactional
 	public Jewelry nextRound(String gameCode) {
-		Jwac jwac = jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
+		Jwac jwac = getJwacOrThrow(gameCode);
 
 		if(hasNextRound(jwac)) {
 			jwacRedisRepository.save(jwac);
@@ -117,7 +117,7 @@ public class JwacService {
 
 	@Transactional
 	public Jewelry gameStart(String gameCode) {
-		Jwac jwac = jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
+		Jwac jwac = getJwacOrThrow(gameCode);
 		jwac.setCurrentRound(1);
 		jwacRedisRepository.save(jwac);
 		return jwac.getJewelry().get(jwac.getCurrentRound());
@@ -125,7 +125,7 @@ public class JwacService {
 
 	@Transactional
 	public JwacGameResultDTO endGame(String gameCode) {
-		Jwac jwac = jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
+		Jwac jwac = getJwacOrThrow(gameCode);
 
 		Map<String, Player> players = jwac.getPlayers();
 
@@ -154,10 +154,9 @@ public class JwacService {
 	}
 
 	@Transactional(readOnly = true)
-	public int getHeadCount(String gameCode) {
-		Jwac jwac =  jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
-
-		return jwac.getHeadCount();
+	public Map<String, Player> getPlayers(String gameCode) {
+		Jwac jwac = getJwacOrThrow(gameCode);
+		return jwac.getPlayers();
 	}
 
 	public int setRound() {
@@ -186,6 +185,7 @@ public class JwacService {
 					.totalBidAmount(0)
 					.specialItem(false)
 					.history(new HashMap<>())
+					.inGame(true)
 					.build()));
 	}
 
@@ -344,7 +344,7 @@ public class JwacService {
 
 	@Transactional(readOnly = true)
 	public JwacItemResultDTO getSpecialItemResult(String gameCode, String mostBidder) {
-		Jwac jwac = jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
+		Jwac jwac = getJwacOrThrow(gameCode);
 		Map<Integer, Jewelry> jewelry = jwac.getJewelry();
 		int currentRound = jwac.getCurrentRound();
 		int maxRound = jwac.getMaxRound();
@@ -366,12 +366,14 @@ public class JwacService {
 	}
 
 	@Transactional
-	public void disconnectPlayer(String gameCode, String nickname) {
-		Jwac jwac = jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
+	public Map<String, Player> disconnectPlayer(String gameCode, String nickname) {
+		Jwac jwac = getJwacOrThrow(gameCode);
 		if(jwac.getPlayers().containsKey(nickname)) {
-			jwac.setHeadCount(jwac.getHeadCount() - 1);
+			jwac.getPlayers().get(nickname).setInGame(false);
 		}
 		jwacRedisRepository.save(jwac);
+
+		return jwac.getPlayers();
 	}
 
 	public boolean hasNextRound(Jwac jwac) {
@@ -423,7 +425,7 @@ public class JwacService {
 	}
 
 	public String getAllDataToJson(String gameCode) {
-		Jwac jwac = jwacRedisRepository.findById(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
+		Jwac jwac = getJwacOrThrow(gameCode);
 		String json = "";
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
@@ -435,5 +437,10 @@ public class JwacService {
 		}
 
 		return json;
+	}
+
+	private Jwac getJwacOrThrow(String gameCode) {
+		return jwacRedisRepository.findById(gameCode)
+			.orElseThrow(() -> new GameNotFoundException(gameCode));
 	}
 }

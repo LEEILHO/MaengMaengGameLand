@@ -18,6 +18,7 @@ public class Player {
 	private long totalBidAmount;
 	private boolean specialItem;
 	private Map<Integer, History> history;
+	private boolean inGame;
 
 	public void addScore(int score) {
 		this.score += score;
