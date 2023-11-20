@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import com.maeng.game.domain.lobby.enums.ChannelTire;
 import com.maeng.game.domain.room.exception.*;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
@@ -112,7 +113,7 @@ public class RoomService {
 
         UserInfo userInfo = getUserInfo(enterDTO.getNickname());
 
-        if(!roomInfo.getChannelTire().equals(userInfo.getTier())){
+        if(!roomInfo.getChannelTire().equals(userInfo.getTier()) && roomInfo.getChannelTire().equals(ChannelTire.UNRANKED)){
             throw new NotEqualsTier("해당 채널과 티어가 달라 입장할 수 없습니다.");
         }
 
