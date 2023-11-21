@@ -258,7 +258,8 @@ public class RoomService {
         // 자리 상태, MaxHeadCount 변경
         Seat seat = room.getSeats().get(seatDTO.getSeatNumber());
 
-        if(seat.isAvailable() && (room.getMinHeadCount() == room.getHeadCount()) || !seat.isAvailable() && (room.getMaxHeadCount() == room.getHeadCount())){
+        if((seat.isAvailable() && (room.getMinHeadCount() == room.getHeadCount())) ||
+                (!seat.isAvailable() && (room.getMaxHeadCount() == room.getHeadCount()))){
             // 최소 인원 이상 닫을 수 없게 & 최대 인원 이상 열 수 없게
             return;
         }
