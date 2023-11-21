@@ -4,6 +4,7 @@ const nextConfig = {
     styledComponents: true,
   },
   reactStrictMode: false,
+  swcMinify: true,
 }
 
 const withPWA = require('next-pwa')({

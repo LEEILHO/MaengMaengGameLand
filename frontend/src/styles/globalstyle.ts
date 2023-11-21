@@ -28,19 +28,14 @@ const GlobalStyle = createGlobalStyle`
   body {
     overflow: hidden;
     overscroll-behavior: contain;
-  }
-
-  html,body {
     width: 100vw;
     height: 100vh;
     width: calc(var(--vw, 1vw) * 100);
-    height: calc(var(--vh, 1vh) * 100); 
+    height: calc(var(--vh, 1vh) * 100);
   }
 
   body #portal  {
     .modal-overlay {
-      width: 100%;
-      height: 100%;
       position: fixed;
       top: 0;
       left: 0;

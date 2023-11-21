@@ -43,6 +43,11 @@ const Lobby = ({ title }: Props) => {
   }
 
   useEffect(() => {
+    // @ts-ignore
+    navigator.virtualKeyboard.overlaysContent = true
+  })
+
+  useEffect(() => {
     setGameType(gameTypeChange(gamePath))
   }, [pathname])
 
