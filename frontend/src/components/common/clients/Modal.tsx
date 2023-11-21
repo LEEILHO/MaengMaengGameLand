@@ -25,8 +25,9 @@ const Modal = ({ children, isOpen, closeModal }: ModalProps) => {
     ) as HTMLDivElement
 
     // ios 아닌 경우만 가상 키보드 생성 시 모달창 위로 올려주기
-    if (!detectIosDevice(window.navigator.userAgent))
+    if (!detectIosDevice(window.navigator.userAgent) && modalWrapper) {
       modalWrapper.style.top = 'calc(50% - env(keyboard-inset-height, 0))'
+    }
   }, [])
 
   return (
