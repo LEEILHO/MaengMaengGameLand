@@ -290,8 +290,8 @@ public class RoomService {
         KickPlayerDTO kick = KickPlayerDTO.builder().nickname(kickDTO.getKickPlayer()).build();
         log.info(kick.toString());
         // 강퇴된 사람 닉네임 보내주기
-        template.convertAndSend(CHAT_EXCHANGE_NAME, "room."+roomCode, MessageDTO.builder()
-                .type("PLAYER_KICK").data(kick));
+//        template.convertAndSend(CHAT_EXCHANGE_NAME, "room."+roomCode, MessageDTO.builder()
+//                .type("PLAYER_KICK").data(kick));
         this.sendRoomInfo(roomCode, room); // ROOM_INFO
         lobbyService.findAllRoom(room.getGameCategory(), room.getChannelTire());
     }
