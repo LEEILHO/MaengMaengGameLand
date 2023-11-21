@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maeng.record.domain.record.data.Awrsp;
+import com.maeng.record.domain.record.data.Gsb;
 import com.maeng.record.domain.record.data.Jwac;
 import com.maeng.record.domain.record.dto.NicknameEditDTO;
 import com.maeng.record.domain.record.dto.RankDTO;
@@ -14,6 +15,7 @@ import com.maeng.record.domain.record.dto.UserInfoDTO;
 import com.maeng.record.domain.record.exception.GameAlreadyExistException;
 import com.maeng.record.domain.record.service.AwrspRecordService;
 import com.maeng.record.domain.record.service.GameUserService;
+import com.maeng.record.domain.record.service.GsbRecordService;
 import com.maeng.record.domain.record.service.JwacRecordService;
 
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ public class MessageListener {
 	private final ObjectMapper objectMapper;
 
 	private final GameUserService gameUserService;
+	private final GsbRecordService gsbRecordService;
 	private final JwacRecordService jwacRecordService;
 	private final AwrspRecordService awrspRecordService;
 
@@ -72,7 +75,23 @@ public class MessageListener {
 
 	@RabbitListener(queues = "gsb.queue")
 	public void receiveMessage3(String message){
-		log.info("gsb = " + message);
+		try {
+			log.info("gsb = " + message);
+			Gsb gsb = objectMapper.readValue(message, Gsb.class);
+			gsbRecordService.saveGsbRecord(gsb);
+
+			RankDTO rankDTO = gsbRecordService.generateRankDTO(gsb);
+			template.convertAndSend(SCORE_EXCHANGE, "score.gsb", rankDTO);
+			log.info("gsb save success");
+		} catch (JsonProcessingException e) {
+			log.info("gsb json parsing error");
+			log.info(e.getMessage());
+			log.info(message);
+		} catch (GameAlreadyExistException e) {
+			log.info(e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@RabbitListener(queues = "awrsp.queue")

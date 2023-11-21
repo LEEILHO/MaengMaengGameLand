@@ -1,7 +1,5 @@
 package com.maeng.record.domain.record.entity;
 
-import java.time.LocalDateTime;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,28 +10,32 @@ import javax.persistence.ManyToOne;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class JwacRoundBid {
+public class GsbRound {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long bidSeq;
+	private Long gsbRoundSeq;
 
 	@ManyToOne
-	@JoinColumn(name = "jwac_round_seq")
-	private JwacRound jwacRound;
+	@JoinColumn(name = "game_seq")
+	private Game game;
 
 	@ManyToOne
 	@JoinColumn(name = "participant_seq")
-	private GameParticipant gameParticipant;
+	private GameParticipant roundWinner;
 
 	@Column
-	private LocalDateTime bidAt;
+	private Integer round;
 
 	@Column
-	private Long bidAmount;
+	private Integer chip;
 }
