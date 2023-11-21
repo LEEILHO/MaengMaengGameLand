@@ -258,7 +258,6 @@ public class RoomService {
         // 자리 상태, MaxHeadCount 변경
         Seat seat = room.getSeats().get(seatDTO.getSeatNumber());
 
-
         if(this.checkSeat(room, seat)){
             // 최소 인원 이상 닫을 수 없게 & 최대 인원 이상 열 수 없게
             return;
@@ -276,6 +275,7 @@ public class RoomService {
     @Transactional
     @Operation(summary = "플레이어 강퇴")
     public void kickPlayer(String roomCode, KickDTO kickDTO){
+        log.info(kickDTO.toString());
         Room room = this.getCurrentRoom(roomCode);
         checkHost(room, kickDTO.getNickname()); // 방장 권한 확인
 
