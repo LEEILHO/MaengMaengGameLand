@@ -61,13 +61,19 @@ public class RoomService {
 
     private final static String CHAT_EXCHANGE_NAME = "room";
     @Value("${game.max}")
-    private final int GAME_MAX_PLAYER = 8;
-    @Value("${game.gsb-min}")
+    private int GAME_MAX_PLAYER;
+    @Value("${game.gsb.min}")
     private int GSB_MIN_PLAYER;
-    @Value("${game.jwac-min}")
+    @Value("${game.jwac.min}")
     private int JWAC_MIN_PLAYER;
-    @Value("${game.awrsp-min}")
+    @Value("${game.awrsp.min}")
     private int AWRSP_MIN_PLAYER;
+    @Value("${game.gsb.max}")
+    private int GSB_MAX_PLAYER;
+    @Value("${game.awrsp.max}")
+    private int AWRSP_MAX_PLAYER;
+    @Value("${game.jwac.max}")
+    private int JWAC_MAX_PLAYER;
 
     @Transactional
     @Operation(summary = "대기방 생성")
@@ -80,7 +86,8 @@ public class RoomService {
                 .title(createRoomDTO.getTitle())
                 .createdAt(LocalDateTime.now())
                 .headCount(0)
-                .maxHeadCount(GAME_MAX_PLAYER)
+                .maxHeadCount(this.getMaxPlayer(createRoomDTO.getGameCategory()))
+                .minHeadCount(this.getMinPlayer(createRoomDTO.getGameCategory()))
                 .publicRoom(createRoomDTO.isPublicRoom())
                 .participant(null)
                 .gameCategory(createRoomDTO.getGameCategory())
@@ -90,12 +97,7 @@ public class RoomService {
                 .gameStart(false)
                 .build();
 
-        if(createRoomDTO.getGameCategory().equals(Game.GOLD_SILVER_BRONZE)){
-            room.setMaxHeadCount(2);
-        }
-
         roomRepository.save(room);
-
         lobbyService.findAllRoom(room.getGameCategory(), room.getChannelTire()); // ROOM_LIST
 
         return roomCode;
@@ -256,7 +258,7 @@ public class RoomService {
         // 자리 상태, MaxHeadCount 변경
         Seat seat = room.getSeats().get(seatDTO.getSeatNumber());
 
-        if(seat.isAvailable() && (GSB_MIN_PLAYER == room.getHeadCount()) || !seat.isAvailable() && (GAME_MAX_PLAYER == room.getHeadCount())){
+        if(seat.isAvailable() && (room.getMinHeadCount() == room.getHeadCount()) || !seat.isAvailable() && (room.getMaxHeadCount() == room.getHeadCount())){
             // 최소 인원 이상 닫을 수 없게 & 최대 인원 이상 열 수 없게
             return;
         }
@@ -505,6 +507,38 @@ public class RoomService {
         }
 
         return -1;
+    }
+
+    public int getMaxPlayer(Game gameCategory){
+        if(gameCategory.equals(Game.ALL_WIN_ROCK_SCISSOR_PAPER)){
+            return AWRSP_MAX_PLAYER;
+        }
+
+        if(gameCategory.equals(Game.JEWELRY_AUCTION)){
+            return JWAC_MAX_PLAYER;
+        }
+
+        if(gameCategory.equals(Game.GOLD_SILVER_BRONZE)){
+            return GSB_MAX_PLAYER;
+        }
+
+        return GAME_MAX_PLAYER;
+    }
+
+    public int getMinPlayer(Game gameCategory){
+        if(gameCategory.equals(Game.ALL_WIN_ROCK_SCISSOR_PAPER)){
+            return AWRSP_MIN_PLAYER;
+        }
+
+        if(gameCategory.equals(Game.JEWELRY_AUCTION)){
+            return JWAC_MIN_PLAYER;
+        }
+
+        if(gameCategory.equals(Game.GOLD_SILVER_BRONZE)){
+            return GSB_MIN_PLAYER;
+        }
+
+        return 2;
     }
 
     public UserInfo getUserInfo(String nickname) {

@@ -33,6 +33,7 @@ public class Room implements Serializable {
     private LocalDateTime createdAt;
     private int headCount;
     private int maxHeadCount;
+    private int minHeadCount;
     @Indexed
     private boolean publicRoom;
     private HashMap<String, User> participant;
