@@ -145,6 +145,10 @@ public class GsbController {
         template.convertAndSend(GAME_EXCHANGE_NAME,"gsb."+gameCode,gsbService.getEndTimer(gameCode, nicknameDto));
 
     }
+    public void disconnectedPlayer(String gameCode, String nickname){
+        log.info("disconnectedPlyaer()");
+        template.convertAndSend(GAME_EXCHANGE_NAME,"gsb."+gameCode, gsbService.disconnectedPlayer(gameCode, nickname));
+    }
     @GetMapping
     public ResponseEntity<?> test(){
 
