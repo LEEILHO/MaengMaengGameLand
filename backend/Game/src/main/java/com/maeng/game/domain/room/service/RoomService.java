@@ -288,7 +288,6 @@ public class RoomService {
         roomRepository.save(room);
 
         KickPlayerDTO kick = KickPlayerDTO.builder().nickname(kickDTO.getKickPlayer()).build();
-        log.info(kick.toString());
         // 강퇴된 사람 닉네임 보내주기
 //        template.convertAndSend(CHAT_EXCHANGE_NAME, "room."+roomCode, MessageDTO.builder()
 //                .type("PLAYER_KICK").data(kick));
@@ -512,6 +511,7 @@ public class RoomService {
             }
         }
 
+        log.info(count+" "+room.getMaxHeadCount()+" "+room.getMinHeadCount());
         return (seat.isAvailable() && (count == room.getMinHeadCount())) ||
                 (!seat.isAvailable() && (count == room.getMaxHeadCount()));
     }
