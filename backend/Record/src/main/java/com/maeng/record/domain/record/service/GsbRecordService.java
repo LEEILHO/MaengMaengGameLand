@@ -60,7 +60,7 @@ public class GsbRecordService {
 		}
 		return Game.builder()
 			.gameCode(gameCode)
-			.gameCategory(GameCategoty.JEWELRY_AUCTION)
+			.gameCategory(GameCategoty.GOLD_SILVER_BRONZE)
 			.startAt(startAt)
 			.endAt(LocalDateTime.now())
 			.build();
