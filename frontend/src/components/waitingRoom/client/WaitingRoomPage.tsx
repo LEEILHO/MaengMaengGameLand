@@ -107,7 +107,7 @@ const WaitingRoomPage = () => {
     setSeats(roomInfo?.participant)
   }, [roomInfo])
 
-  useEffect(() => {
+  useDidMountEffect(() => {
     if (seats) {
       // 내가 방장인지 아닌지, 강퇴당하였는지 체크
       let isKicked = true
