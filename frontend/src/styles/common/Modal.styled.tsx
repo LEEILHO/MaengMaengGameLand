@@ -11,7 +11,7 @@ export const Overlay = styled.div`
 
 export const Wrapper = styled(motion.div)`
   position: absolute;
-  top: 50%;
+  top: calc(50% - env(keyboard-inset-height, 0));
   left: 50%;
   transform: translate(-50%, -50%);
 `
