@@ -85,7 +85,7 @@ public class RoomService {
                 .participant(null)
                 .gameCategory(createRoomDTO.getGameCategory())
                 .channelTire(createRoomDTO.getChannelTire())
-                .seats(this.seatInit())
+                .seats(this.seatInit(createRoomDTO.getGameCategory()))
                 .gameCode("")
                 .gameStart(false)
                 .build();
