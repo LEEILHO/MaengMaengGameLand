@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.maeng.record.domain.record.dto.GameParticipantDTO;
@@ -19,7 +20,9 @@ import com.maeng.record.domain.record.service.MmjService;
 import com.maeng.record.domain.record.service.RecordService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/record")
@@ -27,12 +30,17 @@ public class RecordController {
 	private final RecordService recordService;
 	private final MmjService mmjService;
 	@GetMapping("/history")
-	public ResponseEntity<List<UserGameInfoDTO>> gameHistory(@RequestHeader("userEmail") String email) {
-		return ResponseEntity.status(HttpStatus.SC_OK).body(recordService.userGameHistory(email));
+	public ResponseEntity<List<UserGameInfoDTO>> gameHistory(@RequestHeader("userEmail") String email,
+		@RequestParam(name = "page", defaultValue = "1") int page) {
+		log.info("history: {}, page: {}", email, page);
+
+		return ResponseEntity.status(HttpStatus.SC_OK).body(recordService.userGameHistory(email, page));
 	}
 
 	@PostMapping("/history/detail/{gameCode}")
 	public ResponseEntity<List<GameParticipantDTO>> gameHistoryDetail(@PathVariable("gameCode") String gameCode) {
+		log.info("history detail: {}", gameCode);
+
 		return ResponseEntity.status(HttpStatus.SC_OK).body(recordService.gameDetail(gameCode));
 	}
 

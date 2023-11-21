@@ -1,5 +1,6 @@
 package com.maeng.record.domain.record.service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,7 +14,6 @@ import com.maeng.record.domain.record.dto.UserGameInfoDTO;
 import com.maeng.record.domain.record.entity.GameParticipant;
 import com.maeng.record.domain.record.entity.GameUser;
 import com.maeng.record.domain.record.repository.GameParticipantRepository;
-import com.maeng.record.domain.record.repository.GameRepository;
 import com.maeng.record.domain.record.repository.GameUserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -24,17 +24,14 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class RecordService {
 	private final GameUserRepository gameUserRepository;
-	private final GameRepository gameRepository;
 	private final GameParticipantRepository gameParticipantRepository;
 
-	public List<UserGameInfoDTO> userGameHistory(String email) {
+	public List<UserGameInfoDTO> userGameHistory(String email, int page) {
 		GameUser gameUser = gameUserRepository.findByEmail(email).orElseThrow();
 
-		Pageable pageable = PageRequest.of(0, 10);
+		Pageable pageable = PageRequest.of(page - 1, 10);
 		Page<GameParticipant> gameParticipants =
 			gameParticipantRepository.findByGameUserOrderByGameStartAtDesc(gameUser, pageable);
-
-		log.info(gameParticipants.toString());
 
 		return gameParticipantToUserGameInfoDTO(gameParticipants.getContent());
 	}
@@ -44,7 +41,7 @@ public class RecordService {
 
 		List<GameParticipantDTO> gameParticipantDTOs = gameParticipantToGameParticipantDTO(gameParticipants);
 
-		gameParticipantDTOs.sort((o1, o2) -> o1.getUserRank() - o2.getUserRank());
+		gameParticipantDTOs.sort(Comparator.comparingInt(GameParticipantDTO::getUserRank));
 
 		return gameParticipantDTOs;
 	}
@@ -55,6 +52,7 @@ public class RecordService {
 				.gameCode(gameParticipant.getGame().getGameCode())
 				.gameCategory(gameParticipant.getGame().getGameCategory())
 				.rank(gameParticipant.getUserRank())
+				.startAt(gameParticipant.getGame().getStartAt())
 				.build())
 			.collect(Collectors.toList());
 	}
