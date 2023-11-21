@@ -14,13 +14,14 @@ import useModal from '@hooks/useModal'
 import UpdateRoomModal from './UpdateRoomModal'
 import BackButton from '@components/common/clients/BackButton'
 import { usePathname, useRouter } from 'next/navigation'
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, useResetRecoilState } from 'recoil'
 import { RoomInfoState } from '@atom/waitingRoomAtom'
 import useSocketWaitingRoom from '@hooks/useSocketWaitingRoom'
 import { userState } from '@atom/userAtom'
 import useSound from '@hooks/useSound'
 import AlertModal from '@components/gsb/client/AlertModal'
 import useDidMountEffect from '@hooks/useDidMoundEffect'
+import { ChatListState } from '@atom/chatAtom'
 
 const WaitingRoomPage = () => {
   const router = useRouter()
@@ -39,7 +40,6 @@ const WaitingRoomPage = () => {
     handleSendChat,
     handleUpdateRoom,
     handleKick,
-    kickedPlayer,
     roomInfo,
   } = useSocketWaitingRoom()
 
@@ -56,7 +56,10 @@ const WaitingRoomPage = () => {
   const [isHost, setIsHost] = useState(false)
   const [isReady, setIsReady] = useState(false)
 
+  const resetChat = useResetRecoilState(ChatListState)
+
   const handleBack = useCallback(() => {
+    resetChat()
     handleExit()
     router.replace(`/${gameType}/lobby`)
   }, [])
@@ -106,10 +109,12 @@ const WaitingRoomPage = () => {
 
   useEffect(() => {
     if (seats) {
-      // 내가 방장인지 아닌지 체크
+      // 내가 방장인지 아닌지, 강퇴당하였는지 체크
+      let isKicked = true
       seats.map((seat) => {
         if (seat.user) {
           if (seat.user.nickname === user?.nickname) {
+            isKicked = false
             if (seat.user.ready) setIsReady(true)
             else setIsReady(false)
           }
@@ -121,14 +126,10 @@ const WaitingRoomPage = () => {
           }
         }
       })
+
+      if (isKicked) router.replace(`/${gameType}/lobby`)
     }
   }, [seats])
-
-  useDidMountEffect(() => {
-    if (kickedPlayer === user?.nickname) {
-      router.replace(`/${gameType}/lobby`)
-    }
-  }, [kickedPlayer])
 
   return (
     <>

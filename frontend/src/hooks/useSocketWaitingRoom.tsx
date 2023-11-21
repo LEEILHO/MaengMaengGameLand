@@ -6,7 +6,6 @@ import { RoomInfoState } from '@atom/waitingRoomAtom'
 import { socketResponseType } from '@type/common/common.type'
 import {
   ChatMessageType,
-  KickPlayerType,
   RoomInfoType,
 } from '@type/waitingRoom/waitingRoom.type'
 import { CompatClient, Stomp } from '@stomp/stompjs'
@@ -25,7 +24,6 @@ const useSocketWaitingRoom = () => {
   const user = useRecoilValue(userState)
   const setChatList = useSetRecoilState(ChatListState)
 
-  const [kickedPlayer, setKickedPlayer] = useState<string>('')
   const [roomInfo, setRoomInfo] = useState<RoomInfoType>()
 
   const connectWaitingRoom = useCallback(() => {
@@ -187,7 +185,6 @@ const useSocketWaitingRoom = () => {
   const handleKick = useCallback(
     (kickPlayer: string) => {
       console.log('강퇴 : ', kickPlayer)
-      setKickedPlayer(kickPlayer)
       client.current?.publish({
         destination: `/pub/room.kick.${roomCode}`,
         body: JSON.stringify({
@@ -211,9 +208,7 @@ const useSocketWaitingRoom = () => {
     handleUpdateRoom,
     handleGameStart,
     handleKick,
-    kickedPlayer,
     roomInfo,
-    setKickedPlayer,
   }
 }
 
