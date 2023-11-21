@@ -37,7 +37,8 @@ public class GsbController {
 
     private final GsbService gsbService;
     private final GsbEnterService enterService;
-    private final static String Game_EXCHANGE_NAME = "game";
+    private final static String GAME_EXCHANGE_NAME = "game";
+    private final static String RECORD_EXCHANGE_NAME = "record";
 
     @PostMapping
     public ResponseEntity<String> gsb(@RequestBody String gameCode) throws JsonProcessingException {
@@ -56,7 +57,7 @@ public class GsbController {
             // 카드 전송
             // 숫자 카드 랜덤 전송
             StartCard [] cards = gsbService.getStartCards(gameCode);
-            template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode, MessageDTO.builder()
+            template.convertAndSend(GAME_EXCHANGE_NAME,"gsb."+gameCode, MessageDTO.builder()
                     .type("플레이어순서")
                     .data(cards)
                     .build());
@@ -70,7 +71,7 @@ public class GsbController {
         log.info("setPlayer(), gameCode = {}, playerNickName = {}, playerSeq = {}",gameCode,playerSeqDto.getNickname(),playerSeqDto.getSeq());
         gsbService.setSeq(gameCode,playerSeqDto);
         StartCard [] cards = gsbService.getInfo(gameCode).getStartCards();
-        template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode, MessageDTO.builder()
+        template.convertAndSend(GAME_EXCHANGE_NAME,"gsb."+gameCode, MessageDTO.builder()
                 .type("플레이어순서")
                 .data(cards)
                 .build());
@@ -79,7 +80,7 @@ public class GsbController {
         if(gsbService.getInfo(gameCode).getPlayers() != null && gsbService.getInfo(gameCode).getPlayers().size()==2){
             Gsb gsb = gsbService.setGsb(gameCode);
 
-            template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode, MessageDTO.builder()
+            template.convertAndSend(GAME_EXCHANGE_NAME,"gsb."+gameCode, MessageDTO.builder()
                     .type("게임정보")
                     .data(StartDto.builder()
                             .currentPlayer(gsb.getCurrentPlayer())
@@ -99,7 +100,7 @@ public class GsbController {
     @MessageMapping("game.gsb.set-star.{gameCode}")
     public void setStar(@DestinationVariable String gameCode, StarDto starDto) {
         log.info("setStar(), gameCode = {}, gold = {}, silver = {}, bronze = {}",gameCode,starDto.getGold(),starDto.getSilver(),starDto.getBronze());
-        template.convertAndSend(Game_EXCHANGE_NAME, "gsb."+gameCode,gsbService.setStar( gameCode , starDto ));
+        template.convertAndSend(GAME_EXCHANGE_NAME, "gsb."+gameCode,gsbService.setStar( gameCode , starDto ));
 
 
     }
@@ -109,23 +110,25 @@ public class GsbController {
         /*TODO: 베팅 DTO 반환 */
         MessageDTO messageDTO = gsbService.setBet(gameCode,bettingDto);
 
-        template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode,messageDTO);
+        template.convertAndSend(GAME_EXCHANGE_NAME,"gsb."+gameCode,messageDTO);
 
         // 베팅 포기로 인하여 라운드가 종료된 경우
         if(messageDTO.getType().equals("베팅 포기")){
 
-            template.convertAndSend(Game_EXCHANGE_NAME, "gsb." + gameCode, gsbService.getGiveUpRoundResult(gameCode));
+            template.convertAndSend(GAME_EXCHANGE_NAME, "gsb." + gameCode, gsbService.getGiveUpRoundResult(gameCode));
             // 게임이 종료될 경우
             if(gsbService.endGame(gameCode)){
-                template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode,gsbService.getEndGame(gameCode));
+                template.convertAndSend(GAME_EXCHANGE_NAME,"gsb."+gameCode,gsbService.getEndGame(gameCode));
+                // 게임 데이터 record 서버로 전송
+                template.convertAndSend(RECORD_EXCHANGE_NAME, "gsb."+gameCode, gsbService.getDataToJson(gameCode));
             }
         } else {
             // 라운드가 정상적으로 종료된 경우
             if(gsbService.endRound(gameCode)){
-                template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode,gsbService.getRoundResult(gameCode));
+                template.convertAndSend(GAME_EXCHANGE_NAME,"gsb."+gameCode,gsbService.getRoundResult(gameCode));
                 // 게임이 종료될 경우
                 if(gsbService.endGame(gameCode)){
-                    template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode,gsbService.getEndGame(gameCode));
+                    template.convertAndSend(GAME_EXCHANGE_NAME,"gsb."+gameCode,gsbService.getEndGame(gameCode));
                 }
             }
 
@@ -137,7 +140,7 @@ public class GsbController {
     @MessageMapping("game.gsb.end.{gameCode}")
     public void endTimer(String gameCode, GsbNicknameDto nicknameDto){
         log.info("endTimer()");
-        template.convertAndSend(Game_EXCHANGE_NAME,"gsb."+gameCode,gsbService.getEndTimer(gameCode, nicknameDto));
+        template.convertAndSend(GAME_EXCHANGE_NAME,"gsb."+gameCode,gsbService.getEndTimer(gameCode, nicknameDto));
 
     }
     @GetMapping
