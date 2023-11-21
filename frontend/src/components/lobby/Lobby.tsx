@@ -43,9 +43,11 @@ const Lobby = ({ title }: Props) => {
   }
 
   useEffect(() => {
-    // @ts-ignore
-    navigator.virtualKeyboard.overlaysContent = true
-  })
+    // 가상 키보드 나올 때 브라우저에서 추가 작업 안하도록 설정
+    if ('virtualKeyboard' in navigator)
+      // @ts-ignore
+      navigator.virtualKeyboard.overlaysContent = true
+  }, [])
 
   useEffect(() => {
     setGameType(gameTypeChange(gamePath))
