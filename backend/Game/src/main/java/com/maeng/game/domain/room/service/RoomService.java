@@ -452,12 +452,17 @@ public class RoomService {
         template.convertAndSend(CHAT_EXCHANGE_NAME, "room."+roomCode, messageDTO);
     }
 
-    public HashMap<Integer, Seat> seatInit(){
+    public HashMap<Integer, Seat> seatInit(Game gameCategory){
         HashMap<Integer, Seat> seats = new HashMap<>();
+        boolean seat = true;
 
         for(int i = 0; i < 8; i++){
+            if(Game.GOLD_SILVER_BRONZE.equals(gameCategory) && i == 2){
+                seat = false;
+            }
+
             seats.put(i, Seat.builder()
-                            .available(true)
+                            .available(seat)
                             .nickname("")
                             .build());
         }
