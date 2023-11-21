@@ -1,5 +1,9 @@
-import { styled } from 'styled-components'
+import { css, styled } from 'styled-components'
 import { motion } from 'framer-motion'
+
+type WrrapperProps = {
+  $isIos: boolean
+}
 
 export const Overlay = styled.div`
   z-index: 10;
@@ -9,9 +13,14 @@ export const Overlay = styled.div`
   height: 100%;
 `
 
-export const Wrapper = styled(motion.div)`
+export const Wrapper = styled(motion.div)<WrrapperProps>`
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  ${(props) =>
+    !props.$isIos &&
+    css`
+      top: calc(50% - env(keyboard-inset-height, 0));
+    `}
 `
