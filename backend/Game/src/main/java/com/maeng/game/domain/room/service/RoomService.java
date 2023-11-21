@@ -85,7 +85,7 @@ public class RoomService {
                 .participant(null)
                 .gameCategory(createRoomDTO.getGameCategory())
                 .channelTire(createRoomDTO.getChannelTire())
-                .seats(this.seatInit())
+                .seats(this.seatInit(createRoomDTO.getGameCategory()))
                 .gameCode("")
                 .gameStart(false)
                 .build();
@@ -249,11 +249,18 @@ public class RoomService {
     @Transactional
     @Operation(summary = "자리 상태 변경(자리 열기/닫기)")
     public void seatStateChange(String roomCode, SeatDTO seatDTO){
+
         Room room = this.getCurrentRoom(roomCode);
         checkHost(room, seatDTO.getNickname()); // 방장 권한 확인
 
         // 자리 상태, MaxHeadCount 변경
         Seat seat = room.getSeats().get(seatDTO.getSeatNumber());
+
+        if(seat.isAvailable() && (GSB_MIN_PLAYER == room.getHeadCount()) || !seat.isAvailable() && (GAME_MAX_PLAYER == room.getHeadCount())){
+            // 최소 인원 이상 닫을 수 없게 & 최대 인원 이상 열 수 없게
+            return;
+        }
+
         room.setMaxHeadCount(seat.isAvailable() ? room.getMaxHeadCount() - 1 : room.getMaxHeadCount() + 1);
         seat.setAvailable(!seat.isAvailable()); // 자리 상태 변경
         room.getSeats().put(seatDTO.getSeatNumber(), seat);
