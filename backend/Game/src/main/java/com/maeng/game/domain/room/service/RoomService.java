@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.maeng.game.domain.lobby.enums.ChannelTire;
+import com.maeng.game.domain.room.dto.*;
 import com.maeng.game.domain.room.exception.*;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,17 +28,6 @@ import com.maeng.game.domain.awrsp.service.AwrspService;
 import com.maeng.game.domain.gsb.service.GsbService;
 import com.maeng.game.domain.jwac.service.JwacService;
 import com.maeng.game.domain.lobby.service.LobbyService;
-import com.maeng.game.domain.room.dto.CreateRoomDTO;
-import com.maeng.game.domain.room.dto.EnterDTO;
-import com.maeng.game.domain.room.dto.GameStartDTO;
-import com.maeng.game.domain.room.dto.KickDTO;
-import com.maeng.game.domain.room.dto.MessageDTO;
-import com.maeng.game.domain.room.dto.PlayerDTO;
-import com.maeng.game.domain.room.dto.RoomInfoDTO;
-import com.maeng.game.domain.room.dto.RoomStateDTO;
-import com.maeng.game.domain.room.dto.SeatDTO;
-import com.maeng.game.domain.room.dto.SeatInfoDTO;
-import com.maeng.game.domain.room.dto.UserInfo;
 import com.maeng.game.domain.room.entity.Game;
 import com.maeng.game.domain.room.entity.Room;
 import com.maeng.game.domain.room.entity.Seat;
@@ -297,9 +287,11 @@ public class RoomService {
         room.setHeadCount(room.getHeadCount()-1);
         roomRepository.save(room);
 
+        KickPlayerDTO kick = KickPlayerDTO.builder().nickname(kickDTO.getKickPlayer()).build();
+        log.info(kick.toString());
         // 강퇴된 사람 닉네임 보내주기
         template.convertAndSend(CHAT_EXCHANGE_NAME, "room."+roomCode, MessageDTO.builder()
-                .type("PLAYER_KICK").data(kickDTO.getKickPlayer()));
+                .type("PLAYER_KICK").data(kick));
         this.sendRoomInfo(roomCode, room); // ROOM_INFO
         lobbyService.findAllRoom(room.getGameCategory(), room.getChannelTire());
     }
@@ -500,8 +492,8 @@ public class RoomService {
 
     public int findEmptySeat(HashMap<Integer, Seat> users){
 
-        for(Integer i : users.keySet()){
-            if(users.get(i).getNickname().equals("")){
+        for(int i = 0; i < 8; i++){
+            if(users.get(i).isAvailable() && users.get(i).getNickname().equals("")){
                 log.info("빈 자리 : "+i);
                 return i;
             }
