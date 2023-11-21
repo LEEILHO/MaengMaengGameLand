@@ -47,7 +47,7 @@ public class LobbyService {
                     .roomCode(room.getId())
                     .title(room.getTitle())
                     .headCount(room.getHeadCount())
-                    .maxHeadCount(room.getMaxHeadCount())
+                    .maxHeadCount(room.getCurrentMaxHeadCount())
                     .build());
         }
 

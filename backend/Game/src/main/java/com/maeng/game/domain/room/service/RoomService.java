@@ -78,6 +78,7 @@ public class RoomService {
                 .headCount(0)
                 .maxHeadCount(this.getMaxPlayer(createRoomDTO.getGameCategory()))
                 .minHeadCount(this.getMinPlayer(createRoomDTO.getGameCategory()))
+                .currentMaxHeadCount(this.getMaxPlayer(createRoomDTO.getGameCategory()))
                 .publicRoom(createRoomDTO.isPublicRoom())
                 .participant(null)
                 .gameCategory(createRoomDTO.getGameCategory())
@@ -253,7 +254,7 @@ public class RoomService {
             return;
         }
 
-        room.setMaxHeadCount(seat.isAvailable() ? room.getMaxHeadCount() - 1 : room.getMaxHeadCount() + 1);
+        room.setCurrentMaxHeadCount(seat.isAvailable() ? room.getCurrentMaxHeadCount() - 1 : room.getCurrentMaxHeadCount() + 1);
         seat.setAvailable(!seat.isAvailable()); // 자리 상태 변경
         room.getSeats().put(seatDTO.getSeatNumber(), seat);
         roomRepository.save(room);
@@ -287,7 +288,7 @@ public class RoomService {
         room.setHeadCount(room.getHeadCount()-1);
         roomRepository.save(room);
 
-        KickPlayerDTO kick = KickPlayerDTO.builder().nickname(kickDTO.getKickPlayer()).build();
+//        KickPlayerDTO kick = KickPlayerDTO.builder().nickname(kickDTO.getKickPlayer()).build();
         // 강퇴된 사람 닉네임 보내주기
 //        template.convertAndSend(CHAT_EXCHANGE_NAME, "room."+roomCode, MessageDTO.builder()
 //                .type("PLAYER_KICK").data(kick));
@@ -445,7 +446,7 @@ public class RoomService {
                         .gameCategory(roomInfo.getGameCategory())
                         .participant(users)
                         .headCount(roomInfo.getHeadCount())
-                        .maxHeadCount(roomInfo.getMaxHeadCount())
+                        .maxHeadCount(roomInfo.getCurrentMaxHeadCount())
                         .publicRoom(roomInfo.isPublicRoom())
                         .build())
                 .build();
