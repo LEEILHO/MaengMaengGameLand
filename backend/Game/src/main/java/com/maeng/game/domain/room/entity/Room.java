@@ -34,6 +34,7 @@ public class Room implements Serializable {
     private int headCount;
     private int maxHeadCount;
     private int minHeadCount;
+    private int currentMaxHeadCount;
     @Indexed
     private boolean publicRoom;
     private HashMap<String, User> participant;
