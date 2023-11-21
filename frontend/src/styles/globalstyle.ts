@@ -31,12 +31,8 @@ const GlobalStyle = createGlobalStyle`
     width: 100vw;
     height: 100vh;
     width: calc(var(--vw, 1vw) * 100);
-    height: calc(var(--vh, 1vh) * 100);
+    height: calc(var(--vh, 1vh) * 100 + keyboard-inset-height);
     display: grid;
-    grid-template:
-      "messages" 1fr
-      "input" auto
-      "keyboard" env(keyboard-inset-height, 0px);
   }
 
   body #portal  {
