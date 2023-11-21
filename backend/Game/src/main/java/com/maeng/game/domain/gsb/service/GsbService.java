@@ -877,6 +877,7 @@ public boolean endRound(String gameCode) {
             objectMapper.registerModule(new JavaTimeModule());
             objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
             json = objectMapper.writeValueAsString(gsb);
+            log.info("json = {}", json);
         } catch (Exception e){
             log.error("json error : {} ", e.getMessage());
         }
