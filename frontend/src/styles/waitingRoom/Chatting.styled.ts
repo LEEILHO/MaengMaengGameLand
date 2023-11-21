@@ -31,6 +31,7 @@ export const ChattingInput = styled.input`
   padding-bottom: 6px;
   background: none;
   font-family: 'kbo-dia';
+  color: #fff;
 
   &::placeholder {
     color: rgba(255, 255, 255, 0.5);

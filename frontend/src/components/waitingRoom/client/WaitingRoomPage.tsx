@@ -20,6 +20,7 @@ import useSocketWaitingRoom from '@hooks/useSocketWaitingRoom'
 import { userState } from '@atom/userAtom'
 import useSound from '@hooks/useSound'
 import AlertModal from '@components/gsb/client/AlertModal'
+import useDidMountEffect from '@hooks/useDidMoundEffect'
 
 const WaitingRoomPage = () => {
   const router = useRouter()
@@ -39,10 +40,8 @@ const WaitingRoomPage = () => {
     handleUpdateRoom,
     handleKick,
     kickedPlayer,
-    setKickedPlayer,
+    roomInfo,
   } = useSocketWaitingRoom()
-
-  const roomInfo = useRecoilValue(RoomInfoState)
 
   const { playButtonSound } = useSound()
   const { Modal, isOpen, openModal, closeModal } = useModal()
@@ -125,7 +124,7 @@ const WaitingRoomPage = () => {
     }
   }, [seats])
 
-  useEffect(() => {
+  useDidMountEffect(() => {
     if (kickedPlayer === user?.nickname) {
       router.replace(`/${gameType}/lobby`)
     }
