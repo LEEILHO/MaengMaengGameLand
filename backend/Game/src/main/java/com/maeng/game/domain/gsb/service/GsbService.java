@@ -834,6 +834,25 @@ public boolean endRound(String gameCode) {
 
     }
 
+    public MessageDTO disconnectedPlayer(String gameCode, String nickname){
+        Gsb gsb = getInfo(gameCode);
+        if(nickname.equals(gsb.getPlayers().get(0).getNickname())){
+            return MessageDTO.builder()
+                    .type("연결 끊김 게임 종료")
+                    .data(TimerEndDto.builder().winner(gsb.getPlayers().get(1).getNickname())
+                            .loser(gsb.getPlayers().get(0).getNickname())
+                            .build())
+                    .build();
+        } else {
+            return MessageDTO.builder()
+                    .type("연결 끊김 게임 종료")
+                    .data(TimerEndDto.builder().winner(gsb.getPlayers().get(0).getNickname())
+                            .loser(gsb.getPlayers().get(1).getNickname())
+                            .build())
+                    .build();
+        }
+    }
+
 //    public boolean checkStar(Player player,StarDto starDto){
 //        if(player.getCurrentGold() < starDto.getGold() ||
 //        player.getCurrentSilver() < starDto.getSilver() ||

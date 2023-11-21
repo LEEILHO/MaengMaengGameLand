@@ -1,6 +1,7 @@
 package com.maeng.game.global.session.handler;
 
 import com.maeng.game.domain.awrsp.controller.AwrspController;
+import com.maeng.game.domain.gsb.controller.GsbController;
 import com.maeng.game.domain.jwac.controller.JwacController;
 import com.maeng.game.domain.room.dto.PlayerDTO;
 import com.maeng.game.domain.room.entity.Game;
@@ -27,6 +28,8 @@ public class StompHandler implements ChannelInterceptor {
     private final RoomService roomService;
     private final AwrspController awrspController;
     private final JwacController jwacController;
+
+    private final GsbController gsbController;
 
     @Transactional
     @Override
@@ -92,6 +95,7 @@ public class StompHandler implements ChannelInterceptor {
 
                     if(room.getGameCategory().equals(Game.GOLD_SILVER_BRONZE)){
                         log.info("금은동");
+                        gsbController.disconnectedPlayer(session.getGameCode(), session.getNickname());
 
                     }
 
