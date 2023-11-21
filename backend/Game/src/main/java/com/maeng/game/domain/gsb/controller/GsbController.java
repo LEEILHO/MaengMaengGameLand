@@ -129,6 +129,8 @@ public class GsbController {
                 // 게임이 종료될 경우
                 if(gsbService.endGame(gameCode)){
                     template.convertAndSend(GAME_EXCHANGE_NAME,"gsb."+gameCode,gsbService.getEndGame(gameCode));
+                    // 게임 데이터 record 서버로 전송
+                    template.convertAndSend(RECORD_EXCHANGE_NAME, "gsb."+gameCode, gsbService.getDataToJson(gameCode));
                 }
             }
 
