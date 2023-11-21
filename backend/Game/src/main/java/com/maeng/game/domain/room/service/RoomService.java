@@ -520,8 +520,8 @@ public class RoomService {
             }
         }
 
-        return (seat.isAvailable() && (count == room.getHeadCount())) ||
-                (!seat.isAvailable() && (count == room.getHeadCount()));
+        return (seat.isAvailable() && (count == room.getMinHeadCount())) ||
+                (!seat.isAvailable() && (count == room.getMaxHeadCount()));
     }
     public int getMaxPlayer(Game gameCategory){
         if(gameCategory.equals(Game.ALL_WIN_ROCK_SCISSOR_PAPER)){
