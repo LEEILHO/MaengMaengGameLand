@@ -6,7 +6,7 @@ export const BettingContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   position: fixed;
-  bottom: 0;
+  bottom: calc(0 + env(keyboard-inset-height, 0));
   padding: 0px 40px 20px 40px;
 `
 
