@@ -297,11 +297,9 @@ public class RoomService {
         room.setHeadCount(room.getHeadCount()-1);
         roomRepository.save(room);
 
-        PlayerDTO playerDTO = PlayerDTO.builder().nickname(kickDTO.getNickname()).build();
-
         // 강퇴된 사람 닉네임 보내주기
         template.convertAndSend(CHAT_EXCHANGE_NAME, "room."+roomCode, MessageDTO.builder()
-                .type("PLAYER_KICK").data(playerDTO));
+                .type("PLAYER_KICK").data(kickDTO.getKickPlayer()));
         this.sendRoomInfo(roomCode, room); // ROOM_INFO
         lobbyService.findAllRoom(room.getGameCategory(), room.getChannelTire());
     }
