@@ -2,6 +2,7 @@
 
 import * as S from '@styles/common/Modal.styled'
 import { ModalProps } from '@type/common/modal.type'
+import { detectIosDevice } from '@utils/common/mobile'
 import { AnimatePresence } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
@@ -18,6 +19,16 @@ const Modal = ({ children, isOpen, closeModal }: ModalProps) => {
     setPortalElement(document.getElementById('portal'))
   }, [isOpen])
 
+  useEffect(() => {
+    const modalWrapper = document.querySelector(
+      '.modal-wrapper',
+    ) as HTMLDivElement
+
+    // ios 아닌 경우만 가상 키보드 생성 시 모달창 위로 올려주기
+    if (!detectIosDevice(window.navigator.userAgent))
+      modalWrapper.style.top = 'calc(50% - env(keyboard-inset-height, 0))'
+  }, [])
+
   return (
     <>
       {portalElement
@@ -26,6 +37,7 @@ const Modal = ({ children, isOpen, closeModal }: ModalProps) => {
               {isOpen && (
                 <S.Overlay onClick={closeHandler} className="modal-overlay">
                   <S.Wrapper
+                    className="modal-wrapper"
                     onClick={(e) => e.stopPropagation()}
                     initial={{
                       opacity: 0,
