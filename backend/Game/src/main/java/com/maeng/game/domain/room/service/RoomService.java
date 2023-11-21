@@ -258,8 +258,8 @@ public class RoomService {
         // 자리 상태, MaxHeadCount 변경
         Seat seat = room.getSeats().get(seatDTO.getSeatNumber());
 
-        if((seat.isAvailable() && (room.getMinHeadCount() == room.getHeadCount())) ||
-                (!seat.isAvailable() && (room.getMaxHeadCount() == room.getHeadCount()))){
+
+        if(this.checkSeat(room, seat)){
             // 최소 인원 이상 닫을 수 없게 & 최대 인원 이상 열 수 없게
             return;
         }
@@ -510,6 +510,19 @@ public class RoomService {
         return -1;
     }
 
+    public boolean checkSeat(Room room, Seat seat){
+        HashMap<Integer, Seat> seats = room.getSeats();
+
+        int count = 0;
+        for(Seat s : seats.values()){
+            if(s.isAvailable()){
+                count++;
+            }
+        }
+
+        return (seat.isAvailable() && (count == room.getHeadCount())) ||
+                (!seat.isAvailable() && (count == room.getHeadCount()));
+    }
     public int getMaxPlayer(Game gameCategory){
         if(gameCategory.equals(Game.ALL_WIN_ROCK_SCISSOR_PAPER)){
             return AWRSP_MAX_PLAYER;
