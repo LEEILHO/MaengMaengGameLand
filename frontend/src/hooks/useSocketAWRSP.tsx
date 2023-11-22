@@ -6,23 +6,17 @@ import { SOCKET_URL } from '@constants/baseUrl'
 import SockJS from 'sockjs-client'
 import { usePathname } from 'next/navigation'
 import { socketResponseType } from '@type/common/common.type'
-import {
-  useRecoilState,
-  useRecoilValue,
-  useResetRecoilState,
-  useSetRecoilState,
-} from 'recoil'
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import { userState } from '@atom/userAtom'
 import {
   DrawCardState,
   GameResultState,
-  HistoryState,
   PlayerResultState,
   RoundState,
-  RspCardListState,
   TimerState,
 } from '@atom/awrspAtom'
 import {
+  GameResultResponseType,
   GameResultType,
   PlayerResultType,
   RspType,
@@ -40,6 +34,7 @@ const useSocketAWRSP = () => {
   const [drawCard, setDrawCard] = useRecoilState(DrawCardState)
 
   const [step, setStep] = useState<StepType>('ENTER_GAME')
+  const [answer, setAnswer] = useState<RspType[]>([])
 
   /**
    * 전승 가위바위보 게임 구독
@@ -91,9 +86,10 @@ const useSocketAWRSP = () => {
       }
       // 게임 종료, 순위 받아오기
       else if (response.type === 'GAME_OVER') {
-        const data = response.data as GameResultType[]
+        const data = response.data as GameResultResponseType
         console.log('게임 결과 : ', data)
-        setGameReulst(data)
+        setGameReulst(data.result)
+        setAnswer(data.answer)
         setStep(response.type as StepType)
       }
     })
@@ -188,6 +184,7 @@ const useSocketAWRSP = () => {
     handleCardSubmit,
     step,
     setStep,
+    answer,
   }
 }
 

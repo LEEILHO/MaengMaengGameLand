@@ -25,6 +25,7 @@ import useDidMountEffect from '@hooks/useDidMoundEffect'
 import HistoryModal from '@components/awrsp/client/HistoryModal'
 import { useRouter } from 'next/navigation'
 import useSound from '@hooks/useSound'
+import { getRspImageUrl } from '@utils/awrsp/awrspUtil'
 
 const AwrspGameRoom = () => {
   const router = useRouter()
@@ -35,6 +36,7 @@ const AwrspGameRoom = () => {
     handleCardSubmit,
     step,
     setStep,
+    answer,
   } = useSocketAWRSP()
   const { Modal, closeModal, isOpen, openModal } = useModal()
   const {
@@ -133,22 +135,36 @@ const AwrspGameRoom = () => {
         <>
           <S.RoundDisplay>최종 결과</S.RoundDisplay>
           <S.Content>
-            <S.GameResultList>
+            <S.AnswerContainer>
+              <S.AnswerTitle>정답 카드</S.AnswerTitle>
+              <S.AnswerList>
+                {answer.map((card, index) => (
+                  <S.RspCard
+                    src={getRspImageUrl(card)}
+                    alt={card}
+                    key={card + index}
+                  />
+                ))}
+              </S.AnswerList>
+            </S.AnswerContainer>
+            <S.GameResultContainer>
               <S.TableHeader>
                 <p className="rank">등수</p>
                 <p className="nickname">유저</p>
                 <p className="point">맞춘 라운드</p>
               </S.TableHeader>
-              {gameResult?.map((result) => (
-                <S.GameResultItem key={result.nickname}>
-                  <p className="rank">{result.rank}</p>
-                  <p className="nickname">{result.nickname}</p>
-                  <p className="point">
-                    {result.round !== 0 ? result.round : '-'}
-                  </p>
-                </S.GameResultItem>
-              ))}
-            </S.GameResultList>
+              <S.GameResultList>
+                {gameResult?.map((result) => (
+                  <S.GameResultItem key={result.nickname}>
+                    <p className="rank">{result.rank}</p>
+                    <p className="nickname">{result.nickname}</p>
+                    <p className="point">
+                      {result.round !== 0 ? result.round : '-'}
+                    </p>
+                  </S.GameResultItem>
+                ))}
+              </S.GameResultList>
+            </S.GameResultContainer>
           </S.Content>
         </>
       )}

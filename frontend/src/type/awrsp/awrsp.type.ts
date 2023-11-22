@@ -37,6 +37,11 @@ export type PlayerResultType = {
   detail: RoundResultType
 }
 
+export type GameResultResponseType = {
+  result: GameResultType[]
+  answer: RspType[]
+}
+
 export type GameResultType = {
   nickname: string
   round: number

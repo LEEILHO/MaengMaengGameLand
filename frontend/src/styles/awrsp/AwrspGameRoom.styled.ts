@@ -99,14 +99,14 @@ export const BackToLobbyButton = styled.button`
   }
 `
 
-export const GameResultList = styled.div`
+export const GameResultContainer = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
   align-items: center;
-  padding: 25px;
+
+  margin-top: 12px;
 `
 
 export const TableHeader = styled.div`
@@ -128,6 +128,18 @@ export const TableHeader = styled.div`
   .point {
     width: 100px;
   }
+`
+
+export const GameResultList = styled.div`
+  width: 100%;
+  height: 100px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+
+  overflow: auto;
 `
 
 export const GameResultItem = styled.div`
@@ -153,4 +165,43 @@ export const GameResultItem = styled.div`
   .nickname {
     color: #f5e340;
   }
+`
+
+export const AnswerContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 25px;
+`
+
+export const AnswerTitle = styled.p`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #fff;
+  text-align: center;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+`
+
+export const AnswerList = styled.div`
+  border-radius: 8px;
+  background-color: rgba(217, 217, 217, 0.5);
+
+  padding: 10px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+`
+
+export const RspCard = styled.img`
+  width: 52px;
+  height: 75px;
 `
