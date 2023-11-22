@@ -3,10 +3,7 @@ package com.maeng.game.domain.awrsp.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.maeng.game.domain.awrsp.dto.GameResultDTO;
-import com.maeng.game.domain.awrsp.dto.RoundDetailDTO;
-import com.maeng.game.domain.awrsp.dto.RoundResultDTO;
-import com.maeng.game.domain.awrsp.dto.SubmitDTO;
+import com.maeng.game.domain.awrsp.dto.*;
 import com.maeng.game.domain.awrsp.entity.*;
 import com.maeng.game.domain.awrsp.exception.NotFoundGameException;
 import com.maeng.game.domain.awrsp.repository.AwrspRepository;
@@ -194,28 +191,32 @@ public class AwrspService {
     @Operation(summary = "게임 결과 전송")
     public void sendGameResult(String gameCode){
         Game game = this.getCurrentGame(gameCode);
-        List<GameResultDTO> result = new ArrayList<>();
+        List<RankResultDTO> result = new ArrayList<>();
 
         for(Player player : game.getPlayers().values()){
-            result.add(GameResultDTO.builder()
+            result.add(RankResultDTO.builder()
                             .nickname(player.getNickname())
                             .round(player.getFinishRound())
                             .rank(player.getRank())
                     .build());
         }
 
-        result.sort(new Comparator<GameResultDTO>() {
+        result.sort(new Comparator<RankResultDTO>() {
             @Override
-            public int compare(GameResultDTO o1, GameResultDTO o2) {
+            public int compare(RankResultDTO o1, RankResultDTO o2) {
                 return o1.getRank() - o2.getRank();
             }
         });
 
         MessageDTO messageDTO = MessageDTO.builder()
                 .type("GAME_OVER")
-                .data(result)
+                .data(GameResultDTO.builder()
+                        .result(result)
+                        .answer(this.getAnswer(game.getProblem()))
+                        .build())
                 .build();
 
+        log.info(messageDTO.toString());
         template.convertAndSend(GAME_EXCHANGE, "awrsp."+gameCode, messageDTO);
     }
 
@@ -321,7 +322,6 @@ public class AwrspService {
         }
     }
 
-    @Transactional
     public int rockScissorPaper(Card problem, Card card){
         // TODO : 가위바위보 이기면 1, 비기면 0, 지면 -1 반환
         if(problem.equals(Card.PAPER)){
@@ -376,6 +376,29 @@ public class AwrspService {
         return problem;
     }
 
+    // TODO : 정답 카드 생성
+    public Card[] getAnswer(Card[] problem){
+        Card[] answer = new Card[CARD_COUNT];
+
+        for(int i = 0; i < CARD_COUNT; i++){
+            Card c = null;
+            if(this.rockScissorPaper(problem[i], Card.PAPER) == 1){
+                c = Card.PAPER;
+            }
+
+            if(this.rockScissorPaper(problem[i], Card.SCISSOR) == 1){
+                c = Card.SCISSOR;
+            }
+
+            if(this.rockScissorPaper(problem[i], Card.ROCK) == 1){
+                c = Card.ROCK;
+            }
+
+            answer[i] = c;
+        }
+
+        return answer;
+    }
 
     public Game getCurrentGame(String gameCode){
         Game game = awrspRepository.findById(gameCode).orElse(null);
