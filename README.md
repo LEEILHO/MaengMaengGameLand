@@ -77,23 +77,57 @@
   </br>
   </br>
   
-## 🔌 맹맹마블 기능
-#### 네이버 소셜 로그인 지원
+## 🔌 맹맹게임랜드 기능
+### 🏠홈
+
+#### 📌워치 로그인
+![워치 로그인](https://github.com/LEEILHO/MaengMaengGameLand/assets/12166357/59174068-fa40-4e74-b7d3-0c571fcb89f9)
+
+#### 📌닉네임 수정
+![닉네임 수정](https://github.com/LEEILHO/MaengMaengGameLand/assets/12166357/fac7def0-d80b-40bb-810b-4463b9036ccc)
  
- 
-#### 로비에서 대기방 입장 및 생성
- 
- 
-#### 여러가지 캐릭터 구매
- 
- 
-#### 채팅이 가능한 대기방
- 
- 
-#### 랜덤으로 정해지는 순서
- 
- 
-#### 신나는 게임 화면
+#### 📌전적
+![전적](https://github.com/LEEILHO/MaengMaengGameLand/assets/12166357/58f05c7f-ac82-4086-a0e1-99c02bac09b6)
+
+#### 📌게임 설명
+![게임 설정](https://github.com/LEEILHO/MaengMaengGameLand/assets/12166357/e91f600b-c4d0-4bad-84c8-4bf8598f418f)
+</br>
+</br>
+### 🏠방
+#### 📌방 생성
+![방 생성](https://github.com/LEEILHO/MaengMaengGameLand/assets/12166357/ae465d6c-4f93-4ad7-9307-f9971a49481f)
+
+#### 📌강퇴
+![강퇴](https://github.com/LEEILHO/MaengMaengGameLand/assets/12166357/60d8c710-c13b-4566-b5a0-86cea6c19771)
+</br>
+</br>
+### 🏃🏻맹맹점핑
+#### 📌게임
+![맹맹점핑](https://github.com/LEEILHO/MaengMaengGameLand/assets/12166357/3efe56f8-6a75-44fb-b739-39a68b5dd411)
+</br>
+</br>
+### ✌️전승 가위바위보
+#### 📌카드 제출
+![전승가위바위보_제출](https://github.com/LEEILHO/MaengMaengGameLand/assets/12166357/8ce32975-32e7-4d4a-b047-cf8a3303154c)
+
+#### 📌라운드 결과
+![전승가위바위보_라운드 결과](https://github.com/LEEILHO/MaengMaengGameLand/assets/12166357/80f56624-c5d7-4781-bcc2-fece99294c18)
+
+#### 📌비김카드 선택
+![전승가위바위보_비김카드](https://github.com/LEEILHO/MaengMaengGameLand/assets/12166357/9a6ea9f7-8cc6-4db0-9808-5e8d5a0018c1)
+
+#### 📌히스토리
+![전승가위바위보_히스토리](https://github.com/LEEILHO/MaengMaengGameLand/assets/12166357/d04ebf8e-a98c-4223-9a16-13b6c03f50eb)
+
+#### 📌최종결과
+![전승가위바위보_최종결과](https://github.com/LEEILHO/MaengMaengGameLand/assets/12166357/9fba52ce-eced-42cf-b675-4fe38b03cc74)
+</br>
+</br>
+### 무제한 보석경매
+
+</br>
+</br>
+### 🥇금은동
 
   </br>
   </br>
