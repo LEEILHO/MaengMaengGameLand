@@ -71,6 +71,8 @@
 ## 🔌 아키텍처
 ![image](https://github.com/LEEILHO/MaengMaengGameLand/assets/33304873/b5ff06ca-3818-4632-86cc-dea87eb3eaba)
 
+## 🔌 DB 설계 (ERD)
+![erd](https://github.com/LEEILHO/MaengMaengGameLand/assets/12166357/3bc3eacf-6865-4f45-858a-a1fcb36c1b80)
 
   </br>
   </br>
