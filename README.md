@@ -26,43 +26,50 @@
   </br>
  
 ## 🛠 기술 스택
-`공통` - OAuth 2.0
+### 💻 FrontEnd
+<div>
+  <img src="https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white">
+  <img src="https://img.shields.io/badge/nextjs-2D2D2D?style=for-the-badge&logo=next.js&logoColor=white">
+  <img src="https://img.shields.io/badge/recoil-3578E5?style=for-the-badge&logo=recoil&logoColor=white">
+  <img src="https://img.shields.io/badge/html5-E34F26?style=for-the-badge&logo=html5&logoColor=white">
+  <img src="https://img.shields.io/badge/css3-1572B6?style=for-the-badge&logo=css3&logoColor=white">
+  <img src="https://img.shields.io/badge/styledcomponents-DB7093?style=for-the-badge&logo=styled-components&logoColor=white">
+</div>
 
-`Front` - React, TypeScript, React-Query, tailwind, npm, Recoil, vite
+### 🖥️ BackEnd
+<div>
+  <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white"> 
+  <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
+  <img src="https://img.shields.io/badge/springsecurity-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white">
+  <img src="https://img.shields.io/badge/springcloud-6DB33F?style=for-the-badge&logo=springcloud&logoColor=white">
+  <img src="https://img.shields.io/badge/swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=white">
+  <img src="https://img.shields.io/badge/gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white">
+  <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white">
 
-`Back` - Java, Springboot, Spring Security, Swagger, JUnit, Gradle, Python
+  <img src="https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=redis&logoColor=white">
+  <img src="https://img.shields.io/badge/rabbitmq-FF6600?style=for-the-badge&logo=rabbitmq&logoColor=white">
+  <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white">
+</div>
 
-`DB` - MySQL
+### 📘 Common
+<div>
+  <img src="https://img.shields.io/badge/socket.io-010101?style=for-the-badge&logo=socket.io&logoColor=white">
+  <img src="https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=redis&logoColor=white">
+</div>
 
-`채팅` - Socket.io, Redis
-
-`Deploy` - AWS EC2, RDS, S3, Nginx, Jenkins, Docker
-
-`Cooperation` - Figma, Jira, GitLab, Mattermost, Notion 
- 
-
+### 🏙️ Infra
+<div>
+  <img src="https://img.shields.io/badge/amazon ec2-FF9900?style=for-the-badge&logo=amazonec2&logoColor=white">
+  <img src="https://img.shields.io/badge/amazons 3-569A31?style=for-the-badge&logo=amazons3&logoColor=white">
+  <img src="https://img.shields.io/badge/nginx-009639?style=for-the-badge&logo=nginx&logoColor=white">
+  <img src="https://img.shields.io/badge/jenkins-D24939?style=for-the-badge&logo=jenkins&logoColor=white">
+  <img src="https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white">
+</div>
   </br>
   </br>
  
 ## 🔌 아키텍처
-<img src="./images/architecture.png" height="400">
-맹맹마블의 서비스 아키텍쳐 구성도입니다.
-
-네이버 소셜 로그인으로 로그인 기능을 구현하였습니다.
-
-유저에게 게임 커뮤니티 기능을 제공하는 user service,
-게임 로직을 처리하는 game server,
-유저의 게임 플레이 데이터를 분석하여 플레이 스타일을 제공할 analysis server,
-총 3개의 서버로 나누었고,
-이 서버들의 앞단에 api gateway 서버를 두어 적절한 서비스에 라우팅 하게 하였습니다.
-
-game server는 유저들에게 실시간성 보장과, 데이터 전달을 위해 stomp 프로토콜을 이용한 socket 통신으로 구현할 것입니다.
-
-또한 유저에게 발급 된 token을 저장하는 session redis와,
-실시간으로 변화하는 게임 데이터를 저장할 cache redis
-총 두 개의 redis 서버를 두었습니다.
-
-그리고 게임 플레이 데이터와, 유저별 게임 플레이 스타일을 분석한 정보는 RDBMS에 저장 됩니다.
+![image](https://github.com/LEEILHO/MaengMaengGameLand/assets/33304873/b5ff06ca-3818-4632-86cc-dea87eb3eaba)
 
 
   </br>
