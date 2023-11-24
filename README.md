@@ -123,7 +123,7 @@
 ![전승가위바위보_최종결과](https://github.com/LEEILHO/MaengMaengGameLand/assets/12166357/9fba52ce-eced-42cf-b675-4fe38b03cc74)
 </br>
 </br>
-### 무제한 보석경매
+### 💎무제한 보석경매
 #### 📌보석공개
 ![무제한보석경매_보석공개](https://github.com/LEEILHO/MaengMaengGameLand/assets/35682216/c07b6b93-c800-4811-b15f-300f45a85583)
 
