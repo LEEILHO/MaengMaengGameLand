@@ -21,6 +21,8 @@
 
 ## 📆 프로젝트 진행 기간
 2023.10.10 - 2023.11.17
+</br>
+</br>
  
 ## 🛠 기술 스택
 ### 💻 FrontEnd
@@ -53,8 +55,8 @@
 
 ### ⌚ Android WearOS
 <div>
-  <img src="https://img.shields.io/badge/android-3DDC84?style=for-the-badge&logo=android&logoColor=white">
   <img src="https://img.shields.io/badge/kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white">
+  <img src="https://img.shields.io/badge/android-3DDC84?style=for-the-badge&logo=android&logoColor=white">
   <img src="https://img.shields.io/badge/wearos-4285F4?style=for-the-badge&logo=wearos&logoColor=white">
   <img src="https://img.shields.io/badge/jetpack-428237?style=for-the-badge&logo=jetpackcompose&logoColor=white">
   <img src="https://img.shields.io/badge/retrofit2-68BC71?style=for-the-badge&logo=android&logoColor=white">
